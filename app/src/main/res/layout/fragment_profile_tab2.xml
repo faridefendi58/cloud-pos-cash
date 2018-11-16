@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:useDefaultMargins="true"
+        android:alignmentMode="alignBounds"
+        android:columnOrderPreserved="false"
+        android:columnCount="2"
+        android:padding="10dp">
+
+        <TextView
+            android:text="@string/txt_form_requirement"
+            android:textSize="16dip"
+            android:layout_columnSpan="2"
+            android:layout_gravity="left"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:text="@string/label_old_password"
+            android:layout_gravity="right"
+            />
+
+        <EditText
+            android:ems="10"
+            android:id="@+id/input_old_password"
+            android:inputType="textPassword"
+            android:singleLine="true"
+            />
+
+        <TextView
+            android:text="@string/label_new_password"
+            android:layout_column="0"
+            android:layout_gravity="right"
+            />
+
+        <EditText
+            android:ems="10"
+            android:id="@+id/input_new_password"
+            android:inputType="textPassword"
+            android:singleLine="true"
+            />
+
+        <TextView
+            android:text="@string/label_new_password_confirm"
+            android:layout_column="0"
+            android:layout_gravity="right"
+            />
+
+        <EditText
+            android:ems="10"
+            android:id="@+id/input_new_password_confirm"
+            android:inputType="textPassword"
+            android:singleLine="true"
+            />
+
+        <Space
+            android:layout_row="4"
+            android:layout_column="0"
+            android:layout_columnSpan="1"
+            android:layout_gravity="fill"
+            />
+
+        <Button
+            android:text="@string/update"
+            android:layout_row="5"
+            android:layout_column="1"
+            android:background="@color/btnInfo"
+            android:textColor="@color/colorWhite"
+            android:paddingHorizontal="20dp"
+            android:layout_marginTop="10dp"
+            android:onClick="updatePassword"
+            android:clickable="true"
+            />
+    </GridLayout>
+
+</ScrollView>

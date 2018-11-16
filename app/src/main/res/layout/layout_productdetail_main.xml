@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TabHost
+        android:id="@android:id/tabhost"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TabWidget
+                android:id="@android:id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </TabWidget>
+
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+                <include
+                    android:id="@+id/tab1"
+                    layout="@layout/layout_productdetail_detail" />
+
+                <include
+                    android:id="@+id/tab2"
+                    layout="@layout/layout_productdetail_stock" />
+
+                <include
+                    android:id="@+id/tab3"
+                    layout="@layout/layout_productdetail_discount" />
+            </FrameLayout>
+        </LinearLayout>
+    </TabHost>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+
+        <Button
+            android:id="@+id/addProductLotButton"
+            style="?android:textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:drawableTop="@drawable/ic_add_new"
+            android:background="@android:color/transparent"
+            android:text="@string/add_stock" />
+
+        <Button
+            android:id="@+id/addProductDiscountButton"
+            style="?android:textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:drawableTop="@drawable/ic_add_discount"
+            android:background="@android:color/transparent"
+            android:text="@string/add_discount" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/ic_home_white_24dp"
+        android:title="@string/title_dashboard"
+        app:showAsAction="ifRoom"
+        android:showAsAction="always" />
+
+    <item
+        android:id="@+id/settings"
+        android:title="@string/action_settings">
+
+        <menu>
+            <item
+                android:id="@+id/profile"
+                android:title="@string/action_profile">
+            </item>
+            <item android:id="@+id/language"
+                android:title="@string/language" >
+                <menu>
+                    <item
+                        android:id="@+id/lang_en"
+                        android:title="@string/lang_en"/>
+                    <item
+                        android:id="@+id/lang_id"
+                        android:title="@string/lang_id"/>
+                </menu>
+            </item>
+
+            <item android:id="@+id/currency"
+                android:title="@string/currency" >
+                <menu>
+                    <item
+                        android:id="@+id/currency_idr"
+                        android:title="@string/currency_idr"/>
+                    <item
+                        android:id="@+id/currency_usd"
+                        android:title="@string/currency_usd"/>
+                </menu>
+            </item>
+
+            <item android:id="@+id/params"
+                android:title="@string/action_shop" >
+            </item>
+
+            <item android:id="@+id/printer_and_receipt"
+                android:title="@string/action_printer" >
+            </item>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/syncronize"
+        android:title="@string/action_syncronize">
+    </item>
+    <item
+        android:id="@+id/help"
+        android:title="@string/action_help">
+    </item>
+    <item
+        android:id="@+id/logout"
+        android:title="@string/action_logout">
+    </item>
+</menu>

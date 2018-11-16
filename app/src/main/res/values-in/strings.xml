@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">UcokPOS</string>
+    <string name="grreting">Welcome To UcokPOS</string>
+
+    <string name="action_settings">Pengaturan</string>
+    <string name="action_help">Bantuan</string>
+    <string name="action_profile">Profil</string>
+    <string name="action_shop">Toko</string>
+    <string name="action_printer">Printer dan Struk</string>
+    <string name="action_syncronize">Sinkronisasi</string>
+    <string name="action_logout">Logout</string>
+
+    <string name="total">Total</string>
+    <string name="barcode">Barcode</string>
+    <string name="cancel">Batal</string>
+    <string name="clear">Bersihkan</string>
+    <string name="edit">Ubah</string>
+    <string name="save">Simpan</string>
+    <string name="confirm">Selesai</string>
+    <string name="date">Tanggal</string>
+    <string name="date_added">Tanggal Ditambahkan</string>
+    <string name="quantity">Jumlah</string>
+    <string name="quantity_max">Jumlah Maksimum</string>
+    <string name="remove">Hapus</string>
+    <string name="scan">Scan</string>
+    <string name="unit_price">Unit Price</string>
+    <string name="name">Nama</string>
+    <string name="email">Alamat Email</string>
+    <string name="phone">Telepon/WA</string>
+    <string name="address">Alamat</string>
+    <string name="id">ID</string>
+    <string name="cash">Tunai</string>
+    <string name="change">Kembali</string>
+    <string name="hint_search">Masukkan nama atau barcode</string>
+    <string name="hint_search_customer">Masukkan nama atau email</string>
+    <string name="hint_cash">Masukkan uang tunai di sini</string>
+    <string name="add_new_product">Tambah Produk Baru</string>
+    <string name="add_stock">Tambah Stok</string>
+    <string name="add_discount">Tambah Diskon</string>
+    <string name="add_new_customer">Tambah Pelanggan</string>
+    <string name="previous">&lt;</string>
+    <string name="next">></string>
+    <string name="inventory">Persediaan</string>
+    <string name="sale">Penjualan</string>
+    <string name="report">Laporan</string>
+    <string name="invoice">Tagihan</string>
+    <string name="customer">Pelanggan</string>
+    <string name="language">Bahasa</string>
+    <string name="payment">Pembayaran</string>
+    <string name="update">Ubah</string>
+    <string name="favorite">Paling Disukai</string>
+    <string name="all_list">Semua Daftar</string>
+    <string name="transaction">Transaksi Penjualan</string>
+    <string name="remove_invoice">Hapus Tagihan</string>
+    <string name="print_invoice">Cetak Tagihan</string>
+    <string name="sync_product">Sinkronisasi Produk</string>
+
+    <string name="dialog_quit">Anda yakin ingin KELUAR?</string>
+    <string name="dialog_remove_product">Anda yakin ingin MENGHAPUS produk ini?</string>
+    <string name="dialog_remove_customer">Anda yakin ingin MENGHAPUS pelanggan ini?</string>
+    <string name="dialog_clear_sale">Anda yakin ingin MEMBERSIHKAN penjualan ini?</string>
+    <string name="dialog_remove_invoice">Anda yakin ingin MENGHAPUS tagihan ini?</string>
+    <string name="hint_empty_sale">Data penjualan kosong.</string>
+    <string name="quit">Keluar</string>
+    <string name="no">Tidak</string>
+    <string name="product_detail">Rincian</string>
+    <string name="customer_detail">Rincian</string>
+    <string name="stock">Stok</string>
+    <string name="product_discount">Diskon</string>
+    <string name="success">Berhasil</string>
+    <string name="fail">Gagal</string>
+    <string name="please_input_all">Silakan lengkapi semua data.</string>
+    <string name="need_money">Diperlukan</string>
+    <string name="customer_order">Daftar Transaksi</string>
+    <string name="invoice_detail">Rincian Tagihan</string>
+
+    <string name="title_home">Beranda</string>
+    <string name="title_dashboard">Dasboard</string>
+    <string name="title_notifications">Notifikasi</string>
+    <string name="title_transaction">Transaksi</string>
+    <string name="title_reports">Laporan</string>
+
+    <string name="dashboard_income">Pendapatan</string>
+    <string name="dashboard_transaction">Transaksi</string>
+    <string name="dashboard_today">Hari Ini</string>
+    <string name="dashboard_yesterday">Kemarin</string>
+    <string name="dashboard_this_month">Bulan Ini</string>
+    <string name="dashboard_previous_month">Bulan Lalu</string>
+
+    <string name="lang_en">English</string>
+    <string name="lang_id">Bahasa Indonesia</string>
+    <string name="hint_lang">Silakan restart aplikasi untuk menerapkan pengaturan bahasa ini.</string>
+
+    <string name="currency">Mata Uang</string>
+    <string name="currency_idr">IDR</string>
+    <string name="currency_usd">USD</string>
+
+    <string name="params">Parameter</string>
+    <string name="params_store_name">Nama Toko</string>
+    <string name="params_store_address">Alamat Toko</string>
+    <string name="params_store_phone">No. Telepon</string>
+
+    <string-array name="period">
+        <item>Harian</item>
+        <item>Mingguan</item>
+        <item>Bulanan</item>
+        <item>Tahunan</item>
+    </string-array>
+
+    <style name="ButtonText">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">3dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">2</item>
+    </style>
+
+    <string name="title_activity_login">Masuk atau buat akun baru</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_password_repeat">Password (Diulang)</string>
+    <string name="prompt_name">Nama Lengkap</string>
+    <string name="prompt_phone">Nomor Telepon</string>
+    <string name="action_sign_in">Masuk atau mendaftar</string>
+    <string name="action_sign_in_short">Masuk</string>
+    <string name="action_register">Buat akun baru?</string>
+    <string name="action_have_account">Sudah memiliki akun?</string>
+    <string name="action_submit">Simpan</string>
+    <string name="error_invalid_email">Alamat email tidak valid</string>
+    <string name="error_unavailable_email">Email ini sudah pernah terdaftar</string>
+    <string name="error_invalid_password">Password terlalu pendek</string>
+    <string name="error_invalid_password_repeat">Silakan ulangi password dengan benar</string>
+    <string name="error_incorrect_password">Password tidak sesuai</string>
+    <string name="error_field_required">Kolom ini tidak boleh dikosongi</string>
+    <string name="error_old_password">Password lama salah</string>
+    <string name="permission_rationale">"Izin kontak diperlukan untuk menyediakan penyelesaian email."</string>
+    <string name="login_header_information">Isilah form ini dengan akun login anda,
+        atau buat akun terlebih dahulu untuk dapat menggunakan aplikasi ini.</string>
+
+    <string name="title_activity_profile">Profil</string>
+    <string name="tab_profile_data">Ubah Profil</string>
+    <string name="tab_profile_password">Ubah Password</string>
+
+    <string name="txt_form_requirement">Silakan lengkapi beberapa isian berikut :</string>
+
+    <string name="label_profile_name">Nama Lengkap :</string>
+    <string name="label_profile_email">Alamat Email :</string>
+    <string name="label_profile_phone">No Telepon :</string>
+    <string name="label_old_password">Password Lama :</string>
+    <string name="label_new_password">Password Baru :</string>
+    <string name="label_new_password_confirm">Password Baru (diulang) :</string>
+
+    <string name="message_success_save">Data Anda telah berhasil disimpan.</string>
+    <string name="message_success_update">Data Anda telah berhasil diubah.</string>
+    <string name="message_success_change_password">Password Anda telah berhasil diubah.</string>
+</resources>

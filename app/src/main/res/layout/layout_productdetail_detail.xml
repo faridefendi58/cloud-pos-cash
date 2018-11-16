@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/detailTab"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:orientation="vertical" >
+
+        <EditText
+            android:id="@+id/nameBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#87CEEB"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            android:inputType="textNoSuggestions"
+            android:padding="10dip"
+            android:text="@string/name"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/quantityLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="2dip"
+            android:text="@string/quantity"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/stockSumBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#DDEEFF"
+            android:gravity="right"
+            android:padding="2dip"
+            android:textSize="16sp" />
+
+    <!--
+                <TextView
+                    android:id="@+id/profitLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="2dip"
+                    android:text="Profit per unit"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/profitBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#DDEEFF"
+                    android:gravity="right"
+                    android:padding="2dip"
+                    android:textSize="25sp" />
+    -->
+
+    <TextView
+        android:id="@+id/priceLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="2dip"
+        android:text="@string/unit_price"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/priceBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#87CEEB"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:gravity="right"
+        android:inputType="number"
+        android:padding="2dip"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/barcodeLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="2dip"
+        android:text="@string/barcode"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/barcodeBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#87CEEB"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:gravity="right"
+        android:inputType="number"
+        android:padding="2dip"
+        android:textSize="16sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:weightSum="1">
+
+        <Button
+            android:id="@+id/openEditButton"
+            style="@style/ButtonText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/btnSuccess"
+            android:text="@string/edit"
+            android:drawableLeft="@drawable/ic_edit_white_24dp"
+            android:layout_gravity="center"
+            android:layout_weight="0.5"
+            android:paddingHorizontal="10dp"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/cancelEditButton"
+            style="@style/ButtonText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:background="@color/btnDanger"
+            android:drawableLeft="@drawable/ic_cancel_white_24dp"
+            android:paddingHorizontal="10dp"
+            android:text="@string/cancel" />
+
+        <Button
+            android:id="@+id/submitEditButton"
+            style="@style/ButtonText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:background="@color/btnInfo"
+            android:drawableLeft="@drawable/ic_save_white_24dp"
+            android:paddingHorizontal="10dp"
+            android:text="@string/save" />
+    </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
