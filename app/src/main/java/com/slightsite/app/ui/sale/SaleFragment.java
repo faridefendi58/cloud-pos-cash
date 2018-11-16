@@ -27,7 +27,6 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.LanguageController;
