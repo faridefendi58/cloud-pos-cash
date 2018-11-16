@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">UcokPOS</string>
+    <string name="greeting">Welcome To UcokPOS</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="action_help">Help</string>
+    <string name="action_profile">Profile</string>
+    <string name="action_shop">Shop</string>
+    <string name="action_printer">Printer and Receipt</string>
+    <string name="action_syncronize">Syncronize</string>
+    <string name="action_logout">Logout</string>
+
+    <string name="total">Total</string>
+    <string name="barcode">Barcode</string>
+    <string name="cancel">Cancel</string>
+    <string name="clear">Clear</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+    <string name="confirm">Done</string>
+    <string name="date">Date</string>
+    <string name="date_added">Date Added</string>
+    <string name="quantity">Quantity</string>
+    <string name="quantity_max">Quantity Maximum</string>
+    <string name="remove">Remove</string>
+    <string name="scan">Scan</string>
+    <string name="unit_price">Unit Price</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="phone">Phone/WA</string>
+    <string name="address">Address</string>
+    <string name="id">ID</string>
+    <string name="cash">Cash</string>
+    <string name="change">Change</string>
+    <string name="hint_search">Enter name or barcode</string>
+    <string name="hint_search_customer">Enter name or email</string>
+    <string name="hint_cash">Enter cash here</string>
+    <string name="add_new_product">Add New Product</string>
+    <string name="add_stock">Add A Product Lot</string>
+    <string name="add_discount">Add A Product Discount</string>
+    <string name="add_new_customer">Add New Customer</string>
+    <string name="previous">&lt;</string>
+    <string name="next">></string>
+    <string name="inventory">Inventory</string>
+    <string name="sale">Sale</string>
+    <string name="report">Report</string>
+    <string name="invoice">Invoice</string>
+    <string name="customer">Customer</string>
+    <string name="language">Language</string>
+    <string name="payment">Payment</string>
+    <string name="update">Update</string>
+    <string name="favorite">Favorite</string>
+    <string name="all_list">All List</string>
+    <string name="transaction">Transaction</string>
+    <string name="remove_invoice">Remove Invoice</string>
+    <string name="print_invoice">Print Invoice</string>
+    <string name="sync_product">Syncron Product</string>
+
+    <string name="dialog_quit">Are you sure you want to QUIT?</string>
+    <string name="dialog_remove_product">Are you sure you want to REMOVE this product?</string>
+    <string name="dialog_remove_customer">Are you sure you want to REMOVE this customer?</string>
+    <string name="dialog_clear_sale">Are you sure you want to CLEAR this sale?</string>
+    <string name="dialog_remove_invoice">Are you sure you want to Remove this invoice?</string>
+    <string name="hint_empty_sale">Sale is empty.</string>
+    <string name="quit">Quit</string>
+    <string name="no">No</string>
+    <string name="product_detail">Detail</string>
+    <string name="customer_detail">Detail</string>
+    <string name="stock">Stock</string>
+    <string name="product_discount">Discount</string>
+    <string name="success">Success</string>
+    <string name="fail">Fail</string>
+    <string name="please_input_all">Please fulfill all data.</string>
+    <string name="need_money">Need</string>
+    <string name="customer_order">Customer Orders</string>
+    <string name="invoice_detail">Detail Invoice</string>
+
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_transaction">Transaction</string>
+    <string name="title_reports">Reports</string>
+
+    <string name="dashboard_income">Income</string>
+    <string name="dashboard_transaction">Transaction</string>
+    <string name="dashboard_today">Today</string>
+    <string name="dashboard_yesterday">Yesterday</string>
+    <string name="dashboard_this_month">This Month</string>
+    <string name="dashboard_previous_month">Previous Month</string>
+
+    <string name="lang_en">English</string>
+    <string name="lang_id">Bahasa Indonesia</string>
+    <string name="hint_lang">Please restart the application to apply this language settings.</string>
+
+    <string name="currency">Currency</string>
+    <string name="currency_idr">IDR</string>
+    <string name="currency_usd">USD</string>
+
+    <string name="params">Parameters</string>
+    <string name="params_store_name">Store Name</string>
+    <string name="params_store_address">Store Address</string>
+    <string name="params_store_phone">Store Phone</string>
+
+    <string-array name="period">
+        <item>Daily</item>
+        <item>Weekly</item>
+        <item>Monthly</item>
+        <item>Yearly</item>
+    </string-array>
+
+    <style name="ButtonText">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">3dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">2</item>
+    </style>
+
+    <string name="title_activity_login">Sign in or create an account</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_password_repeat">Password (Repeat)</string>
+    <string name="prompt_name">Full Name</string>
+    <string name="prompt_phone">Phone Number</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_register">Create new account?</string>
+    <string name="action_have_account">Already have an account?</string>
+    <string name="action_submit">Submit</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_unavailable_email">This email address is already exist</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_invalid_password_repeat">Please repeat your password correctly</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_old_password">The old password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="login_header_information">Please fill in this form with your login account,
+        or create an account first to be able to use this application.</string>
+
+    <string name="title_activity_profile">Profile</string>
+    <string name="tab_profile_data">Profile Data</string>
+    <string name="tab_profile_password">Change Password</string>
+
+    <string name="txt_form_requirement">Please complete the following input :</string>
+
+    <string name="label_profile_name">Full Name :</string>
+    <string name="label_profile_email">Email Address :</string>
+    <string name="label_profile_phone">Telephone :</string>
+    <string name="label_old_password">Old Password :</string>
+    <string name="label_new_password">New Password :</string>
+    <string name="label_new_password_confirm">New Password (repeat) :</string>
+
+    <string name="message_success_save">Your data has been successfully saved.</string>
+    <string name="message_success_update">Your data has been successfully updated.</string>
+    <string name="message_success_change_password">Your password has been successfully changed.</string>
+
+</resources>

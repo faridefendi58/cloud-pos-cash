@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.dashboard.DashboardFragment"
+    android:background="@color/colorGrey"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/store_name_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:id="@+id/txt_store_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center_horizontal"
+            android:padding="10dp"
+            android:text=""
+            android:textSize="16dip"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:text=""
+            android:textSize="16dip"
+            android:textStyle="bold"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/income_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/colorWhite"
+        android:layout_below="@+id/store_name_container"
+        android:layout_margin="10dp">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:shrinkColumns="*"  android:stretchColumns="*" android:background="#ffffff">
+
+            <TableRow
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dashboard_income"
+                    android:textAllCaps="true"
+                    android:layout_span="2"
+                    android:padding="10dip"
+                    android:textStyle="bold"/>
+
+            </TableRow>
+
+            <TableRow android:layout_height="1px" android:background="#BDBDBD">
+                <TextView android:layout_span="2" android:layout_height="1px"
+                    android:layout_width="fill_parent" android:text="">
+                </TextView>
+            </TableRow>
+
+            <TableRow
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:text="@string/dashboard_today"
+                    android:layout_weight="1"
+                    android:padding="10dip"
+                    android:gravity="left"/>
+
+                <TextView
+                    android:id="@+id/txt_income_today"
+                    android:text=""
+                    android:layout_weight="1"
+                    android:padding="10dip"
+                    android:gravity="right"/>
+            </TableRow>
+            <TableRow
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:text="@string/dashboard_yesterday"
+                    android:layout_weight="1"
+                    android:padding="10dip"
+                    android:gravity="left"/>
+
+                <TextView
+                    android:id="@+id/txt_income_yesterday"
+                    android:text=""
+                    android:layout_weight="1"
+                    android:padding="10dip"
+                    android:gravity="right"/>
+            </TableRow>
+            <TableRow
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:text="@string/dashboard_this_month"
+                    android:layout_weight="1"
+                    android:padding="10dip"
+                    android:gravity="left"/>
+
+                <TextView
+                    android:id="@+id/txt_income_this_month"
+                    android:text=""
+                    android:layout_weight="1"
+                    android:padding="10dip"
+                    android:gravity="right"/>
+            </TableRow>
+            <TableRow
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:text="@string/dashboard_previous_month"
+                    android:layout_weight="1"
+                    android:padding="10dip"
+                    android:gravity="left"/>
+
+                <TextView
+                    android:id="@+id/txt_income_last_month"
+                    android:text=""
+                    android:layout_weight="1"
+                    android:padding="10dip"
+                    android:gravity="right"/>
+            </TableRow>
+
+        </TableLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/orders_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/colorWhite"
+        android:layout_below="@+id/income_container"
+        android:layout_margin="10dp">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:shrinkColumns="*"  android:stretchColumns="*" android:background="#ffffff">
+
+            <TableRow
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dashboard_transaction"
+                    android:textAllCaps="true"
+                    android:layout_span="2"
+                    android:padding="10dip"
+                    android:textStyle="bold"/>
+
+            </TableRow>
+
+            <TableRow android:layout_height="1px" android:background="#BDBDBD">
+                <TextView android:layout_span="2" android:layout_height="1px"
+                    android:layout_width="fill_parent" android:text="">
+                </TextView>
+            </TableRow>
+
+            <TableRow
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:text="@string/dashboard_today"
+                    android:layout_weight="1"
+                    android:padding="10dip"
+                    android:gravity="left"/>
+
+                <TextView
+                    android:id="@+id/txt_transaction_today"
+                    android:text=""
+                    android:layout_weight="1"
+                    android:padding="10dip"
+                    android:gravity="right"/>
+            </TableRow>
+            <TableRow
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:text="@string/dashboard_yesterday"
+                    android:layout_weight="1"
+                    android:padding="10dip"
+                    android:gravity="left"/>
+
+                <TextView
+                    android:id="@+id/txt_transaction_yesterday"
+                    android:text=""
+                    android:layout_weight="1"
+                    android:padding="10dip"
+                    android:gravity="right"/>
+            </TableRow>
+            <TableRow
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:text="@string/dashboard_this_month"
+                    android:layout_weight="1"
+                    android:padding="10dip"
+                    android:gravity="left"/>
+
+                <TextView
+                    android:id="@+id/txt_transaction_this_month"
+                    android:text=""
+                    android:layout_weight="1"
+                    android:padding="10dip"
+                    android:gravity="right"/>
+            </TableRow>
+            <TableRow
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:text="@string/dashboard_previous_month"
+                    android:layout_weight="1"
+                    android:padding="10dip"
+                    android:gravity="left"/>
+
+                <TextView
+                    android:id="@+id/txt_transaction_last_month"
+                    android:text=""
+                    android:layout_weight="1"
+                    android:padding="10dip"
+                    android:gravity="right"/>
+            </TableRow>
+
+        </TableLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

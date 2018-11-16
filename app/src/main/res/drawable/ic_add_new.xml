@@ -1,0 +1,28 @@
+<vector android:height="48dp" android:viewportHeight="512"
+    android:viewportWidth="512" android:width="48dp"
+    xmlns:aapt="http://schemas.android.com/aapt" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:pathData="M256,256m-256,0a256,256 0,1 1,512 0a256,256 0,1 1,-512 0">
+        <aapt:attr name="android:fillColor">
+            <gradient android:endX="512" android:endY="256"
+                android:startX="3.8E-6" android:startY="256" android:type="linear">
+                <item android:color="#FF8DC63F" android:offset="0"/>
+                <item android:color="#FF76B83F" android:offset="1"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:pathData="M256,469.334c-117.631,0 -213.333,-95.702 -213.333,-213.333c0,-117.631 95.702,-213.333 213.333,-213.333c117.636,0 213.333,95.702 213.333,213.333C469.333,373.632 373.636,469.334 256,469.334z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:endX="469.33334" android:endY="256.00052"
+                android:startX="42.666668" android:startY="256.00052" android:type="linear">
+                <item android:color="#FF76B83F" android:offset="0"/>
+                <item android:color="#FF8DC63F" android:offset="1"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:fillAlpha="0.3" android:fillColor="#FF000000"
+        android:pathData="M144,383.973h184.665V199.362H144V383.973zM180.981,286.676h50.352v-50.349h10v50.349h50.351v10H241.333v50.351h-10v-50.351h-50.352V286.676z" android:strokeAlpha="0.3"/>
+    <path android:fillAlpha="0.3" android:fillColor="#FF000000"
+        android:pathData="M199.388,144.027l0,45.334l139.279,0l0,139.277l45.333,0l0,-184.612z" android:strokeAlpha="0.3"/>
+    <path android:fillColor="#FFFFFF" android:pathData="M136,375.973h184.665V191.362H136V375.973zM172.981,278.676h50.352v-50.349h10v50.349h50.351v10H233.333v50.351h-10v-50.351h-50.352V278.676z"/>
+    <path android:fillColor="#FFFFFF" android:pathData="M191.388,136.027l0,45.334l139.279,0l0,139.277l45.333,0l0,-184.612z"/>
+</vector>
