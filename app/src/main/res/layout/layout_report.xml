@@ -17,10 +17,10 @@
 
         <Button
             android:id="@+id/previousButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:background="@drawable/ic_arrow_back_24dp"
-            android:textSize="10sp" />
+            android:textSize="8sp" />
 
         <TextView
             android:id="@+id/currentBox"
@@ -33,10 +33,10 @@
 
         <Button
             android:id="@+id/nextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:background="@drawable/ic_arrow_forward_24dp"
-            android:textSize="10sp" />
+            android:textSize="8sp" />
     </LinearLayout>
 
     <!-- 

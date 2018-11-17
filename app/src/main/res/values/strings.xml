@@ -162,6 +162,10 @@
     <string name="label_new_password">New Password :</string>
     <string name="label_new_password_confirm">New Password (repeat) :</string>
 
+    <string name="label_warehouse_name">Warehouse :</string>
+    <string name="label_syncron_product">Syncron Product Data</string>
+    <string name="label_syncron_customer">Syncron Customer Data</string>
+
     <string name="message_success_save">Your data has been successfully saved.</string>
     <string name="message_success_update">Your data has been successfully updated.</string>
     <string name="message_success_change_password">Your password has been successfully changed.</string>

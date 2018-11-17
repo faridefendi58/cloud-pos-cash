@@ -160,6 +160,10 @@
     <string name="label_new_password">Password Baru :</string>
     <string name="label_new_password_confirm">Password Baru (diulang) :</string>
 
+    <string name="label_warehouse_name">Warehouse :</string>
+    <string name="label_syncron_product">Sesuaikan Data Produk</string>
+    <string name="label_syncron_customer">Sesuaikan Data Pelanggan</string>
+
     <string name="message_success_save">Data Anda telah berhasil disimpan.</string>
     <string name="message_success_update">Data Anda telah berhasil diubah.</string>
     <string name="message_success_change_password">Password Anda telah berhasil diubah.</string>
