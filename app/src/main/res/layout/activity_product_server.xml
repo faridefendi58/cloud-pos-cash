@@ -23,42 +23,32 @@
 
         <TextView
             android:text="@string/label_warehouse_name"
-            android:layout_gravity="right"
-            />
+            android:layout_gravity="left"
+            android:layout_columnSpan="2"
+            android:paddingLeft="8dp"
+            android:textStyle="bold"/>
 
-        <EditText
-            android:ems="10"
-            android:id="@+id/input_name"
-            android:inputType="textPersonName"
-            android:singleLine="true"
-            />
+        <Spinner
+            android:id="@+id/available_warehouse"
+            android:layout_gravity="fill_horizontal"
+            android:layout_columnSpan="2"/>
 
-        <TextView
+        <CheckBox
+            android:id="@+id/sync_product"
+            android:layout_height="wrap_content"
             android:text="@string/label_syncron_product"
-            android:layout_column="0"
-            android:layout_gravity="right"
-            />
+            android:layout_width="fill_parent"
+            android:layout_columnSpan="2"
+            android:checked="true">
+        </CheckBox>
 
-        <EditText
-            android:ems="10"
-            android:id="@+id/input_email"
-            android:inputType="textEmailAddress"
-            android:singleLine="true"
-            />
-
-        <TextView
+        <CheckBox
+            android:id="@+id/sync_customer"
+            android:layout_height="wrap_content"
             android:text="@string/label_syncron_customer"
-            android:layout_column="0"
-            android:layout_gravity="right"
-            />
-
-        <EditText
-            android:ems="10"
-            android:id="@+id/input_phone"
-            android:inputType="textPhonetic"
-            android:singleLine="true"
-            android:text=""
-            />
+            android:layout_width="fill_parent"
+            android:layout_columnSpan="2">
+        </CheckBox>
 
         <Space
             android:layout_row="5"
@@ -75,7 +65,7 @@
             android:textColor="@color/colorWhite"
             android:paddingHorizontal="20dp"
             android:layout_marginTop="10dp"
-            android:onClick="updateProfile"
+            android:onClick="syncronizeToServer"
             android:clickable="true"
             />
     </GridLayout>
