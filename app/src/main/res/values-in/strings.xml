@@ -163,4 +163,6 @@
     <string name="message_success_save">Data Anda telah berhasil disimpan.</string>
     <string name="message_success_update">Data Anda telah berhasil diubah.</string>
     <string name="message_success_change_password">Password Anda telah berhasil diubah.</string>
+    <string name="message_success_added">Telah berhasil ditambahkan.</string>
+    <string name="message_success_delete">Data Anda telah berhasil dihapus.</string>
 </resources>

@@ -4,12 +4,14 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.slightsite.app.R;
 import com.slightsite.app.domain.inventory.LineItem;
@@ -73,6 +75,13 @@ public class EditFragmentDialog extends DialogFragment {
 				Log.d("remove", "id=" + lineItem.getId());
 				register.removeItem(lineItem);
 				end();
+				//show success message
+				Toast toast = Toast.makeText(
+						getActivity().getApplicationContext(),
+						getResources().getString(R.string.message_success_delete),
+						Toast.LENGTH_SHORT);
+				toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 8, 8);
+				toast.show();
 			}
 		});
 
@@ -98,6 +107,13 @@ public class EditFragmentDialog extends DialogFragment {
 				}
 				
 				end();
+				//show success message
+				Toast toast = Toast.makeText(
+						getActivity().getApplicationContext(),
+						getResources().getString(R.string.message_success_update),
+						Toast.LENGTH_SHORT);
+				toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 8, 8);
+				toast.show();
 			}
 			
 		});

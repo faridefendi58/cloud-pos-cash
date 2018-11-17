@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,6 +130,13 @@ public class InventoryFragment extends UpdatableFragment {
 				register.addItem(productCatalog.getProductById(id), 1);
 				saleFragment.update();
 				viewPager.setCurrentItem(1);
+
+				Toast toast = Toast.makeText(
+						getActivity().getApplicationContext(),
+						productCatalog.getProductById(id).getName()+ ' ' +res.getString(R.string.message_success_added),
+						Toast.LENGTH_SHORT);
+				toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 8, 8);
+				toast.show();
 			}     
 		});
 
