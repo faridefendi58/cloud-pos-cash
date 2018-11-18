@@ -67,5 +67,6 @@ fastlane/readme.md
 
 # others
 MainActivity.java
+Server.java
 gradle/*
 dist/*

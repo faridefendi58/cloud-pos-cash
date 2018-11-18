@@ -148,12 +148,6 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 		database.execSQL("INSERT INTO " + DatabaseContents.TABLE_PARAMS + " (" +
 				"_id, name, value, type, description, date_added)\n" +
 				"VALUES ('1', 'store_name', 'Store Name', 'text', '', '"+ datetime +"');");
-		database.execSQL("INSERT INTO " + DatabaseContents.TABLE_PARAMS + " (" +
-				"_id, name, value, type, description, date_added)\n" +
-				"VALUES ('2', 'server_url', 'http://pos.slightsite.com/api/', 'text', '', '"+ datetime +"');");
-		database.execSQL("INSERT INTO " + DatabaseContents.TABLE_PARAMS + " (" +
-				"_id, name, value, type, description, date_added)\n" +
-				"VALUES ('3', 'server_api_key', 'ac43724f16e9241d990427ab7c8f4228', 'text', '', '"+ datetime +"');");
 		Log.d("CREATE DATABASE", "Create " + DatabaseContents.TABLE_PARAMS + " Successfully.");
 
 		database.execSQL("CREATE TABLE " + DatabaseContents.TABLE_ADMIN + "("

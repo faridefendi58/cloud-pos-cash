@@ -31,9 +31,11 @@ import com.slightsite.app.domain.AppController;
 import com.slightsite.app.domain.inventory.Inventory;
 import com.slightsite.app.domain.inventory.Product;
 import com.slightsite.app.domain.inventory.ProductCatalog;
+import com.slightsite.app.domain.inventory.Stock;
 import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.techicalservices.NoDaoSetException;
+import com.slightsite.app.techicalservices.Server;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,6 +63,7 @@ public class ProductServerActivity extends Activity {
 
     private ProductCatalog productCatalog;
     private String warehouse_name;
+    private Stock stock;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -124,6 +127,7 @@ public class ProductServerActivity extends Activity {
         try {
             paramCatalog = ParamService.getInstance().getParamCatalog();
             productCatalog = Inventory.getInstance().getProductCatalog();
+            stock = Inventory.getInstance().getStock();
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -136,7 +140,7 @@ public class ProductServerActivity extends Activity {
 
         warehouse_items.clear();
 
-        String url = paramCatalog.getParamByName("server_url").getValue() + "warehouse/list?api-key=" + paramCatalog.getParamByName("server_api_key").getValue();
+        String url = Server.URL + "warehouse/list?api-key=" + Server.API_KEY;
         _string_request(
                 Request.Method.GET,
                 url, params, false,
@@ -241,12 +245,13 @@ public class ProductServerActivity extends Activity {
     private void insert_new_product() {
         Map<String, String> params = new HashMap<String, String>();
         params.put("simply", "1");
-        params.put("warehouse", warehouse_name);
+        params.put("with_discount", "1");
+        //params.put("warehouse_name", warehouse_name);
 
         final ArrayList<String> items = new ArrayList<String>();
         items.add("-");
 
-        String url = paramCatalog.getParamByName("server_url").getValue() + "product/list?api-key=" + paramCatalog.getParamByName("server_api_key").getValue();
+        String url = Server.URL + "product/list?api-key=" + Server.API_KEY;
         _string_request(Request.Method.GET, url, params, false,
                 new VolleyCallback() {
                     @Override
@@ -271,10 +276,17 @@ public class ProductServerActivity extends Activity {
                                             productCatalog.addProduct(
                                                     data_n.getString("title"),
                                                     data_n.getString("id"),
-                                                    Double.parseDouble("90000"));
+                                                    Double.parseDouble(data_n.getString("price")));
                                         } catch (Exception e) {
                                             Log.e(TAG, e.getMessage());
                                         }
+                                    } else {
+                                        try {
+                                            pd.setName(data_n.getString("title"));
+                                            pd.setBarcode(data_n.getString("id"));
+                                            pd.setUnitPrice(Double.parseDouble(data_n.getString("price")));
+                                            productCatalog.editProduct(pd);
+                                        } catch (Exception e) {}
                                     }
                                 }
                             }
