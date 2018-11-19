@@ -1,5 +1,7 @@
 package com.slightsite.app.techicalservices.inventory;
 
+import android.content.ContentValues;
+
 import java.util.List;
 
 import com.slightsite.app.domain.inventory.Product;
@@ -141,4 +143,6 @@ public interface InventoryDao {
 	void suspendProduct(Product product);
 
 	double getUnitPriceByQuantity(int productId, int quantity);
+
+	ContentValues getDiscountDataByQuantity(int productId, int quantity);
 }

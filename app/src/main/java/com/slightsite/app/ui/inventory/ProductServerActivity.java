@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -28,6 +29,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.AppController;
+import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.inventory.Inventory;
 import com.slightsite.app.domain.inventory.Product;
 import com.slightsite.app.domain.inventory.ProductCatalog;
@@ -262,11 +264,12 @@ public class ProductServerActivity extends Activity {
                             // Check for error node in json
                             if (success == 1) {
                                 JSONArray data = jObj.getJSONArray("data");
-                                Log.e(TAG, "List Product : " + data.toString());
+                                ArrayList<String> product_items = new ArrayList<String>();
                                 for(int n = 0; n < data.length(); n++)
                                 {
                                     JSONObject data_n = data.getJSONObject(n);
                                     items.add(data_n.getString("title"));
+                                    product_items.add(data_n.getString("id"));
                                     Product pd = null;
                                     try {
                                         pd = productCatalog.getProductByBarcode(data_n.getString("id"));
@@ -287,6 +290,41 @@ public class ProductServerActivity extends Activity {
                                             pd.setUnitPrice(Double.parseDouble(data_n.getString("price")));
                                             productCatalog.editProduct(pd);
                                         } catch (Exception e) {}
+                                    }
+                                }
+                                JSONArray discounts = jObj.getJSONArray("discount");
+                                for(int p = 0; p < data.length(); p++)
+                                {
+                                    Product pd = null;
+                                    try {
+                                        pd = productCatalog.getProductByBarcode(product_items.get(p));
+                                    } catch (Exception e) {}
+
+                                    JSONArray discount_items = discounts.getJSONArray(p);
+                                    if (discount_items.length() > 0 && pd != null) {
+                                        for(int q = 0; q < discount_items.length(); q++)
+                                        {
+                                            JSONObject data_q = discount_items.getJSONObject(q);
+                                            try {
+                                                ContentValues disc = stock.getDiscountDataByQuantity(Integer.parseInt(product_items.get(p)),data_q.getInt("quantity_max"));
+                                                if (disc != null) {
+                                                    stock.updateProductDiscount(
+                                                            disc.getAsInteger("_id"),
+                                                            Integer.parseInt(data_q.getString("quantity")),
+                                                            Integer.parseInt(data_q.getString("quantity_max")),
+                                                            Double.parseDouble(data_q.getString("price")));
+                                                } else {
+                                                    stock.addProductDiscount(
+                                                            DateTimeStrategy.getCurrentTime(),
+                                                            Integer.parseInt(data_q.getString("quantity")),
+                                                            Integer.parseInt(data_q.getString("quantity_max")),
+                                                            pd,
+                                                            Double.parseDouble(data_q.getString("price")));
+                                                }
+                                            } catch (Exception e) {
+                                                Log.e(TAG, e.getMessage());
+                                            }
+                                        }
                                     }
                                 }
                             }

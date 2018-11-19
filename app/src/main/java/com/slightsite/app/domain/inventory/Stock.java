@@ -1,5 +1,7 @@
 package com.slightsite.app.domain.inventory;
 
+import android.content.ContentValues;
+
 import java.util.List;
 
 import com.slightsite.app.techicalservices.inventory.InventoryDao;
@@ -113,5 +115,10 @@ public class Stock {
 
 	public void deleteProductDiscount(int id) {
 		inventoryDao.deleteProductDiscount(id);
+	}
+
+	public ContentValues getDiscountDataByQuantity(int productId, int quantity) {
+		ContentValues discount_data = inventoryDao.getDiscountDataByQuantity(productId, quantity);
+		return discount_data;
 	}
 }

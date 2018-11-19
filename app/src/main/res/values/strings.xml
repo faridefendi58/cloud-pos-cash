@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">UcokPOS</string>
+    <string name="app_name">Ucok Point Of Sales</string>
     <string name="greeting">Welcome To UcokPOS</string>
 
     <string name="action_settings">Settings</string>
