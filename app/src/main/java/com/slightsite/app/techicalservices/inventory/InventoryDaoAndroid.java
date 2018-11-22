@@ -258,7 +258,7 @@ public class InventoryDaoAndroid implements InventoryDao {
 		content.put("product_id",  productDiscount.getProduct().getId());
 		content.put("cost",  productDiscount.unitCost());
 
-		Log.e(ProductDetailActivity.class.getSimpleName(), "COntent data : "+ content.toString());
+		//Log.e(ProductDetailActivity.class.getSimpleName(), "COntent data : "+ content.toString());
 		int id = database.insert(DatabaseContents.TABLE_PRODUCT_DISCOUNT.toString(), content);
 
 		return id;
@@ -364,4 +364,9 @@ public class InventoryDaoAndroid implements InventoryDao {
 
 		return content;
 	}
+
+    @Override
+    public void clearProductDiscount() {
+        database.execute("DELETE FROM " + DatabaseContents.TABLE_PRODUCT_DISCOUNT);
+    }
 }

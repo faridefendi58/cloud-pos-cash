@@ -83,7 +83,6 @@ public class Stock {
 	 */
 	public void updateStockSum(int productId, int quantity) {
 		inventoryDao.updateStockSum(productId,quantity);
-		
 	}
 
 	/**
@@ -91,7 +90,6 @@ public class Stock {
 	 */
 	public void clearStock() {
 		inventoryDao.clearStock();
-		
 	}
 
 	/**
@@ -120,5 +118,9 @@ public class Stock {
 	public ContentValues getDiscountDataByQuantity(int productId, int quantity) {
 		ContentValues discount_data = inventoryDao.getDiscountDataByQuantity(productId, quantity);
 		return discount_data;
+	}
+
+	public void clearProductDiscount() {
+		inventoryDao.clearProductDiscount();
 	}
 }

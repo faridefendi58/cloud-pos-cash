@@ -46,6 +46,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 @SuppressLint("NewApi")
@@ -292,6 +293,9 @@ public class ProductServerActivity extends Activity {
                                         } catch (Exception e) {}
                                     }
                                 }
+                                // clear the discount data
+                                stock.clearProductDiscount();
+
                                 JSONArray discounts = jObj.getJSONArray("discount");
                                 for(int p = 0; p < data.length(); p++)
                                 {
@@ -306,7 +310,7 @@ public class ProductServerActivity extends Activity {
                                         {
                                             JSONObject data_q = discount_items.getJSONObject(q);
                                             try {
-                                                ContentValues disc = stock.getDiscountDataByQuantity(Integer.parseInt(product_items.get(p)),data_q.getInt("quantity_max"));
+                                                ContentValues disc = stock.getDiscountDataByQuantity(Integer.parseInt(product_items.get(p)),data_q.getInt("quantity"));
                                                 if (disc != null) {
                                                     stock.updateProductDiscount(
                                                             disc.getAsInteger("_id"),
@@ -336,20 +340,90 @@ public class ProductServerActivity extends Activity {
                 });
     }
 
+    private void insert_new_stock() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("warehouse_name", warehouse_name);
+
+        String url = Server.URL + "stock/list?api-key=" + Server.API_KEY;
+        _string_request(Request.Method.GET, url, params, false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+                                HashMap< Integer, Integer> stocks = new HashMap< Integer, Integer>();
+                                for(int n = 0; n < data.length(); n++)
+                                {
+                                    JSONObject data_n = data.getJSONObject(n);
+                                    if (stocks.get(data_n.getInt("product_id")) != null) {
+                                        Integer qty = stocks.get(data_n.getInt("product_id")) + data_n.getInt("quantity");
+                                        stocks.put(data_n.getInt("product_id"), qty);
+                                    } else {
+                                        stocks.put(data_n.getInt("product_id"), data_n.getInt("quantity"));
+                                    }
+                                }
+
+                                Log.e(TAG, "Stock : "+ stocks.toString());
+
+                                for (Map.Entry<Integer, Integer> entry : stocks.entrySet()) {
+                                    Product pd = null;
+                                    try {
+                                        pd = productCatalog.getProductByBarcode(entry.getKey().toString());
+                                        List lot = stock.getProductLotByProductId(entry.getKey());
+                                        Log.e(entry.getKey().toString(), "Lot : "+ lot.toString());
+                                        Log.e(entry.getKey().toString(), "Lot size : "+ lot.size());
+                                        if (lot.size() > 0) {
+                                            stock.updateStockSum(entry.getKey(), entry.getValue());
+                                        } else {
+                                            stock.addProductLot(
+                                                    DateTimeStrategy.getCurrentTime(),
+                                                    entry.getValue(),
+                                                    pd,
+                                                    pd.getUnitPrice());
+                                        }
+                                    } catch (Exception e) {}
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
     public void syncronizeToServer(View view)
     {
         warehouse_name = available_warehouse.getSelectedItem().toString();
         CheckBox sync_product = findViewById(R.id.sync_product);
         CheckBox sync_customer = findViewById(R.id.sync_customer);
 
+        Boolean success = false;
         if (sync_product.isChecked()) {
             try {
                 insert_new_product();
-                Toast.makeText(getBaseContext(), getResources().getString(R.string.success),
-                        Toast.LENGTH_SHORT).show();
+                success &= true;
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
         }
+
+        if (sync_customer.isChecked()) {
+            try {
+                insert_new_stock();
+                success &= true;
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+            }
+        }
+
+        //if (success) {
+            Toast.makeText(getBaseContext(), getResources().getString(R.string.message_success_syncronize),
+                    Toast.LENGTH_SHORT).show();
+        //}
     }
 }

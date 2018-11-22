@@ -145,4 +145,6 @@ public interface InventoryDao {
 	double getUnitPriceByQuantity(int productId, int quantity);
 
 	ContentValues getDiscountDataByQuantity(int productId, int quantity);
+
+	void clearProductDiscount();
 }

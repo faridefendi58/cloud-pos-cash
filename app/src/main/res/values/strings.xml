@@ -171,5 +171,6 @@
     <string name="message_success_change_password">Your password has been successfully changed.</string>
     <string name="message_success_added">Has been successfully added.</string>
     <string name="message_success_delete">Your data has been successfully updated.</string>
+    <string name="message_success_syncronize">Your data has been successfully syncronized.</string>
 
 </resources>
