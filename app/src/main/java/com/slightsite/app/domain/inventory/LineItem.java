@@ -1,10 +1,13 @@
 package com.slightsite.app.domain.inventory;
 
+import android.util.Log;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.LanguageController;
+import com.slightsite.app.domain.sale.Sale;
 
 /**
  * LineItem of Sale.
@@ -18,6 +21,7 @@ public class LineItem {
 	private int id;
 	private double unitPriceAtSale;
 	private double unitGrosirPrice;
+	public static boolean multi_level_price = true;
 
 	/**
 	 * Static value for UNDEFINED ID.
@@ -29,8 +33,8 @@ public class LineItem {
 	 * @param product product of this LineItem.
 	 * @param quantity product quantity of this LineItem.
 	 */
-	public LineItem(Product product, int quantity) {
-		this(UNDEFINED, product, quantity, product.getUnitPrice());
+	public LineItem(Product product, int quantity, int quantity_total) {
+		this(UNDEFINED, product, quantity, product.getUnitPrice(), quantity_total);
 	}
 
 	/**
@@ -41,20 +45,23 @@ public class LineItem {
 	 * @param unitPriceAtSale unit price at sale time. default is price from ProductCatalog.
 	 */
 	public LineItem(int id, Product product, int quantity,
-			double unitPriceAtSale) {
+			double unitPriceAtSale, int quantity_total) {
 		this.id = id;
 		this.product = product;
 		this.quantity = quantity;
 		this.unitPriceAtSale = unitPriceAtSale;
 
-		/*try {
-			unitGrosirPrice = product.getUnitPriceByQuantity(product.getId(), quantity);
-			if (unitGrosirPrice > 0) {
-				this.unitPriceAtSale = unitGrosirPrice;
+		Log.e("LineItem", "quantity_total : "+ quantity_total);
+		try {
+			if (quantity_total >= 5 && multi_level_price) {
+				unitGrosirPrice = product.getUnitPriceByQuantity(product.getId(), quantity_total);
+				if (unitGrosirPrice > 0) {
+					this.unitPriceAtSale = unitGrosirPrice;
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}*/
+		}
 	}
 
 	/**

@@ -2,6 +2,8 @@ package com.slightsite.app.domain.inventory;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 
 /**

@@ -2,6 +2,7 @@ package com.slightsite.app.domain.sale;
 
 import android.util.Log;
 
+import java.awt.font.TextAttribute;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -162,7 +163,27 @@ public class Register {
 	 * @param priceAtSale a new priceAtSale to set.
 	 */
 	public void updateItem(int saleId, LineItem lineItem, int quantity, double priceAtSale) {
+		int tot_sale_qty = currentSale.getOrders() + quantity - lineItem.getQuantity();
+
+		if (lineItem.multi_level_price) { // jika harga bertingkat aktif
+			// geting unit price of the all total quantity
+			double thePriceAtSale = lineItem.getProduct().getUnitPriceByQuantity(lineItem.getProduct().getId(), tot_sale_qty);
+			if (thePriceAtSale > 0) {
+				priceAtSale = thePriceAtSale;
+			}
+			//also update the other item
+			for(LineItem line : currentSale.getAllLineItem()){
+				if (line.getId() != lineItem.getId()) {
+					double thePriceAtSale2 = line.getProduct().getUnitPriceByQuantity(line.getProduct().getId(), tot_sale_qty);
+					if (thePriceAtSale2 > 0) {
+						line.setUnitPriceAtSale(thePriceAtSale2);
+					}
+				}
+			}
+		}
+
 		lineItem.setUnitPriceAtSale(priceAtSale);
+
 		lineItem.setQuantity(quantity);
 		saleDao.updateLineItem(saleId, lineItem);
 	}

@@ -132,7 +132,6 @@ public class SaleFragment extends UpdatableFragment {
 	 * @param list
 	 */
 	private void showList(List<LineItem> list) {
-		
 		saleList = new ArrayList<Map<String, String>>();
 		for(LineItem line : list) {
 			saleList.add(line.toMap());

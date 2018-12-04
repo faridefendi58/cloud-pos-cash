@@ -9,6 +9,7 @@ import android.util.Log;
 import com.slightsite.app.domain.inventory.Product;
 import com.slightsite.app.domain.inventory.ProductDiscount;
 import com.slightsite.app.domain.inventory.ProductLot;
+import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.techicalservices.Database;
 import com.slightsite.app.techicalservices.DatabaseContents;
 import com.slightsite.app.ui.inventory.ProductDetailActivity;
@@ -336,9 +337,9 @@ public class InventoryDaoAndroid implements InventoryDao {
 				" WHERE product_id = " + productId + " AND "+ quantity +" BETWEEN quantity AND quantity_max;";
 
 		List<Object> objectList = (database.select(queryString));
-		Log.e("DB", "Object list : "+ objectList.toString());
-		Log.e("DB", "productId : "+ productId);
-		Log.e("DB", "quantity : "+ quantity);
+		//Log.e("DB", "Object list : "+ objectList.toString());
+		//Log.e("DB", "productId : "+ productId);
+		//Log.e("DB", "quantity : "+ quantity);
 
 		Double cost = 0.0;
 		if (objectList.size() > 0) {
