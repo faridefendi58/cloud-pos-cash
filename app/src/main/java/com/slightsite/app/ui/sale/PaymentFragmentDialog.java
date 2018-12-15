@@ -10,6 +10,7 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -44,6 +45,7 @@ public class PaymentFragmentDialog extends DialogFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 		View v = inflater.inflate(R.layout.dialog_payment, container,false);
 		strtext = getArguments().getString("edttext");
 		String currency = CurrencyController.getInstance().getCurrency();
@@ -53,7 +55,7 @@ public class PaymentFragmentDialog extends DialogFragment {
 
 		input = (EditText) v.findViewById(R.id.dialog_saleInput);
 		totalPrice = (TextView) v.findViewById(R.id.payment_total);
-		totalPrice.setText(strtext);
+		totalPrice.setText(CurrencyController.getInstance().moneyFormat(Double.parseDouble(strtext)));
 		clearButton = (Button) v.findViewById(R.id.clearButton);
 		clearButton.setOnClickListener(new View.OnClickListener() {
 			@Override

@@ -196,7 +196,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_payment"
             fab:fab_size="mini"
-            fab:fab_label="@string/payment" />
+            fab:fab_label="@string/next_to_payment" />
 
         <com.github.clans.fab.FloatingActionButton
             android:layout_width="wrap_content"
@@ -204,7 +204,7 @@
             android:onClick="jumpToCustomer"
             android:src="@drawable/ic_add_customer"
             fab:fab_size="mini"
-            fab:fab_label="@string/customer" />
+            fab:fab_label="@string/pick_customer" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/clearButton"
@@ -212,7 +212,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_erase_list"
             fab:fab_size="mini"
-            fab:fab_label="@string/clear" />
+            fab:fab_label="@string/clear_transaction" />
 
     </com.github.clans.fab.FloatingActionMenu>
 

@@ -42,15 +42,6 @@
         android:layout_marginTop="10dp">
 
         <Button
-            android:id="@+id/confirmButton"
-            style="@style/ButtonText"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:background="@drawable/btn_green"
-            android:text="@string/confirm" />
-
-        <Button
             android:id="@+id/removeButton"
             style="@style/ButtonText"
             android:layout_width="match_parent"
@@ -58,6 +49,15 @@
             android:layout_weight="0.5"
             android:background="@drawable/btn_red"
             android:text="@string/remove" />
+
+        <Button
+            android:id="@+id/confirmButton"
+            style="@style/ButtonText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:background="@drawable/btn_green"
+            android:text="@string/confirm" />
     </LinearLayout>
 
 </LinearLayout>

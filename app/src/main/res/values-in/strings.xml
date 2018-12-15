@@ -16,6 +16,7 @@
     <string name="barcode">Barcode</string>
     <string name="cancel">Batal</string>
     <string name="clear">Bersihkan</string>
+    <string name="clear_transaction">Batalkan Transaksi</string>
     <string name="edit">Ubah</string>
     <string name="save">Simpan</string>
     <string name="confirm">Selesai</string>
@@ -35,7 +36,7 @@
     <string name="change">Kembali</string>
     <string name="hint_search">Masukkan nama atau barcode</string>
     <string name="hint_search_customer">Masukkan nama atau email</string>
-    <string name="hint_cash">Masukkan uang tunai di sini</string>
+    <string name="hint_cash">Uang tunai yang diterima</string>
     <string name="add_new_product">Tambah Produk Baru</string>
     <string name="add_stock">Tambah Stok</string>
     <string name="add_discount">Tambah Diskon</string>
@@ -47,8 +48,10 @@
     <string name="report">Laporan</string>
     <string name="invoice">Tagihan</string>
     <string name="customer">Pelanggan</string>
+    <string name="pick_customer">Pilih Pelanggan</string>
     <string name="language">Bahasa</string>
     <string name="payment">Pembayaran</string>
+    <string name="next_to_payment">Lanjut ke Pembayaran</string>
     <string name="update">Ubah</string>
     <string name="favorite">Paling Disukai</string>
     <string name="all_list">Semua Daftar</string>
@@ -81,6 +84,7 @@
     <string name="title_notifications">Notifikasi</string>
     <string name="title_transaction">Transaksi</string>
     <string name="title_reports">Laporan</string>
+    <string name="title_update_cart">Ubah Item</string>
 
     <string name="dashboard_income">Pendapatan</string>
     <string name="dashboard_transaction">Transaksi</string>
@@ -170,4 +174,5 @@
     <string name="message_success_added">Telah berhasil ditambahkan.</string>
     <string name="message_success_delete">Data Anda telah berhasil dihapus.</string>
     <string name="message_success_syncronize">Data Anda telah berhasil disinkronisasi dengan server.</string>
+    <string name="message_success_payment">Pembayaran telah berhasil disimpan.</string>
 </resources>
