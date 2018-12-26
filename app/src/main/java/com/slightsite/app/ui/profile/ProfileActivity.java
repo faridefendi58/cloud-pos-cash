@@ -9,9 +9,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -24,6 +27,7 @@ import com.slightsite.app.R;
 import com.slightsite.app.domain.ProfileController;
 import com.slightsite.app.ui.DashboardActivity;
 import com.slightsite.app.ui.LoginActivity;
+import com.slightsite.app.ui.MainActivity;
 
 public class ProfileActivity extends Activity {
 
@@ -44,6 +48,8 @@ public class ProfileActivity extends Activity {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             ActionBar actionBar = getActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1ABC9C")));
+            actionBar.setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#e2e3e5")));
         }
     }
 
@@ -61,6 +67,7 @@ public class ProfileActivity extends Activity {
         mTabHost.setCurrentTab(0);
 
         initUi();
+        initiateActionBar();
     }
 
 
@@ -74,20 +81,19 @@ public class ProfileActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.navigation_home) {
-            Intent intent = new Intent(ProfileActivity.this, DashboardActivity.class);
-            finish();
-            startActivity(intent);
-            return true;
+        Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                startActivity(intent);
+                return true;
+            case R.id.navigation_home:
+                finish();
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

@@ -175,4 +175,8 @@
     <string name="message_success_delete">Data Anda telah berhasil dihapus.</string>
     <string name="message_success_syncronize">Data Anda telah berhasil disinkronisasi dengan server.</string>
     <string name="message_success_payment">Pembayaran telah berhasil disimpan.</string>
+
+    <string name="title_print_invoice">Print Faktur</string>
+    <string name="title_list_printer">Daftar Printer</string>
+    <string name="title_print_preview">Print Preview</string>
 </resources>

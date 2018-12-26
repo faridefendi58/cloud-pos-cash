@@ -3,6 +3,8 @@ package com.slightsite.app.ui.params;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -76,6 +78,8 @@ public class ParamsActivity extends Activity {
             ActionBar actionBar = getActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(getResources().getString(R.string.params));
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1ABC9C")));
+            actionBar.setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#e2e3e5")));
         }
     }
 

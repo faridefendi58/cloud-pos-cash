@@ -32,7 +32,8 @@
             </item>
 
             <item android:id="@+id/currency"
-                android:title="@string/currency" >
+                android:title="@string/currency"
+                android:visible="false">
                 <menu>
                     <item
                         android:id="@+id/currency_idr"

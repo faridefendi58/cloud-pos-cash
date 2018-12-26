@@ -9,6 +9,8 @@
         android:targetSdkVersion="21" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
@@ -65,6 +67,11 @@
         <activity
             android:name=".ui.inventory.ProductServerActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.printer.PrinterActivity"
+            android:label="@string/title_print_invoice"
+            android:theme="@style/AppCompatTheme">
+        </activity>
     </application>
 
 </manifest>

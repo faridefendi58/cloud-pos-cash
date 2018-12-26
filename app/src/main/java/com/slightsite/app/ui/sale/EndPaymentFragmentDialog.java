@@ -1,6 +1,7 @@
 package com.slightsite.app.ui.sale;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.ui.component.UpdatableFragment;
+import com.slightsite.app.ui.printer.PrinterActivity;
 
 /**
  * A dialog shows the total change and confirmation for Sale.
@@ -25,6 +27,7 @@ import com.slightsite.app.ui.component.UpdatableFragment;
 public class EndPaymentFragmentDialog extends DialogFragment  {
 
 	private Button doneButton;
+	private Button printButton;
 	private TextView chg;
 	private Register regis;
 	private UpdatableFragment saleFragment;
@@ -63,6 +66,14 @@ public class EndPaymentFragmentDialog extends DialogFragment  {
 				end();
 			}
 		});
+		printButton = (Button) v.findViewById(R.id.printButton);
+		printButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				print();
+			}
+		});
 		
 		return v;
 	}
@@ -82,4 +93,10 @@ public class EndPaymentFragmentDialog extends DialogFragment  {
 		this.dismiss();
 	}
 
+	private void print(){
+		end();
+		Intent newActivity = new Intent(getActivity(), PrinterActivity.class);
+		//newActivity.putExtra("id", productId);
+		getActivity().startActivity(newActivity);
+	}
 }
