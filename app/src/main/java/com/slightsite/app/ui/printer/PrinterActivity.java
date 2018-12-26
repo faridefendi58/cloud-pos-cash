@@ -16,6 +16,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import java.io.InputStream;
@@ -26,6 +27,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.slightsite.app.R;
+import com.slightsite.app.ui.MainActivity;
 
 public class PrinterActivity extends AppCompatActivity {
     BluetoothAdapter bluetoothAdapter;
@@ -234,16 +236,50 @@ public class PrinterActivity extends AppCompatActivity {
     }
 
     public String getFormatedReceipt() {
-        String[] name = {"Chapati", "Chicken Chettinad Full"};
-        int[] price = {70, 130};
-        int[] quantity = {1, 1};
+        String[] name = {"Chapati", "Chicken Chettinad Full", "Chicked Mushroom", "Middle Burger"};
+        int[] price = {70000, 13000, 17000, 10000};
+        int[] quantity = {1, 1, 3, 10};
 
-        String res = "";
+        String res = "\n";
+        res += String.format("%s%n", centerString(32, "FOOD GARDEN"));
+        res += String.format("%s%n", centerString(32,"JOGJA CITY MALL"));
+        res += String.format("%s%n", centerString(32,"Jl. Magelang Km 5,8 No. 18"));
+        res += String.format("%s%n", centerString(32,"Sinduadi Mlati, Sleman"));
+        res += String.format("%s%n", centerString(32,"Yogyakarta"));
+        res += String.format("%s%n%n", centerString(32,"(0274) - 530 4250"));
+
+        res += String.format("%s%n", str_repeat("=", 32));
+        res += String.format("%1$-7s %2$-4s %3$-10s%n", "Tanggal", ":", "26-12-2018");
+        res += String.format("%1$-7s %2$-4s %3$-10s%n", "Jam", ":", "23:09:15");
+        res += String.format("%1$-7s %2$-4s %3$-10s%n", "Kasir", ":", "John Due");
+        res += String.format("%s%n%n", str_repeat("=", 32));
         for (int i = 0; i < name.length; ++i) {
-            res += String.format("%2d. %-23s %4d %4d %4d%n", i + 1, name[i],
-                    price[i], quantity[i], price[i] * quantity[i]);
+            res += String.format("%-4s%n", name[i]);
+            res += String.format("%4d %2s %,4d %,10d%n%n", quantity[i], "x", price[i], price[i] * quantity[i]);
         }
+        res += String.format("%s%n", str_repeat("=", 32));
+        res += String.format("%1$-12s %2$-4s %3$,-2d%n", "Subtotal", ":", 125000);
+        res += String.format("%1$-12s %2$-4s %3$,-2d%n", "PPN", ":", 0);
+        res += String.format("%1$-12s %2$-4s %3$,-2d%n", "Grand Total", ":", 125000);
+        res += String.format("%1$-12s %2$-4s %3$,-2d%n", "Cash", ":", 150000);
+        res += String.format("%1$-12s %2$-4s %3$,-2d%n%n", "Kembali", ":", 25000);
+
+        res += String.format("%s%n", centerString(32, "Terimakasih"));
+        res += String.format("%s%n%n", centerString(32, "Selamat belanja kembali"));
+        res += "\n";
 
         return res;
+    }
+
+    private static String str_repeat(String val, int count){
+        StringBuilder buf = new StringBuilder(val.length() * count);
+        while (count-- > 0) {
+            buf.append(val);
+        }
+        return buf.toString();
+    }
+
+    public static String centerString (int width, String s) {
+        return String.format("%-" + width  + "s", String.format("%" + (s.length() + (width - s.length()) / 2) + "s", s));
     }
 }

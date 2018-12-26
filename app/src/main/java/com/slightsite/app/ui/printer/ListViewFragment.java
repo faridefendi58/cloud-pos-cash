@@ -51,11 +51,9 @@ public class ListViewFragment extends Fragment {
     }
 
     private void onClickEvent(View view) {
-        view.findViewById(R.id.show_button).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.print_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Get the selected position
-                //adapter.getSelectedItem();
                 ((PrinterActivity)getActivity()).setBluetoothDeviceName(adapter.getSelectedItem());
                 String txt = ((PrinterActivity)getActivity()).getFormatedReceipt();
                 ((PrinterActivity)getActivity()).IntentPrint(txt);
@@ -64,12 +62,9 @@ public class ListViewFragment extends Fragment {
         view.findViewById(R.id.home_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Delete the selected position
-                //adapter.deleteSelectedPosition();
                 Intent intent = new Intent(getActivity(), MainActivity.class);
                 getActivity().startActivity(intent);
             }
         });
-
     }
 }
