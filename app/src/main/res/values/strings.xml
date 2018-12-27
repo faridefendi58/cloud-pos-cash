@@ -179,7 +179,12 @@
     <string name="message_success_payment">Your payment has been successfully saved.</string>
 
     <string name="title_print_invoice">Print Invoice</string>
-    <string name="title_list_printer">Available Printer</string>
+    <string name="title_list_printer">Devices</string>
     <string name="title_print_preview">Print Preview</string>
+    <string name="title_print_config">Configs</string>
+
+    <string name="label_print_char_length">Character Length :</string>
+    <string name="label_print_header">Header :</string>
+    <string name="label_print_footer">Footer :</string>
 
 </resources>
