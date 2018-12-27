@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:background="#fefefe"
     android:baselineAligned="false"
+    android:paddingVertical="2dip"
     android:orientation="horizontal" >
 
     <TableRow

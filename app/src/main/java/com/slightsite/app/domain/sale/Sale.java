@@ -138,8 +138,8 @@ public class Sale {
 	public Map<String, String> toMap() {	
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("id",id + "");
-		map.put("startTime", DateTimeStrategy.parseDate(startTime, "dd/MM/yy HH:s"));
-		map.put("endTime", DateTimeStrategy.parseDate(endTime, "dd/MM/yy HH:s"));
+		map.put("startTime", DateTimeStrategy.parseDate(startTime, "dd/MM/yy HH:ss"));
+		map.put("endTime", DateTimeStrategy.parseDate(endTime, "dd/MM/yy HH:ss"));
 		map.put("status", getStatus());
 		map.put("total", CurrencyController.getInstance().moneyFormat(getTotal()) + "");
 		map.put("orders", getOrders() + "");

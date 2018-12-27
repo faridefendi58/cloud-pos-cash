@@ -8,6 +8,8 @@ import java.util.Map;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,12 +20,14 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.slightsite.app.R;
+import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.domain.sale.SaleLedger;
@@ -47,6 +51,8 @@ public class ReportFragment extends UpdatableFragment {
 	private TextView currentBox;
 	private Calendar currentTime;
 	private DatePickerDialog datePicker;
+	private EditText searchBox;
+	private SimpleAdapter sAdap;
 	
 	public static final int DAILY = 0;
 	public static final int WEEKLY = 1;
@@ -70,8 +76,32 @@ public class ReportFragment extends UpdatableFragment {
 		saleLedgerListView = (ListView) view.findViewById(R.id.saleListView);
 		totalBox = (TextView) view.findViewById(R.id.totalBox);
 		spinner = (Spinner) view.findViewById(R.id.spinner1);
+		searchBox = (EditText) view.findViewById(R.id.searchBox);
 		
 		initUI();
+
+		// search trigger
+		searchBox.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+				// When user changed the Text
+				sAdap.getFilter().filter(cs);
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+										  int arg3) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable arg0) {
+				// TODO Auto-generated method stub
+			}
+		});
+
 		return view;
 	}
 
@@ -139,7 +169,6 @@ public class ReportFragment extends UpdatableFragment {
 		          startActivity(newActivity);  
 		      }     
 		});
-		
 	}
 	
 	/**
@@ -153,7 +182,7 @@ public class ReportFragment extends UpdatableFragment {
 			saleList.add(sale.toMap());
 		}
 
-		SimpleAdapter sAdap = new SimpleAdapter(getActivity().getBaseContext() , saleList,
+		sAdap = new SimpleAdapter(getActivity().getBaseContext() , saleList,
 				R.layout.listview_report, new String[] { "id", "startTime", "total"},
 				new int[] { R.id.sid, R.id.startTime , R.id.total});
 		saleLedgerListView.setAdapter(sAdap);
@@ -205,8 +234,9 @@ public class ReportFragment extends UpdatableFragment {
 		double total = 0;
 		for (Sale sale : list)
 			total += sale.getTotal();
-		
-		totalBox.setText(total + "");
+
+		String total_formated = CurrencyController.getInstance().moneyFormat(total);
+		totalBox.setText(total_formated);
 		showList(list);
 	}
 	

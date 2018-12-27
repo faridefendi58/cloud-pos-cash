@@ -39,14 +39,12 @@
             android:textSize="8sp" />
     </LinearLayout>
 
-    <!-- 
     <EditText
         android:id="@+id/searchBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter invoice ID here." >
     </EditText>
-    -->
 
     <LinearLayout
         android:baselineAligned="false"
@@ -117,6 +115,7 @@
                 android:textColor="#FFFFFF"
                 android:textStyle="bold" />
         </TableRow>
+
     </LinearLayout>
 
     <LinearLayout
