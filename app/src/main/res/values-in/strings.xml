@@ -33,10 +33,12 @@
     <string name="address">Alamat</string>
     <string name="id">ID</string>
     <string name="cash">Tunai</string>
+    <string name="transfer">Bank Transfer</string>
     <string name="change">Kembali</string>
     <string name="hint_search">Masukkan nama atau barcode</string>
     <string name="hint_search_customer">Masukkan nama atau email</string>
     <string name="hint_cash">Uang tunai yang diterima</string>
+    <string name="hint_transfer">Nominal yang ditransfer</string>
     <string name="add_new_product">Tambah Produk Baru</string>
     <string name="add_stock">Tambah Stok</string>
     <string name="add_discount">Tambah Diskon</string>

@@ -52,6 +52,7 @@ public class SaleFragment extends UpdatableFragment {
 	private UpdatableFragment reportFragment;
 	private Resources res;
 	private TextView customer_name_box;
+	private com.github.clans.fab.FloatingActionMenu fButtonMenu;
 
 	/**
 	 * Construct a new SaleFragment.
@@ -79,6 +80,8 @@ public class SaleFragment extends UpdatableFragment {
 		clearButton = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.clearButton);
 		endButton = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.endButton);
 		customer_name_box = (TextView) view.findViewById(R.id.customer_name_box);
+
+		fButtonMenu = (com.github.clans.fab.FloatingActionMenu) view.findViewById(R.id.menu);
 		
 		initUI();
 		return view;
@@ -108,6 +111,7 @@ public class SaleFragment extends UpdatableFragment {
 			@Override
 			public void onClick(View v) {
 				if(register.hasSale()){
+					fButtonMenu.close(true);
 					showPopup(v);
 				} else {
 					Toast.makeText(getActivity().getBaseContext() , res.getString(R.string.hint_empty_sale), Toast.LENGTH_SHORT).show();
@@ -118,6 +122,7 @@ public class SaleFragment extends UpdatableFragment {
 		clearButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				fButtonMenu.close(true);
 				if (!register.hasSale() || register.getCurrentSale().getAllLineItem().isEmpty()) {
 					Toast.makeText(getActivity().getBaseContext() , res.getString(R.string.hint_empty_sale), Toast.LENGTH_SHORT).show();
 				} else {
