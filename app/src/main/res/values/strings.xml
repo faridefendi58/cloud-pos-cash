@@ -104,6 +104,7 @@
     <string name="params">Parameters</string>
     <string name="params_store_name">Store Name</string>
     <string name="params_store_address">Store Address</string>
+    <string name="params_store_address2">Store Address 2</string>
     <string name="params_store_phone">Store Phone</string>
 
     <string-array name="period">

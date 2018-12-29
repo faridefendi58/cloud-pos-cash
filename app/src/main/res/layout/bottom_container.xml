@@ -12,6 +12,7 @@
         android:layout_weight="1"
         android:text="@string/title_home"
         android:textColor="@android:color/black"
+        android:background="@color/colorGrey"
         android:textSize="14sp" />
 
     <Button
@@ -20,7 +21,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="@string/print_invoice"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
+        android:background="@color/btnInfo"
         android:textSize="14sp" />
 
 </LinearLayout>

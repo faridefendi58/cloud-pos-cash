@@ -104,6 +104,7 @@
     <string name="params">Parameter</string>
     <string name="params_store_name">Nama Toko</string>
     <string name="params_store_address">Alamat Toko</string>
+    <string name="params_store_address2">Alamat Toko 2</string>
     <string name="params_store_phone">No. Telepon</string>
 
     <string-array name="period">

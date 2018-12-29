@@ -49,7 +49,7 @@
             </item>
 
             <item android:id="@+id/printer_and_receipt"
-                android:title="@string/action_printer" >
+                android:title="@string/action_printer" android:visible="false">
             </item>
         </menu>
     </item>

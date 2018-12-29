@@ -31,6 +31,7 @@ public class ParamsActivity extends Activity {
 
     private EditText appStoreNameBox;
     private EditText appStoreAddressBox;
+    private EditText appStoreAddressBox2;
     private EditText appStorePhoneBox;
 
     @Override
@@ -53,6 +54,7 @@ public class ParamsActivity extends Activity {
 
         appStoreNameBox = (EditText) findViewById(R.id.appStoreNameBox);
         appStoreAddressBox = (EditText) findViewById(R.id.appStoreAddressBox);
+        appStoreAddressBox2 = (EditText) findViewById(R.id.appStoreAddressBox2);
         appStorePhoneBox = (EditText) findViewById(R.id.appStorePhoneBox);
 
         try {
@@ -150,6 +152,21 @@ public class ParamsActivity extends Activity {
             }
         }
 
+        if (appStoreAddressBox2.getText().toString().length() > 0) {
+            Params pStoreAddress2 = paramCatalog.getParamByName("store_address2");
+            if (pStoreAddress2 instanceof Params) {
+                pStoreAddress2.setValue(appStoreAddressBox2.getText().toString());
+                Boolean storeAddress2 = paramCatalog.editParam(pStoreAddress2);
+            } else {
+                Boolean storeAddress2 = paramCatalog.addParam(
+                        "store_address2",
+                        appStoreAddressBox2.getText().toString(),
+                        "text",
+                        "The address of store 2"
+                );
+            }
+        }
+
         if (appStorePhoneBox.getText().toString().length() > 0) {
             Params pStorePhone = paramCatalog.getParamByName("store_phone");
             if (pStorePhone instanceof Params) {
@@ -172,6 +189,9 @@ public class ParamsActivity extends Activity {
 
         if (paramCatalog.getParamByName("store_address") != null)
             appStoreAddressBox.setText(paramCatalog.getParamByName("store_address").getValue());
+
+        if (paramCatalog.getParamByName("store_address2") != null)
+            appStoreAddressBox2.setText(paramCatalog.getParamByName("store_address2").getValue());
 
         if (paramCatalog.getParamByName("store_phone") != null)
             appStorePhoneBox.setText(paramCatalog.getParamByName("store_phone").getValue());

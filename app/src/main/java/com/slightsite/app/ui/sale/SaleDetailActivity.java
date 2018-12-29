@@ -143,6 +143,7 @@ public class SaleDetailActivity extends Activity{
 		Intent newActivity = new Intent(SaleDetailActivity.this,
 				PrinterActivity.class);
 		newActivity.putExtra("saleId", saleId);
+		Log.e("Sale detail act", "send saleId : "+ saleId);
 		startActivity(newActivity);
 	}
 

@@ -35,6 +35,20 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="@string/params_store_address2"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp"/>
+
+    <EditText
+        android:id="@+id/appStoreAddressBox2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/params_store_address"
+        android:text="" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/params_store_phone"
         android:textSize="18sp"
         android:layout_marginTop="10dp"/>

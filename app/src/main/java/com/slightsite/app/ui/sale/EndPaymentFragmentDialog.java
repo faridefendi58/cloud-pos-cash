@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,9 +95,11 @@ public class EndPaymentFragmentDialog extends DialogFragment  {
 	}
 
 	private void print(){
+		int saleId = regis.getCurrentSale().getId();
 		end();
+
 		Intent newActivity = new Intent(getActivity(), PrinterActivity.class);
-		//newActivity.putExtra("id", productId);
+		newActivity.putExtra("saleId", saleId);
 		getActivity().startActivity(newActivity);
 	}
 }
