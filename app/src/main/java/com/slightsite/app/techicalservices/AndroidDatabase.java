@@ -1,6 +1,8 @@
 package com.slightsite.app.techicalservices;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -139,6 +141,13 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 				+ "date_added DATETIME"
 
 				+ ");");
+
+		Calendar c = Calendar.getInstance();
+		SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		String datetime = dateformat.format(c.getTime());
+		database.execSQL("INSERT INTO " + DatabaseContents.TABLE_PARAMS + " (" +
+				"_id, name, value, type, description, date_added)\n" +
+				"VALUES ('1', 'store_name', 'Store Name', 'text', '', '"+ datetime +"');");
 		Log.d("CREATE DATABASE", "Create " + DatabaseContents.TABLE_PARAMS + " Successfully.");
 
 		database.execSQL("CREATE TABLE " + DatabaseContents.TABLE_ADMIN + "("

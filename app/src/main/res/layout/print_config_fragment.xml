@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom_container">
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:useDefaultMargins="true"
+            android:alignmentMode="alignBounds"
+            android:columnOrderPreserved="true"
+            android:columnCount="2"
+            android:padding="10dp">
+
+            <TextView
+                android:text="@string/txt_form_requirement"
+                android:textSize="14dip"
+                android:layout_columnSpan="2"
+                android:layout_gravity="left"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:text="@string/label_print_char_length"
+                android:layout_gravity="left"
+                />
+
+            <EditText
+                android:ems="10"
+                android:id="@+id/txt_char_length"
+                android:inputType="number"
+                android:singleLine="true"
+                android:text="32"
+                android:textColor="@color/colorBlack"
+                android:textSize="14dip"
+                />
+
+            <TextView
+                android:text="@string/label_print_header"
+                android:layout_column="0"
+                android:layout_columnSpan="2"
+                android:layout_gravity="fill"
+                />
+
+            <EditText
+                android:id="@+id/txt_header"
+                android:inputType="textMultiLine"
+                android:textColor="@color/colorBlack"
+                android:layout_column="0"
+                android:layout_columnSpan="2"
+                android:layout_gravity="fill"
+                android:textSize="14dip"
+                />
+
+            <TextView
+                android:text="@string/label_print_footer"
+                android:layout_column="0"
+                android:layout_columnSpan="2"
+                android:layout_gravity="fill"
+                />
+
+            <EditText
+                android:id="@+id/txt_footer"
+                android:inputType="textMultiLine"
+                android:textColor="@color/colorBlack"
+                android:layout_column="0"
+                android:layout_columnSpan="2"
+                android:layout_gravity="fill"
+                android:textSize="14dip"
+                />
+
+            <Space
+                android:layout_row="5"
+                android:layout_column="0"
+                android:layout_columnSpan="1"
+                android:layout_gravity="fill"
+                />
+
+        </GridLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/bottom_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/home_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/title_home"
+            android:textColor="@android:color/black"
+            android:background="@color/colorGrey"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/update"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/update"
+            android:textColor="@android:color/white"
+            android:background="@color/btnInfo"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+</RelativeLayout>

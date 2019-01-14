@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +26,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.github.clans.fab.FloatingActionButton;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentIntegratorSupportV4;
 import com.google.zxing.integration.android.IntentResult;
@@ -34,7 +37,6 @@ import com.slightsite.app.domain.inventory.ProductCatalog;
 import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.techicalservices.DatabaseExecutor;
 import com.slightsite.app.techicalservices.Demo;
-import com.slightsite.app.techicalservices.ExpandableHeightGridView;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.component.ButtonAdapter;
@@ -56,6 +58,7 @@ public class InventoryFragment extends UpdatableFragment {
 	private com.github.clans.fab.FloatingActionButton addProductButton;
 	private EditText searchBox;
 	private Button scanButton;
+	private FloatingActionButton syncProductButton;
 
 	private ViewPager viewPager;
 	private Register register;
@@ -91,6 +94,7 @@ public class InventoryFragment extends UpdatableFragment {
 		addProductButton = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.addProductButton);
 		scanButton = (Button) view.findViewById(R.id.scanButton);
 		searchBox = (EditText) view.findViewById(R.id.searchBox);
+		syncProductButton = (FloatingActionButton) view.findViewById(R.id.syncProductButton);
 
 		main = (MainActivity) getActivity();
 		viewPager = main.getViewPager();
@@ -128,6 +132,13 @@ public class InventoryFragment extends UpdatableFragment {
 				register.addItem(productCatalog.getProductById(id), 1);
 				saleFragment.update();
 				viewPager.setCurrentItem(1);
+
+				Toast toast = Toast.makeText(
+						getActivity().getApplicationContext(),
+						productCatalog.getProductById(id).getName()+ ' ' +res.getString(R.string.message_success_added),
+						Toast.LENGTH_SHORT);
+				toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 8, 8);
+				toast.show();
 			}     
 		});
 
@@ -139,6 +150,14 @@ public class InventoryFragment extends UpdatableFragment {
 			}
 		});
 
+		syncProductButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent newActivity = new Intent(getActivity(),
+						ProductServerActivity.class);
+				startActivity(newActivity);
+			}
+		});
 	}
 
 	/**

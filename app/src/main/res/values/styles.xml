@@ -23,4 +23,18 @@
         <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
+    <style name="AppCompatTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowDisablePreview">true</item>
+        <item name="windowActionBar">true</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="actionMenuTextColor">@android:color/white</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+    </style>
+
 </resources>

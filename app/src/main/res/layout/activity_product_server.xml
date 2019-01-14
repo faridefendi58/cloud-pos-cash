@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:useDefaultMargins="true"
+        android:alignmentMode="alignBounds"
+        android:columnOrderPreserved="true"
+        android:columnCount="2"
+        android:padding="10dp">
+
+        <TextView
+            android:text="@string/txt_form_requirement"
+            android:textSize="16dip"
+            android:layout_columnSpan="2"
+            android:layout_gravity="left"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:text="@string/label_warehouse_name"
+            android:layout_gravity="left"
+            android:layout_columnSpan="2"
+            android:paddingLeft="8dp"
+            android:textStyle="bold"/>
+
+        <Spinner
+            android:id="@+id/available_warehouse"
+            android:layout_gravity="fill_horizontal"
+            android:layout_columnSpan="2"/>
+
+        <CheckBox
+            android:id="@+id/sync_product"
+            android:layout_height="wrap_content"
+            android:text="@string/label_syncron_product"
+            android:layout_width="fill_parent"
+            android:layout_columnSpan="2"
+            android:checked="true">
+        </CheckBox>
+
+        <CheckBox
+            android:id="@+id/sync_customer"
+            android:layout_height="wrap_content"
+            android:text="@string/label_syncron_customer"
+            android:layout_width="fill_parent"
+            android:layout_columnSpan="2">
+        </CheckBox>
+
+        <Space
+            android:layout_row="5"
+            android:layout_column="0"
+            android:layout_columnSpan="1"
+            android:layout_gravity="fill"
+            />
+
+        <Button
+            android:text="@string/action_submit"
+            android:layout_row="6"
+            android:layout_column="1"
+            android:background="@color/btnInfo"
+            android:textColor="@color/colorWhite"
+            android:paddingHorizontal="20dp"
+            android:layout_marginTop="10dp"
+            android:onClick="syncronizeToServer"
+            android:clickable="true"
+            />
+    </GridLayout>
+
+</LinearLayout>

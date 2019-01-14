@@ -94,13 +94,14 @@ public class ProductDetailActivity extends Activity {
 			ActionBar actionBar = getActionBar();
 			actionBar.setDisplayHomeAsUpEnabled(true);
 			actionBar.setTitle(res.getString(R.string.product_detail));
-			//actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#33B5E5")));
+			actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1ABC9C")));
 		}
 	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		
+		super.onCreate(savedInstanceState);
+
 		res = getResources();
 		initiateActionBar();
 		
@@ -127,7 +128,6 @@ public class ProductDetailActivity extends Activity {
 	 * @param savedInstanceState
 	 */
 	private void initUI(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 		setContentView(R.layout.layout_productdetail_main);
 		stockListView = (ListView) findViewById(R.id.stockListView);
 		discountListView = (ListView) findViewById(R.id.discountListView);

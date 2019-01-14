@@ -1,5 +1,7 @@
 package com.slightsite.app.domain.sale;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,15 +62,16 @@ public class Sale {
 	 * @return LineItem of Sale that just added.
 	 */
 	public LineItem addLineItem(Product product, int quantity) {
-		
+
 		for (LineItem lineItem : items) {
 			if (lineItem.getProduct().getId() == product.getId()) {
 				lineItem.addQuantity(quantity);
 				return lineItem;
 			}
 		}
-		
-		LineItem lineItem = new LineItem(product, quantity);
+
+		int quantity_total = getOrders();
+		LineItem lineItem = new LineItem(product, quantity, quantity_total);
 		items.add(lineItem);
 		return lineItem;
 	}
@@ -135,8 +138,8 @@ public class Sale {
 	public Map<String, String> toMap() {	
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("id",id + "");
-		map.put("startTime", DateTimeStrategy.parseDate(startTime, "dd/MM/yy HH:s"));
-		map.put("endTime", DateTimeStrategy.parseDate(endTime, "dd/MM/yy HH:s"));
+		map.put("startTime", DateTimeStrategy.parseDate(startTime, "dd/MM/yy HH:ss"));
+		map.put("endTime", DateTimeStrategy.parseDate(endTime, "dd/MM/yy HH:ss"));
 		map.put("status", getStatus());
 		map.put("total", CurrencyController.getInstance().moneyFormat(getTotal()) + "");
 		map.put("orders", getOrders() + "");
@@ -150,6 +153,17 @@ public class Sale {
 	 */
 	public void removeItem(LineItem lineItem) {
 		items.remove(lineItem);
+		//rebuild the line item
+		if (lineItem.multi_level_price) { // jika harga bertingkat aktif
+			int tot_sale_qty = getOrders();
+			for (LineItem lineItem2 : items) {
+				// geting unit price of the all total quantity
+				double thePriceAtSale = lineItem2.getProduct().getUnitPriceByQuantity(lineItem2.getProduct().getId(), tot_sale_qty);
+				if (thePriceAtSale > 0) {
+                    lineItem2.setUnitPriceAtSale(thePriceAtSale);
+				}
+			}
+		}
 	}
 
 	public int getCustomerId() {

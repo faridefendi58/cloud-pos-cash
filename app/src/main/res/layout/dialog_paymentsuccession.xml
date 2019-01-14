@@ -3,7 +3,26 @@
     android:id="@+id/layout_paymentDialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingHorizontal="10dp"
+    android:paddingVertical="20dp"
     android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/message_success_payment"
+            android:textSize="18sp"
+            android:background="@color/alertSuccess"
+            android:textColor="@color/alertSuccessFontColor"
+            android:padding="10dp"/>
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,13 +30,14 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
         android:orientation="horizontal" >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/change"
-            android:textSize="30sp" />
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/changeTxt"
@@ -26,7 +46,7 @@
             android:layout_weight="1"
             android:ems="20"
             android:gravity="right"
-            android:textSize="30sp" />
+            android:textSize="24sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -34,9 +54,19 @@
         android:layout_height="wrap_content" >
 
         <Button
+            android:id="@+id/printButton"
+            style="@style/ButtonText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/btn_yellow"
+            android:text="@string/print_invoice"
+            android:textSize="20sp" />
+
+        <Button
             android:id="@+id/doneButton"
             style="@style/ButtonText"
-            android:layout_width="0dip"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/btn_green"

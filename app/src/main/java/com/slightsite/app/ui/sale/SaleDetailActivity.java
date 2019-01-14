@@ -30,6 +30,7 @@ import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.domain.sale.SaleLedger;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.ui.MainActivity;
+import com.slightsite.app.ui.printer.PrinterActivity;
 
 /**
  * UI for showing the detail of Sale in the record.
@@ -75,7 +76,8 @@ public class SaleDetailActivity extends Activity{
 			ActionBar actionBar = getActionBar();
 			actionBar.setDisplayHomeAsUpEnabled(true);
 			actionBar.setTitle(getResources().getString(R.string.invoice_detail));
-			//actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#33B5E5")));
+			actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1ABC9C")));
+			actionBar.setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#e2e3e5")));
 		}
 	}
 	
@@ -138,7 +140,11 @@ public class SaleDetailActivity extends Activity{
 	}
 
 	public void printInvoice(View v) {
-
+		Intent newActivity = new Intent(SaleDetailActivity.this,
+				PrinterActivity.class);
+		newActivity.putExtra("saleId", saleId);
+		Log.e("Sale detail act", "send saleId : "+ saleId);
+		startActivity(newActivity);
 	}
 
 	public void removeInvoice(View v) {

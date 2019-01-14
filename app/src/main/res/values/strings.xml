@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">UcokPOS</string>
+    <string name="app_name">Ucok Point Of Sales</string>
     <string name="greeting">Welcome To UcokPOS</string>
 
     <string name="action_settings">Settings</string>
@@ -16,6 +16,7 @@
     <string name="barcode">Barcode</string>
     <string name="cancel">Cancel</string>
     <string name="clear">Clear</string>
+    <string name="clear_transaction">Clear Transaction</string>
     <string name="edit">Edit</string>
     <string name="save">Save</string>
     <string name="confirm">Done</string>
@@ -32,10 +33,12 @@
     <string name="address">Address</string>
     <string name="id">ID</string>
     <string name="cash">Cash</string>
+    <string name="transfer">Transfer Bank</string>
     <string name="change">Change</string>
     <string name="hint_search">Enter name or barcode</string>
     <string name="hint_search_customer">Enter name or email</string>
     <string name="hint_cash">Enter cash here</string>
+    <string name="hint_transfer">Enter transfer nominal here</string>
     <string name="add_new_product">Add New Product</string>
     <string name="add_stock">Add A Product Lot</string>
     <string name="add_discount">Add A Product Discount</string>
@@ -47,8 +50,10 @@
     <string name="report">Report</string>
     <string name="invoice">Invoice</string>
     <string name="customer">Customer</string>
+    <string name="pick_customer">Pick Customer</string>
     <string name="language">Language</string>
     <string name="payment">Payment</string>
+    <string name="next_to_payment">Next to Payment</string>
     <string name="update">Update</string>
     <string name="favorite">Favorite</string>
     <string name="all_list">All List</string>
@@ -81,6 +86,7 @@
     <string name="title_notifications">Notifications</string>
     <string name="title_transaction">Transaction</string>
     <string name="title_reports">Reports</string>
+    <string name="title_update_cart">Update Item</string>
 
     <string name="dashboard_income">Income</string>
     <string name="dashboard_transaction">Transaction</string>
@@ -100,6 +106,7 @@
     <string name="params">Parameters</string>
     <string name="params_store_name">Store Name</string>
     <string name="params_store_address">Store Address</string>
+    <string name="params_store_address2">Store Address 2</string>
     <string name="params_store_phone">Store Phone</string>
 
     <string-array name="period">
@@ -162,8 +169,25 @@
     <string name="label_new_password">New Password :</string>
     <string name="label_new_password_confirm">New Password (repeat) :</string>
 
+    <string name="label_warehouse_name">Warehouse :</string>
+    <string name="label_syncron_product">Syncron Product Data</string>
+    <string name="label_syncron_customer">Syncron Customer Data</string>
+
     <string name="message_success_save">Your data has been successfully saved.</string>
     <string name="message_success_update">Your data has been successfully updated.</string>
     <string name="message_success_change_password">Your password has been successfully changed.</string>
+    <string name="message_success_added">Has been successfully added.</string>
+    <string name="message_success_delete">Your data has been successfully deleted.</string>
+    <string name="message_success_syncronize">Your data has been successfully syncronized.</string>
+    <string name="message_success_payment">Your payment has been successfully saved.</string>
+
+    <string name="title_print_invoice">Print Invoice</string>
+    <string name="title_list_printer">Devices</string>
+    <string name="title_print_preview">Print Preview</string>
+    <string name="title_print_config">Configs</string>
+
+    <string name="label_print_char_length">Character Length :</string>
+    <string name="label_print_header">Header :</string>
+    <string name="label_print_footer">Footer :</string>
 
 </resources>

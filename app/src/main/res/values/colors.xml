@@ -6,6 +6,7 @@
     <color name="colorRed">#e13d5f</color>
     <color name="colorGrey">#ebebeb</color>
     <color name="colorWhite">#ffffff</color>
+    <color name="colorBlack">#606060</color>
 
     <color name="alertPrimary">#cce5ff</color>
     <color name="alertPrimaryFontColor">#004085</color>
@@ -26,4 +27,7 @@
     <color name="btnDanger">#dc3545</color>
     <color name="btnWarning">#ffc107</color>
     <color name="btnInfo">#17a2b8</color>
+    <color name="greenUcok">#1ABC9C</color>
+    <color name="yellowUcok">#eecb1d</color>
+    <color name="yellowDarkUcok">#bbaa18</color>
 </resources>

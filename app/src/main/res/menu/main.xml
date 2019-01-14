@@ -7,7 +7,8 @@
         android:icon="@drawable/ic_home_white_24dp"
         android:title="@string/title_dashboard"
         app:showAsAction="ifRoom"
-        android:showAsAction="always" />
+        android:showAsAction="always"
+        android:visible="false"/>
 
     <item
         android:id="@+id/settings"
@@ -31,7 +32,8 @@
             </item>
 
             <item android:id="@+id/currency"
-                android:title="@string/currency" >
+                android:title="@string/currency"
+                android:visible="false">
                 <menu>
                     <item
                         android:id="@+id/currency_idr"
@@ -47,7 +49,7 @@
             </item>
 
             <item android:id="@+id/printer_and_receipt"
-                android:title="@string/action_printer" >
+                android:title="@string/action_printer" android:visible="false">
             </item>
         </menu>
     </item>

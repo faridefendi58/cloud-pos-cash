@@ -144,6 +144,13 @@ public class SaleDaoAndroid implements SaleDao {
 		String queryString = "SELECT * FROM " + DatabaseContents.TABLE_SALE_LINEITEM + " WHERE sale_id = " + saleId;
 		List<Object> objectList = database.select(queryString);
 		List<LineItem> list = new ArrayList<LineItem>();
+
+		int tot_qty = 0; //getTotalQuantity(saleId);
+		for (Object object1: objectList) {
+			ContentValues content1 = (ContentValues) object1;
+			tot_qty = tot_qty + content1.getAsInteger("quantity");
+		}
+
 		for (Object object: objectList) {
 			ContentValues content = (ContentValues) object;
 			int productId = content.getAsInteger("product_id");
@@ -155,7 +162,8 @@ public class SaleDaoAndroid implements SaleDao {
 				ContentValues content2 = (ContentValues) object2;
 				productList.add(new Product(productId, content2.getAsString("name"), content2.getAsString("barcode"), content2.getAsDouble("unit_price")));
 			}
-			list.add(new LineItem(content.getAsInteger("_id") , productList.get(0), content.getAsInteger("quantity"), content.getAsDouble("unit_price")));
+
+			list.add(new LineItem(content.getAsInteger("_id") , productList.get(0), content.getAsInteger("quantity"), content.getAsDouble("unit_price"), tot_qty));
 		}
 		return list;
 	}
@@ -307,6 +315,23 @@ public class SaleDaoAndroid implements SaleDao {
 					&& content.containsKey("count")
 					&& content.getAsString("count") != null) {
 				total = content.getAsInteger("count");
+			}
+		}
+
+		return total;
+	}
+
+	public int getTotalQuantity(int saleId) {
+		String queryString = "SELECT SUM(quantity) AS total_qty FROM " + DatabaseContents.TABLE_SALE_LINEITEM + " WHERE sale_id = " + saleId;
+		List<Object> objectList = database.select(queryString);
+		int total = 0;
+		Log.e("Sale dao android", "qry total qty : "+ objectList.toString());
+		for (Object object: objectList) {
+			ContentValues content = (ContentValues) object;
+			if (content != null
+					&& content.containsKey("total_qty")
+					&& content.getAsString("total_qty") != null) {
+				total = content.getAsInteger("total_qty");
 			}
 		}
 

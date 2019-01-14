@@ -9,6 +9,7 @@ import android.util.Log;
 import com.slightsite.app.domain.inventory.Product;
 import com.slightsite.app.domain.inventory.ProductDiscount;
 import com.slightsite.app.domain.inventory.ProductLot;
+import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.techicalservices.Database;
 import com.slightsite.app.techicalservices.DatabaseContents;
 import com.slightsite.app.ui.inventory.ProductDetailActivity;
@@ -258,7 +259,7 @@ public class InventoryDaoAndroid implements InventoryDao {
 		content.put("product_id",  productDiscount.getProduct().getId());
 		content.put("cost",  productDiscount.unitCost());
 
-		Log.e(ProductDetailActivity.class.getSimpleName(), "COntent data : "+ content.toString());
+		//Log.e(ProductDetailActivity.class.getSimpleName(), "COntent data : "+ content.toString());
 		int id = database.insert(DatabaseContents.TABLE_PRODUCT_DISCOUNT.toString(), content);
 
 		return id;
@@ -336,9 +337,9 @@ public class InventoryDaoAndroid implements InventoryDao {
 				" WHERE product_id = " + productId + " AND "+ quantity +" BETWEEN quantity AND quantity_max;";
 
 		List<Object> objectList = (database.select(queryString));
-		Log.e("DB", "Object list : "+ objectList.toString());
-		Log.e("DB", "productId : "+ productId);
-		Log.e("DB", "quantity : "+ quantity);
+		//Log.e("DB", "Object list : "+ objectList.toString());
+		//Log.e("DB", "productId : "+ productId);
+		//Log.e("DB", "quantity : "+ quantity);
 
 		Double cost = 0.0;
 		if (objectList.size() > 0) {
@@ -348,4 +349,25 @@ public class InventoryDaoAndroid implements InventoryDao {
 
 		return cost;
 	}
+
+	@Override
+	public ContentValues getDiscountDataByQuantity(int productId, int quantity) {
+		String queryString = "SELECT * FROM " +
+				DatabaseContents.TABLE_PRODUCT_DISCOUNT +
+				" WHERE product_id = " + productId + " AND "+ quantity +" BETWEEN quantity AND quantity_max;";
+
+		List<Object> objectList = (database.select(queryString));
+
+		ContentValues content = null;
+		if (objectList.size() > 0) {
+			content = (ContentValues) objectList.get(0);
+		}
+
+		return content;
+	}
+
+    @Override
+    public void clearProductDiscount() {
+        database.execute("DELETE FROM " + DatabaseContents.TABLE_PRODUCT_DISCOUNT);
+    }
 }

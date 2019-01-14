@@ -17,10 +17,10 @@
 
         <Button
             android:id="@+id/previousButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:background="@drawable/ic_arrow_back_24dp"
-            android:textSize="10sp" />
+            android:textSize="8sp" />
 
         <TextView
             android:id="@+id/currentBox"
@@ -33,20 +33,18 @@
 
         <Button
             android:id="@+id/nextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:background="@drawable/ic_arrow_forward_24dp"
-            android:textSize="10sp" />
+            android:textSize="8sp" />
     </LinearLayout>
 
-    <!-- 
     <EditText
         android:id="@+id/searchBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter invoice ID here." >
     </EditText>
-    -->
 
     <LinearLayout
         android:baselineAligned="false"
@@ -117,6 +115,7 @@
                 android:textColor="#FFFFFF"
                 android:textStyle="bold" />
         </TableRow>
+
     </LinearLayout>
 
     <LinearLayout
