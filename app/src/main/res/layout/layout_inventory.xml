@@ -18,38 +18,103 @@
 
         <Button
             android:id="@+id/scanButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="0.25"
             android:background="@android:color/transparent"
-            android:drawableLeft="@drawable/ic_barcode_scanner"
+            android:drawableLeft="@drawable/ic_scan_barcode"
             android:layout_marginLeft="8dp"
             android:text="" />
 
         <EditText
             android:id="@+id/searchBox"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1.75"
             android:ems="8"
+            android:textSize="16sp"
             android:hint="@string/hint_search" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_below="@+id/search_bar_wrapper"
         android:layout_marginTop="48dp">
 
         <GridView
             android:id="@+id/productListView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp"
             android:layout_weight="1"
-            android:numColumns="2"
+            android:numColumns="1"
             android:scrollbars="vertical">
         </GridView>
+
+        <LinearLayout
+            android:id="@+id/bottom_cart_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <com.balysv.materialripple.MaterialRippleLayout
+                android:id="@+id/lyt_previous"
+                style="@style/RippleStyleWhite"
+                android:layout_width="@dimen/spacing_xxlarge"
+                android:layout_height="@dimen/spacing_xxlarge"
+                android:background="@color/alertSecondary">
+
+                <ImageView
+                    android:layout_width="@dimen/spacing_smlarge"
+                    android:layout_height="@dimen/spacing_smlarge"
+                    android:layout_gravity="center"
+                    android:tint="@color/colorBlack"
+                    android:src="@drawable/ic_shopping_cart_black_24dp" />
+
+            </com.balysv.materialripple.MaterialRippleLayout>
+
+            <com.balysv.materialripple.MaterialRippleLayout
+                android:id="@+id/lyt_next"
+                style="@style/RippleStyleWhite"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/spacing_xxlarge"
+                android:layout_weight="1"
+                android:background="@color/greenUcok">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/cart_total"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Next"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
+                        android:textColor="@android:color/white" />
+
+                    <ImageView
+                        android:layout_width="@dimen/spacing_smlarge"
+                        android:layout_height="@dimen/spacing_smlarge"
+                        android:layout_marginLeft="@dimen/spacing_medium"
+                        android:layout_marginStart="@dimen/spacing_medium"
+                        android:rotation="180"
+                        android:tint="@android:color/white"
+                        android:src="@drawable/ic_arrow_back" />
+
+                </LinearLayout>
+
+
+            </com.balysv.materialripple.MaterialRippleLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -96,7 +161,8 @@
         fab:menu_labels_position="left"
         fab:menu_openDirection="up"
         fab:menu_backgroundColor="@android:color/transparent"
-        fab:menu_fab_label="">
+        fab:menu_fab_label=""
+        android:visibility="gone">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/syncProductButton"
