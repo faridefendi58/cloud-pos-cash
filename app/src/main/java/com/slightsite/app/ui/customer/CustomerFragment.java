@@ -115,7 +115,7 @@ public class CustomerFragment extends UpdatableFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count){}
         });
 
-        customerListView.setOnItemClickListener(new OnItemClickListener() {
+        /*customerListView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> myAdapter, View myView, int position, long mylng) {
                 int id = Integer.parseInt(customerList.get(position).get("id").toString());
 
@@ -133,7 +133,7 @@ public class CustomerFragment extends UpdatableFragment {
                     customer_id_box.setText(""+ id);
                 }
             }
-        });
+        });*/
 
     }
 

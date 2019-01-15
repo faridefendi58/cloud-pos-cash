@@ -14,9 +14,13 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -39,6 +43,7 @@ import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.component.UpdatableFragment;
+import com.slightsite.app.ui.inventory.InventoryFragment;
 
 /**
  * UI for Sale operation.
@@ -60,6 +65,8 @@ public class SaleFragment extends UpdatableFragment {
 
 	private AdapterListCart mAdapter;
 	private LinearLayout total_container;
+	private ViewPager viewPager;
+	private MainActivity main;
 
 	/**
 	 * Construct a new SaleFragment.
@@ -80,6 +87,7 @@ public class SaleFragment extends UpdatableFragment {
 		}
 
 		View view = inflater.inflate(R.layout.layout_cart, container, false);
+		setHasOptionsMenu(true);
 		
 		res = getResources();
 		saleListView = (RecyclerView) view.findViewById(R.id.sale_List);
@@ -94,7 +102,10 @@ public class SaleFragment extends UpdatableFragment {
 		customer_name_box = (TextView) view.findViewById(R.id.customer_name_box);
 
 		fButtonMenu = (com.github.clans.fab.FloatingActionMenu) view.findViewById(R.id.menu);*/
-		
+
+		main = (MainActivity) getActivity();
+		viewPager = main.getViewPager();
+
 		initUI();
 		return view;
 	}
@@ -103,7 +114,6 @@ public class SaleFragment extends UpdatableFragment {
 	 * Initiate this UI.
 	 */
 	private void initUI() {
-
 		/*saleListView.setOnItemClickListener(new OnItemClickListener(){
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
@@ -228,7 +238,14 @@ public class SaleFragment extends UpdatableFragment {
 		else{
 			showList(new ArrayList<LineItem>());
 			totalPrice.setText("0.00");
-			//customer_name_box.setVisibility(View.GONE);
+			total_container.setVisibility(View.GONE);
+			viewPager.setCurrentItem(0);
+			try {
+				LinearLayout bottom_cart_container = ( LinearLayout) viewPager.findViewById(R.id.bottom_cart_container);
+				bottom_cart_container.setVisibility(View.GONE);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -261,5 +278,21 @@ public class SaleFragment extends UpdatableFragment {
 		});
 
 		dialog.show();
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.menu_delete, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.nav_delete :
+				showConfirmClearDialog();
+			default:
+				return super.onOptionsItemSelected(item);
+		}
 	}
 }

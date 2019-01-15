@@ -96,7 +96,7 @@ public class AdapterListCart extends RecyclerView.Adapter<RecyclerView.ViewHolde
             sub_total = prc * qty;
             view.price.setText("@ "+ CurrencyController.getInstance().moneyFormat(prc));
             //view.price_subtotal.setText(CurrencyController.getInstance().moneyFormat(sub_total));
-            view.image.setImageResource(R.drawable.no_image);
+            view.image.setImageResource(R.drawable.ic_no_image);
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
