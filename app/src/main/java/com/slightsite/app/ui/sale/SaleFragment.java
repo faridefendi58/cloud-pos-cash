@@ -12,6 +12,9 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -45,7 +49,7 @@ public class SaleFragment extends UpdatableFragment {
     
 	private Register register;
 	private ArrayList<Map<String, String>> saleList;
-	private ListView saleListView;
+	private RecyclerView saleListView;
 	private com.github.clans.fab.FloatingActionButton clearButton;
 	private TextView totalPrice;
 	private com.github.clans.fab.FloatingActionButton endButton;
@@ -53,6 +57,9 @@ public class SaleFragment extends UpdatableFragment {
 	private Resources res;
 	private TextView customer_name_box;
 	private com.github.clans.fab.FloatingActionMenu fButtonMenu;
+
+	private AdapterListCart mAdapter;
+	private LinearLayout total_container;
 
 	/**
 	 * Construct a new SaleFragment.
@@ -72,16 +79,21 @@ public class SaleFragment extends UpdatableFragment {
 			e.printStackTrace();
 		}
 
-		View view = inflater.inflate(R.layout.layout_sale, container, false);
+		View view = inflater.inflate(R.layout.layout_cart, container, false);
 		
 		res = getResources();
-		saleListView = (ListView) view.findViewById(R.id.sale_List);
+		saleListView = (RecyclerView) view.findViewById(R.id.sale_List);
+		saleListView.setLayoutManager(new LinearLayoutManager(getContext()));
+		saleListView.setHasFixedSize(true);
+		saleListView.setNestedScrollingEnabled(false);
 		totalPrice = (TextView) view.findViewById(R.id.totalPrice);
-		clearButton = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.clearButton);
+		total_container = (LinearLayout) view.findViewById(R.id.total_container);
+
+		/*clearButton = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.clearButton);
 		endButton = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.endButton);
 		customer_name_box = (TextView) view.findViewById(R.id.customer_name_box);
 
-		fButtonMenu = (com.github.clans.fab.FloatingActionMenu) view.findViewById(R.id.menu);
+		fButtonMenu = (com.github.clans.fab.FloatingActionMenu) view.findViewById(R.id.menu);*/
 		
 		initUI();
 		return view;
@@ -91,15 +103,15 @@ public class SaleFragment extends UpdatableFragment {
 	 * Initiate this UI.
 	 */
 	private void initUI() {
-		
-		saleListView.setOnItemClickListener(new OnItemClickListener(){
+
+		/*saleListView.setOnItemClickListener(new OnItemClickListener(){
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				showEditPopup(arg1,arg2);
 			}
-		});
+		});*/
 
-		clearButton.setOnClickListener(new View.OnClickListener() {
+		/*clearButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				ViewPager viewPager = ((MainActivity) getActivity()).getViewPager();
@@ -129,7 +141,7 @@ public class SaleFragment extends UpdatableFragment {
 					showConfirmClearDialog();
 				}
 			} 
-		});
+		});*/
 	}
 	
 	/**
@@ -141,12 +153,25 @@ public class SaleFragment extends UpdatableFragment {
 		for(LineItem line : list) {
 			saleList.add(line.toMap());
 		}
-		Log.e(getActivity().getLocalClassName(), "sale list : "+ saleList.toString());
 
-		SimpleAdapter sAdap;
+		/*SimpleAdapter sAdap;
 		sAdap = new SimpleAdapter(getActivity().getBaseContext(), saleList,
-				R.layout.listview_lineitem, new String[]{"name","quantity","price"}, new int[] {R.id.name,R.id.quantity,R.id.price});
-		saleListView.setAdapter(sAdap);
+				R.layout.listview_cart, new String[]{"name","quantity","price"}, new int[] {R.id.name,R.id.quantity,R.id.price});
+		saleListView.setAdapter(sAdap);*/
+		//set data and list adapter
+		mAdapter = new AdapterListCart(getContext(), list, register, totalPrice);
+		saleListView.setAdapter(mAdapter);
+
+		mAdapter.setOnItemClickListener(new AdapterListCart.OnItemClickListener() {
+			@Override
+			public void onItemClick(View view, LineItem obj, int position) {
+				showEditPopup(view, position);
+			}
+		});
+
+		if (register.getTotal() > 0) {
+			total_container.setVisibility(View.VISIBLE);
+		}
 	}
 
 	/**
@@ -203,7 +228,7 @@ public class SaleFragment extends UpdatableFragment {
 		else{
 			showList(new ArrayList<LineItem>());
 			totalPrice.setText("0.00");
-			customer_name_box.setVisibility(View.GONE);
+			//customer_name_box.setVisibility(View.GONE);
 		}
 	}
 	

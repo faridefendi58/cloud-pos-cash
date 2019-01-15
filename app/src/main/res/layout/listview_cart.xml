@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/spacing_smlarge"
+    android:layout_marginRight="@dimen/spacing_smlarge"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="2dp"
+    app:cardElevation="2dp"
+    app:cardUseCompatPadding="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:id="@+id/lyt_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_large">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Praesent Vitae"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="@color/grey_90"
+                    app:fontFamily="sans-serif-medium"/>
+
+                <TextView
+                    android:id="@+id/price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$14.32"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="@color/light_green_500" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/substract_qty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/spacing_xlarge"
+                        android:clickable="true"
+                        android:drawableLeft="@drawable/ic_remove_black" />
+
+                    <TextView
+                        android:id="@+id/quantity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/spacing_large"
+                        android:layout_marginRight="@dimen/spacing_large"
+                        android:gravity="center_vertical"
+                        android:text="01"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                        android:textColor="@color/grey_40"
+                        app:fontFamily="sans-serif-medium" />
+
+                    <TextView
+                        android:id="@+id/add_qty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/spacing_xlarge"
+                        android:clickable="true"
+                        android:drawableLeft="@drawable/ic_add_black" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/no_image" />
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>

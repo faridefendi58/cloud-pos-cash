@@ -110,6 +110,8 @@ public class InventoryFragment extends UpdatableFragment {
 		viewPager = main.getViewPager();
 
 		initUI();
+		updateCart();
+
 		return view;
 	}
 
@@ -142,12 +144,7 @@ public class InventoryFragment extends UpdatableFragment {
 				register.addItem(productCatalog.getProductById(id), 1);
 				saleFragment.update();
 				viewPager.setCurrentItem(0);
-				Double tot_cart = register.getTotal();
-				if (tot_cart > 0) {
-					Integer tot_item_cart = register.getCurrentSale().getAllLineItem().size();
-					cart_total.setText("Sub Total " + CurrencyController.getInstance().moneyFormat(tot_cart) + " of " + tot_item_cart+ " Items");
-					bottom_cart_container.setVisibility(View.VISIBLE);
-				}
+				updateCart();
 
 				Toast toast = Toast.makeText(
 						getActivity().getApplicationContext(),
@@ -284,5 +281,14 @@ public class InventoryFragment extends UpdatableFragment {
 		params.height = (totalHeight
 				+ (myGridView.getVerticalSpacing() * (adapterCount))) + add_height;
 		myGridView.setLayoutParams(params);
+	}
+
+	private void updateCart() {
+		Double tot_cart = register.getTotal();
+		if (tot_cart > 0) {
+			Integer tot_item_cart = register.getCurrentSale().getAllLineItem().size();
+			cart_total.setText("Sub Total " + CurrencyController.getInstance().moneyFormat(tot_cart) + " of " + tot_item_cart+ " Items");
+			bottom_cart_container.setVisibility(View.VISIBLE);
+		}
 	}
 }
