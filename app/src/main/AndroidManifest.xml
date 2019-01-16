@@ -70,6 +70,10 @@
         <activity
             android:name=".ui.printer.PrinterActivity"
             android:label="@string/title_print_invoice"
+            android:theme="@style/AppCompatTheme"/>
+        <activity
+            android:name=".ui.sale.CheckoutActivity"
+            android:label="@string/payment"
             android:theme="@style/AppCompatTheme">
         </activity>
     </application>

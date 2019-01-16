@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -35,6 +36,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.balysv.materialripple.MaterialRippleLayout;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.LanguageController;
@@ -62,6 +64,7 @@ public class SaleFragment extends UpdatableFragment {
 	private Resources res;
 	private TextView customer_name_box;
 	private com.github.clans.fab.FloatingActionMenu fButtonMenu;
+	private MaterialRippleLayout lyt_next_to_payment;
 
 	private AdapterListCart mAdapter;
 	private LinearLayout total_container;
@@ -96,6 +99,7 @@ public class SaleFragment extends UpdatableFragment {
 		saleListView.setNestedScrollingEnabled(false);
 		totalPrice = (TextView) view.findViewById(R.id.totalPrice);
 		total_container = (LinearLayout) view.findViewById(R.id.total_container);
+		lyt_next_to_payment = (MaterialRippleLayout) view.findViewById(R.id.lyt_next_to_payment);
 
 		/*clearButton = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.clearButton);
 		endButton = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.endButton);
@@ -114,6 +118,14 @@ public class SaleFragment extends UpdatableFragment {
 	 * Initiate this UI.
 	 */
 	private void initUI() {
+		lyt_next_to_payment.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent newActivity = new Intent(getContext(),
+						CheckoutActivity.class);
+				startActivity(newActivity);
+			}
+		});
 		/*saleListView.setOnItemClickListener(new OnItemClickListener(){
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
