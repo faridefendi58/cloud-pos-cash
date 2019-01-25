@@ -19,35 +19,44 @@
             android:textColor="@color/grey_40"
             app:fontFamily="sans-serif-medium" />
 
+        <TextView
+            android:id="@+id/customer_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
         <EditText
             style="@style/EditText.Flat.Grey"
+            android:id="@+id/customer_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_large"
             android:background="@drawable/edit_text_round_bg_outline"
-            android:hint="Name"
+            android:hint="@string/prompt_name"
             android:minHeight="@dimen/spacing_xmlarge"
-            android:text="Laura Michelle" />
+            android:text="" />
 
         <EditText
             style="@style/EditText.Flat.Grey"
+            android:id="@+id/customer_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_middle"
             android:background="@drawable/edit_text_round_bg_outline"
-            android:hint="Email"
+            android:hint="@string/prompt_email"
             android:minHeight="@dimen/spacing_xmlarge"
-            android:text="laura.michelle@mail.com" />
+            android:text="" />
 
         <EditText
             style="@style/EditText.Flat.Grey"
+            android:id="@+id/customer_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_middle"
             android:background="@drawable/edit_text_round_bg_outline"
-            android:hint="Phone"
+            android:hint="@string/prompt_phone"
             android:minHeight="@dimen/spacing_xmlarge"
-            android:text="(859) 261-0876" />
+            android:text="" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -60,15 +69,15 @@
 
         <EditText
             style="@style/EditText.Flat.Grey"
+            android:id="@+id/customer_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_large"
             android:background="@drawable/edit_text_round_bg_outline"
-            android:hint="Address"
-            android:minHeight="@dimen/spacing_xmlarge"
-            android:text="1144 Central" />
+            android:hint="@string/address"
+            android:minHeight="@dimen/spacing_xmlarge" />
 
-        <LinearLayout
+        <!--<LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_middle"
@@ -81,7 +90,6 @@
                 android:layout_weight="1"
                 android:background="@drawable/edit_text_round_bg_outline"
                 android:hint="Country"
-                android:text="United State"
                 android:drawableEnd="@drawable/ic_expand_arrow"
                 android:drawableRight="@drawable/ic_expand_arrow"
                 android:minHeight="@dimen/spacing_xmlarge" />
@@ -97,10 +105,9 @@
                 android:layout_weight="1"
                 android:background="@drawable/edit_text_round_bg_outline"
                 android:hint="ZIP Code"
-                android:text="41071"
                 android:minHeight="@dimen/spacing_xmlarge" />
 
-        </LinearLayout>
+        </LinearLayout>-->
 
         <EditText
             style="@style/EditText.Flat.Grey"
@@ -111,7 +118,6 @@
             android:drawableRight="@drawable/ic_expand_arrow"
             android:background="@drawable/edit_text_round_bg_outline"
             android:hint="City"
-            android:text="Newport"
             android:minHeight="@dimen/spacing_xmlarge" />
 
         <EditText
@@ -123,7 +129,6 @@
             android:drawableRight="@drawable/ic_expand_arrow"
             android:background="@drawable/edit_text_round_bg_outline"
             android:hint="State / Province"
-            android:text="Kentucky"
             android:minHeight="@dimen/spacing_xmlarge" />
 
     </LinearLayout>
