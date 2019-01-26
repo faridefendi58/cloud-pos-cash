@@ -1,5 +1,6 @@
 package com.slightsite.app.ui.sale;
 
+import android.app.Activity;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,11 +11,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.slightsite.app.R;
+import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.techicalservices.Tools;
 
 public class CheckoutActivity extends AppCompatActivity {
@@ -32,6 +35,8 @@ public class CheckoutActivity extends AppCompatActivity {
     private TextView tv_shipping, tv_payment, tv_confirm;
 
     private int idx_state = 0;
+
+    public Customer customer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +100,15 @@ public class CheckoutActivity extends AppCompatActivity {
 
         if (state.name().equalsIgnoreCase(State.SHIPPING.name())) {
             fragment = new ShippingFragment();
+            try {
+                Bundle bundle = new Bundle();
+                bundle.putString("customer_name", customer.getName());
+                bundle.putString("customer_email", customer.getEmail());
+                bundle.putString("customer_phone", customer.getPhone());
+                bundle.putString("customer_address", customer.getAddress());
+                fragment.setArguments(bundle);
+            } catch (Exception e) {}
+
             tv_shipping.setTextColor(getResources().getColor(R.color.grey_90));
             image_shipping.clearColorFilter();
         } else if (state.name().equalsIgnoreCase(State.PAYMENT.name())) {
@@ -137,5 +151,24 @@ public class CheckoutActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), item.getTitle(), Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }
