@@ -75,11 +75,24 @@ public class Checkout implements Serializable {
     }
 
     public List<PaymentItem> getPaymentItems() {
-        payment_items.add(new PaymentItem("jan", Double.parseDouble("1234")));
+        payment_items =  new ArrayList<PaymentItem>();
+        if (Integer.parseInt(cash_receive) > 0) {
+            PaymentItem cash = new PaymentItem("cash_receive", Double.parseDouble(cash_receive));
+            payment_items.add(cash);
+        }
         for (String key : transfer_bank.keySet()) {
             PaymentItem pi = new PaymentItem(key, Double.parseDouble(transfer_bank.get(key)));
             payment_items.add(pi);
         }
         return payment_items;
+    }
+
+    public HashMap<String,String> getPaymentTypes() {
+        HashMap<String,String> types = new HashMap<String, String>();
+        types.put("cash_receive", "Cash Payment");
+        types.put("nominal_mandiri", "Transfer Bank Mandiri");
+        types.put("nominal_bca", "Transfer Bank BCA");
+
+        return types;
     }
 }

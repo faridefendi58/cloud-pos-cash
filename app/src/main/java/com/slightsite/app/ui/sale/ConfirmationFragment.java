@@ -36,7 +36,7 @@ public class ConfirmationFragment extends Fragment {
     private RecyclerView paymentListView;
     private ArrayList<Map<String, String>> paymentList;
     private AdapterListPayment pAdapter;
-    private AdapterListCart mAdapter;
+    private AdapterListOrder mAdapter;
     private Register register;
     private ArrayList<Map<String, String>> saleList;
     private RecyclerView saleListView;
@@ -90,6 +90,8 @@ public class ConfirmationFragment extends Fragment {
 
             totalPrice.setText(CurrencyController.getInstance().moneyFormat(register.getTotal()) + "");
         }
+
+        showPaymentList(c_data.getPaymentItems());
     }
 
     private void initDefaultValue() {
@@ -99,18 +101,11 @@ public class ConfirmationFragment extends Fragment {
                 conf_customer_name.setText(customer.getName());
                 conf_customer_address.setText(customer.getAddress());
             }
-            showPaymentList(c_data.getPaymentItems());
         } catch (Exception e) { }
     }
 
     private void showPaymentList(List<PaymentItem> list) {
-        paymentList = new ArrayList<Map<String, String>>();
-        for(PaymentItem line : list) {
-            paymentList.add(line.toMap());
-        }
-        Log.e(getTag(), "paymentList : "+ paymentList.toString());
-
-        pAdapter = new AdapterListPayment(getContext(), list);
+        pAdapter = new AdapterListPayment(getContext(), list, c_data.getPaymentTypes());
         paymentListView.setAdapter(pAdapter);
     }
 
@@ -120,10 +115,10 @@ public class ConfirmationFragment extends Fragment {
             saleList.add(line.toMap());
         }
 
-        mAdapter = new AdapterListCart(getContext(), list, register, totalPrice);
+        mAdapter = new AdapterListOrder(getContext(), list, register, totalPrice);
         saleListView.setAdapter(mAdapter);
 
-        mAdapter.setOnItemClickListener(new AdapterListCart.OnItemClickListener() {
+        mAdapter.setOnItemClickListener(new AdapterListOrder.OnItemClickListener() {
             @Override
             public void onItemClick(View view, LineItem obj, int position) {
             }

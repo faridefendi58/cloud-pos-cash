@@ -1,15 +1,24 @@
 package com.slightsite.app.domain.sale;
 
 import com.slightsite.app.domain.CurrencyController;
+import com.slightsite.app.domain.inventory.Product;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PaymentItem {
     private String title;
     private double nominal;
 
+    public static final int UNDEFINED = -1;
+
     public PaymentItem(String title, double nominal) {
+        this(UNDEFINED, title, nominal);
+    }
+
+    public PaymentItem(int id, String title, double nominal) {
         this.title = title;
         this.nominal = nominal;
     }

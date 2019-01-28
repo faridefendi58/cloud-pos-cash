@@ -6,17 +6,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.slightsite.app.R;
+import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.sale.PaymentItem;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class AdapterListPayment extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<PaymentItem> items = new ArrayList<>();
+    private HashMap< String, String> payment_types;
 
     private Context ctx;
     private AdapterListPayment.OnItemClickListener mOnItemClickListener;
@@ -29,19 +33,18 @@ public class AdapterListPayment extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.mOnItemClickListener = mItemClickListener;
     }
 
-    public AdapterListPayment(Context context, List<PaymentItem> items) {
+    public AdapterListPayment(Context context, List<PaymentItem> items, HashMap<String,String> payment_types) {
         this.items = items;
         ctx = context;
+        this.payment_types = payment_types;
     }
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
-        public ImageView image;
         public TextView title;
         public TextView price;
 
         public OriginalViewHolder(View v) {
             super(v);
-            image = (ImageView) v.findViewById(R.id.image);
             title = (TextView) v.findViewById(R.id.title);
             price = (TextView) v.findViewById(R.id.price);
         }
@@ -50,7 +53,7 @@ public class AdapterListPayment extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder vh;
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.listview_cart, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.listview_payment, parent, false);
         vh = new AdapterListPayment.OriginalViewHolder(v);
         return vh;
     }
@@ -58,13 +61,13 @@ public class AdapterListPayment extends RecyclerView.Adapter<RecyclerView.ViewHo
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        if (holder instanceof AdapterListCart.OriginalViewHolder) {
+        if (holder instanceof AdapterListPayment.OriginalViewHolder) {
             final AdapterListPayment.OriginalViewHolder view = (AdapterListPayment.OriginalViewHolder) holder;
             AdapterListPayment.OriginalViewHolder vwh = (AdapterListPayment.OriginalViewHolder) holder;
 
             final PaymentItem p = items.get(position);
-            view.title.setText(p.getTitle());
-            view.price.setText(p.getNominal()+"");
+            view.title.setText(payment_types.get(p.getTitle()));
+            view.price.setText(CurrencyController.getInstance().moneyFormat(p.getNominal())+ "");
         }
     }
 
