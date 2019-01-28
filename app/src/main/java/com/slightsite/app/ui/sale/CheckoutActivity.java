@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.slightsite.app.R;
 import com.slightsite.app.domain.customer.Customer;
+import com.slightsite.app.domain.sale.Checkout;
 import com.slightsite.app.techicalservices.Tools;
 
 public class CheckoutActivity extends AppCompatActivity {
@@ -37,6 +38,8 @@ public class CheckoutActivity extends AppCompatActivity {
     private int idx_state = 0;
 
     public Customer customer;
+    public Fragment current_fragment = null;
+    public Checkout checkout_data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,21 +101,27 @@ public class CheckoutActivity extends AppCompatActivity {
         Fragment fragment = null;
         refreshStepTitle();
 
+        Bundle bundle = new Bundle();
+
+        checkout_data = this.getCheckoutData();
+
         if (state.name().equalsIgnoreCase(State.SHIPPING.name())) {
             fragment = new ShippingFragment();
             try {
-                Bundle bundle = new Bundle();
                 bundle.putString("customer_name", customer.getName());
                 bundle.putString("customer_email", customer.getEmail());
                 bundle.putString("customer_phone", customer.getPhone());
                 bundle.putString("customer_address", customer.getAddress());
                 fragment.setArguments(bundle);
+
+                checkout_data.setCustomer(customer);
             } catch (Exception e) {}
 
             tv_shipping.setTextColor(getResources().getColor(R.color.grey_90));
             image_shipping.clearColorFilter();
         } else if (state.name().equalsIgnoreCase(State.PAYMENT.name())) {
             fragment = new PaymentFragment();
+
             line_first.setBackgroundColor(getResources().getColor(R.color.greenUcok));
             image_shipping.setColorFilter(getResources().getColor(R.color.greenUcok), PorterDuff.Mode.SRC_ATOP);
             image_payment.clearColorFilter();
@@ -126,8 +135,13 @@ public class CheckoutActivity extends AppCompatActivity {
         }
 
         if (fragment == null) return;
+
+        bundle.putSerializable("checkout_data", checkout_data);
+        fragment.setArguments(bundle);
+
         fragmentTransaction.replace(R.id.frame_content, fragment);
         fragmentTransaction.commit();
+        current_fragment = fragment;
     }
 
     private void refreshStepTitle() {
@@ -155,10 +169,20 @@ public class CheckoutActivity extends AppCompatActivity {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+        Checkout c_data = new Checkout();
+        c_data.setCustomer(customer);
+        this.checkout_data = c_data;
     }
 
     public Customer getCustomer() {
         return customer;
+    }
+
+    public Checkout getCheckoutData() {
+        if (checkout_data == null) {
+            return new Checkout();
+        }
+        return checkout_data;
     }
 
     public static void hideKeyboard(Activity activity) {

@@ -26,6 +26,7 @@
 
             <EditText
                 style="@style/EditText.Flat.Grey"
+                android:id="@+id/cash_receive"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/edit_text_round_bg_outline"
@@ -92,6 +93,7 @@
 
             <EditText
                 style="@style/EditText.Flat.Grey"
+                android:id="@+id/nominal_mandiri"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/edit_text_round_bg_outline"
@@ -112,6 +114,7 @@
 
             <EditText
                 style="@style/EditText.Flat.Grey"
+                android:id="@+id/nominal_bca"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/edit_text_round_bg_outline"
@@ -178,6 +181,7 @@
 
             <EditText
                 style="@style/EditText.Flat.Grey"
+                android:id="@+id/edc_card_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/edit_text_round_bg_outline"
@@ -189,6 +193,7 @@
 
             <EditText
                 style="@style/EditText.Flat.Grey"
+                android:id="@+id/edc_card_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_middle"
