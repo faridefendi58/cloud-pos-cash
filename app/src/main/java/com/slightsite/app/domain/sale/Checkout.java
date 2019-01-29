@@ -95,4 +95,17 @@ public class Checkout implements Serializable {
 
         return types;
     }
+
+    public Double getTotalPaymentReceived() {
+        Double payment_received = 0.00;
+        if (Integer.parseInt(cash_receive) > 0) {
+            payment_received = payment_received + Double.parseDouble(cash_receive);
+        }
+
+        for (String key : transfer_bank.keySet()) {
+            payment_received = payment_received + Double.parseDouble(transfer_bank.get(key));
+        }
+
+        return payment_received;
+    }
 }

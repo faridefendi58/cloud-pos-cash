@@ -1,5 +1,6 @@
 package com.slightsite.app.ui.sale;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,7 @@ import com.slightsite.app.domain.sale.Checkout;
 import com.slightsite.app.domain.sale.PaymentItem;
 import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.techicalservices.NoDaoSetException;
+import com.slightsite.app.ui.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +44,11 @@ public class ConfirmationFragment extends Fragment {
     private RecyclerView saleListView;
     private Resources res;
     private TextView totalPrice;
+    private TextView edit_customer;
+    private TextView edit_payment;
+    private TextView edit_cart;
+    private TextView totalPayment;
+    private TextView changeDue;
 
     public ConfirmationFragment() {
     }
@@ -79,6 +86,12 @@ public class ConfirmationFragment extends Fragment {
         saleListView.setLayoutManager(new LinearLayoutManager(getContext()));
         saleListView.setHasFixedSize(true);
         saleListView.setNestedScrollingEnabled(false);
+
+        edit_customer  = (TextView) root.findViewById(R.id.edit_customer);
+        edit_payment  = (TextView) root.findViewById(R.id.edit_payment);
+        edit_cart  = (TextView) root.findViewById(R.id.edit_cart);
+        totalPayment  = (TextView) root.findViewById(R.id.totalPayment);
+        changeDue  = (TextView) root.findViewById(R.id.changeDue);
     }
 
     private void initAction() {
@@ -92,6 +105,28 @@ public class ConfirmationFragment extends Fragment {
         }
 
         showPaymentList(c_data.getPaymentItems());
+
+        edit_customer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((CheckoutActivity) getActivity()).goToFragment(0);
+            }
+        });
+
+        edit_payment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((CheckoutActivity) getActivity()).goToFragment(1);
+            }
+        });
+
+        edit_cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //((CheckoutActivity) getActivity()).recreate();
+                getActivity().finish();
+            }
+        });
     }
 
     private void initDefaultValue() {
@@ -100,6 +135,11 @@ public class ConfirmationFragment extends Fragment {
                 customer = c_data.getCustomer();
                 conf_customer_name.setText(customer.getName());
                 conf_customer_address.setText(customer.getAddress());
+            }
+            if (c_data.getTotalPaymentReceived() > 0) {
+                totalPayment.setText(CurrencyController.getInstance().moneyFormat(c_data.getTotalPaymentReceived()));
+                Double change_due = c_data.getTotalPaymentReceived() - register.getTotal();
+                changeDue.setText(CurrencyController.getInstance().moneyFormat(change_due));
             }
         } catch (Exception e) { }
     }

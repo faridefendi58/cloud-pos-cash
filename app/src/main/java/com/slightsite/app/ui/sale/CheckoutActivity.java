@@ -195,4 +195,9 @@ public class CheckoutActivity extends AppCompatActivity {
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
+    public void goToFragment(int index) {
+        idx_state = index;
+        displayFragment(array_state[idx_state]);
+    }
 }

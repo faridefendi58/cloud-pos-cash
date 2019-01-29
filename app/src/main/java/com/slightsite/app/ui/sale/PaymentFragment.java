@@ -21,7 +21,10 @@ import android.widget.Toast;
 
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.slightsite.app.R;
+import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.sale.Checkout;
+import com.slightsite.app.domain.sale.Register;
+import com.slightsite.app.techicalservices.NoDaoSetException;
 
 import org.w3c.dom.Text;
 
@@ -34,12 +37,16 @@ public class PaymentFragment extends Fragment {
     private LinearLayout edc_container;
     private SwitchCompat switch_tranfer;
     private SwitchCompat switch_edc;
+
     private View root;
     private EditText cash_receive;
     private EditText ed_nominal_mandiri;
     private EditText ed_nominal_bca;
     private EditText edc_card_type;
     private EditText edc_card_number;
+    private TextView total_order;
+
+    private Register register;
 
     private Checkout c_data;
     private HashMap< String, String> banks = new HashMap< String, String>();
@@ -49,6 +56,11 @@ public class PaymentFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        try {
+            register = Register.getInstance();
+        } catch (NoDaoSetException e) {
+            e.printStackTrace();
+        }
         root = inflater.inflate(R.layout.fragment_payment, container, false);
 
         initView();
@@ -71,6 +83,7 @@ public class PaymentFragment extends Fragment {
         ed_nominal_bca = (EditText) root.findViewById(R.id.nominal_bca);
         edc_card_type = (EditText) root.findViewById(R.id.edc_card_type);
         edc_card_number  = (EditText) root.findViewById(R.id.edc_card_number);
+        total_order  = (TextView) root.findViewById(R.id.total_order);
     }
 
     private void initAction() {
@@ -107,6 +120,8 @@ public class PaymentFragment extends Fragment {
         setTextChangeListener(cash_receive, "cashReceive");
         setTextChangeListener(ed_nominal_mandiri, "nominal_mandiri");
         setTextChangeListener(ed_nominal_bca, "nominal_bca");
+
+        total_order.setText(CurrencyController.getInstance().moneyFormat(register.getTotal()));
     }
 
     private void setTextChangeListener(EditText etv, final String setType) {

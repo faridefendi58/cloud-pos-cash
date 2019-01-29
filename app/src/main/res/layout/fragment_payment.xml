@@ -13,6 +13,36 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/spacing_middle">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TOTAL ORDER"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:textColor="@color/grey_40"
+                app:fontFamily="sans-serif-medium" />
+
+            <TextView
+                style="@style/EditText.Flat.Grey"
+                android:id="@+id/total_order"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/edit_text_round_bg_outline"
+                android:drawableEnd="@drawable/ic_expand_arrow"
+                android:layout_marginTop="@dimen/spacing_middle"
+                android:drawableRight="@drawable/ic_payment_black_24dp"
+                android:minHeight="@dimen/spacing_xmedium"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="@dimen/spacing_large">
 
