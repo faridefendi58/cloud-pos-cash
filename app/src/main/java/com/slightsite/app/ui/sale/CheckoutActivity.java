@@ -1,6 +1,7 @@
 package com.slightsite.app.ui.sale;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,9 +19,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.slightsite.app.R;
+import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.sale.Checkout;
+import com.slightsite.app.domain.sale.Register;
+import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Tools;
+import com.slightsite.app.ui.printer.PrinterActivity;
 
 public class CheckoutActivity extends AppCompatActivity {
 
@@ -40,10 +46,18 @@ public class CheckoutActivity extends AppCompatActivity {
     public Customer customer;
     public Fragment current_fragment = null;
     public Checkout checkout_data;
+    private Register register;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        try {
+            register = Register.getInstance();
+        } catch (NoDaoSetException e) {
+            e.printStackTrace();
+        }
+
         setContentView(R.layout.activity_checkout);
         initToolbar();
         initComponent();
@@ -68,7 +82,15 @@ public class CheckoutActivity extends AppCompatActivity {
         (findViewById(R.id.lyt_next)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (idx_state == array_state.length - 1) return;
+                if (idx_state == array_state.length - 1) {
+                    int saleId = register.getCurrentSale().getId();
+                    register.endSale(DateTimeStrategy.getCurrentTime());
+
+                    Intent newActivity = new Intent(CheckoutActivity.this, PrinterActivity.class);
+                    newActivity.putExtra("saleId", saleId);
+                    startActivity(newActivity);
+                    return;
+                }
                 idx_state++;
                 displayFragment(array_state[idx_state]);
             }
@@ -126,6 +148,11 @@ public class CheckoutActivity extends AppCompatActivity {
             image_shipping.setColorFilter(getResources().getColor(R.color.greenUcok), PorterDuff.Mode.SRC_ATOP);
             image_payment.clearColorFilter();
             tv_payment.setTextColor(getResources().getColor(R.color.grey_90));
+
+            if (!checkout_data.getCustomer().equals(null)) {
+                register.setCustomer(checkout_data.getCustomer());
+            }
+
         } else if (state.name().equalsIgnoreCase(State.CONFIRMATION.name())) {
             fragment = new ConfirmationFragment();
             line_second.setBackgroundColor(getResources().getColor(R.color.greenUcok));

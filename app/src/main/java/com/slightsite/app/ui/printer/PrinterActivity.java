@@ -53,7 +53,7 @@ public class PrinterActivity extends AppCompatActivity {
     int readBufferPosition;
     volatile boolean stopWorker;
     String value = "";
-    String bluetoothDeviceName = ""; //"58Printer";
+    String bluetoothDeviceName = "58Printer";
     ArrayList<String> bluetoothDeviceList;
     Map<String, String> printerConfigs = new HashMap<String, String>();
     private ParamCatalog paramCatalog;
@@ -136,6 +136,7 @@ public class PrinterActivity extends AppCompatActivity {
                 beginListenForData();
             } else {
                 value += "No Devices found";
+                bluetoothDeviceList = new ArrayList<>();
                 Toast.makeText(this, value, Toast.LENGTH_LONG).show();
                 return;
             }
@@ -162,6 +163,7 @@ public class PrinterActivity extends AppCompatActivity {
                 }
             } else {
                 value += "No Devices found";
+                bluetoothDeviceList = new ArrayList<>();
                 Toast.makeText(this, value, Toast.LENGTH_LONG).show();
                 return;
             }
