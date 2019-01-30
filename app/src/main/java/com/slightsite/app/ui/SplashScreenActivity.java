@@ -49,7 +49,7 @@ import com.slightsite.app.techicalservices.sale.SaleDaoAndroid;
  */
 public class SplashScreenActivity extends Activity {
 
-	public static final String POS_VERSION = "LolliPOS 1.0";
+	public static final String POS_VERSION = "UcokPOS 2.0";
 	private static final long SPLASH_TIMEOUT = 2000;
 	private Button goButton;
 	private boolean gone;
@@ -114,9 +114,9 @@ public class SplashScreenActivity extends Activity {
 		gone = true;
 		Intent newActivity = new Intent(SplashScreenActivity.this,
 				LoginActivity.class);
-		finish();
+		//finish();
 		startActivity(newActivity);
-		//SplashScreenActivity.this.finish();
+		SplashScreenActivity.this.finish();
 	}
 
 	private ProgressBar progressBar;

@@ -251,8 +251,10 @@ public class SaleFragment extends UpdatableFragment {
 			showList(new ArrayList<LineItem>());
 			totalPrice.setText("0.00");
 			total_container.setVisibility(View.GONE);
-			viewPager.setCurrentItem(0);
 			try {
+				if (viewPager.getCurrentItem() != 0) {
+					viewPager.setCurrentItem(0);
+				}
 				LinearLayout bottom_cart_container = ( LinearLayout) viewPager.findViewById(R.id.bottom_cart_container);
 				bottom_cart_container.setVisibility(View.GONE);
 			} catch (Exception e) {

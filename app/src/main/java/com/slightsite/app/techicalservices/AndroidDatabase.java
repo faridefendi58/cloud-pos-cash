@@ -147,7 +147,7 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 		String datetime = dateformat.format(c.getTime());
 		database.execSQL("INSERT INTO " + DatabaseContents.TABLE_PARAMS + " (" +
 				"_id, name, value, type, description, date_added)\n" +
-				"VALUES ('1', 'store_name', 'Store Name', 'text', '', '"+ datetime +"');");
+				"VALUES ('1', 'store_name', 'Ucok Durian', 'text', '', '"+ datetime +"');");
 		Log.d("CREATE DATABASE", "Create " + DatabaseContents.TABLE_PARAMS + " Successfully.");
 
 		database.execSQL("CREATE TABLE " + DatabaseContents.TABLE_ADMIN + "("
@@ -169,7 +169,7 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 				+ "_id INTEGER PRIMARY KEY,"
 				+ "sale_id INTEGER,"
 				+ "payment_channel TEXT(128),"
-				+ "amount INTEGER DEFAULT 0,"
+				+ "amount DOUBLE,"
 				+ "date_added DATETIME"
 				+ ");");
 		
