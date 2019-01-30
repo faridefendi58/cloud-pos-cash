@@ -151,6 +151,8 @@
     <string name="error_field_required">Kolom ini tidak boleh dikosongi</string>
     <string name="error_old_password">Password lama salah</string>
     <string name="permission_rationale">"Izin kontak diperlukan untuk menyediakan penyelesaian email."</string>
+    <string name="error_empty_customer_data">Mohon lengkapi kolom Nama, Telepon, dan Alamat</string>
+    <string name="error_empty_payment_data">Mohon lengkapi data pembayaran</string>
     <string name="login_header_information">Isilah form ini dengan akun login anda,
         atau buat akun terlebih dahulu untuk dapat menggunakan aplikasi ini.</string>
 

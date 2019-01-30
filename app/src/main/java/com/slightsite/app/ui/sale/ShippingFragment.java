@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.slightsite.app.R;
 import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.customer.CustomerCatalog;
 import com.slightsite.app.domain.customer.CustomerService;
+import com.slightsite.app.domain.sale.Checkout;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 
 import java.util.List;
@@ -38,6 +40,11 @@ public class ShippingFragment extends Fragment {
     private EditText email;
     private EditText address;
 
+    private Checkout c_data;
+    private String customer_name;
+    private String customer_phone;
+    private String customer_email;
+    private String customer_address;
 
     public ShippingFragment() {
     }
@@ -53,6 +60,7 @@ public class ShippingFragment extends Fragment {
         }
         customers = customerCatalog.getAllCustomer();
         setupUserAutocomplete();
+        initAction();
 
         try {
             String customer_name = getArguments().getString("customer_name");
@@ -88,7 +96,6 @@ public class ShippingFragment extends Fragment {
                 phone.setText(item.getPhone());
                 email.setText(item.getEmail());
                 address.setText(item.getAddress());
-                Log.e(getTag(), "customer id : "+ item.getId());
                 //customer_id.setText(item.getId());
                 ((CheckoutActivity) getActivity()).setCustomer(item);
                 ((CheckoutActivity) getActivity()).hideKeyboard(getActivity());
@@ -104,5 +111,56 @@ public class ShippingFragment extends Fragment {
                 .with(presenter)
                 .with(callback)
                 .build();
+    }
+
+    private void setTextChangeListener(EditText etv, final String setType) {
+        etv.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                try {
+                    customer_name = name.getText().toString();
+                    customer_email = email.getText().toString();
+                    customer_address = address.getText().toString();
+                    if (setType == "phone") {
+                        if (!cust.getPhone().equals(s.toString())) {
+                            cust.setPhone(s.toString());
+                            cust.setName(customer_name);
+                            if (customer_email.equals(null)) {
+                                cust.setEmail(customer_email);
+                            } else {
+                                cust.setEmail("-");
+                            }
+                            if (customer_address.equals(null)) {
+                                cust.setAddress(customer_address);
+                            }
+                            ((CheckoutActivity) getActivity()).setCustomer(cust);
+                        }
+                    }
+                    if (setType == "address") {
+                        if (!cust.getAddress().equals(s.toString())) {
+                            cust.setAddress(s.toString());
+                            ((CheckoutActivity) getActivity()).setCustomer(cust);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void initAction() {
+        c_data = ((CheckoutActivity) getActivity()).getCheckoutData();
+        cust = c_data.getCustomer();
+        setTextChangeListener(phone, "phone");
+        setTextChangeListener(address, "address");
     }
 }

@@ -116,7 +116,9 @@ public class SaleDetailActivity extends Activity{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			this.finish();
+			Intent newActivity = new Intent(SaleDetailActivity.this, MainActivity.class);
+			finish();
+			startActivity(newActivity);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

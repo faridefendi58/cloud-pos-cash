@@ -150,6 +150,8 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_old_password">The old password is incorrect</string>
     <string name="error_field_required">This field is required</string>
+    <string name="error_empty_customer_data">Please fill the Name, Phone, and Address</string>
+    <string name="error_empty_payment_data">Please complete the payment data</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
