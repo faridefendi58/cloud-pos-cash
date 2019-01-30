@@ -38,6 +38,7 @@ public class DatabaseExecutor {
 		execute("DELETE FROM " + DatabaseContents.TABLE_STOCK + ";");
 		execute("DELETE FROM " + DatabaseContents.TABLE_STOCK_SUM + ";");
 		execute("DELETE FROM " + DatabaseContents.TABLE_PRODUCT_DISCOUNT + ";");
+		execute("DELETE FROM " + DatabaseContents.TABLE_SALE_PAYMENT + ";");
 		execute("VACUUM;");
 	}
 	

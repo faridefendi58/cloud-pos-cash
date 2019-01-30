@@ -76,8 +76,8 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 				+ "start_time DATETIME,"
 				+ "end_time DATETIME,"
 				+ "customer_id INTEGER,"
-				+ "orders INTEGER"
-				
+				+ "orders INTEGER,"
+				+ "pushed INTEGER DEFAULT 0"
 				+ ");");
 		Log.d("CREATE DATABASE", "Create " + DatabaseContents.TABLE_SALE + " Successfully.");
 		
@@ -163,6 +163,15 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 				+ ");");
 
 		Log.d("CREATE DATABASE", "Create " + DatabaseContents.TABLE_ADMIN + " Successfully.");
+
+		database.execSQL("CREATE TABLE " + DatabaseContents.TABLE_SALE_PAYMENT + "("
+
+				+ "_id INTEGER PRIMARY KEY,"
+				+ "sale_id INTEGER,"
+				+ "payment_channel TEXT(128),"
+				+ "amount INTEGER DEFAULT 0,"
+				+ "date_added DATETIME"
+				+ ");");
 		
 		Log.d("CREATE DATABASE", "Create Database Successfully.");
 

@@ -207,7 +207,8 @@
                 android:layout_gravity="end"
                 android:layout_marginTop="@dimen/spacing_large"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_visa" />
+                android:src="@drawable/ic_visa"
+                android:visibility="gone"/>
 
             <EditText
                 style="@style/EditText.Flat.Grey"
@@ -219,7 +220,8 @@
                 android:layout_marginTop="@dimen/spacing_middle"
                 android:drawableRight="@drawable/ic_expand_arrow"
                 android:hint="Card Type"
-                android:minHeight="@dimen/spacing_xmlarge" />
+                android:minHeight="@dimen/spacing_xmlarge"
+                android:visibility="gone"/>
 
             <EditText
                 style="@style/EditText.Flat.Grey"

@@ -107,7 +107,7 @@
                 android:hint="ZIP Code"
                 android:minHeight="@dimen/spacing_xmlarge" />
 
-        </LinearLayout>-->
+        </LinearLayout>
 
         <EditText
             style="@style/EditText.Flat.Grey"
@@ -129,7 +129,7 @@
             android:drawableRight="@drawable/ic_expand_arrow"
             android:background="@drawable/edit_text_round_bg_outline"
             android:hint="State / Province"
-            android:minHeight="@dimen/spacing_xmlarge" />
+            android:minHeight="@dimen/spacing_xmlarge" />-->
 
     </LinearLayout>
 
