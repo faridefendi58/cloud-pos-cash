@@ -10,6 +10,7 @@ import java.util.Map;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.LanguageController;
+import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.inventory.LineItem;
 import com.slightsite.app.domain.inventory.Product;
 

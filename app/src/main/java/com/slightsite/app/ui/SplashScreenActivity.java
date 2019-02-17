@@ -114,9 +114,9 @@ public class SplashScreenActivity extends Activity {
 		gone = true;
 		Intent newActivity = new Intent(SplashScreenActivity.this,
 				LoginActivity.class);
-		//finish();
+		finish();
 		startActivity(newActivity);
-		SplashScreenActivity.this.finish();
+		//SplashScreenActivity.this.finish();
 	}
 
 	private ProgressBar progressBar;

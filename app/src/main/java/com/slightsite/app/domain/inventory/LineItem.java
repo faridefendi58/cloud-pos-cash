@@ -114,6 +114,10 @@ public class LineItem {
 		map.put("quantity", quantity + "");
 		//map.put("price", CurrencyController.getInstance().moneyFormat(getTotalPriceAtSale()) + "");
 		map.put("price", CurrencyController.getInstance().moneyFormat(getPriceAtSale()) + "");
+		map.put("unit_price", getPriceAtSale() + "");
+		map.put("base_price", product.getUnitPrice() + "");
+		map.put("id", product.getId() + "");
+		map.put("barcode", product.getBarcode() + "");
 		return map;
 
 	}

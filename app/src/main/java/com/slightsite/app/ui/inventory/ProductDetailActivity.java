@@ -93,7 +93,8 @@ public class ProductDetailActivity extends Activity {
 		if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			ActionBar actionBar = getActionBar();
 			actionBar.setDisplayHomeAsUpEnabled(true);
-			actionBar.setTitle(res.getString(R.string.product_detail));
+			//actionBar.setTitle(res.getString(R.string.product_detail));
+			actionBar.setTitle(product.getName());
 			actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1ABC9C")));
 		}
 	}
@@ -103,7 +104,6 @@ public class ProductDetailActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		res = getResources();
-		initiateActionBar();
 		
 		try {
 			stock = Inventory.getInstance().getStock();
@@ -114,6 +114,8 @@ public class ProductDetailActivity extends Activity {
 
 		id = getIntent().getStringExtra("id");
 		product = productCatalog.getProductById(Integer.parseInt(id));
+
+		initiateActionBar();
 
 		initUI(savedInstanceState);
 		remember = new String[3];
