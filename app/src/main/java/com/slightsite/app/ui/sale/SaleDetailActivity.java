@@ -3,6 +3,7 @@ package com.slightsite.app.ui.sale;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,8 +12,10 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -20,6 +23,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -39,6 +43,8 @@ import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.domain.sale.SaleLedger;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
+import com.slightsite.app.techicalservices.URLBuilder;
+import com.slightsite.app.ui.LoginActivity;
 import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.inventory.ProductServerActivity;
 import com.slightsite.app.ui.printer.PrinterActivity;
@@ -46,6 +52,8 @@ import com.slightsite.app.ui.printer.PrinterActivity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import static com.slightsite.app.ui.LoginActivity.TAG_ID;
 
 /**
  * UI for showing the detail of Sale in the record.
@@ -71,6 +79,8 @@ public class SaleDetailActivity extends Activity{
 	private static final String TAG_SUCCESS = "success";
 	private static final String TAG_MESSAGE = "message";
 
+	private SharedPreferences sharedpreferences;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -83,6 +93,7 @@ public class SaleDetailActivity extends Activity{
 		saleId = Integer.parseInt(getIntent().getStringExtra("id"));
 		sale = saleLedger.getSaleById(saleId);
 		customer = saleLedger.getCustomerBySaleId(saleId);
+		sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
 
 		String dt = DateTimeStrategy.getCurrentTime();
 		
@@ -203,54 +214,77 @@ public class SaleDetailActivity extends Activity{
 		quitDialog.show();
 	}
 
+    /**
+     * Params format for server (converted to json) :
+	 * {"api-key":"ac43724f16e9241d990427ab7c8f4228",
+	 * "payment":[{"type":"cash","change_due":"0","amount_tendered":"380000.0"}],
+	 * "items_belanja":[{"barcode":"12","name":"Daging durian","unit_price":"100000.0","qty":"2","id":"2","base_price":"100000.0"},{"barcode":"1","name":"Durian Kupas","unit_price":"90000.0","qty":"1","id":"4","base_price":"90000.0"},{"barcode":"3","name":"Pancake Durian","unit_price":"90000.0","qty":"1","id":"3","base_price":"90000.0"}],
+	 * "customer":{"name":"Farid Efendi","email":"-"},
+	 * "admin_id":"1"}
+     * @param v
+     */
 	public void pushInvoice(View v) {
-		Log.e("Sale detail act", "send saleId : "+ saleId);
-
-		JSONArray jsonArray = new JSONArray();
-		JSONObject jObj = new JSONObject();
+		Map<String, Object> mObj = new HashMap<String, Object>();
+		ArrayList arrItems = new ArrayList();
 		for (int i = 0; i < lineitemList.size(); i++){
-			JSONObject myJsonObject = new JSONObject();
+			Map<String, String> mItem = new HashMap<String, String>();
 			try {
-				myJsonObject.put("name", lineitemList.get(i).get("name"));
-				myJsonObject.put("qty", lineitemList.get(i).get("quantity"));
-				myJsonObject.put("unit_price", lineitemList.get(i).get("unit_price"));
-				myJsonObject.put("base_price", lineitemList.get(i).get("base_price"));
-				myJsonObject.put("id", lineitemList.get(i).get("id"));
-				myJsonObject.put("barcode", lineitemList.get(i).get("barcode"));
-				jsonArray.put(myJsonObject);
+				// use map
+				mItem.put("name", lineitemList.get(i).get("name"));
+				mItem.put("qty", lineitemList.get(i).get("quantity"));
+				mItem.put("unit_price", lineitemList.get(i).get("unit_price"));
+				mItem.put("base_price", lineitemList.get(i).get("base_price"));
+				mItem.put("id", lineitemList.get(i).get("id"));
+				mItem.put("barcode", lineitemList.get(i).get("barcode"));
+				arrItems.add(mItem);
 			} catch (Exception e) {}
 		}
 
-		JSONObject jObjCust = new JSONObject();
-		JSONArray jsonArrayCust = new JSONArray();
+        Map<String, String> arrCust = new HashMap<String, String>();
 
-		JSONObject jObjPayment = new JSONObject();
-		JSONArray jsonArrayPayment = new JSONArray();
+		ArrayList arrPaymentList = new ArrayList();
+		Map<String, String> arrPayment = new HashMap<String, String>();
 		try {
 			Customer cust = saleLedger.getCustomerBySaleId(saleId);
-			jObj.put("items_belanja", jsonArray);
-			jObjCust.put("email", cust.getEmail());
-			jObjCust.put("name", cust.getName());
-			jsonArrayCust.put(jObjCust);
-			jObj.put("customer", jsonArrayCust);
+			mObj.put("items_belanja", arrItems);
 
-			jObjPayment.put("amount_tendered", sale.getTotal());
-			jObjPayment.put("change", 0);
+            arrCust.put("email", cust.getEmail());
+            arrCust.put("name", cust.getName());
+            arrCust.put("phone", cust.getPhone());
+            mObj.put("customer", arrCust);
 
-			jsonArrayPayment.put(jObjPayment);
-			jObj.put("payment", jsonArrayPayment);
-		} catch (JSONException e) {
+			arrPayment.put("type", "cash");
+			arrPayment.put("amount_tendered", ""+ sale.getTotal());
+			arrPayment.put("change_due", "0");
+			arrPaymentList.add(arrPayment);
+			mObj.put("payment", arrPaymentList);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		Log.e(getClass().getSimpleName(), "jsonArray : "+ jObj.toString());
+		Boolean pushed = false;
+		try {
+			int server_invoice_id = saleLedger.getServerInvoiceId(saleId);
+			if (server_invoice_id <= 0) {
+				_execute(mObj);
+			} else {
+                Toast.makeText(getApplicationContext(),
+                        "Data telah tercatat di server dengan id "+ server_invoice_id, Toast.LENGTH_LONG).show();
+            }
+		} catch (Exception e) {
+
+		}
 	}
 
-	private void _execute() {
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("items", "cuk");
-
+	private void _execute(Map mObj) {
 		String _url = Server.URL + "transaction/create?api-key=" + Server.API_KEY;
+		String qry = URLBuilder.httpBuildQuery(mObj, "UTF-8");
+		_url += "&"+ qry;
+
+		Map<String, String> params = new HashMap<String, String>();
+		String admin_id = sharedpreferences.getString(TAG_ID, null);
+		params.put("admin_id", admin_id);
+
 		_string_request(
 				Request.Method.POST,
 				_url,
@@ -259,7 +293,22 @@ public class SaleDetailActivity extends Activity{
 				new VolleyCallback(){
 					@Override
 					public void onSuccess(String result) {
+						Log.e("After Pushed", "result : "+ result);
+						try {
+							JSONObject jObj = new JSONObject(result);
+							success = jObj.getInt(TAG_SUCCESS);
+							int server_invoice_id = jObj.getInt(TAG_ID);
+							// Check for error node in json
+							if (success == 1) {
+								saleLedger.setServerInvoiceId(sale, server_invoice_id);
+							}
+							Toast.makeText(getApplicationContext(),
+									jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
 
+						hideDialog();
 					}
 				});
 	}
@@ -286,20 +335,12 @@ public class SaleDetailActivity extends Activity{
 			showDialog();
 		}
 
-		if (method == Request.Method.GET) { //get method doesnt support getParams
-			Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
-			while(iterator.hasNext())
-			{
-				Map.Entry<String, String> pair = iterator.next();
-				String pair_value = pair.getValue();
-				if (pair_value.contains(" "))
-					pair_value = pair.getValue().replace(" ", "%20");
-				url += "&" + pair.getKey() + "=" + pair_value;
-			}
+		if (method == Request.Method.GET) {
+			String qry = URLBuilder.httpBuildQuery(params, "UTF-8");
+			url += "&" + qry;
 		}
 
 		StringRequest strReq = new StringRequest(method, url, new Response.Listener < String > () {
-
 			@Override
 			public void onResponse(String Response) {
 				callback.onSuccess(Response);
