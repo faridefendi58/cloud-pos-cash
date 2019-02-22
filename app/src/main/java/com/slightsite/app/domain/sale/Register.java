@@ -110,6 +110,7 @@ public class Register {
 		if (currentSale != null) {
 			saleDao.endSale(currentSale, endTime);
 			for(LineItem line : currentSale.getAllLineItem()){
+				Log.e(getClass().getSimpleName(), "end sale -> "+ line.getProduct().getName());
 				stock.updateStockSum(line.getProduct().getId(), line.getQuantity());
 			}
 			currentSale = null;

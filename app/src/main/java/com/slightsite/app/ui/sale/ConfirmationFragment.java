@@ -60,6 +60,7 @@ public class ConfirmationFragment extends Fragment {
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
+        Log.e(getTag(), "register : "+ register.getCurrentSale().getAllLineItem().toString());
 
         root = inflater.inflate(R.layout.fragment_confirmation, container, false);
 

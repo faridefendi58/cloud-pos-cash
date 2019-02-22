@@ -157,7 +157,7 @@ public class AdapterListCart extends RecyclerView.Adapter<RecyclerView.ViewHolde
         lineItem.setQuantity(qty);
         Double grosir_price = lineItem.getProduct().getUnitPriceByQuantity(lineItem.getProduct().getId(), qty);
 
-        int saleId = lineItem.getId();
+        int saleId = register.getCurrentSale().getId();
         if (grosir_price > 0) {
             register.updateItem(
                     saleId,
