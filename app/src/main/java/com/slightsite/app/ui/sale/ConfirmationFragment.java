@@ -17,6 +17,7 @@ import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.inventory.LineItem;
+import com.slightsite.app.domain.payment.Payment;
 import com.slightsite.app.domain.sale.Checkout;
 import com.slightsite.app.domain.sale.PaymentItem;
 import com.slightsite.app.domain.sale.Register;
@@ -49,6 +50,7 @@ public class ConfirmationFragment extends Fragment {
     private TextView edit_cart;
     private TextView totalPayment;
     private TextView changeDue;
+    private Payment payment;
 
     public ConfirmationFragment() {
     }
@@ -68,6 +70,9 @@ public class ConfirmationFragment extends Fragment {
         initAction();
         initDefaultValue();
 
+        try {
+            register.setPaymentItems(c_data.getPaymentItems());
+        } catch (Exception e){ }
         return root;
     }
 

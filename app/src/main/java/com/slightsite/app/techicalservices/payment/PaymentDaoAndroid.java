@@ -1,6 +1,7 @@
 package com.slightsite.app.techicalservices.payment;
 
 import android.content.ContentValues;
+import android.util.Log;
 
 import com.slightsite.app.domain.payment.Payment;
 import com.slightsite.app.techicalservices.Database;
@@ -29,6 +30,8 @@ public class PaymentDaoAndroid implements PaymentDao {
         content.put("amount", payment.getAmount());
 
         int id = database.insert(DatabaseContents.TABLE_SALE_PAYMENT.toString(), content);
+        Log.e(getClass().getSimpleName(), "saved id : "+ id);
+        Log.e(getClass().getSimpleName(), "content : "+ content.toString());
 
         return id;
     }
@@ -80,10 +83,10 @@ public class PaymentDaoAndroid implements PaymentDao {
     }
 
     @Override
-    public Payment getPaymentBySaleId(int sale_id) {
+    public  List<Payment> getPaymentBySaleId(int sale_id) {
         List<Payment> list = getPaymentBy("sale_id", sale_id +"");
         if (list.isEmpty()) return null;
-        return list.get(0);
+        return list;
     }
 
     @Override

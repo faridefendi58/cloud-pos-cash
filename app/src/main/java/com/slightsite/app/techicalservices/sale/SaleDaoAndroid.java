@@ -11,6 +11,7 @@ import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.inventory.LineItem;
 import com.slightsite.app.domain.inventory.Product;
+import com.slightsite.app.domain.payment.Payment;
 import com.slightsite.app.domain.sale.QuickLoadSale;
 import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.techicalservices.Database;

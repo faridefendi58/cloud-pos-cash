@@ -36,7 +36,7 @@ public class PaymentCatalog {
      * @payment name
      * @return
      */
-    public Payment getPaymentBySaleId(int sale_id) {
+    public  List<Payment> getPaymentBySaleId(int sale_id) {
         return paymentDao.getPaymentBySaleId(sale_id);
     }
 

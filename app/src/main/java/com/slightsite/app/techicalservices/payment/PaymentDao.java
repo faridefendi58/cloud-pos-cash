@@ -17,7 +17,7 @@ public interface PaymentDao {
 
     Payment getPaymentById(int id);
 
-    Payment getPaymentBySaleId(int sale_id);
+    List<Payment> getPaymentBySaleId(int sale_id);
 
     List<Payment> getAllPayment();
 

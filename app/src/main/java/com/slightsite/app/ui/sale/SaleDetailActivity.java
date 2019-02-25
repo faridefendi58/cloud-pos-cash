@@ -39,6 +39,9 @@ import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.inventory.LineItem;
+import com.slightsite.app.domain.payment.Payment;
+import com.slightsite.app.domain.payment.PaymentCatalog;
+import com.slightsite.app.domain.payment.PaymentService;
 import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.domain.sale.SaleLedger;
 import com.slightsite.app.techicalservices.NoDaoSetException;
@@ -71,6 +74,9 @@ public class SaleDetailActivity extends Activity{
 	private TextView customerBox;
 	private Customer customer;
 	private TextView status;
+
+	private PaymentCatalog paymentCatalog;
+	private List<Payment> paymentList;
 
 	ProgressDialog pDialog;
 	int success;
@@ -130,6 +136,13 @@ public class SaleDetailActivity extends Activity{
 		lineitemListView = (ListView) findViewById(R.id.lineitemList);
 		customerBox = (TextView) findViewById(R.id.customerBox);
 		status = (TextView) findViewById(R.id.status);
+
+		try {
+			paymentCatalog = PaymentService.getInstance().getPaymentCatalog();
+			paymentList = paymentCatalog.getPaymentBySaleId(saleId);
+		} catch (NoDaoSetException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -253,10 +266,20 @@ public class SaleDetailActivity extends Activity{
             arrCust.put("phone", cust.getPhone());
             mObj.put("customer", arrCust);
 
-			arrPayment.put("type", "cash");
-			arrPayment.put("amount_tendered", ""+ sale.getTotal());
-			arrPayment.put("change_due", "0");
-			arrPaymentList.add(arrPayment);
+            if (paymentList.size() > 0) {
+            	for (Payment py : paymentList) {
+					Map<String, String> arrPayment2 = new HashMap<String, String>();
+					arrPayment2.put("type", py.getPaymentChannel());
+					arrPayment2.put("amount_tendered", ""+ py.getAmount());
+					arrPayment2.put("change_due", "0");
+					arrPaymentList.add(arrPayment2);
+				}
+			} else {
+				arrPayment.put("type", "cash");
+				arrPayment.put("amount_tendered", ""+ sale.getTotal());
+				arrPayment.put("change_due", "0");
+				arrPaymentList.add(arrPayment);
+			}
 			mObj.put("payment", arrPaymentList);
 		} catch (Exception e) {
 			e.printStackTrace();

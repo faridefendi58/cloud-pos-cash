@@ -77,6 +77,7 @@ public class SplashScreenActivity extends Activity {
 		CustomerService.setCustomerDao(customerDao);
 		ParamService.setParamDao(paramDao);
 		PaymentService.setPaymentDao(paymentDao);
+		Register.setPaymentDao(paymentDao);
 
 		DateTimeStrategy.setLocale("id", "ID");
 		setLanguage(LanguageController.getInstance().getLanguage());
