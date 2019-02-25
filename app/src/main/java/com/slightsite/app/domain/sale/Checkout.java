@@ -11,8 +11,10 @@ import java.util.List;
 
 public class Checkout implements Serializable {
     private HashMap< String, String> transfer_bank;
+    private HashMap< String, String> edc;
     private Customer customer;
     private String cash_receive = "0";
+    private String card_number = "0";
     private Boolean use_transfer_bank = false;
     private Boolean use_edc = false;
     private List<PaymentItem> payment_items;
@@ -26,6 +28,17 @@ public class Checkout implements Serializable {
     public void setTransferBank(HashMap< String, String> transfer_bank) {
         Log.e(getClass().getSimpleName(), "transfer_bank : "+ transfer_bank.toString());
         this.transfer_bank = transfer_bank;
+    }
+
+    public void setEdc(HashMap< String, String> edc_params) {
+        Log.e(getClass().getSimpleName(), "edc : "+ edc.toString());
+        this.edc = edc_params;
+    }
+
+    public HashMap< String, String> getEdc() {
+        if (edc == null)
+            edc = new HashMap< String, String>();;
+        return edc;
     }
 
     public Customer getCustomer() {
@@ -66,12 +79,12 @@ public class Checkout implements Serializable {
         return use_transfer_bank;
     }
 
-    public void setUseEdc(Boolean use_bank) {
-        this.use_transfer_bank = use_bank;
+    public void setUseEdc(Boolean useedc) {
+        this.use_edc = useedc;
     }
 
     public Boolean getUseEdc() {
-        return use_transfer_bank;
+        return use_edc;
     }
 
     public List<PaymentItem> getPaymentItems() {
@@ -84,6 +97,10 @@ public class Checkout implements Serializable {
             PaymentItem pi = new PaymentItem(key, Double.parseDouble(transfer_bank.get(key)));
             payment_items.add(pi);
         }
+        for (String key : edc.keySet()) {
+            PaymentItem pi = new PaymentItem(key, Double.parseDouble(edc.get(key)));
+            payment_items.add(pi);
+        }
         return payment_items;
     }
 
@@ -92,6 +109,7 @@ public class Checkout implements Serializable {
         types.put("cash_receive", "Cash Payment");
         types.put("nominal_mandiri", "Transfer Bank Mandiri");
         types.put("nominal_bca", "Transfer Bank BCA");
+        types.put("nominal_edc", "EDC Payment");
 
         return types;
     }
@@ -106,6 +124,18 @@ public class Checkout implements Serializable {
             payment_received = payment_received + Double.parseDouble(transfer_bank.get(key));
         }
 
+        for (String key : edc.keySet()) {
+            payment_received = payment_received + Double.parseDouble(edc.get(key));
+        }
+
         return payment_received;
+    }
+
+    public void setCardNumber(String numb) {
+        this.card_number = numb;
+    }
+
+    public String getCardNumber() {
+        return card_number;
     }
 }

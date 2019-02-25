@@ -56,7 +56,6 @@ public class UserPresenter extends RecyclerViewPresenter<Customer> {
                 }
             }
             adapter.setData(list);
-            Log.e("UserPresenter", "found "+list.size()+" users for query "+query);
         }
         adapter.notifyDataSetChanged();
     }

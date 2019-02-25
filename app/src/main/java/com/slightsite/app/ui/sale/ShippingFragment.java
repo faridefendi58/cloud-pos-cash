@@ -31,6 +31,7 @@ public class ShippingFragment extends Fragment {
 
     private View root;
     private Autocomplete userAutocomplete;
+    private Autocomplete phoneAutocomplete;
     private CustomerCatalog customerCatalog;
     private List<Customer> customers;
     private Customer cust;

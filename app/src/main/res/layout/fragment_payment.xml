@@ -230,27 +230,31 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_middle"
                 android:background="@drawable/edit_text_round_bg_outline"
-                android:hint="Card Number"
+                android:hint="Nomor Kartu"
                 android:minHeight="@dimen/spacing_xmlarge"
                 android:drawableEnd="@drawable/ic_credit_card_grey"
-                android:drawableRight="@drawable/ic_credit_card_grey" />
+                android:drawableRight="@drawable/ic_credit_card_grey"
+                android:inputType="number" />
 
             <EditText
+                android:id="@+id/edc_nominal"
                 style="@style/EditText.Flat.Grey"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_middle"
                 android:background="@drawable/edit_text_round_bg_outline"
-                android:hint="Name"
+                android:hint="Nominal dibayarkan"
                 android:minHeight="@dimen/spacing_xmlarge"
-                android:drawableEnd="@drawable/ic_person_grey"
-                android:drawableRight="@drawable/ic_person_grey" />
+                android:drawableEnd="@drawable/ic_money_white_24dp"
+                android:drawableRight="@drawable/ic_money_white_24dp"
+                android:inputType="number" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_middle"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <EditText
                     style="@style/EditText.Flat.Grey"

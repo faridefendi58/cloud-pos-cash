@@ -44,12 +44,14 @@ public class PaymentFragment extends Fragment {
     private EditText ed_nominal_bca;
     private EditText edc_card_type;
     private EditText edc_card_number;
+    private EditText edc_nominal;
     private TextView total_order;
 
     private Register register;
 
     private Checkout c_data;
     private HashMap< String, String> banks = new HashMap< String, String>();
+    private HashMap< String, String> edcs = new HashMap< String, String>();
 
     public PaymentFragment() {
     }
@@ -83,6 +85,7 @@ public class PaymentFragment extends Fragment {
         ed_nominal_bca = (EditText) root.findViewById(R.id.nominal_bca);
         edc_card_type = (EditText) root.findViewById(R.id.edc_card_type);
         edc_card_number  = (EditText) root.findViewById(R.id.edc_card_number);
+        edc_nominal  = (EditText) root.findViewById(R.id.edc_nominal);
         total_order  = (TextView) root.findViewById(R.id.total_order);
     }
 
@@ -91,6 +94,10 @@ public class PaymentFragment extends Fragment {
         if (!c_data.getTransferBank().isEmpty()) {
             banks = c_data.getTransferBank();
             Log.e(getTag(), "transfer bank data on init :"+ banks.toString());
+        }
+
+        if (!c_data.getEdc().isEmpty()) {
+            edcs = c_data.getEdc();
         }
 
         switch_tranfer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -120,6 +127,8 @@ public class PaymentFragment extends Fragment {
         setTextChangeListener(cash_receive, "cashReceive");
         setTextChangeListener(ed_nominal_mandiri, "nominal_mandiri");
         setTextChangeListener(ed_nominal_bca, "nominal_bca");
+        setTextChangeListener(edc_card_number, "card_number");
+        setTextChangeListener(edc_nominal, "nominal_edc");
 
         total_order.setText(CurrencyController.getInstance().moneyFormat(register.getTotal()));
     }
@@ -152,6 +161,14 @@ public class PaymentFragment extends Fragment {
                         banks.put(setType, s.toString());
                         Log.e(getTag(), "Banks : "+ banks.toString());
                         c_data.setTransferBank(banks);
+                    } else if (setType == "card_number") {
+                        c_data.setCardNumber(s.toString());
+                    } else if (setType == "nominal_edc") {
+                        if (edcs.containsKey(setType)) {
+                            edcs.remove(setType);
+                        }
+                        edcs.put(setType, s.toString());
+                        c_data.setEdc(edcs);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -175,6 +192,19 @@ public class PaymentFragment extends Fragment {
                     }
                     if (banks.containsKey("nominal_bca")) {
                         ed_nominal_bca.setText(c_data.getTransferBank().get("nominal_bca"));
+                    }
+                }
+            }
+
+            if (c_data.getUseEdc()) {
+                switch_edc.setChecked(true);
+                edc_container.setVisibility(View.VISIBLE);
+                if (!c_data.getEdc().isEmpty()) {
+                    if (c_data.getCardNumber().length() > 1) {
+                        edc_card_number.setText(c_data.getCardNumber());
+                    }
+                    if (edcs.containsKey("nominal_edc")) {
+                        edc_nominal.setText(c_data.getEdc().get("nominal_edc"));
                     }
                 }
             }
