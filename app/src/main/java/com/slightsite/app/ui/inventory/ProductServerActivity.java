@@ -37,6 +37,7 @@ import com.slightsite.app.domain.inventory.ProductCatalog;
 import com.slightsite.app.domain.inventory.Stock;
 import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
+import com.slightsite.app.domain.params.Params;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.ui.MainActivity;
@@ -64,6 +65,7 @@ public class ProductServerActivity extends Activity {
     private ParamCatalog paramCatalog;
     private Spinner available_warehouse;
     private ArrayList<String> warehouse_items = new ArrayList<String>();
+    private HashMap<String, String> warehouse_ids = new HashMap<String, String>();
     private JSONArray warehouse_data;
 
     private ProductCatalog productCatalog;
@@ -156,6 +158,9 @@ public class ProductServerActivity extends Activity {
                     @Override
                     public void onSuccess(String result) {
                         try {
+                            Params whParam = paramCatalog.getParamByName("warehouse_id");
+                            int selected_wh = 0;
+
                             JSONObject jObj = new JSONObject(result);
                             success = jObj.getInt(TAG_SUCCESS);
                             // Check for error node in json
@@ -165,6 +170,12 @@ public class ProductServerActivity extends Activity {
                                 {
                                     JSONObject data_n = warehouse_data.getJSONObject(n);
                                     warehouse_items.add(data_n.getString("title"));
+                                    warehouse_ids.put(data_n.getString("title"), data_n.getString("id"));
+                                    if (whParam != null) {
+                                        if (Integer.parseInt(whParam.getValue()) == Integer.parseInt(data_n.getString("id"))) {
+                                            selected_wh = n;
+                                        }
+                                    }
                                 }
                             }
 
@@ -173,6 +184,7 @@ public class ProductServerActivity extends Activity {
                                     R.layout.spinner_item, warehouse_items);
                             whAdapter.notifyDataSetChanged();
                             available_warehouse.setAdapter(whAdapter);
+                            available_warehouse.setSelection(selected_wh);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -427,6 +439,16 @@ public class ProductServerActivity extends Activity {
         }
 
         //if (success) {
+            try {
+                Params pWarehouseId = paramCatalog.getParamByName("warehouse_id");
+                if (pWarehouseId instanceof Params) {
+                    pWarehouseId.setValue(warehouse_ids.get(warehouse_name));
+                    Boolean saveParam = paramCatalog.editParam(pWarehouseId);
+                } else {
+                    Boolean saveParam = paramCatalog.addParam("warehouse_id", warehouse_ids.get(warehouse_name), "text", warehouse_name);
+                }
+            } catch (Exception e) { e.printStackTrace(); }
+
             Toast.makeText(getBaseContext(), getResources().getString(R.string.message_success_syncronize),
                     Toast.LENGTH_SHORT).show();
         //}

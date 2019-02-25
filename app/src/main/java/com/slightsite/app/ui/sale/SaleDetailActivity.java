@@ -39,6 +39,9 @@ import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.inventory.LineItem;
+import com.slightsite.app.domain.params.ParamCatalog;
+import com.slightsite.app.domain.params.ParamService;
+import com.slightsite.app.domain.params.Params;
 import com.slightsite.app.domain.payment.Payment;
 import com.slightsite.app.domain.payment.PaymentCatalog;
 import com.slightsite.app.domain.payment.PaymentService;
@@ -77,6 +80,7 @@ public class SaleDetailActivity extends Activity{
 
 	private PaymentCatalog paymentCatalog;
 	private List<Payment> paymentList;
+	private ParamCatalog paramCatalog;
 
 	ProgressDialog pDialog;
 	int success;
@@ -92,6 +96,7 @@ public class SaleDetailActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		try {
 			saleLedger = SaleLedger.getInstance();
+			paramCatalog = ParamService.getInstance().getParamCatalog();
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
 		}
@@ -281,6 +286,11 @@ public class SaleDetailActivity extends Activity{
 				arrPaymentList.add(arrPayment);
 			}
 			mObj.put("payment", arrPaymentList);
+            // set warehouse_id if any
+			Params whParam = paramCatalog.getParamByName("warehouse_id");
+			if (whParam != null) {
+				mObj.put("warehouse_id", whParam.getValue());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
