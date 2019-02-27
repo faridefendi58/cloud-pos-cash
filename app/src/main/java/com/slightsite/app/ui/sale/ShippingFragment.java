@@ -1,16 +1,21 @@
 package com.slightsite.app.ui.sale;
 
+import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -23,8 +28,12 @@ import com.slightsite.app.domain.customer.CustomerCatalog;
 import com.slightsite.app.domain.customer.CustomerService;
 import com.slightsite.app.domain.sale.Checkout;
 import com.slightsite.app.techicalservices.NoDaoSetException;
+import com.slightsite.app.techicalservices.Tools;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class ShippingFragment extends Fragment {
@@ -40,12 +49,16 @@ public class ShippingFragment extends Fragment {
     private EditText phone;
     private EditText email;
     private EditText address;
+    private EditText shipping_method;
+    private AutoCompleteTextView shipping_date;
 
     private Checkout c_data;
     private String customer_name;
     private String customer_phone;
     private String customer_email;
     private String customer_address;
+
+    private String[] ship_methods = new String[]{"Bawa Langsung", "Ambil Nanti", "Gojek", "Grab", "Kurir"};
 
     public ShippingFragment() {
     }
@@ -85,6 +98,9 @@ public class ShippingFragment extends Fragment {
         phone = (EditText) root.findViewById(R.id.customer_phone);
         email = (EditText) root.findViewById(R.id.customer_email);
         address = (EditText) root.findViewById(R.id.customer_address);
+        shipping_method = (EditText) root.findViewById(R.id.shipping_method);
+        shipping_date = (AutoCompleteTextView) root.findViewById(R.id.shipping_date);
+
         final TextView customer_id = (TextView) root.findViewById(R.id.customer_id);
         float elevation = 6f;
         Drawable backgroundDrawable = new ColorDrawable(Color.WHITE);
@@ -163,5 +179,52 @@ public class ShippingFragment extends Fragment {
         cust = c_data.getCustomer();
         setTextChangeListener(phone, "phone");
         setTextChangeListener(address, "address");
+
+        shipping_method.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showShippingMethodDialog(v);
+            }
+        });
+
+        shipping_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogDatePickerLight(v);
+            }
+        });
+    }
+
+    private void showShippingMethodDialog(final View v) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        //builder.setTitle("Cara Pengiriman");
+        builder.setSingleChoiceItems(ship_methods, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                ((EditText) v).setText(ship_methods[i]);
+                dialogInterface.dismiss();
+            }
+        });
+        builder.show();
+    }
+
+    private void dialogDatePickerLight(final View v) {
+        Calendar cur_calender = Calendar.getInstance();
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
+                new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+                long date = newDate.getTimeInMillis();
+                ((EditText) v).setText(Tools.getFormattedDateShort(date));
+            }
+
+        }, cur_calender.get(Calendar.YEAR), cur_calender.get(Calendar.MONTH), cur_calender.get(Calendar.DAY_OF_MONTH));
+
+        datePickerDialog.show();
     }
 }

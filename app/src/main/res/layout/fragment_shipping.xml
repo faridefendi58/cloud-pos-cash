@@ -58,15 +58,6 @@
             android:minHeight="@dimen/spacing_xmlarge"
             android:text="" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_large"
-            android:text="SHIPPING ADDRESS"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            android:textColor="@color/grey_40"
-            app:fontFamily="sans-serif-medium" />
-
         <EditText
             style="@style/EditText.Flat.Grey"
             android:id="@+id/customer_address"
@@ -75,6 +66,57 @@
             android:layout_marginTop="@dimen/spacing_large"
             android:background="@drawable/edit_text_round_bg_outline"
             android:hint="@string/address"
+            android:minHeight="@dimen/spacing_xmlarge" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:text="SHIPPING METHOD"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:textColor="@color/grey_40"
+            app:fontFamily="sans-serif-medium" />
+
+        <EditText
+            android:id="@+id/shipping_method"
+            style="@style/EditText.Flat.Grey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_round_bg_outline"
+            android:drawableEnd="@drawable/ic_expand_arrow"
+            android:drawableRight="@drawable/ic_expand_arrow"
+            android:editable="false"
+            android:focusable="false"
+            android:minHeight="@dimen/spacing_xmlarge"
+            android:paddingLeft="@dimen/spacing_middle"
+            android:paddingRight="@dimen/spacing_middle"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:text="Bawa Langsung"
+            android:hint="Cara Pengiriman"/>
+
+        <AutoCompleteTextView
+            android:id="@+id/shipping_date"
+            style="@style/EditText.Flat.Grey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:background="@drawable/edit_text_round_bg_outline"
+            android:drawableEnd="@drawable/ic_arrow_drop_grey"
+            android:drawableRight="@drawable/ic_arrow_drop_grey"
+            android:editable="false"
+            android:hint="Tanggal Pengiriman"
+            android:focusable="false"
+            android:maxLines="1"
+            android:singleLine="true" />
+
+        <EditText
+            style="@style/EditText.Flat.Grey"
+            android:id="@+id/shipping_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:background="@drawable/edit_text_round_bg_outline"
+            android:hint="Alamat Pengiriman"
             android:minHeight="@dimen/spacing_xmlarge" />
 
         <!--<LinearLayout
