@@ -71,6 +71,7 @@ public class PaymentFragment extends Fragment {
         if (!c_data.getTransferBank().isEmpty()) {
             Log.e(getTag(), "transfer bank data on default value :"+ c_data.getTransferBank().toString());
         }
+        Log.e(getTag(), "shipping data on payment : "+ c_data.getShipping().toMap().toString());
 
         return root;
     }

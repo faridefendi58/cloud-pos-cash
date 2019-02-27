@@ -27,10 +27,13 @@ import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.customer.CustomerCatalog;
 import com.slightsite.app.domain.customer.CustomerService;
 import com.slightsite.app.domain.sale.Checkout;
+import com.slightsite.app.domain.sale.Shipping;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Tools;
+import com.slightsite.app.ui.inventory.ProductServerActivity;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -51,6 +54,8 @@ public class ShippingFragment extends Fragment {
     private EditText address;
     private EditText shipping_method;
     private AutoCompleteTextView shipping_date;
+    private AutoCompleteTextView shipping_warehouse;
+    private EditText shipping_address;
 
     private Checkout c_data;
     private String customer_name;
@@ -59,6 +64,12 @@ public class ShippingFragment extends Fragment {
     private String customer_address;
 
     private String[] ship_methods = new String[]{"Bawa Langsung", "Ambil Nanti", "Gojek", "Grab", "Kurir"};
+    private enum SMethod {DIRECT, LATER, GOJEK, GRAB, CURRIER }
+
+    private ArrayList<String> warehouse_items = new ArrayList<String>();
+    private String current_warehouse_name;
+
+    private Shipping ship;
 
     public ShippingFragment() {
     }
@@ -86,6 +97,7 @@ public class ShippingFragment extends Fragment {
             phone.setText(customer_phone);
             email.setText(customer_email);
             address.setText(customer_address);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -100,6 +112,8 @@ public class ShippingFragment extends Fragment {
         address = (EditText) root.findViewById(R.id.customer_address);
         shipping_method = (EditText) root.findViewById(R.id.shipping_method);
         shipping_date = (AutoCompleteTextView) root.findViewById(R.id.shipping_date);
+        shipping_address = (EditText) root.findViewById(R.id.shipping_address);
+        shipping_warehouse = (AutoCompleteTextView) root.findViewById(R.id.shipping_warehouse);
 
         final TextView customer_id = (TextView) root.findViewById(R.id.customer_id);
         float elevation = 6f;
@@ -167,6 +181,9 @@ public class ShippingFragment extends Fragment {
                             ((CheckoutActivity) getActivity()).setCustomer(cust);
                         }
                     }
+                    if (setType == "shipping_address") {
+                        ship.setAddress(s.toString());
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -180,10 +197,23 @@ public class ShippingFragment extends Fragment {
         setTextChangeListener(phone, "phone");
         setTextChangeListener(address, "address");
 
+        if (ship == null) {
+            ship = c_data.getShipping();
+        }
+        ship.setMethod(0);
+        ship.setWarehouseId(((CheckoutActivity) getActivity()).getCurrentWarehouseId());
+        c_data.setShipping(ship);
+
         shipping_method.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showShippingMethodDialog(v);
+            }
+        });
+        shipping_warehouse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showShippingWarehouseDialog(v);
             }
         });
 
@@ -193,14 +223,34 @@ public class ShippingFragment extends Fragment {
                 dialogDatePickerLight(v);
             }
         });
+
+        setTextChangeListener(shipping_warehouse, "shipping_address");
     }
 
     private void showShippingMethodDialog(final View v) {
+        current_warehouse_name = ((CheckoutActivity)getActivity()).getCurrentWarehouseName();
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        //builder.setTitle("Cara Pengiriman");
+
         builder.setSingleChoiceItems(ship_methods, -1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                ship.setMethod(i);
+                ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
+                if (i == 0) {
+                    shipping_date.setVisibility(View.GONE);
+                    shipping_address.setVisibility(View.GONE);
+                    shipping_warehouse.setVisibility(View.GONE);
+                } else if (i == 1) {
+                    shipping_date.setVisibility(View.VISIBLE);
+                    shipping_address.setVisibility(View.GONE);
+                    shipping_warehouse.setVisibility(View.VISIBLE);
+                    shipping_warehouse.setText(current_warehouse_name);
+                } else if (i > 1) {
+                    shipping_date.setVisibility(View.VISIBLE);
+                    shipping_address.setVisibility(View.VISIBLE);
+                    shipping_warehouse.setVisibility(View.GONE);
+                }
                 ((EditText) v).setText(ship_methods[i]);
                 dialogInterface.dismiss();
             }
@@ -221,10 +271,34 @@ public class ShippingFragment extends Fragment {
                 newDate.set(year, monthOfYear, dayOfMonth);
                 long date = newDate.getTimeInMillis();
                 ((EditText) v).setText(Tools.getFormattedDateShort(date));
+                ship.setDate(Tools.getFormattedDateFlat(date));
+                ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
             }
 
         }, cur_calender.get(Calendar.YEAR), cur_calender.get(Calendar.MONTH), cur_calender.get(Calendar.DAY_OF_MONTH));
 
         datePickerDialog.show();
+    }
+
+    private void showShippingWarehouseDialog(final View v) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        final String[] whs = getWarehouses();
+        builder.setSingleChoiceItems(whs, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                ((EditText) v).setText(whs[i]);
+                ship.setWarehouseId(Integer.parseInt(warehouse_items.get(i)));
+                ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
+                dialogInterface.dismiss();
+            }
+        });
+        builder.show();
+    }
+
+    private String[] getWarehouses() {
+        warehouse_items = ((CheckoutActivity)getActivity()).getWarehouseItems();
+        String[] namesArr = warehouse_items.toArray(new String[warehouse_items.size()]);
+
+        return namesArr;
     }
 }

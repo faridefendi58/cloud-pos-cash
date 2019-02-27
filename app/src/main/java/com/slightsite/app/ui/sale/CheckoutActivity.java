@@ -1,6 +1,7 @@
 package com.slightsite.app.ui.sale;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -15,20 +16,41 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.slightsite.app.R;
+import com.slightsite.app.domain.AppController;
 import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.customer.CustomerCatalog;
 import com.slightsite.app.domain.customer.CustomerService;
+import com.slightsite.app.domain.params.ParamCatalog;
+import com.slightsite.app.domain.params.ParamService;
+import com.slightsite.app.domain.params.Params;
 import com.slightsite.app.domain.sale.Checkout;
 import com.slightsite.app.domain.sale.Register;
+import com.slightsite.app.domain.sale.Shipping;
 import com.slightsite.app.techicalservices.NoDaoSetException;
+import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.ui.printer.PrinterActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class CheckoutActivity extends AppCompatActivity {
 
@@ -47,11 +69,26 @@ public class CheckoutActivity extends AppCompatActivity {
     private int idx_state = 0;
 
     public Customer customer;
+    public Shipping shipping;
     public Fragment current_fragment = null;
     public Checkout checkout_data;
     private Register register;
     private CustomerCatalog customerCatalog;
     private Vibrator vibe;
+
+    ProgressDialog pDialog;
+    int success;
+
+    private static final String TAG = CheckoutActivity.class.getSimpleName();
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_MESSAGE = "message";
+
+    private ArrayList<String> warehouse_items = new ArrayList<String>();
+    private ParamCatalog paramCatalog;
+    private HashMap<String, String> warehouse_ids = new HashMap<String, String>();
+    private HashMap<Integer, String> warehouse_names = new HashMap<Integer, String>();
+    private JSONArray warehouse_data;
+    private int current_warehouse_id = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +97,13 @@ public class CheckoutActivity extends AppCompatActivity {
         try {
             register = Register.getInstance();
             customerCatalog = CustomerService.getInstance().getCustomerCatalog();
+
+            paramCatalog = ParamService.getInstance().getParamCatalog();
+            Params whParam = paramCatalog.getParamByName("warehouse_id");
+            if (whParam != null) {
+                current_warehouse_id = Integer.parseInt(whParam.getValue());
+            }
+            getWarehouseList();
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -110,12 +154,16 @@ public class CheckoutActivity extends AppCompatActivity {
                     newActivity.putExtra("saleId", saleId);
                     finish();
                     startActivity(newActivity);
-                    Log.e(getClass().getSimpleName(), "saleId : "+ saleId);
                     return;
                 } else {
                     if (array_state[idx_state] == State.SHIPPING) {
                         // cek customer data dl
-                        if (checkout_data.getCustomer().equals("null") || checkout_data.getCustomer().getEmail() == "email@email.com") {
+                        Log.e(TAG, "customer email : "+ checkout_data.getCustomer().getEmail().toString());
+                        Log.e(TAG, "customer name : "+ checkout_data.getCustomer().getName().length());
+                        Log.e(TAG, "shipping data on SHIPPING : "+ checkout_data.getShipping().toMap().toString());
+                        if (checkout_data.getCustomer().equals("null")
+                                || checkout_data.getCustomer().getEmail() == "email@email.com"
+                                || (checkout_data.getCustomer().getName().length() == 0)) {
                             Toast.makeText(getBaseContext(),
                                     getResources().getString(R.string.error_empty_customer_data), Toast.LENGTH_SHORT)
                                     .show();
@@ -123,6 +171,7 @@ public class CheckoutActivity extends AppCompatActivity {
                             return;
                         }
                     } else if (array_state[idx_state] == State.PAYMENT) {
+                        Log.e(TAG, "shipping data on payment : "+ checkout_data.getShipping().toMap().toString());
                         if (checkout_data.getTotalPaymentReceived() <= 0) {
                             Toast.makeText(getBaseContext(),
                                     getResources().getString(R.string.error_empty_payment_data), Toast.LENGTH_SHORT)
@@ -194,7 +243,7 @@ public class CheckoutActivity extends AppCompatActivity {
             if (!checkout_data.getCustomer().equals(null)) {
                 register.setCustomer(checkout_data.getCustomer());
             }
-
+            Log.e(TAG, "CUK : "+ checkout_data.getShipping().toMap().toString());
         } else if (state.name().equalsIgnoreCase(State.CONFIRMATION.name())) {
             fragment = new ConfirmationFragment();
             line_second.setBackgroundColor(getResources().getColor(R.color.greenUcok));
@@ -268,5 +317,130 @@ public class CheckoutActivity extends AppCompatActivity {
     public void goToFragment(int index) {
         idx_state = index;
         displayFragment(array_state[idx_state]);
+    }
+
+    private void getWarehouseList() {
+        Map<String, String> params = new HashMap<String, String>();
+
+        warehouse_items.clear();
+
+        String url = Server.URL + "warehouse/list?api-key=" + Server.API_KEY;
+        _string_request(
+                Request.Method.GET,
+                url, params, false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                warehouse_data = jObj.getJSONArray("data");
+                                for(int n = 0; n < warehouse_data.length(); n++)
+                                {
+                                    JSONObject data_n = warehouse_data.getJSONObject(n);
+                                    warehouse_items.add(data_n.getString("title"));
+                                    warehouse_ids.put(data_n.getString("title"), data_n.getString("id"));
+                                    warehouse_names.put(data_n.getInt("id"), data_n.getString("title"));
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    public interface VolleyCallback {
+        void onSuccess(String result);
+    }
+
+    private void showDialog() {
+        if (!pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hideDialog() {
+        if (pDialog.isShowing())
+            pDialog.dismiss();
+    }
+
+    private void _string_request(int method, String url, final Map params, final Boolean show_dialog, final VolleyCallback callback) {
+        if (show_dialog) {
+            pDialog = new ProgressDialog(this);
+            pDialog.setCancelable(false);
+            pDialog.setMessage("Request data ...");
+            showDialog();
+        }
+
+        if (method == Request.Method.GET) { //get method doesnt support getParams
+            Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
+            while(iterator.hasNext())
+            {
+                Map.Entry<String, String> pair = iterator.next();
+                String pair_value = pair.getValue();
+                if (pair_value.contains(" "))
+                    pair_value = pair.getValue().replace(" ", "%20");
+                url += "&" + pair.getKey() + "=" + pair_value;
+            }
+        }
+
+        StringRequest strReq = new StringRequest(method, url, new Response.Listener < String > () {
+
+            @Override
+            public void onResponse(String Response) {
+                callback.onSuccess(Response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                if (show_dialog) {
+                    hideDialog();
+                }
+            }
+        })
+        {
+            // set headers
+            @Override
+            protected Map<String, String> getParams() {
+                return params;
+            }
+        };
+
+        strReq.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        try {
+            AppController.getInstance().addToRequestQueue(strReq, "json_obj_req");
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), e.getMessage());
+        }
+    }
+
+    public ArrayList<String> getWarehouseItems() {
+        return warehouse_items;
+    }
+
+    public int getCurrentWarehouseId() {
+        return current_warehouse_id;
+    }
+
+    public String getCurrentWarehouseName() {
+        return warehouse_names.get(current_warehouse_id);
+    }
+
+    public void setShipping(Shipping shipping, Checkout c_data) {
+        this.shipping = shipping;
+        c_data.setShipping(shipping);
+        this.checkout_data = c_data;
+    }
+
+    public Shipping getShipping() {
+        return shipping;
     }
 }

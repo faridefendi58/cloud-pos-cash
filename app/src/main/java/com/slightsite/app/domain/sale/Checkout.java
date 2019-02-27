@@ -18,6 +18,7 @@ public class Checkout implements Serializable {
     private Boolean use_transfer_bank = false;
     private Boolean use_edc = false;
     private List<PaymentItem> payment_items;
+    private Shipping shipping;
 
     public HashMap< String, String> getTransferBank() {
         if (transfer_bank == null)
@@ -137,5 +138,15 @@ public class Checkout implements Serializable {
 
     public String getCardNumber() {
         return card_number;
+    }
+
+    public void setShipping(Shipping shipping) {
+        this.shipping = shipping;
+    }
+
+    public Shipping getShipping() {
+        if (shipping == null)
+            shipping = new Shipping(1, 0, "", "", 0);
+        return shipping;
     }
 }

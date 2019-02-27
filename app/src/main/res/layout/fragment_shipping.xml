@@ -95,6 +95,22 @@
             android:hint="Cara Pengiriman"/>
 
         <AutoCompleteTextView
+            android:id="@+id/shipping_warehouse"
+            style="@style/EditText.Flat.Grey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:background="@drawable/edit_text_round_bg_outline"
+            android:drawableEnd="@drawable/ic_arrow_drop_grey"
+            android:drawableRight="@drawable/ic_arrow_drop_grey"
+            android:editable="false"
+            android:hint="Lokasi Pengambilan"
+            android:focusable="false"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:visibility="gone"/>
+
+        <AutoCompleteTextView
             android:id="@+id/shipping_date"
             style="@style/EditText.Flat.Grey"
             android:layout_width="match_parent"
@@ -104,10 +120,11 @@
             android:drawableEnd="@drawable/ic_arrow_drop_grey"
             android:drawableRight="@drawable/ic_arrow_drop_grey"
             android:editable="false"
-            android:hint="Tanggal Pengiriman"
+            android:hint="Tanggal Kirim/Ambil"
             android:focusable="false"
             android:maxLines="1"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:visibility="gone"/>
 
         <EditText
             style="@style/EditText.Flat.Grey"
@@ -117,7 +134,8 @@
             android:layout_marginTop="@dimen/spacing_large"
             android:background="@drawable/edit_text_round_bg_outline"
             android:hint="Alamat Pengiriman"
-            android:minHeight="@dimen/spacing_xmlarge" />
+            android:minHeight="@dimen/spacing_xmlarge"
+            android:visibility="gone"/>
 
         <!--<LinearLayout
             android:layout_width="match_parent"
