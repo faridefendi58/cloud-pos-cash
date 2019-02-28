@@ -71,7 +71,7 @@ public class PaymentFragment extends Fragment {
         if (!c_data.getTransferBank().isEmpty()) {
             Log.e(getTag(), "transfer bank data on default value :"+ c_data.getTransferBank().toString());
         }
-        Log.e(getTag(), "shipping data on payment : "+ c_data.getShipping().toMap().toString());
+        Log.e(getTag(), "shipping data on payment frag : "+ c_data.getShipping().toMap().toString());
 
         return root;
     }
@@ -180,7 +180,7 @@ public class PaymentFragment extends Fragment {
 
     private void initDefaultValue() {
         try {
-            if (Integer.parseInt(c_data.getCashReceive()) > 0) {
+            if (c_data.getCashReceive().length() > 0 && Integer.parseInt(c_data.getCashReceive()) > 0) {
                 cash_receive.setText(c_data.getCashReceive());
             }
 

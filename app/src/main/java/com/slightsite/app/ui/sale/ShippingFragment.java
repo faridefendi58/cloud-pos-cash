@@ -35,6 +35,8 @@ import com.slightsite.app.ui.inventory.ProductServerActivity;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -63,10 +65,11 @@ public class ShippingFragment extends Fragment {
     private String customer_email;
     private String customer_address;
 
-    private String[] ship_methods = new String[]{"Bawa Langsung", "Ambil Nanti", "Gojek", "Grab", "Kurir"};
+    private String[] ship_methods = new String[]{};
     private enum SMethod {DIRECT, LATER, GOJEK, GRAB, CURRIER }
 
     private ArrayList<String> warehouse_items = new ArrayList<String>();
+    private HashMap<String, String> warehouse_ids = new HashMap<String, String>();
     private String current_warehouse_name;
 
     private Shipping ship;
@@ -201,8 +204,17 @@ public class ShippingFragment extends Fragment {
             ship = c_data.getShipping();
         }
         ship.setMethod(0);
-        ship.setWarehouseId(((CheckoutActivity) getActivity()).getCurrentWarehouseId());
+        CheckoutActivity c_act = ((CheckoutActivity) getActivity());
+        int current_wh_id = c_act.getCurrentWarehouseId();
+        ship.setWarehouseId(current_wh_id);
+        ship.setWarehouseName(c_act.getCurrentWarehouseName());
+        try {
+            long date = Calendar.getInstance().getTimeInMillis();
+            ship.setDate(Tools.getFormattedDateFlat(date));
+        } catch (Exception e) {}
+
         c_data.setShipping(ship);
+        ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
 
         shipping_method.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -229,6 +241,7 @@ public class ShippingFragment extends Fragment {
 
     private void showShippingMethodDialog(final View v) {
         current_warehouse_name = ((CheckoutActivity)getActivity()).getCurrentWarehouseName();
+        ship_methods = ((CheckoutActivity)getActivity()).getShippingMethods();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
@@ -283,12 +296,18 @@ public class ShippingFragment extends Fragment {
     private void showShippingWarehouseDialog(final View v) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         final String[] whs = getWarehouses();
+        warehouse_ids = ((CheckoutActivity)getActivity()).getWarehouseIds();
         builder.setSingleChoiceItems(whs, -1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 ((EditText) v).setText(whs[i]);
-                ship.setWarehouseId(Integer.parseInt(warehouse_items.get(i)));
+                try {
+                    ship.setWarehouseId(Integer.parseInt(warehouse_ids.get(whs[i])));
+                } catch (Exception e) {}
+
+                ship.setWarehouseName(whs[i]);
                 ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
+
                 dialogInterface.dismiss();
             }
         });

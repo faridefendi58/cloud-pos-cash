@@ -89,6 +89,9 @@ public class CheckoutActivity extends AppCompatActivity {
     private HashMap<Integer, String> warehouse_names = new HashMap<Integer, String>();
     private JSONArray warehouse_data;
     private int current_warehouse_id = 0;
+    private String current_warehouse_name = null;
+
+    private String[] ship_methods = new String[]{"Bawa Langsung", "Ambil Nanti", "Gojek", "Grab", "Kurir"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,8 +161,6 @@ public class CheckoutActivity extends AppCompatActivity {
                 } else {
                     if (array_state[idx_state] == State.SHIPPING) {
                         // cek customer data dl
-                        Log.e(TAG, "customer email : "+ checkout_data.getCustomer().getEmail().toString());
-                        Log.e(TAG, "customer name : "+ checkout_data.getCustomer().getName().length());
                         Log.e(TAG, "shipping data on SHIPPING : "+ checkout_data.getShipping().toMap().toString());
                         if (checkout_data.getCustomer().equals("null")
                                 || checkout_data.getCustomer().getEmail() == "email@email.com"
@@ -216,7 +217,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
         Bundle bundle = new Bundle();
 
-        checkout_data = this.getCheckoutData();
+        checkout_data = getCheckoutData();
 
         if (state.name().equalsIgnoreCase(State.SHIPPING.name())) {
             fragment = new ShippingFragment();
@@ -243,7 +244,7 @@ public class CheckoutActivity extends AppCompatActivity {
             if (!checkout_data.getCustomer().equals(null)) {
                 register.setCustomer(checkout_data.getCustomer());
             }
-            Log.e(TAG, "CUK : "+ checkout_data.getShipping().toMap().toString());
+            Log.e(TAG, "CUK2 : "+ getShipping().toMap().toString());
         } else if (state.name().equalsIgnoreCase(State.CONFIRMATION.name())) {
             fragment = new ConfirmationFragment();
             line_second.setBackgroundColor(getResources().getColor(R.color.greenUcok));
@@ -254,7 +255,8 @@ public class CheckoutActivity extends AppCompatActivity {
 
         if (fragment == null) return;
 
-        bundle.putSerializable("checkout_data", checkout_data);
+        //bundle.putSerializable("checkout_data", checkout_data);
+        bundle.putSerializable("checkout_data", getCheckoutData());
         fragment.setArguments(bundle);
 
         fragmentTransaction.replace(R.id.frame_content, fragment);
@@ -343,6 +345,9 @@ public class CheckoutActivity extends AppCompatActivity {
                                     warehouse_items.add(data_n.getString("title"));
                                     warehouse_ids.put(data_n.getString("title"), data_n.getString("id"));
                                     warehouse_names.put(data_n.getInt("id"), data_n.getString("title"));
+                                    if (data_n.getInt("id") == current_warehouse_id) {
+                                        current_warehouse_name = data_n.getString("title");
+                                    }
                                 }
                             }
 
@@ -426,21 +431,32 @@ public class CheckoutActivity extends AppCompatActivity {
         return warehouse_items;
     }
 
+    public HashMap<String, String> getWarehouseIds() {
+        return warehouse_ids;
+    }
+
     public int getCurrentWarehouseId() {
         return current_warehouse_id;
     }
 
     public String getCurrentWarehouseName() {
+        if (current_warehouse_name != null) {
+            return current_warehouse_name;
+        }
         return warehouse_names.get(current_warehouse_id);
     }
 
-    public void setShipping(Shipping shipping, Checkout c_data) {
-        this.shipping = shipping;
+    public void setShipping(Shipping _shipping, Checkout c_data) {
+        this.shipping = _shipping;
         c_data.setShipping(shipping);
         this.checkout_data = c_data;
     }
 
     public Shipping getShipping() {
         return shipping;
+    }
+
+    public String[] getShippingMethods() {
+        return ship_methods;
     }
 }

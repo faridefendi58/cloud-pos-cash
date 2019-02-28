@@ -21,6 +21,7 @@ import com.slightsite.app.domain.payment.Payment;
 import com.slightsite.app.domain.sale.Checkout;
 import com.slightsite.app.domain.sale.PaymentItem;
 import com.slightsite.app.domain.sale.Register;
+import com.slightsite.app.domain.sale.Shipping;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.ui.MainActivity;
 
@@ -52,6 +53,13 @@ public class ConfirmationFragment extends Fragment {
     private TextView changeDue;
     private Payment payment;
 
+    /** shipping detail */
+    private TextView shipping_method;
+    private TextView shipping_date;
+    private TextView shipping_warehouse;
+    private Shipping shipping;
+    private String[] ship_methods;
+
     public ConfirmationFragment() {
     }
 
@@ -59,10 +67,10 @@ public class ConfirmationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         try {
             register = Register.getInstance();
+            ship_methods = ((CheckoutActivity)getActivity()).getShippingMethods();
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
-        Log.e(getTag(), "register : "+ register.getCurrentSale().getAllLineItem().toString());
 
         root = inflater.inflate(R.layout.fragment_confirmation, container, false);
 
@@ -98,6 +106,10 @@ public class ConfirmationFragment extends Fragment {
         edit_cart  = (TextView) root.findViewById(R.id.edit_cart);
         totalPayment  = (TextView) root.findViewById(R.id.totalPayment);
         changeDue  = (TextView) root.findViewById(R.id.changeDue);
+
+        shipping_method = (TextView) root.findViewById(R.id.shipping_method);
+        shipping_date = (TextView) root.findViewById(R.id.shipping_date);
+        shipping_warehouse = (TextView) root.findViewById(R.id.shipping_warehouse);
     }
 
     private void initAction() {
@@ -146,6 +158,14 @@ public class ConfirmationFragment extends Fragment {
                 totalPayment.setText(CurrencyController.getInstance().moneyFormat(c_data.getTotalPaymentReceived()));
                 Double change_due = c_data.getTotalPaymentReceived() - register.getTotal();
                 changeDue.setText(CurrencyController.getInstance().moneyFormat(change_due));
+            }
+
+            if (!c_data.getShipping().equals(null)) {
+                shipping = c_data.getShipping();
+                Log.e(getTag(), "Shipping data on confirmation :"+ shipping.toMap().toString());
+                shipping_method.setText(ship_methods[shipping.getMethod()]);
+                shipping_date.setText(shipping.getDate());
+                shipping_warehouse.setText(shipping.getWarehouseId());
             }
         } catch (Exception e) { }
     }

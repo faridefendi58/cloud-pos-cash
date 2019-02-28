@@ -8,6 +8,7 @@ public class Shipping {
     private String date;
     private String address;
     private int warehouse_id;
+    private String warehouse_name;
 
     public static final int UNDEFINED = -1;
 
@@ -32,6 +33,7 @@ public class Shipping {
         map.put("date", date);
         map.put("address", address);
         map.put("warehouse_id", warehouse_id+"");
+        map.put("warehouse_name", warehouse_name);
 
         return map;
 
@@ -63,5 +65,12 @@ public class Shipping {
     }
     public int getWarehouseId() {
         return warehouse_id;
+    }
+
+    public void setWarehouseName(String warehouseName) {
+        this.warehouse_name = warehouseName;
+    }
+    public String getWarehouseName() {
+        return warehouse_name;
     }
 }

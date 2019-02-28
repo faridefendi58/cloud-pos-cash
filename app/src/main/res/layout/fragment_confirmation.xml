@@ -82,6 +82,121 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:text="SHIPMENT DETAILS:"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                    android:textColor="@color/grey_40"
+                    app:fontFamily="sans-serif-medium" />
+
+                <TextView
+                    android:id="@+id/edit_shipment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Edit"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="@color/colorPrimary"
+                    app:fontFamily="sans-serif-medium" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="@dimen/spacing_middle"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/shipping_method"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="@color/grey_90"
+                    app:fontFamily="sans-serif-medium"
+                    android:textStyle="bold"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="@dimen/spacing_middle"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="@color/grey_90"
+                    app:fontFamily="sans-serif-medium"
+                    android:text="Tanggal Ambil/Kirim"
+                    android:drawableRight="@drawable/ic_arrow_forward_24dp"/>
+
+                <TextView
+                    android:id="@+id/shipping_date"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingLeft="@dimen/spacing_middle"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="@color/grey_90"
+                    app:fontFamily="sans-serif-medium"
+                    android:textAlignment="textEnd"
+                    android:text="28 Feb 2019"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="@dimen/spacing_middle"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="@color/grey_90"
+                    app:fontFamily="sans-serif-medium"
+                    android:text="WH Pengambilan"
+                    android:drawableRight="@drawable/ic_arrow_forward_24dp"/>
+
+                <TextView
+                    android:id="@+id/shipping_warehouse"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingLeft="@dimen/spacing_middle"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="@color/grey_90"
+                    app:fontFamily="sans-serif-medium"
+                    android:textAlignment="textEnd"
+                    android:text="WH Jl Kabupaten"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey_10" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_large">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="PAYMENT DETAILS:"
                     android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                     android:textColor="@color/grey_40"
