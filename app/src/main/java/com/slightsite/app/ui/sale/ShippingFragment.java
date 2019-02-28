@@ -34,6 +34,7 @@ import com.slightsite.app.ui.inventory.ProductServerActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -83,6 +84,7 @@ public class ShippingFragment extends Fragment {
 
         try {
             customerCatalog = CustomerService.getInstance().getCustomerCatalog();
+            ship_methods = ((CheckoutActivity)getActivity()).getShippingMethods();
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -101,6 +103,28 @@ public class ShippingFragment extends Fragment {
             email.setText(customer_email);
             address.setText(customer_address);
 
+            String _shipping_method = getArguments().getString("shipping_method");
+            String _shipping_warehouse = getArguments().getString("shipping_warehouse_pickup");
+            int _shipping_warehouse_id = getArguments().getInt("shipping_warehouse_id");
+            String _shipping_date = getArguments().getString("shipping_date");
+            String _shipping_address = getArguments().getString("shipping_address");
+            int _shipping_method_id = Arrays.asList(ship_methods).indexOf(_shipping_method);
+
+            if (_shipping_method != null) {
+                shipping_method.setText(_shipping_method);
+                // also update the shipping
+                ship.setMethod(_shipping_method_id);
+                ship.setWarehouseName(_shipping_warehouse);
+                ship.setWarehouseId(_shipping_warehouse_id);
+                ship.setDate(_shipping_date);
+                ship.setAddress(_shipping_address);
+                ((CheckoutActivity)getActivity()).setShipping(ship, c_data);
+            }
+            shipping_warehouse.setText(_shipping_warehouse);
+            shipping_date.setText(_shipping_date);
+            shipping_address.setText(_shipping_address);
+
+            setupShippingForm(_shipping_method_id);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -241,7 +265,6 @@ public class ShippingFragment extends Fragment {
 
     private void showShippingMethodDialog(final View v) {
         current_warehouse_name = ((CheckoutActivity)getActivity()).getCurrentWarehouseName();
-        ship_methods = ((CheckoutActivity)getActivity()).getShippingMethods();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
@@ -250,20 +273,7 @@ public class ShippingFragment extends Fragment {
             public void onClick(DialogInterface dialogInterface, int i) {
                 ship.setMethod(i);
                 ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
-                if (i == 0) {
-                    shipping_date.setVisibility(View.GONE);
-                    shipping_address.setVisibility(View.GONE);
-                    shipping_warehouse.setVisibility(View.GONE);
-                } else if (i == 1) {
-                    shipping_date.setVisibility(View.VISIBLE);
-                    shipping_address.setVisibility(View.GONE);
-                    shipping_warehouse.setVisibility(View.VISIBLE);
-                    shipping_warehouse.setText(current_warehouse_name);
-                } else if (i > 1) {
-                    shipping_date.setVisibility(View.VISIBLE);
-                    shipping_address.setVisibility(View.VISIBLE);
-                    shipping_warehouse.setVisibility(View.GONE);
-                }
+                setupShippingForm(i);
                 ((EditText) v).setText(ship_methods[i]);
                 dialogInterface.dismiss();
             }
@@ -319,5 +329,24 @@ public class ShippingFragment extends Fragment {
         String[] namesArr = warehouse_items.toArray(new String[warehouse_items.size()]);
 
         return namesArr;
+    }
+
+    private void setupShippingForm(int i) {
+        if (i == 0) {
+            shipping_date.setVisibility(View.GONE);
+            shipping_address.setVisibility(View.GONE);
+            shipping_warehouse.setVisibility(View.GONE);
+        } else if (i == 1) {
+            shipping_date.setVisibility(View.VISIBLE);
+            shipping_address.setVisibility(View.GONE);
+            shipping_warehouse.setVisibility(View.VISIBLE);
+            if (current_warehouse_name != null) {
+                shipping_warehouse.setText(current_warehouse_name);
+            }
+        } else if (i > 1) {
+            shipping_date.setVisibility(View.VISIBLE);
+            shipping_address.setVisibility(View.VISIBLE);
+            shipping_warehouse.setVisibility(View.GONE);
+        }
     }
 }

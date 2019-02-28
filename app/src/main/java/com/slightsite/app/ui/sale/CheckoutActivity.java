@@ -226,9 +226,23 @@ public class CheckoutActivity extends AppCompatActivity {
                 bundle.putString("customer_email", customer.getEmail());
                 bundle.putString("customer_phone", customer.getPhone());
                 bundle.putString("customer_address", customer.getAddress());
+
+                bundle.putString("shipping_method", ship_methods[shipping.getMethod()]);
+                bundle.putString("shipping_warehouse_pickup", warehouse_names.get(shipping.getWarehouseId()));
+                bundle.putString("shipping_warehouse_id", shipping.getWarehouseId()+"");
+                bundle.putString("shipping_date", shipping.getDate());
+                bundle.putString("shipping_address", shipping.getAddress());
                 fragment.setArguments(bundle);
 
+                if (shipping.getWarehouseName() == null && bundle.getString("shipping_warehouse").length() > 0) {
+                    shipping.setWarehouseName(bundle.getString("shipping_warehouse"));
+                    setCurrentWarehouseName(current_warehouse_name);
+                }
+
+                Log.e(TAG, "bundle : "+ bundle.toString());
+
                 checkout_data.setCustomer(customer);
+                checkout_data.setShipping(shipping);
             } catch (Exception e) {}
 
             tv_shipping.setTextColor(getResources().getColor(R.color.grey_90));
@@ -244,7 +258,7 @@ public class CheckoutActivity extends AppCompatActivity {
             if (!checkout_data.getCustomer().equals(null)) {
                 register.setCustomer(checkout_data.getCustomer());
             }
-            Log.e(TAG, "CUK2 : "+ getShipping().toMap().toString());
+            //Log.e(TAG, "CUK2 : "+ getShipping().toMap().toString());
         } else if (state.name().equalsIgnoreCase(State.CONFIRMATION.name())) {
             fragment = new ConfirmationFragment();
             line_second.setBackgroundColor(getResources().getColor(R.color.greenUcok));
@@ -444,6 +458,10 @@ public class CheckoutActivity extends AppCompatActivity {
             return current_warehouse_name;
         }
         return warehouse_names.get(current_warehouse_id);
+    }
+
+    public void setCurrentWarehouseName(String _current_warehouse_name) {
+        this.current_warehouse_name = _current_warehouse_name;
     }
 
     public void setShipping(Shipping _shipping, Checkout c_data) {
