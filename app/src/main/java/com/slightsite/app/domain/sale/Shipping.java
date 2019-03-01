@@ -4,11 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Shipping {
+    private int id;
     private int method;
+    private int sale_id;
     private String date;
     private String address;
     private int warehouse_id;
     private String warehouse_name;
+    private String date_added;
 
     public static final int UNDEFINED = -1;
 
@@ -17,6 +20,7 @@ public class Shipping {
     }
 
     public Shipping(int id, int method, String date, String address, int warehouse_id) {
+        this.id = id;
         this.method = method;
         this.date = date;
         this.address = address;
@@ -29,14 +33,27 @@ public class Shipping {
      */
     public Map<String, String> toMap() {
         Map<String, String> map = new HashMap<String, String>();
+        map.put("sale_id", sale_id+"");
         map.put("method", method+"");
         map.put("date", date);
         map.put("address", address);
         map.put("warehouse_id", warehouse_id+"");
         map.put("warehouse_name", warehouse_name);
+        map.put("date_added", date_added);
 
         return map;
 
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setSaleId(int sale_id) {
+        this.sale_id = sale_id;
+    }
+    public int getSaleId() {
+        return sale_id;
     }
 
     public void setMethod(int method) {
@@ -72,5 +89,12 @@ public class Shipping {
     }
     public String getWarehouseName() {
         return warehouse_name;
+    }
+
+    public void setDateAdded(String date) {
+        this.date_added = date;
+    }
+    public String getDateAdded() {
+        return date_added;
     }
 }

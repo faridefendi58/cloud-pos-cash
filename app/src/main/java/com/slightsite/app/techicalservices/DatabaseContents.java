@@ -19,7 +19,8 @@ public enum DatabaseContents {
 	CURRENCY("currency"),
 	TABLE_PARAMS("params"),
 	TABLE_ADMIN("admin"),
-	TABLE_SALE_PAYMENT("sale_payment");
+	TABLE_SALE_PAYMENT("sale_payment"),
+	TABLE_SALE_SHIPPING("sale_shipping");
 
 	private String name;
 	

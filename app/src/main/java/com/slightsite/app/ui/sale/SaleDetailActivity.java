@@ -47,6 +47,9 @@ import com.slightsite.app.domain.payment.PaymentCatalog;
 import com.slightsite.app.domain.payment.PaymentService;
 import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.domain.sale.SaleLedger;
+import com.slightsite.app.domain.sale.Shipping;
+import com.slightsite.app.domain.shipping.ShippingCatalog;
+import com.slightsite.app.domain.shipping.ShippingService;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.URLBuilder;
@@ -81,6 +84,8 @@ public class SaleDetailActivity extends Activity{
 	private PaymentCatalog paymentCatalog;
 	private List<Payment> paymentList;
 	private ParamCatalog paramCatalog;
+	private ShippingCatalog shippingCatalog;
+	private Shipping shipping;
 
 	ProgressDialog pDialog;
 	int success;
@@ -145,6 +150,15 @@ public class SaleDetailActivity extends Activity{
 		try {
 			paymentCatalog = PaymentService.getInstance().getPaymentCatalog();
 			paymentList = paymentCatalog.getPaymentBySaleId(saleId);
+			shippingCatalog = ShippingService.getInstance().getShippingCatalog();
+			shipping = shippingCatalog.getShippingBySaleId(saleId);
+			List<Shipping> list_shipping = shippingCatalog.getAllShipping();
+			Log.e(TAG, "shipping data : "+ shipping.toMap().toString());
+			for (int i = 0; i < list_shipping.size(); i++)
+			{
+				Log.e(TAG, "looping shipping data : "+ list_shipping.get(i).toMap().toString());
+			}
+
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
 		}

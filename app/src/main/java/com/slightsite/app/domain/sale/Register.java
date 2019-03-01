@@ -18,6 +18,7 @@ import com.slightsite.app.domain.payment.Payment;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.payment.PaymentDao;
 import com.slightsite.app.techicalservices.sale.SaleDao;
+import com.slightsite.app.techicalservices.shipping.ShippingDao;
 
 /**
  * Handles all Sale processes.
@@ -30,7 +31,9 @@ public class Register {
 	private static Stock stock = null;
 	private static Customer customer = null;
 	private static PaymentDao paymentDao = null;
+	private static ShippingDao shippingDao = null;
 	private static List<PaymentItem> payment_items = null;
+	private static Shipping shipping = null;
 
 	private Sale currentSale;
 	
@@ -127,7 +130,17 @@ public class Register {
 					e.printStackTrace();
 				}
 			}
-			Log.e(getClass().getSimpleName(), "Payment Data : "+ payment_items.toString());
+
+			try {
+				Shipping shp = getShipping();
+				shp.setDateAdded(endTime);
+				shp.setSaleId(currentSale.getId());
+				shippingDao.addShipping(shp);
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+			Log.e(getClass().getSimpleName(), "Payment Data on end payment : "+ payment_items.toString());
+			Log.e(getClass().getSimpleName(), "Shipping Data on end payment : "+ shipping.toMap().toString());
 			currentSale = null;
 		}
 	}
@@ -248,5 +261,19 @@ public class Register {
 
 	public static void setPaymentDao(PaymentDao dao) {
 		paymentDao = dao;
+	}
+
+	public static void setShippingDao(ShippingDao dao) {
+		shippingDao = dao;
+	}
+
+	public void setShipping(Shipping _shipping) {
+		if (currentSale != null) {
+			this.shipping = _shipping;
+		}
+	}
+
+	public Shipping getShipping() {
+		return shipping;
 	}
 }

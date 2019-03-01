@@ -80,6 +80,13 @@ public class ConfirmationFragment extends Fragment {
 
         try {
             register.setPaymentItems(c_data.getPaymentItems());
+            // also setup the shipping
+            Shipping _ship = c_data.getShipping();
+            _ship.setSaleId(register.getCurrentSale().getId());
+            _ship.setDateAdded(register.getCurrentSale().getStartTime());
+            register.setShipping(_ship);
+            c_data.setShipping(_ship);
+            Log.e(getTag(), "Shipping data on onCreateView conf fragment: "+ register.getShipping().toMap().toString());
         } catch (Exception e){ }
         return root;
     }

@@ -27,6 +27,7 @@ import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.payment.PaymentService;
 import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.domain.sale.SaleLedger;
+import com.slightsite.app.domain.shipping.ShippingService;
 import com.slightsite.app.techicalservices.AndroidDatabase;
 import com.slightsite.app.techicalservices.Database;
 import com.slightsite.app.techicalservices.DatabaseExecutor;
@@ -40,6 +41,8 @@ import com.slightsite.app.techicalservices.payment.PaymentDao;
 import com.slightsite.app.techicalservices.payment.PaymentDaoAndroid;
 import com.slightsite.app.techicalservices.sale.SaleDao;
 import com.slightsite.app.techicalservices.sale.SaleDaoAndroid;
+import com.slightsite.app.techicalservices.shipping.ShippingDao;
+import com.slightsite.app.techicalservices.shipping.ShippingDaoAndroid;
 
 /**
  * This is the first activity page, core-app and database created here.
@@ -64,6 +67,7 @@ public class SplashScreenActivity extends Activity {
 		CustomerDao customerDao = new CustomerDaoAndroid(database);
 		ParamDao paramDao = new ParamDaoAndroid(database);
 		PaymentDao paymentDao = new PaymentDaoAndroid(database);
+		ShippingDao shippingDao = new ShippingDaoAndroid(database) {};
 
 		DatabaseExecutor.setDatabase(database);
 		LanguageController.setDatabase(database);
@@ -78,6 +82,8 @@ public class SplashScreenActivity extends Activity {
 		ParamService.setParamDao(paramDao);
 		PaymentService.setPaymentDao(paymentDao);
 		Register.setPaymentDao(paymentDao);
+		ShippingService.setShippingDao(shippingDao);
+		Register.setShippingDao(shippingDao);
 
 		DateTimeStrategy.setLocale("id", "ID");
 		setLanguage(LanguageController.getInstance().getLanguage());
