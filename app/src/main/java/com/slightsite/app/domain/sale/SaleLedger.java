@@ -97,4 +97,12 @@ public class SaleLedger {
 	public int getTotalTransaction(String time_frame) {
 		return saleDao.getTotalTransaction(time_frame);
 	}
+
+	public int getServerInvoiceId(int sale_id) {
+		return saleDao.getServerInvoiceId(sale_id);
+	}
+
+	public static void setServerInvoiceId(Sale sale, int server_invoice_id) {
+		saleDao.setPushedSale(sale, server_invoice_id);
+	}
 }

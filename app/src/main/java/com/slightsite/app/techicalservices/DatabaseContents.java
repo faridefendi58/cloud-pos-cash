@@ -7,7 +7,7 @@ package com.slightsite.app.techicalservices;
  */
 public enum DatabaseContents {
 	
-	DATABASE("com.slightsite.posdb1"),
+	DATABASE("com.slightsite.posdb2"),
 	TABLE_PRODUCT_CATALOG("product_catalog"),
 	TABLE_STOCK("stock"),
 	TABLE_PRODUCT_DISCOUNT("product_discount"),
@@ -18,7 +18,9 @@ public enum DatabaseContents {
 	LANGUAGE("language"),
 	CURRENCY("currency"),
 	TABLE_PARAMS("params"),
-	TABLE_ADMIN("admin");
+	TABLE_ADMIN("admin"),
+	TABLE_SALE_PAYMENT("sale_payment"),
+	TABLE_SALE_SHIPPING("sale_shipping");
 
 	private String name;
 	

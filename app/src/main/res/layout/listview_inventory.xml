@@ -37,28 +37,56 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="4dp">
 
-                <TextView
-                    android:id="@+id/name"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="8dp" />
+                    android:orientation="horizontal">
 
-                <RelativeLayout
-                    android:id="@+id/optionView_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:layout_below="@+id/name">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-                    <View
-                        android:id="@+id/optionView"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:background="@drawable/ic_edit_blue_24dp"
-                        android:onClick="optionOnClickHandler"
-                        android:layout_gravity="right"/>
+                        <TextView
+                            android:id="@+id/name"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginBottom="8dp"
+                            android:layout_weight="1"/>
 
-                </RelativeLayout>
+                        <TextView
+                            android:id="@+id/stock_counter"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:layout_below="@+id/name"
+                            android:text="100 in stock"
+                            android:textColor="@color/greenUcok"/>
+
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/optionView_container"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:layout_weight="0.5"
+                        android:gravity="right">
+
+                        <View
+                            android:id="@+id/optionView"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:background="@drawable/ic_edit_blue_24dp"
+                            android:onClick="optionOnClickHandler"
+                            android:layout_gravity="right"
+                            />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
 
             </RelativeLayout>
 

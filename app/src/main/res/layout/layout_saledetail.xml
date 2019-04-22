@@ -69,6 +69,26 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#00698c"
+            android:text="@string/status"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:baselineAligned="false"
         android:orientation="horizontal"
         android:layout_marginTop="10dp">
@@ -148,7 +168,7 @@
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         android:paddingBottom="5dp"
-        android:weightSum="2">
+        android:weightSum="3">
 
         <Button
             android:id="@+id/removeButton"
@@ -157,7 +177,7 @@
             android:layout_weight="1"
             android:textColor="@android:color/white"
             android:background="@color/btnDanger"
-            android:text="@string/remove_invoice"
+            android:text="@string/remove"
             android:textSize="14sp"
             android:clickable="true"
             android:onClick="removeInvoice"/>
@@ -169,10 +189,22 @@
             android:layout_weight="1"
             android:textColor="@android:color/white"
             android:background="@color/btnInfo"
-            android:text="@string/print_invoice"
+            android:text="@string/print"
             android:textSize="14sp"
             android:clickable="true"
             android:onClick="printInvoice"/>
+
+        <Button
+            android:id="@+id/pushButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textColor="@android:color/white"
+            android:background="@color/btnWarning"
+            android:text="@string/push"
+            android:textSize="14sp"
+            android:clickable="true"
+            android:onClick="pushInvoice"/>
 
     </LinearLayout>
 

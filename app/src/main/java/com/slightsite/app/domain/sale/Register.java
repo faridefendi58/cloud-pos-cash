@@ -5,6 +5,7 @@ import android.util.Log;
 import java.awt.font.TextAttribute;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Locale;
 
 import com.slightsite.app.domain.DateTimeStrategy;
@@ -13,8 +14,11 @@ import com.slightsite.app.domain.inventory.Inventory;
 import com.slightsite.app.domain.inventory.LineItem;
 import com.slightsite.app.domain.inventory.Product;
 import com.slightsite.app.domain.inventory.Stock;
+import com.slightsite.app.domain.payment.Payment;
 import com.slightsite.app.techicalservices.NoDaoSetException;
+import com.slightsite.app.techicalservices.payment.PaymentDao;
 import com.slightsite.app.techicalservices.sale.SaleDao;
+import com.slightsite.app.techicalservices.shipping.ShippingDao;
 
 /**
  * Handles all Sale processes.
@@ -26,6 +30,10 @@ public class Register {
 	private static SaleDao saleDao = null;
 	private static Stock stock = null;
 	private static Customer customer = null;
+	private static PaymentDao paymentDao = null;
+	private static ShippingDao shippingDao = null;
+	private static List<PaymentItem> payment_items = null;
+	private static Shipping shipping = null;
 
 	private Sale currentSale;
 	
@@ -110,8 +118,29 @@ public class Register {
 		if (currentSale != null) {
 			saleDao.endSale(currentSale, endTime);
 			for(LineItem line : currentSale.getAllLineItem()){
+				Log.e(getClass().getSimpleName(), "end sale -> "+ line.getProduct().getName());
 				stock.updateStockSum(line.getProduct().getId(), line.getQuantity());
 			}
+			// saving the payment method
+			for (PaymentItem pi : payment_items) {
+				try {
+					Payment pym = new Payment(currentSale.getId(), pi.getTitle(), pi.getNominal());
+					paymentDao.addPayment(pym);
+				} catch (Exception e){
+					e.printStackTrace();
+				}
+			}
+
+			try {
+				Shipping shp = getShipping();
+				shp.setDateAdded(endTime);
+				shp.setSaleId(currentSale.getId());
+				shippingDao.addShipping(shp);
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+			Log.e(getClass().getSimpleName(), "Payment Data on end payment : "+ payment_items.toString());
+			Log.e(getClass().getSimpleName(), "Shipping Data on end payment : "+ shipping.toMap().toString());
 			currentSale = null;
 		}
 	}
@@ -218,5 +247,33 @@ public class Register {
 		if (currentSale != null) {
 			saleDao.removeCustomerSale(currentSale);
 		}
+	}
+
+	public void setPaymentItems(List<PaymentItem> payment_items) {
+		if (currentSale != null) {
+			this.payment_items = payment_items;
+		}
+	}
+
+	public List<PaymentItem> getPaymentItems() {
+		return payment_items;
+	}
+
+	public static void setPaymentDao(PaymentDao dao) {
+		paymentDao = dao;
+	}
+
+	public static void setShippingDao(ShippingDao dao) {
+		shippingDao = dao;
+	}
+
+	public void setShipping(Shipping _shipping) {
+		if (currentSale != null) {
+			this.shipping = _shipping;
+		}
+	}
+
+	public Shipping getShipping() {
+		return shipping;
 	}
 }

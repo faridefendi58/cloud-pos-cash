@@ -40,8 +40,8 @@
     <string name="hint_cash">Enter cash here</string>
     <string name="hint_transfer">Enter transfer nominal here</string>
     <string name="add_new_product">Add New Product</string>
-    <string name="add_stock">Add A Product Lot</string>
-    <string name="add_discount">Add A Product Discount</string>
+    <string name="add_stock">Add Stock</string>
+    <string name="add_discount">Add Multilevel Price</string>
     <string name="add_new_customer">Add New Customer</string>
     <string name="previous">&lt;</string>
     <string name="next">></string>
@@ -60,7 +60,9 @@
     <string name="transaction">Transaction</string>
     <string name="remove_invoice">Remove Invoice</string>
     <string name="print_invoice">Print Invoice</string>
+    <string name="print">Print</string>
     <string name="sync_product">Syncron Product</string>
+    <string name="push">Push</string>
 
     <string name="dialog_quit">Are you sure you want to QUIT?</string>
     <string name="dialog_remove_product">Are you sure you want to REMOVE this product?</string>
@@ -73,13 +75,14 @@
     <string name="product_detail">Detail</string>
     <string name="customer_detail">Detail</string>
     <string name="stock">Stock</string>
-    <string name="product_discount">Discount</string>
+    <string name="product_discount">Multilevel Price</string>
     <string name="success">Success</string>
     <string name="fail">Fail</string>
     <string name="please_input_all">Please fulfill all data.</string>
     <string name="need_money">Need</string>
     <string name="customer_order">Customer Orders</string>
     <string name="invoice_detail">Detail Invoice</string>
+    <string name="status">Status</string>
 
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
@@ -150,6 +153,8 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_old_password">The old password is incorrect</string>
     <string name="error_field_required">This field is required</string>
+    <string name="error_empty_customer_data">Please fill the Name, Phone, and Address</string>
+    <string name="error_empty_payment_data">Please complete the payment data</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>

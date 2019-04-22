@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/spacing_middle">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TOTAL ORDER"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:textColor="@color/grey_40"
+                app:fontFamily="sans-serif-medium" />
+
+            <TextView
+                style="@style/EditText.Flat.Grey"
+                android:id="@+id/total_order"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/edit_text_round_bg_outline"
+                android:drawableEnd="@drawable/ic_expand_arrow"
+                android:layout_marginTop="@dimen/spacing_middle"
+                android:drawableRight="@drawable/ic_payment_black_24dp"
+                android:minHeight="@dimen/spacing_xmedium"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_large">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CASH"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:textColor="@color/grey_40"
+                app:fontFamily="sans-serif-medium" />
+
+            <EditText
+                style="@style/EditText.Flat.Grey"
+                android:id="@+id/cash_receive"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_round_bg_outline"
+                android:drawableEnd="@drawable/ic_expand_arrow"
+                android:layout_marginTop="@dimen/spacing_middle"
+                android:drawableRight="@drawable/ic_expand_arrow"
+                android:hint="@string/hint_cash"
+                android:minHeight="@dimen/spacing_xmlarge"
+                android:inputType="number"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:paddingHorizontal="@dimen/spacing_large"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TRANSFER BANK"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:textColor="@color/grey_40"
+                app:fontFamily="sans-serif-medium" />
+
+            <View
+                android:layout_width="@dimen/spacing_middle"
+                android:layout_height="wrap_content" />
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/switch_tranfer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                app:thumbTint="@color/switch_color_primary" />
+
+            <View
+                android:layout_width="@dimen/spacing_middle"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/transfer_bank_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_large"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="@dimen/spacing_xmlarge"
+                android:layout_height="@dimen/spacing_large"
+                android:layout_gravity="end"
+                android:layout_marginTop="@dimen/spacing_large"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_mandiri" />
+
+            <EditText
+                style="@style/EditText.Flat.Grey"
+                android:id="@+id/nominal_mandiri"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_round_bg_outline"
+                android:drawableEnd="@drawable/ic_expand_arrow"
+                android:layout_marginTop="@dimen/spacing_middle"
+                android:drawableRight="@drawable/ic_payment_black_24dp"
+                android:hint="Nominal Transfer ke Mandiri"
+                android:minHeight="@dimen/spacing_xmlarge"
+                android:inputType="number"/>
+
+            <ImageView
+                android:layout_width="@dimen/spacing_xmlarge"
+                android:layout_height="@dimen/spacing_large"
+                android:layout_gravity="end"
+                android:layout_marginTop="@dimen/spacing_large"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_bca" />
+
+            <EditText
+                style="@style/EditText.Flat.Grey"
+                android:id="@+id/nominal_bca"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_round_bg_outline"
+                android:drawableEnd="@drawable/ic_expand_arrow"
+                android:layout_marginTop="@dimen/spacing_middle"
+                android:drawableRight="@drawable/ic_payment_black_24dp"
+                android:hint="Nominal Transfer ke BCA"
+                android:minHeight="@dimen/spacing_xmlarge"
+                android:inputType="number"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:paddingHorizontal="@dimen/spacing_large"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="EDC PAYMENT"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:textColor="@color/grey_40"
+                app:fontFamily="sans-serif-medium" />
+
+            <View
+                android:layout_width="@dimen/spacing_middle"
+                android:layout_height="wrap_content" />
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/switch_edc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                app:thumbTint="@color/switch_color_primary" />
+
+            <View
+                android:layout_width="@dimen/spacing_middle"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/edc_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_large"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="@dimen/spacing_xmlarge"
+                android:layout_height="@dimen/spacing_large"
+                android:layout_gravity="end"
+                android:layout_marginTop="@dimen/spacing_large"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_visa"
+                android:visibility="gone"/>
+
+            <EditText
+                style="@style/EditText.Flat.Grey"
+                android:id="@+id/edc_card_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_round_bg_outline"
+                android:drawableEnd="@drawable/ic_expand_arrow"
+                android:layout_marginTop="@dimen/spacing_middle"
+                android:drawableRight="@drawable/ic_expand_arrow"
+                android:hint="Card Type"
+                android:minHeight="@dimen/spacing_xmlarge"
+                android:visibility="gone"/>
+
+            <EditText
+                style="@style/EditText.Flat.Grey"
+                android:id="@+id/edc_card_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_middle"
+                android:background="@drawable/edit_text_round_bg_outline"
+                android:hint="Nomor Kartu"
+                android:minHeight="@dimen/spacing_xmlarge"
+                android:drawableEnd="@drawable/ic_credit_card_grey"
+                android:drawableRight="@drawable/ic_credit_card_grey"
+                android:inputType="number" />
+
+            <EditText
+                android:id="@+id/edc_nominal"
+                style="@style/EditText.Flat.Grey"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_middle"
+                android:background="@drawable/edit_text_round_bg_outline"
+                android:hint="Nominal dibayarkan"
+                android:minHeight="@dimen/spacing_xmlarge"
+                android:drawableEnd="@drawable/ic_money_white_24dp"
+                android:drawableRight="@drawable/ic_money_white_24dp"
+                android:inputType="number" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_middle"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <EditText
+                    style="@style/EditText.Flat.Grey"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableEnd="@drawable/ic_event_grey"
+                    android:drawableRight="@drawable/ic_event_grey"
+                    android:background="@drawable/edit_text_round_bg_outline"
+                    android:hint="Expired Date"
+                    android:minHeight="@dimen/spacing_xmlarge" />
+
+                <View
+                    android:layout_width="@dimen/spacing_middle"
+                    android:layout_height="0dp" />
+
+                <EditText
+                    style="@style/EditText.Flat.Grey"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/edit_text_round_bg_outline"
+                    android:hint="CVV"
+                    android:minHeight="@dimen/spacing_xmlarge" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey_10" />
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

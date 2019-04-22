@@ -103,6 +103,10 @@ public class CustomerCatalog {
         customerDao.suspendCustomer(customer);
     }
 
-
+    public int createCustomer(String name, String email, String phone, String address, int status) {
+        Customer customer = new Customer(name, email, phone, address, status);
+        int id = customerDao.addCustomer(customer);
+        return id;
+    }
 }
 

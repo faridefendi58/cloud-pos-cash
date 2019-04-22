@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.inventory.LineItem;
+import com.slightsite.app.domain.payment.Payment;
 import com.slightsite.app.domain.sale.Sale;
 
 /**
@@ -102,4 +103,8 @@ public interface SaleDao {
 	int getTotalIncome(String time_frame);
 
 	int getTotalTransaction(String time_frame);
+
+	void setPushedSale(Sale sale, int server_invoice_id);
+
+	int getServerInvoiceId(int sale_id);
 }

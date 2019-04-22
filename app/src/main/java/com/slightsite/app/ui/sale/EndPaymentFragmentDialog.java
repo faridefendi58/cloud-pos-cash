@@ -53,6 +53,7 @@ public class EndPaymentFragmentDialog extends DialogFragment  {
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
 		}
+		Log.e(getTag(), "regis : "+ regis.getCurrentSale().getAllLineItem().toString());
 
 		getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 		View v = inflater.inflate(R.layout.dialog_paymentsuccession, container,false);

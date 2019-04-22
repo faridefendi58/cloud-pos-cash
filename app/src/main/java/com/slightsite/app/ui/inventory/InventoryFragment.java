@@ -22,15 +22,19 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.balysv.materialripple.MaterialRippleLayout;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentIntegratorSupportV4;
 import com.google.zxing.integration.android.IntentResult;
 import com.slightsite.app.R;
+import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.inventory.Inventory;
 import com.slightsite.app.domain.inventory.Product;
 import com.slightsite.app.domain.inventory.ProductCatalog;
@@ -59,6 +63,9 @@ public class InventoryFragment extends UpdatableFragment {
 	private EditText searchBox;
 	private Button scanButton;
 	private FloatingActionButton syncProductButton;
+	private TextView cart_total;
+	private LinearLayout bottom_cart_container;
+	private MaterialRippleLayout lyt_next;
 
 	private ViewPager viewPager;
 	private Register register;
@@ -95,11 +102,16 @@ public class InventoryFragment extends UpdatableFragment {
 		scanButton = (Button) view.findViewById(R.id.scanButton);
 		searchBox = (EditText) view.findViewById(R.id.searchBox);
 		syncProductButton = (FloatingActionButton) view.findViewById(R.id.syncProductButton);
+		cart_total = (TextView) view.findViewById(R.id.cart_total);
+		bottom_cart_container = (LinearLayout) view.findViewById(R.id.bottom_cart_container);
+		lyt_next = (MaterialRippleLayout) view.findViewById(R.id.lyt_next);
 
 		main = (MainActivity) getActivity();
 		viewPager = main.getViewPager();
 
 		initUI();
+		updateCart();
+
 		return view;
 	}
 
@@ -131,13 +143,14 @@ public class InventoryFragment extends UpdatableFragment {
 
 				register.addItem(productCatalog.getProductById(id), 1);
 				saleFragment.update();
-				viewPager.setCurrentItem(1);
+				viewPager.setCurrentItem(0);
+				updateCart();
 
 				Toast toast = Toast.makeText(
 						getActivity().getApplicationContext(),
 						productCatalog.getProductById(id).getName()+ ' ' +res.getString(R.string.message_success_added),
 						Toast.LENGTH_SHORT);
-				toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 8, 8);
+				toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 8);
 				toast.show();
 			}     
 		});
@@ -158,6 +171,13 @@ public class InventoryFragment extends UpdatableFragment {
 				startActivity(newActivity);
 			}
 		});
+
+		lyt_next.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				viewPager.setCurrentItem(1);
+			}
+		});
 	}
 
 	/**
@@ -172,7 +192,7 @@ public class InventoryFragment extends UpdatableFragment {
 		}
 
 		ButtonAdapter sAdap = new ButtonAdapter(getActivity().getBaseContext(), inventoryList,
-				R.layout.listview_inventory, new String[]{"name"}, new int[] {R.id.name}, R.id.optionView, "id");
+				R.layout.listview_inventory, new String[]{"name", "availability"}, new int[] {R.id.name, R.id.stock_counter}, R.id.optionView, "id");
 		inventoryListView.setAdapter(sAdap);
 	}
 
@@ -261,5 +281,14 @@ public class InventoryFragment extends UpdatableFragment {
 		params.height = (totalHeight
 				+ (myGridView.getVerticalSpacing() * (adapterCount))) + add_height;
 		myGridView.setLayoutParams(params);
+	}
+
+	private void updateCart() {
+		Double tot_cart = register.getTotal();
+		if (tot_cart > 0) {
+			Integer tot_item_cart = register.getCurrentSale().getAllLineItem().size();
+			cart_total.setText("Sub Total " + CurrencyController.getInstance().moneyFormat(tot_cart) + " of " + tot_item_cart+ " Items");
+			bottom_cart_container.setVisibility(View.VISIBLE);
+		}
 	}
 }

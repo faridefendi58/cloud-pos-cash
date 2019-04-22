@@ -24,8 +24,10 @@ import com.slightsite.app.domain.ProfileController;
 import com.slightsite.app.domain.customer.CustomerService;
 import com.slightsite.app.domain.inventory.Inventory;
 import com.slightsite.app.domain.params.ParamService;
+import com.slightsite.app.domain.payment.PaymentService;
 import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.domain.sale.SaleLedger;
+import com.slightsite.app.domain.shipping.ShippingService;
 import com.slightsite.app.techicalservices.AndroidDatabase;
 import com.slightsite.app.techicalservices.Database;
 import com.slightsite.app.techicalservices.DatabaseExecutor;
@@ -35,8 +37,12 @@ import com.slightsite.app.techicalservices.inventory.InventoryDao;
 import com.slightsite.app.techicalservices.inventory.InventoryDaoAndroid;
 import com.slightsite.app.techicalservices.params.ParamDao;
 import com.slightsite.app.techicalservices.params.ParamDaoAndroid;
+import com.slightsite.app.techicalservices.payment.PaymentDao;
+import com.slightsite.app.techicalservices.payment.PaymentDaoAndroid;
 import com.slightsite.app.techicalservices.sale.SaleDao;
 import com.slightsite.app.techicalservices.sale.SaleDaoAndroid;
+import com.slightsite.app.techicalservices.shipping.ShippingDao;
+import com.slightsite.app.techicalservices.shipping.ShippingDaoAndroid;
 
 /**
  * This is the first activity page, core-app and database created here.
@@ -46,7 +52,7 @@ import com.slightsite.app.techicalservices.sale.SaleDaoAndroid;
  */
 public class SplashScreenActivity extends Activity {
 
-	public static final String POS_VERSION = "LolliPOS 1.0";
+	public static final String POS_VERSION = "UcokPOS 2.0";
 	private static final long SPLASH_TIMEOUT = 2000;
 	private Button goButton;
 	private boolean gone;
@@ -60,6 +66,8 @@ public class SplashScreenActivity extends Activity {
 		SaleDao saleDao = new SaleDaoAndroid(database);
 		CustomerDao customerDao = new CustomerDaoAndroid(database);
 		ParamDao paramDao = new ParamDaoAndroid(database);
+		PaymentDao paymentDao = new PaymentDaoAndroid(database);
+		ShippingDao shippingDao = new ShippingDaoAndroid(database) {};
 
 		DatabaseExecutor.setDatabase(database);
 		LanguageController.setDatabase(database);
@@ -72,12 +80,14 @@ public class SplashScreenActivity extends Activity {
 		SaleLedger.setSaleDao(saleDao);
 		CustomerService.setCustomerDao(customerDao);
 		ParamService.setParamDao(paramDao);
+		PaymentService.setPaymentDao(paymentDao);
+		Register.setPaymentDao(paymentDao);
+		ShippingService.setShippingDao(shippingDao);
+		Register.setShippingDao(shippingDao);
 
 		DateTimeStrategy.setLocale("id", "ID");
 		setLanguage(LanguageController.getInstance().getLanguage());
 		CurrencyController.setCurrency("idr");
-
-		Log.d("Core App", "INITIATE");
 	}
 	
 	/**
@@ -111,8 +121,9 @@ public class SplashScreenActivity extends Activity {
 		gone = true;
 		Intent newActivity = new Intent(SplashScreenActivity.this,
 				LoginActivity.class);
+		finish();
 		startActivity(newActivity);
-		SplashScreenActivity.this.finish();	
+		//SplashScreenActivity.this.finish();
 	}
 
 	private ProgressBar progressBar;

@@ -113,6 +113,13 @@ public class Product {
 		map.put("name", name);
 		map.put("barcode", barcode);
 		map.put("unitPrice", unitPrice + "");
+		int stock = getStock(id);
+		map.put("stock", stock + "");
+		if (stock > 0) {
+			map.put("availability", stock + " in stock");
+		} else {
+			map.put("availability", "Out of stock");
+		}
 		return map;
 		
 	}
@@ -121,6 +128,17 @@ public class Product {
 		Double stock = 0.0;
 		try {
 			stock = Inventory.getInstance().getUnitPriceByQuantity(id, quantity);
+		} catch (NoDaoSetException e) {
+			e.printStackTrace();
+		}
+
+		return stock;
+	}
+
+	public int getStock(int id) {
+		int stock = 0;
+		try {
+			stock = Inventory.getInstance().getStock().getStockSumById(id);
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
 		}

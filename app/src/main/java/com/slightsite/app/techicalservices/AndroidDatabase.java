@@ -76,8 +76,8 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 				+ "start_time DATETIME,"
 				+ "end_time DATETIME,"
 				+ "customer_id INTEGER,"
-				+ "orders INTEGER"
-				
+				+ "orders INTEGER,"
+				+ "pushed INTEGER DEFAULT 0"
 				+ ");");
 		Log.d("CREATE DATABASE", "Create " + DatabaseContents.TABLE_SALE + " Successfully.");
 		
@@ -147,7 +147,7 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 		String datetime = dateformat.format(c.getTime());
 		database.execSQL("INSERT INTO " + DatabaseContents.TABLE_PARAMS + " (" +
 				"_id, name, value, type, description, date_added)\n" +
-				"VALUES ('1', 'store_name', 'Store Name', 'text', '', '"+ datetime +"');");
+				"VALUES ('1', 'store_name', 'Ucok Durian', 'text', '', '"+ datetime +"');");
 		Log.d("CREATE DATABASE", "Create " + DatabaseContents.TABLE_PARAMS + " Successfully.");
 
 		database.execSQL("CREATE TABLE " + DatabaseContents.TABLE_ADMIN + "("
@@ -163,6 +163,28 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 				+ ");");
 
 		Log.d("CREATE DATABASE", "Create " + DatabaseContents.TABLE_ADMIN + " Successfully.");
+
+		database.execSQL("CREATE TABLE " + DatabaseContents.TABLE_SALE_PAYMENT + "("
+
+				+ "_id INTEGER PRIMARY KEY,"
+				+ "sale_id INTEGER,"
+				+ "payment_channel TEXT(128),"
+				+ "amount DOUBLE,"
+				+ "date_added DATETIME"
+				+ ");");
+
+		database.execSQL("CREATE TABLE " + DatabaseContents.TABLE_SALE_SHIPPING + "("
+
+				+ "_id INTEGER PRIMARY KEY,"
+				+ "sale_id INTEGER,"
+				+ "method INTEGER DEFAULT 0,"
+				+ "warehouse_id INTEGER DEFAULT 0,"
+				+ "pickup_date DATETIME,"
+				+ "address TEXT(256),"
+				+ "notes TEXT(256),"
+				+ "configs TEXT(256),"
+				+ "date_added DATETIME"
+				+ ");");
 		
 		Log.d("CREATE DATABASE", "Create Database Successfully.");
 

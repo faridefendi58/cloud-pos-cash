@@ -52,8 +52,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
-            android:drawableTop="@drawable/ic_add_new"
-            android:background="@android:color/transparent"
+            android:background="@color/colorPrimaryLight"
+            android:textColor="@color/colorWhite"
             android:text="@string/add_stock" />
 
         <Button
@@ -62,8 +62,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
-            android:drawableTop="@drawable/ic_add_discount"
-            android:background="@android:color/transparent"
+            android:background="@color/blue_300"
+            android:textColor="@color/colorWhite"
             android:text="@string/add_discount" />
     </LinearLayout>
 

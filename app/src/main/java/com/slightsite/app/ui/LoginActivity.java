@@ -94,7 +94,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
+        //populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -134,9 +134,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
 
     private void populateAutoComplete() {
-        if (!mayRequestContacts()) {
+        /*if (!mayRequestContacts()) {
             return;
-        }
+        }*/
 
         getLoaderManager().initLoader(0, null, this);
     }
@@ -164,11 +164,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_READ_CONTACTS) {
+        /*if (requestCode == REQUEST_READ_CONTACTS) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 populateAutoComplete();
             }
-        }
+        }*/
     }
 
 
