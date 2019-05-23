@@ -16,6 +16,7 @@ import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.inventory.LineItem;
 import com.slightsite.app.domain.sale.Register;
+import com.slightsite.app.ui.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,6 +143,14 @@ public class AdapterListCart extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         } catch (Exception e) {
                             Log.e(getClass().getSimpleName(), e.getMessage());
                         }
+                    } else {
+                        try {
+                            register.removeItem(p);
+                            ((MainActivity)ctx).updateInventoryFragment();
+                            ((MainActivity)ctx).updateSaleFragment();
+                        } catch (Exception e) {
+                            Log.e(getClass().getSimpleName(), e.getMessage());
+                        }
                     }
                 }
             });
@@ -183,6 +192,7 @@ public class AdapterListCart extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
         cart_total.setText(CurrencyController.getInstance().moneyFormat(register.getTotal()));
+        ((MainActivity)ctx).updateInventoryFragment();
     }
 }
 

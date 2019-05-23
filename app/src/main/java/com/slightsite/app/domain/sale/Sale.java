@@ -170,4 +170,15 @@ public class Sale {
 	public int getCustomerId() {
 		return customer_id;
 	}
+
+	public LineItem getLineItemByProductId(int id) {
+		if (id >= 0) {
+			for (LineItem lineItem : items) {
+				if (lineItem.getProduct().getId() == id) {
+					return lineItem;
+				}
+			}
+		}
+		return null;
+	}
 }

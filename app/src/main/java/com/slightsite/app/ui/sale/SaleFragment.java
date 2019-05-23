@@ -61,6 +61,7 @@ public class SaleFragment extends UpdatableFragment {
 	private TextView totalPrice;
 	private com.github.clans.fab.FloatingActionButton endButton;
 	private UpdatableFragment reportFragment;
+	private UpdatableFragment inventoryFragment;
 	private Resources res;
 	private TextView customer_name_box;
 	private com.github.clans.fab.FloatingActionMenu fButtonMenu;
@@ -126,44 +127,6 @@ public class SaleFragment extends UpdatableFragment {
 				startActivity(newActivity);
 			}
 		});
-		/*saleListView.setOnItemClickListener(new OnItemClickListener(){
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				showEditPopup(arg1,arg2);
-			}
-		});*/
-
-		/*clearButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				ViewPager viewPager = ((MainActivity) getActivity()).getViewPager();
-				viewPager.setCurrentItem(1);
-			}
-		});
-
-		endButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if(register.hasSale()){
-					fButtonMenu.close(true);
-					showPopup(v);
-				} else {
-					Toast.makeText(getActivity().getBaseContext() , res.getString(R.string.hint_empty_sale), Toast.LENGTH_SHORT).show();
-				}
-			}
-		});
-		
-		clearButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				fButtonMenu.close(true);
-				if (!register.hasSale() || register.getCurrentSale().getAllLineItem().isEmpty()) {
-					Toast.makeText(getActivity().getBaseContext() , res.getString(R.string.hint_empty_sale), Toast.LENGTH_SHORT).show();
-				} else {
-					showConfirmClearDialog();
-				}
-			} 
-		});*/
 	}
 	
 	/**
@@ -225,7 +188,7 @@ public class SaleFragment extends UpdatableFragment {
 		EditFragmentDialog newFragment = new EditFragmentDialog(SaleFragment.this, reportFragment);
 		newFragment.setArguments(bundle);
 		newFragment.show(getFragmentManager(), "");
-		
+		((MainActivity)getActivity()).updateInventoryFragment();
 	}
 
 	/**
