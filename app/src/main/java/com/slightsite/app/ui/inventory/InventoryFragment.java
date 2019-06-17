@@ -220,6 +220,9 @@ public class InventoryFragment extends UpdatableFragment {
 			Log.e(getTag(), "Loop qty : "+ quantity.toString());
 		}*/
 
+		// clearing the stack on update
+		this.stacks = new HashMap<Integer, Integer>();
+
 		AdapterListProduct pAdap = new AdapterListProduct(main, list, R.layout.listview_inventory, InventoryFragment.this);
 		inventoryListView.setAdapter(pAdap);
 	}
@@ -320,7 +323,7 @@ public class InventoryFragment extends UpdatableFragment {
 
 			bottom_cart_container.setVisibility(View.VISIBLE);
 		} else {
-			//bottom_cart_container.setVisibility(View.GONE);
+			bottom_cart_container.setVisibility(View.GONE);
 			cart_total.setText("Empty cart");
 		}
 	}

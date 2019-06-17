@@ -252,6 +252,10 @@ public class SaleFragment extends UpdatableFragment {
 			public void onClick(DialogInterface dialog, int which) {
 				register.cancleSale();
 				update();
+				try {
+					((MainActivity)getActivity()).updateInventoryFragment();
+				} catch (Exception e) {Log.e(getTag(), e.getMessage());}
+				Log.e(getTag(), "clearing inventory");
 			}
 		});
 
