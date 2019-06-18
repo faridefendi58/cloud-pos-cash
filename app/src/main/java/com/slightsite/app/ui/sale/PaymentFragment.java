@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +47,8 @@ public class PaymentFragment extends Fragment {
     private EditText edc_card_number;
     private EditText edc_nominal;
     private TextView total_order;
+    private ImageButton bt_toggle_mandiri;
+    private ImageButton bt_toggle_bca;
 
     private Register register;
 
@@ -88,6 +91,8 @@ public class PaymentFragment extends Fragment {
         edc_card_number  = (EditText) root.findViewById(R.id.edc_card_number);
         edc_nominal  = (EditText) root.findViewById(R.id.edc_nominal);
         total_order  = (TextView) root.findViewById(R.id.total_order);
+        bt_toggle_mandiri = (ImageButton) root.findViewById(R.id.bt_toggle_mandiri);
+        bt_toggle_bca = (ImageButton) root.findViewById(R.id.bt_toggle_bca);
     }
 
     private void initAction() {
@@ -132,6 +137,34 @@ public class PaymentFragment extends Fragment {
         setTextChangeListener(edc_nominal, "nominal_edc");
 
         total_order.setText(CurrencyController.getInstance().moneyFormat(register.getTotal()));
+
+        bt_toggle_mandiri.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayout lyt_expand_text = (LinearLayout) v.getRootView().findViewById(R.id.lyt_expand_mandiri);
+                if (lyt_expand_text.getVisibility() == View.VISIBLE) {
+                    lyt_expand_text.setVisibility(View.GONE);
+                    bt_toggle_mandiri.setImageDrawable(getResources().getDrawable(R.drawable.ic_add_black));
+                } else {
+                    lyt_expand_text.setVisibility(View.VISIBLE);
+                    bt_toggle_mandiri.setImageDrawable(getResources().getDrawable(R.drawable.ic_remove_black));
+                }
+            }
+        });
+
+        bt_toggle_bca.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayout lyt_expand_text = (LinearLayout) v.getRootView().findViewById(R.id.lyt_expand_bca);
+                if (lyt_expand_text.getVisibility() == View.VISIBLE) {
+                    lyt_expand_text.setVisibility(View.GONE);
+                    bt_toggle_bca.setImageDrawable(getResources().getDrawable(R.drawable.ic_add_black));
+                } else {
+                    lyt_expand_text.setVisibility(View.VISIBLE);
+                    bt_toggle_bca.setImageDrawable(getResources().getDrawable(R.drawable.ic_remove_black));
+                }
+            }
+        });
     }
 
     private void setTextChangeListener(EditText etv, final String setType) {
@@ -190,9 +223,13 @@ public class PaymentFragment extends Fragment {
                 if (!c_data.getTransferBank().isEmpty()) {
                     if (banks.containsKey("nominal_mandiri")) {
                         ed_nominal_mandiri.setText(c_data.getTransferBank().get("nominal_mandiri"));
+                        LinearLayout lyt_expand_bca = (LinearLayout) root.findViewById(R.id.lyt_expand_bca);
+                        lyt_expand_bca.setVisibility(View.VISIBLE);
                     }
                     if (banks.containsKey("nominal_bca")) {
                         ed_nominal_bca.setText(c_data.getTransferBank().get("nominal_bca"));
+                        LinearLayout lyt_expand_mandiri = (LinearLayout) root.findViewById(R.id.lyt_expand_mandiri);
+                        lyt_expand_mandiri.setVisibility(View.VISIBLE);
                     }
                 }
             }
@@ -211,6 +248,16 @@ public class PaymentFragment extends Fragment {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public boolean toggleArrow(View view) {
+        if (view.getRotation() == 0) {
+            view.animate().setDuration(200).rotation(180);
+            return true;
+        } else {
+            view.animate().setDuration(200).rotation(0);
+            return false;
         }
     }
 }

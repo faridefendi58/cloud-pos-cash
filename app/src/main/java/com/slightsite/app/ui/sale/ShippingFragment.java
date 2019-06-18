@@ -90,6 +90,7 @@ public class ShippingFragment extends Fragment {
         }
         customers = customerCatalog.getAllCustomer();
         setupUserAutocomplete();
+        setupPhoneAutoComplete();
         initAction();
 
         try {
@@ -348,5 +349,35 @@ public class ShippingFragment extends Fragment {
             shipping_address.setVisibility(View.VISIBLE);
             shipping_warehouse.setVisibility(View.GONE);
         }
+    }
+
+    private void setupPhoneAutoComplete() {
+        float elevation = 6f;
+        Drawable backgroundDrawable = new ColorDrawable(Color.WHITE);
+        AutocompletePresenter<Customer> presenter = new PhonePresenter(getContext(), customers);
+        AutocompleteCallback<Customer> callback = new AutocompleteCallback<Customer>() {
+            @Override
+            public boolean onPopupItemClicked(Editable editable, Customer item) {
+                editable.clear();
+                editable.append(item.getPhone());
+                name.setText(item.getName());
+                phone.setText(item.getPhone());
+                email.setText(item.getEmail());
+                address.setText(item.getAddress());
+
+                ((CheckoutActivity) getActivity()).setCustomer(item);
+                ((CheckoutActivity) getActivity()).hideKeyboard(getActivity());
+                return true;
+            }
+
+            public void onPopupVisibilityChanged(boolean shown) {}
+        };
+
+        phoneAutocomplete = Autocomplete.<Customer>on(phone)
+                .with(elevation)
+                .with(backgroundDrawable)
+                .with(presenter)
+                .with(callback)
+                .build();
     }
 }
