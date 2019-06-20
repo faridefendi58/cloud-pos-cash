@@ -18,6 +18,7 @@ import com.slightsite.app.R;
 import com.slightsite.app.domain.inventory.LineItem;
 import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.techicalservices.NoDaoSetException;
+import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.component.UpdatableFragment;
 
 /**
@@ -129,6 +130,7 @@ public class EditFragmentDialog extends DialogFragment {
 		saleFragment.update();
 		try {
 			reportFragment.update();
+			((MainActivity)getActivity()).updateInventoryFragment();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

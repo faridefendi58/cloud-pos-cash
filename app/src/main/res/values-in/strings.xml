@@ -188,4 +188,7 @@
     <string name="title_list_printer">Printer</string>
     <string name="title_print_preview">Print Preview</string>
     <string name="title_print_config">Konfigurasi</string>
+
+    <string name="label_change_due">Kembali</string>
+    <string name="label_dept">Hutang</string>
 </resources>

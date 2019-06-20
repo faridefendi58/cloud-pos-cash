@@ -195,4 +195,7 @@
     <string name="label_print_header">Header :</string>
     <string name="label_print_footer">Footer :</string>
 
+    <string name="label_change_due">Change Due</string>
+    <string name="label_dept">Dept</string>
+
 </resources>

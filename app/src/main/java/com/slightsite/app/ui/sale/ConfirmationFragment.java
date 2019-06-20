@@ -25,7 +25,10 @@ import com.slightsite.app.domain.sale.Shipping;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.ui.MainActivity;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +54,7 @@ public class ConfirmationFragment extends Fragment {
     private TextView edit_cart;
     private TextView totalPayment;
     private TextView changeDue;
+    private TextView change_due_label;
     private Payment payment;
 
     /** shipping detail */
@@ -113,6 +117,7 @@ public class ConfirmationFragment extends Fragment {
         edit_cart  = (TextView) root.findViewById(R.id.edit_cart);
         totalPayment  = (TextView) root.findViewById(R.id.totalPayment);
         changeDue  = (TextView) root.findViewById(R.id.changeDue);
+        change_due_label  = (TextView) root.findViewById(R.id.change_due_label);
 
         shipping_method = (TextView) root.findViewById(R.id.shipping_method);
         shipping_date = (TextView) root.findViewById(R.id.shipping_date);
@@ -165,12 +170,23 @@ public class ConfirmationFragment extends Fragment {
                 totalPayment.setText(CurrencyController.getInstance().moneyFormat(c_data.getTotalPaymentReceived()));
                 Double change_due = c_data.getTotalPaymentReceived() - register.getTotal();
                 changeDue.setText(CurrencyController.getInstance().moneyFormat(change_due));
+                if (change_due < 0) {
+                    change_due_label.setText(getResources().getString(R.string.label_dept));
+                } else {
+                    change_due_label.setText(getResources().getString(R.string.label_change_due));
+                }
             }
 
             if (!c_data.getShipping().equals(null)) {
                 shipping = c_data.getShipping();
                 Log.e(getTag(), "Shipping data on confirmation :"+ shipping.toMap().toString());
                 shipping_method.setText(ship_methods[shipping.getMethod()]);
+                if (shipping.getDate().equals(null) || shipping.getDate().length() == 0) {
+                    DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+                    String date = df.format(Calendar.getInstance().getTime());
+                    shipping.setDate(date);
+                    Log.e(getTag(), "Date current : "+ shipping.getDate());
+                }
                 shipping_date.setText(shipping.getDate());
                 shipping_warehouse.setText(shipping.getWarehouseId());
             }
