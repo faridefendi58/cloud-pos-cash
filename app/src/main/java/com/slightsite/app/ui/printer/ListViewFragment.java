@@ -51,12 +51,10 @@ public class ListViewFragment extends Fragment {
     }
 
     private void onClickEvent(View view) {
-        view.findViewById(R.id.print_button).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.reload_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PrinterActivity)getActivity()).setBluetoothDeviceName(adapter.getSelectedItem());
-                String txt = ((PrinterActivity)getActivity()).getFormatedReceipt();
-                ((PrinterActivity)getActivity()).IntentPrint(txt);
+                ((PrinterActivity)getActivity()).InitDeviceList();
             }
         });
         view.findViewById(R.id.home_button).setOnClickListener(new View.OnClickListener() {

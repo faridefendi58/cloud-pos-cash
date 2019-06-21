@@ -257,8 +257,8 @@ public class PrinterActivity extends AppCompatActivity {
         ConfigsFragment ConfigFr = new ConfigsFragment();
         ConfigFr.setArguments(bundle);
 
-        adapter.addFrag(ListViewFr, getResources().getString(R.string.title_list_printer));
         adapter.addFrag(PreviewFr, getResources().getString(R.string.title_print_preview));
+        adapter.addFrag(ListViewFr, getResources().getString(R.string.title_list_printer));
         adapter.addFrag(ConfigFr, getResources().getString(R.string.title_print_config));
         viewPager.setAdapter(adapter);
     }
@@ -313,7 +313,6 @@ public class PrinterActivity extends AppCompatActivity {
         for(LineItem line : list) {
             lineitemList.add(line.toMap());
         }
-        Log.e("Printer Act", "lineitemList :"+ lineitemList.toString());
 
         res += String.format("%s%n%n", str_repeat("=", char_length));
         int sub_total = 0;

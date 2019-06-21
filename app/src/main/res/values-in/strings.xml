@@ -63,6 +63,7 @@
     <string name="print">Print</string>
     <string name="sync_product">Sinkronisasi Produk</string>
     <string name="push">Push</string>
+    <string name="reload_device">Reload</string>
 
     <string name="dialog_quit">Anda yakin ingin KELUAR?</string>
     <string name="dialog_remove_product">Anda yakin ingin MENGHAPUS produk ini?</string>
