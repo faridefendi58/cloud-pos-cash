@@ -35,6 +35,9 @@ import com.slightsite.app.domain.ProfileController;
 import com.slightsite.app.domain.inventory.LineItem;
 import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
+import com.slightsite.app.domain.payment.Payment;
+import com.slightsite.app.domain.payment.PaymentCatalog;
+import com.slightsite.app.domain.payment.PaymentService;
 import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.domain.sale.SaleLedger;
 import com.slightsite.app.techicalservices.NoDaoSetException;
@@ -64,6 +67,8 @@ public class PrinterActivity extends AppCompatActivity {
     private Sale sale;
     private int saleId;
     private SaleLedger saleLedger;
+    private PaymentCatalog paymentCatalog;
+    private List<Payment> paymentList;
     private List<Map<String, String>> lineitemList;
     private int cuk;
 
@@ -277,6 +282,10 @@ public class PrinterActivity extends AppCompatActivity {
 
         try {
             saleLedger = SaleLedger.getInstance();
+            paymentCatalog = PaymentService.getInstance().getPaymentCatalog();
+            if (saleId > 0) {
+                paymentList = paymentCatalog.getPaymentBySaleId(saleId);
+            }
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -299,13 +308,16 @@ public class PrinterActivity extends AppCompatActivity {
         } catch (Exception e) { e.printStackTrace(); }
 
         String[] separated = current_time.split(" ");
-        res += String.format("%1$-7s %2$-4s %3$-10s%n", "Tanggal", ":", separated[0]);
-        res += String.format("%1$-7s %2$-4s %3$-10s%n", "Jam", ":", separated[1]);
+        res += String.format("%1$-7s %2$-4s %3$-10s%n",
+                getResources().getString(R.string.label_date), ":", separated[0]);
+        res += String.format("%1$-7s %2$-4s %3$-10s%n",
+                getResources().getString(R.string.label_hour), ":", separated[1]);
 
         sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
         adminData = ProfileController.getInstance().getDataByEmail(sharedpreferences.getString(LoginActivity.TAG_EMAIL, null));
         if (adminData != null) {
-            res += String.format("%1$-7s %2$-4s %3$-10s%n", "Kasir", ":", adminData.getAsString(LoginActivity.TAG_NAME));
+            res += String.format("%1$-7s %2$-4s %3$-10s%n",
+                    getResources().getString(R.string.label_cashier), ":", adminData.getAsString(LoginActivity.TAG_NAME));
         }
 
         List<LineItem> list = sale.getAllLineItem();
@@ -343,8 +355,35 @@ public class PrinterActivity extends AppCompatActivity {
         int cash = grand_total;
         int change_due = grand_total - cash;
         res += String.format("%1$-12s %2$-4s %3$,-2d%n", "Grand Total", ":", grand_total);
-        res += String.format("%1$-12s %2$-4s %3$,-2d%n", "Cash", ":", cash);
-        res += String.format("%1$-12s %2$-4s %3$,-2d%n%n", "Kembali", ":", change_due);
+
+        if (!paymentList.isEmpty()) {
+            int payment_total = 0;
+            for (int j = 0; j < paymentList.size(); ++j) {
+                Payment py = paymentList.get(j);
+                int amnt = 0;
+                String amnt_str = String.format("%.0f", py.getAmount());
+                try {
+                    amnt = Integer.parseInt(amnt_str);
+                    payment_total = payment_total + amnt;
+                } catch (Exception e){
+                    Log.e(getClass().getSimpleName(), e.getMessage());
+                }
+                res += String.format("%1$-12s %2$-4s %3$,-2d%n",
+                        getResources().getString(getPaymentChannel(py.getPaymentChannel())), ":", amnt);
+            }
+            change_due = grand_total - payment_total;
+        } else {
+            res += String.format("%1$-12s %2$-4s %3$,-2d%n",
+                    getResources().getString(R.string.payment_cash), ":", cash);
+        }
+
+        if (change_due >= 0) {
+            res += String.format("%1$-12s %2$-4s %3$,-2d%n%n",
+                    getResources().getString(R.string.label_change_due), ":", change_due);
+        } else {
+            res += String.format("%1$-12s %2$-4s %3$,-2d%n%n",
+                    getResources().getString(R.string.label_dept), ":", change_due);
+        }
 
         res += printerConfigs.get("footer");
         res += "\n";
@@ -417,5 +456,16 @@ public class PrinterActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return outputDateString;
+    }
+
+    public Integer getPaymentChannel(String channel) {
+        Map<String, Integer> result = new HashMap<>();
+
+        result.put("cash_receive", R.string.payment_cash);
+        result.put("nominal_mandiri", R.string.payment_mandiri);
+        result.put("nominal_bca", R.string.payment_bca);
+        result.put("nominal_edc", R.string.payment_edc);
+
+        return result.get(channel);
     }
 }

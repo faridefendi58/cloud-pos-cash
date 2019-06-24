@@ -198,5 +198,13 @@
 
     <string name="label_change_due">Change Due</string>
     <string name="label_dept">Dept</string>
+    <string name="label_date">Date</string>
+    <string name="label_hour">Hour</string>
+    <string name="label_cashier">Cashier</string>
+
+    <string name="payment_cash">Cash</string>
+    <string name="payment_mandiri">Mandiri Transfer</string>
+    <string name="payment_bca">BCA Transfer</string>
+    <string name="payment_edc">EDC Payment</string>
 
 </resources>

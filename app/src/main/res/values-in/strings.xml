@@ -192,4 +192,12 @@
 
     <string name="label_change_due">Kembali</string>
     <string name="label_dept">Hutang</string>
+    <string name="label_date">Tanggal</string>
+    <string name="label_hour">Jam</string>
+    <string name="label_cashier">Kasir</string>
+
+    <string name="payment_cash">Tunai</string>
+    <string name="payment_mandiri">Transfer Mandiri</string>
+    <string name="payment_bca">Transfer BCA</string>
+    <string name="payment_edc">Mesin EDC</string>
 </resources>
