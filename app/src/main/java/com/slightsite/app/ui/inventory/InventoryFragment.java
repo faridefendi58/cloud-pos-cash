@@ -323,7 +323,7 @@ public class InventoryFragment extends UpdatableFragment {
 
 			bottom_cart_container.setVisibility(View.VISIBLE);
 		} else {
-			bottom_cart_container.setVisibility(View.GONE);
+			bottom_cart_container.setVisibility(View.INVISIBLE);
 			cart_total.setText("Empty cart");
 		}
 	}
@@ -339,12 +339,14 @@ public class InventoryFragment extends UpdatableFragment {
 				updateCart();
 				saleFragment.update();
 				stacks.put(id, the_qty);
+				Log.e(getTag(), "On adding qty "+ position);
 			}
 		});
 
 		myView.findViewById(R.id.substract_qty).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				Log.e(getTag(), "On substract qty");
 				TextView quantity = myView.findViewById(R.id.quantity);
 				int current_qty = Integer.parseInt(quantity.getText().toString());
 				int the_qty = current_qty;

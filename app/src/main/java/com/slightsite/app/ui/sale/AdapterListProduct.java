@@ -82,7 +82,7 @@ public class AdapterListProduct extends BaseAdapter{
     public View getView(final int position, View convertView, ViewGroup parent) {
         // TODO Auto-generated method stub
         final Holder holder = new Holder();
-        final View rowView;
+        View rowView;
 
         rowView = inflater.inflate(this.resource, null);
         holder.name = (TextView) rowView.findViewById(R.id.name);
@@ -91,6 +91,7 @@ public class AdapterListProduct extends BaseAdapter{
         holder.product_image = (ImageView) rowView.findViewById(R.id.product_image);
         holder.optionView = (View) rowView.findViewById(R.id.optionView);
         holder.add_qty_container = (LinearLayout) rowView.findViewById(R.id.add_qty_container);
+        holder.rowView = rowView;
 
         final Product p = items.get(position);
         Map<String, String> pmap = p.toMap();
@@ -113,7 +114,6 @@ public class AdapterListProduct extends BaseAdapter{
             @Override
             public void onClick(View v) {
                 if (!stacks.containsKey(p.getId())) {
-
                     holder.add_qty_container.setVisibility(View.VISIBLE);
                     holder.optionView.setVisibility(View.GONE);
 
@@ -125,15 +125,16 @@ public class AdapterListProduct extends BaseAdapter{
 
                     try {
                         fragment.addToCart(p);
-                    } catch (Exception e) {}
+                    } catch (Exception e) {
+                        Log.e(getClass().getSimpleName(), e.getMessage());
+                    }
                 } else {
                     holder.add_qty_container.setVisibility(View.VISIBLE);
                     holder.optionView.setVisibility(View.GONE);
                     int tot_qty = stacks.get(p.getId()) + 1;
                     holder.quantity.setText(""+ tot_qty);
                 }
-                fragment.triggerAddSubstractButton(rowView, p.getId(), position);
-                Log.e(getClass().getSimpleName(), "stacks : "+ stacks.toString());
+                fragment.triggerAddSubstractButton(holder.rowView, p.getId(), position);
             }
         });
 
