@@ -135,5 +135,10 @@ public class ShippingDaoAndroid implements ShippingDao {
 
         database.update(DatabaseContents.TABLE_SALE_SHIPPING.toString(), content);
     }
+
+    @Override
+    public void removeShipping(int id) {
+        database.delete(DatabaseContents.TABLE_SALE_SHIPPING.toString(), id);
+    }
 }
 

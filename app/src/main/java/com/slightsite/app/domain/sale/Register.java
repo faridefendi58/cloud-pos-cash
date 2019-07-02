@@ -121,6 +121,16 @@ public class Register {
 				Log.e(getClass().getSimpleName(), "end sale -> "+ line.getProduct().getName());
 				stock.updateStockSum(line.getProduct().getId(), line.getQuantity());
 			}
+
+			try {
+				List<Payment> check_payment = paymentDao.getPaymentBySaleId(currentSale.getId());
+				if (check_payment != null) {
+					for(Payment pymnt : check_payment){
+						// remove the payment data on update
+						paymentDao.removePayment(pymnt.getId());
+					}
+				}
+			} catch (Exception e) {e.printStackTrace();}
 			// saving the payment method
 			for (PaymentItem pi : payment_items) {
 				try {
@@ -132,6 +142,10 @@ public class Register {
 			}
 
 			try {
+				Shipping check_shp = shippingDao.getShippingBySaleId(currentSale.getId());
+				if (check_shp != null) {
+					shippingDao.removeShipping(check_shp.getId());
+				}
 				Shipping shp = getShipping();
 				shp.setDateAdded(endTime);
 				shp.setSaleId(currentSale.getId());

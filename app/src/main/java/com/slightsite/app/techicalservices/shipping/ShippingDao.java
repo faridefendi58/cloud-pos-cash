@@ -26,5 +26,7 @@ public interface ShippingDao {
     void clearShippingCatalog();
 
     void suspendShipping(Shipping payment);
+
+    void removeShipping(int id);
 }
 

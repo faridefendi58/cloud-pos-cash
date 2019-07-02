@@ -310,11 +310,29 @@ public class PrinterActivity extends AppCompatActivity {
         String[] separated = current_time.split(" ");
         res += String.format("%1$-7s %2$-4s %3$-10s%n",
                 getResources().getString(R.string.label_date), ":", separated[0]);
-        res += String.format("%1$-7s %2$-4s %3$-10s%n",
-                getResources().getString(R.string.label_hour), ":", separated[1]);
+        String date_transaction = sale.getEndTime();
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MMM-dd  hh:mm a");
+            date_transaction = DateTimeStrategy.parseDate(sale.getEndTime(), "yyyy/MM/dd");
+
+        } catch (Exception e) {
+
+        }
 
         sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
         adminData = ProfileController.getInstance().getDataByEmail(sharedpreferences.getString(LoginActivity.TAG_EMAIL, null));
+
+        String no_nota = date_transaction+"/"+sale.getId();
+        if (adminData != null) {
+            no_nota = date_transaction+"/"+ sharedpreferences.getString(LoginActivity.TAG_ID, null) +"/"+sale.getId();
+        }
+
+        res += String.format("%1$-7s %2$-4s %3$-10s%n",
+                getResources().getString(R.string.label_no_nota), ":", no_nota);
+        res += String.format("%1$-7s %2$-4s %3$-10s%n",
+                getResources().getString(R.string.label_hour), ":", separated[1]);
+
+
         if (adminData != null) {
             res += String.format("%1$-7s %2$-4s %3$-10s%n",
                     getResources().getString(R.string.label_cashier), ":", adminData.getAsString(LoginActivity.TAG_NAME));
@@ -356,7 +374,7 @@ public class PrinterActivity extends AppCompatActivity {
         int change_due = grand_total - cash;
         res += String.format("%1$-12s %2$-4s %3$,-2d%n", "Grand Total", ":", grand_total);
 
-        if (!paymentList.isEmpty()) {
+        if (paymentList != null && !paymentList.isEmpty()) {
             int payment_total = 0;
             for (int j = 0; j < paymentList.size(); ++j) {
                 Payment py = paymentList.get(j);
@@ -371,7 +389,7 @@ public class PrinterActivity extends AppCompatActivity {
                 res += String.format("%1$-12s %2$-4s %3$,-2d%n",
                         getResources().getString(getPaymentChannel(py.getPaymentChannel())), ":", amnt);
             }
-            change_due = grand_total - payment_total;
+            change_due = payment_total - grand_total;
         } else {
             res += String.format("%1$-12s %2$-4s %3$,-2d%n",
                     getResources().getString(R.string.payment_cash), ":", cash);

@@ -26,4 +26,6 @@ public interface PaymentDao {
     void clearPaymentCatalog();
 
     void suspendPayment(Payment payment);
+
+    void removePayment(int id);
 }

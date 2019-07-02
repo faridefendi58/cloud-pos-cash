@@ -195,6 +195,7 @@
     <string name="label_date">Tanggal</string>
     <string name="label_hour">Jam</string>
     <string name="label_cashier">Kasir</string>
+    <string name="label_no_nota">No. Nota</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Mandiri</string>

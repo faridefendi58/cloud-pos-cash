@@ -21,6 +21,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -45,6 +47,7 @@ import com.slightsite.app.domain.params.Params;
 import com.slightsite.app.domain.payment.Payment;
 import com.slightsite.app.domain.payment.PaymentCatalog;
 import com.slightsite.app.domain.payment.PaymentService;
+import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.domain.sale.SaleLedger;
 import com.slightsite.app.domain.sale.Shipping;
@@ -130,6 +133,13 @@ public class SaleDetailActivity extends Activity{
 			actionBar.setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#e2e3e5")));
 		}
 	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.detail_menu, menu);
+		return true;
+	}
 	
 
 	/**
@@ -153,11 +163,11 @@ public class SaleDetailActivity extends Activity{
 			shippingCatalog = ShippingService.getInstance().getShippingCatalog();
 			shipping = shippingCatalog.getShippingBySaleId(saleId);
 			List<Shipping> list_shipping = shippingCatalog.getAllShipping();
-			Log.e(TAG, "shipping data : "+ shipping.toMap().toString());
-			for (int i = 0; i < list_shipping.size(); i++)
+
+			/*for (int i = 0; i < list_shipping.size(); i++)
 			{
 				Log.e(TAG, "looping shipping data : "+ list_shipping.get(i).toMap().toString());
-			}
+			}*/
 
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
@@ -173,7 +183,6 @@ public class SaleDetailActivity extends Activity{
 		for(LineItem line : list) {
 			lineitemList.add(line.toMap());
 		}
-		Log.e(getClass().getSimpleName(), list.toString());
 
 		SimpleAdapter sAdap = new SimpleAdapter(SaleDetailActivity.this, lineitemList,
 				R.layout.listview_lineitem, new String[]{"name","quantity","price"}, new int[] {R.id.name,R.id.quantity,R.id.price});
@@ -183,11 +192,16 @@ public class SaleDetailActivity extends Activity{
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			Intent newActivity = new Intent(SaleDetailActivity.this, MainActivity.class);
-			finish();
-			startActivity(newActivity);
-			return true;
+			case android.R.id.home:
+				Intent newActivity = new Intent(SaleDetailActivity.this, MainActivity.class);
+				finish();
+				startActivity(newActivity);
+				return true;
+			case R.id.action_edit:
+				Intent updateAct = new Intent(SaleDetailActivity.this, MainActivity.class);
+				updateAct.putExtra("saleId", sale.getId());
+				startActivity(updateAct);
+				return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -214,7 +228,6 @@ public class SaleDetailActivity extends Activity{
 		Intent newActivity = new Intent(SaleDetailActivity.this,
 				PrinterActivity.class);
 		newActivity.putExtra("saleId", saleId);
-		Log.e("Sale detail act", "send saleId : "+ saleId);
 		startActivity(newActivity);
 	}
 
@@ -340,7 +353,6 @@ public class SaleDetailActivity extends Activity{
 				new VolleyCallback(){
 					@Override
 					public void onSuccess(String result) {
-						Log.e("After Pushed", "result : "+ result);
 						try {
 							JSONObject jObj = new JSONObject(result);
 							success = jObj.getInt(TAG_SUCCESS);
@@ -396,7 +408,6 @@ public class SaleDetailActivity extends Activity{
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				error.printStackTrace();
-				Log.e(TAG, "Request Error: " + error.getMessage());
 				Toast.makeText(getApplicationContext(),
 						error.getMessage(), Toast.LENGTH_LONG).show();
 				if (show_dialog) {
@@ -412,5 +423,10 @@ public class SaleDetailActivity extends Activity{
 			}
 		};
 		AppController.getInstance().addToRequestQueue(strReq, "json_obj_req");
+	}
+
+	private void editSale() {
+
+		Log.e(getClass().getSimpleName(), "Sale : "+ sale.toMap());
 	}
 }

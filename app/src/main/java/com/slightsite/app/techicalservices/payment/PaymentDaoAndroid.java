@@ -126,4 +126,9 @@ public class PaymentDaoAndroid implements PaymentDao {
 
         database.update(DatabaseContents.TABLE_SALE_PAYMENT.toString(), content);
     }
+
+    @Override
+    public void removePayment(int id) {
+        database.delete(DatabaseContents.TABLE_SALE_PAYMENT.toString(), id);
+    }
 }

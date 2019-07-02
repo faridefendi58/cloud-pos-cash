@@ -201,6 +201,7 @@
     <string name="label_date">Date</string>
     <string name="label_hour">Hour</string>
     <string name="label_cashier">Cashier</string>
+    <string name="label_no_nota">No. Nota</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>
