@@ -13,16 +13,16 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/customer"
+            android:text="@string/label_no_nota"
             android:textColor="#00698c"
-            android:textSize="18sp" />
+            android:textSize="@dimen/spacing_large" />
 
         <TextView
-            android:id="@+id/customerBox"
+            android:id="@+id/invoice_number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="right"
-            android:textSize="18sp"
+            android:textSize="@dimen/spacing_large"
             android:text=""/>
     </LinearLayout>
 
@@ -36,14 +36,14 @@
             android:layout_height="wrap_content"
             android:text="@string/total"
             android:textColor="#00698c"
-            android:textSize="18sp" />
+            android:textSize="@dimen/spacing_large" />
 
         <TextView
             android:id="@+id/totalBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="right"
-            android:textSize="18sp" />
+            android:textSize="@dimen/spacing_large" />
     </LinearLayout>
 
     <LinearLayout
@@ -56,34 +56,35 @@
             android:layout_height="wrap_content"
             android:textColor="#00698c"
             android:text="@string/date"
-            android:textSize="18sp" />
+            android:textSize="@dimen/spacing_large" />
 
         <TextView
             android:id="@+id/dateBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="right"
-            android:textSize="18sp" />
+            android:textSize="@dimen/spacing_large" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#00698c"
             android:text="@string/status"
-            android:textSize="18sp" />
+            android:textSize="@dimen/spacing_large" />
 
         <TextView
             android:id="@+id/status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="right"
-            android:textSize="18sp" />
+            android:textSize="@dimen/spacing_large" />
     </LinearLayout>
 
     <LinearLayout
@@ -158,8 +159,121 @@
     <ListView
         android:id="@+id/lineitemList"
         android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1">
+        android:layout_height="wrap_content">
+    </ListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/spacing_large">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/blue_300"
+            android:text="Customer Information" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/spacing_middle"
+        android:paddingLeft="@dimen/spacing_middle">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/grey_90"
+            android:text="@string/label_customer_name"/>
+
+        <TextView
+            android:id="@+id/customerBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/grey_90" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/spacing_middle">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/grey_90"
+            android:text="@string/label_customer_address"/>
+
+        <TextView
+            android:id="@+id/customer_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/grey_90" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/spacing_middle">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/grey_90"
+            android:text="@string/label_customer_phone"/>
+
+        <TextView
+            android:id="@+id/customer_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/grey_90" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/spacing_large">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/blue_300"
+            android:text="Payment Information" />
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/paymentitemList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/spacing_middle">
     </ListView>
 
     <LinearLayout
@@ -168,7 +282,8 @@
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         android:paddingBottom="5dp"
-        android:weightSum="3">
+        android:weightSum="3"
+        android:visibility="gone">
 
         <Button
             android:id="@+id/removeButton"

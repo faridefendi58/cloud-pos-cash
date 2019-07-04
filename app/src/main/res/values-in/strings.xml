@@ -198,6 +198,9 @@
     <string name="label_cashier">Kasir</string>
     <string name="label_no_nota">No. Nota</string>
     <string name="label_detail">Rincian</string>
+    <string name="label_customer_name">Nama Pelanggan</string>
+    <string name="label_customer_address">Alamat</string>
+    <string name="label_customer_phone">No Telepon</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Mandiri</string>

@@ -76,6 +76,7 @@ public class SaleDetailActivity extends Activity{
 	private TextView totalBox;
 	private TextView dateBox;
 	private ListView lineitemListView;
+	private ListView paymentitemListView;
 	private List<Map<String, String>> lineitemList;
 	private Sale sale;
 	private int saleId;
@@ -83,6 +84,9 @@ public class SaleDetailActivity extends Activity{
 	private TextView customerBox;
 	private Customer customer;
 	private TextView status;
+	private TextView invoice_number;
+	private TextView customer_address;
+	private TextView customer_phone;
 
 	private PaymentCatalog paymentCatalog;
 	private List<Payment> paymentList;
@@ -138,7 +142,7 @@ public class SaleDetailActivity extends Activity{
 	public boolean onCreateOptionsMenu(Menu menu) {
 		if (sale.getStatus() != "PUSHED") {
 			MenuInflater inflater = getMenuInflater();
-			inflater.inflate(R.menu.detail_menu, menu);
+			inflater.inflate(R.menu.option_menu, menu);
 		}
 		return true;
 	}
@@ -156,8 +160,12 @@ public class SaleDetailActivity extends Activity{
 		totalBox = (TextView) findViewById(R.id.totalBox);
 		dateBox = (TextView) findViewById(R.id.dateBox);
 		lineitemListView = (ListView) findViewById(R.id.lineitemList);
+		paymentitemListView = (ListView) findViewById(R.id.paymentitemList);
 		customerBox = (TextView) findViewById(R.id.customerBox);
 		status = (TextView) findViewById(R.id.status);
+        invoice_number = (TextView) findViewById(R.id.invoice_number);
+		customer_address = (TextView) findViewById(R.id.customer_address);
+		customer_phone = (TextView) findViewById(R.id.customer_phone);
 
 		try {
 			paymentCatalog = PaymentService.getInstance().getPaymentCatalog();
@@ -184,6 +192,15 @@ public class SaleDetailActivity extends Activity{
 		SimpleAdapter sAdap = new SimpleAdapter(SaleDetailActivity.this, lineitemList,
 				R.layout.listview_lineitem, new String[]{"name","quantity","price"}, new int[] {R.id.name,R.id.quantity,R.id.price});
 		lineitemListView.setAdapter(sAdap);
+
+		List<Map<String, String>> pyitemList = new ArrayList<Map<String, String>>();
+		for (Payment payment : paymentList) {
+			pyitemList.add(payment.toMap());
+		}
+
+		SimpleAdapter pAdap = new SimpleAdapter(SaleDetailActivity.this, pyitemList,
+				R.layout.listview_payment, new String[]{"payment_channel","amount"}, new int[] {R.id.title, R.id.price});
+		paymentitemListView.setAdapter(pAdap);
 	}
 
 	@Override
@@ -191,6 +208,7 @@ public class SaleDetailActivity extends Activity{
 		switch (item.getItemId()) {
 			case android.R.id.home:
 				Intent newActivity = new Intent(SaleDetailActivity.this, MainActivity.class);
+				newActivity.putExtra("fragment",2);
 				finish();
 				startActivity(newActivity);
 				return true;
@@ -209,6 +227,15 @@ public class SaleDetailActivity extends Activity{
 						.setNegativeButton(android.R.string.no, null).show();
 
 				return true;
+			case R.id.action_remove:
+				removeInvoice(getCurrentFocus());
+				return true;
+			case R.id.action_print:
+				printInvoice(getCurrentFocus());
+				return true;
+			case R.id.action_push:
+				pushInvoice(getCurrentFocus());
+				return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -222,7 +249,11 @@ public class SaleDetailActivity extends Activity{
 		dateBox.setText(DateTimeStrategy.parseDate(sale.getEndTime(), "dd/MM/yy HH:s") + "");
 		customerBox.setText(customer.getName());
 		status.setText(sale.getStatus());
+		Map<String, String> salemap = sale.toMap();
+		invoice_number.setText(salemap.get("invoiceNumber"));
 		showList(sale.getAllLineItem());
+		customer_address.setText(customer.getAddress());
+		customer_phone.setText(customer.getPhone());
 	}
 	
 	@Override

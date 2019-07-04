@@ -204,6 +204,9 @@
     <string name="label_cashier">Cashier</string>
     <string name="label_no_nota">No. Nota</string>
     <string name="label_detail">Detail</string>
+    <string name="label_customer_name">Customer Name</string>
+    <string name="label_customer_address">Address</string>
+    <string name="label_customer_phone">Phone Number</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>

@@ -1,0 +1,26 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_edit"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom"
+        android:showAsAction="always"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="@string/edit"/>
+
+    <item
+        android:id="@+id/action_remove"
+        android:title="@string/remove_invoice">
+    </item>
+
+    <item
+        android:id="@+id/action_print"
+        android:title="@string/print_invoice">
+    </item>
+
+    <item
+        android:id="@+id/action_push"
+        android:title="@string/push">
+    </item>
+</menu>
