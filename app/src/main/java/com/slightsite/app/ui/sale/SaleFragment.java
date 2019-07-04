@@ -66,6 +66,7 @@ public class SaleFragment extends UpdatableFragment {
 	private TextView customer_name_box;
 	private com.github.clans.fab.FloatingActionMenu fButtonMenu;
 	private MaterialRippleLayout lyt_next_to_payment;
+	private MaterialRippleLayout lyt_previous;
 
 	private AdapterListCart mAdapter;
 	private LinearLayout total_container;
@@ -101,6 +102,7 @@ public class SaleFragment extends UpdatableFragment {
 		totalPrice = (TextView) view.findViewById(R.id.totalPrice);
 		total_container = (LinearLayout) view.findViewById(R.id.total_container);
 		lyt_next_to_payment = (MaterialRippleLayout) view.findViewById(R.id.lyt_next_to_payment);
+		lyt_previous = (MaterialRippleLayout) view.findViewById(R.id.lyt_previous);
 
 		/*clearButton = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.clearButton);
 		endButton = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.endButton);
@@ -125,6 +127,13 @@ public class SaleFragment extends UpdatableFragment {
 				Intent newActivity = new Intent(getContext(),
 						CheckoutActivity.class);
 				startActivity(newActivity);
+			}
+		});
+
+		lyt_previous.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				viewPager.setCurrentItem(0);
 			}
 		});
 	}

@@ -357,7 +357,8 @@ public class InventoryFragment extends UpdatableFragment {
 
 				if (the_qty == 0) {
 					myView.findViewById(R.id.add_qty_container).setVisibility(View.GONE);
-					myView.findViewById(R.id.optionView).setVisibility(View.VISIBLE);
+					//myView.findViewById(R.id.optionView).setVisibility(View.VISIBLE);
+					myView.findViewById(R.id.addCartButton).setVisibility(View.VISIBLE);
 					// substract the cart
 					try {
 						//LineItem lineItem = register.getCurrentSale().getLineItemAt(position);

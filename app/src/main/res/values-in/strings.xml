@@ -201,4 +201,6 @@
     <string name="payment_mandiri">Transfer Mandiri</string>
     <string name="payment_bca">Transfer BCA</string>
     <string name="payment_edc">Mesin EDC</string>
+
+    <string name="button_add_to_cart">Tambah</string>
 </resources>

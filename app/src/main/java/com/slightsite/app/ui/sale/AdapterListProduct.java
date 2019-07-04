@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -76,6 +77,7 @@ public class AdapterListProduct extends BaseAdapter{
         View optionView;
         LinearLayout add_qty_container;
         View rowView;
+        Button addCartButton;
     }
 
     @Override
@@ -92,6 +94,7 @@ public class AdapterListProduct extends BaseAdapter{
         holder.optionView = (View) rowView.findViewById(R.id.optionView);
         holder.add_qty_container = (LinearLayout) rowView.findViewById(R.id.add_qty_container);
         holder.rowView = rowView;
+        holder.addCartButton = (Button) rowView.findViewById(R.id.addCartButton);
 
         final Product p = items.get(position);
         Map<String, String> pmap = p.toMap();
@@ -104,7 +107,7 @@ public class AdapterListProduct extends BaseAdapter{
             holder.quantity.setText(""+ stacks.get(p.getId()));
             holder.add_qty_container.setVisibility(View.VISIBLE);
         } else {
-            holder.optionView.setVisibility(View.VISIBLE);
+            holder.optionView.setVisibility(View.GONE);
             holder.quantity.setText("0");
             holder.add_qty_container.setVisibility(View.GONE);
         }
@@ -115,7 +118,8 @@ public class AdapterListProduct extends BaseAdapter{
             public void onClick(View v) {
                 if (!stacks.containsKey(p.getId())) {
                     holder.add_qty_container.setVisibility(View.VISIBLE);
-                    holder.optionView.setVisibility(View.GONE);
+                    //holder.optionView.setVisibility(View.GONE);
+                    holder.addCartButton.setVisibility(View.GONE);
 
                     int tot_qty = Integer.parseInt(holder.quantity.getText().toString()) + 1;
                     if (tot_qty <= 0) {
@@ -129,7 +133,8 @@ public class AdapterListProduct extends BaseAdapter{
                         Log.e(getClass().getSimpleName(), e.getMessage());
                     }
                 } else {
-                    holder.add_qty_container.setVisibility(View.VISIBLE);
+                    //holder.add_qty_container.setVisibility(View.VISIBLE);
+                    holder.addCartButton.setVisibility(View.VISIBLE);
                     holder.optionView.setVisibility(View.GONE);
                     int tot_qty = stacks.get(p.getId()) + 1;
                     holder.quantity.setText(""+ tot_qty);
@@ -144,6 +149,34 @@ public class AdapterListProduct extends BaseAdapter{
                 if(activity instanceof MainActivity){
                     activity.optionOnClickHandler2(p.getId());
                 }
+            }
+        });
+
+        holder.addCartButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!stacks.containsKey(p.getId())) {
+                    holder.add_qty_container.setVisibility(View.VISIBLE);
+                    holder.addCartButton.setVisibility(View.GONE);
+
+                    int tot_qty = Integer.parseInt(holder.quantity.getText().toString()) + 1;
+                    if (tot_qty <= 0) {
+                        tot_qty = 1;
+                    }
+                    holder.quantity.setText(""+ tot_qty);
+
+                    try {
+                        fragment.addToCart(p);
+                    } catch (Exception e) {
+                        Log.e(getClass().getSimpleName(), e.getMessage());
+                    }
+                } else {
+                    holder.addCartButton.setVisibility(View.VISIBLE);
+                    holder.optionView.setVisibility(View.GONE);
+                    int tot_qty = stacks.get(p.getId()) + 1;
+                    holder.quantity.setText(""+ tot_qty);
+                }
+                fragment.triggerAddSubstractButton(holder.rowView, p.getId(), position);
             }
         });
 

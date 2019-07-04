@@ -208,4 +208,6 @@
     <string name="payment_bca">BCA Transfer</string>
     <string name="payment_edc">EDC Payment</string>
 
+    <string name="button_add_to_cart">Add To Cart</string>
+
 </resources>
