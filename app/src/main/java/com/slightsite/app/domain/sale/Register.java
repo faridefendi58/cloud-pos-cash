@@ -175,7 +175,11 @@ public class Register {
 	 * @return true if success to load Sale from ID; otherwise false.
 	 */
 	public boolean setCurrentSale(int id) {
-		currentSale = saleDao.getSaleById(id);
+		if (id == 0) {
+			currentSale = null;
+		} else {
+			currentSale = saleDao.getSaleById(id);
+		}
 		return false;
 	}
 
@@ -193,7 +197,9 @@ public class Register {
 	 */
 	public void cancleSale() {
 		if (currentSale != null){
-			saleDao.cancelSale(currentSale,DateTimeStrategy.getCurrentTime());
+			if (!currentSale.getStatus().equals("ENDED") || !currentSale.getStatus().equals("PUSHED")) {
+				saleDao.cancelSale(currentSale,DateTimeStrategy.getCurrentTime());
+			}
 			currentSale = null;
 		}
 	}

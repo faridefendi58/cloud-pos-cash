@@ -91,6 +91,7 @@
     <string name="title_transaction">Transaction</string>
     <string name="title_reports">Reports</string>
     <string name="title_update_cart">Update Item</string>
+    <string name="title_update_sale">Update Invoice</string>
 
     <string name="dashboard_income">Income</string>
     <string name="dashboard_transaction">Transaction</string>
@@ -210,5 +211,7 @@
     <string name="payment_edc">EDC Payment</string>
 
     <string name="button_add_to_cart">Add To Cart</string>
+
+    <string name="confirm_edit">Are you sure you want to edit this?</string>
 
 </resources>

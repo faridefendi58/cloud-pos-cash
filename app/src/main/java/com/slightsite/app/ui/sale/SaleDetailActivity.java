@@ -166,11 +166,6 @@ public class SaleDetailActivity extends Activity{
 			shipping = shippingCatalog.getShippingBySaleId(saleId);
 			List<Shipping> list_shipping = shippingCatalog.getAllShipping();
 
-			/*for (int i = 0; i < list_shipping.size(); i++)
-			{
-				Log.e(TAG, "looping shipping data : "+ list_shipping.get(i).toMap().toString());
-			}*/
-
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
 		}
@@ -200,9 +195,19 @@ public class SaleDetailActivity extends Activity{
 				startActivity(newActivity);
 				return true;
 			case R.id.action_edit:
-				Intent updateAct = new Intent(SaleDetailActivity.this, MainActivity.class);
-				updateAct.putExtra("saleId", sale.getId());
-				startActivity(updateAct);
+				new AlertDialog.Builder(SaleDetailActivity.this)
+						.setTitle(getResources().getString(R.string.title_update_sale))
+						.setMessage(getResources().getString(R.string.confirm_edit))
+						.setIcon(android.R.drawable.ic_dialog_alert)
+						.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+							public void onClick(DialogInterface dialog, int whichButton) {
+								Intent updateAct = new Intent(SaleDetailActivity.this, MainActivity.class);
+								updateAct.putExtra("saleId", sale.getId());
+								startActivity(updateAct);
+							}})
+						.setNegativeButton(android.R.string.no, null).show();
+
 				return true;
 		default:
 			return super.onOptionsItemSelected(item);

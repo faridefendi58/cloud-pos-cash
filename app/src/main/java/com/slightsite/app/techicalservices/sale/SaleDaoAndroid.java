@@ -188,7 +188,6 @@ public class SaleDaoAndroid implements SaleDao {
         content.put("start_time", sale.getStartTime());
         content.put("end_time", endTime);
 		database.update(DatabaseContents.TABLE_SALE.toString(), content);
-		
 	}
 
 	@Override
