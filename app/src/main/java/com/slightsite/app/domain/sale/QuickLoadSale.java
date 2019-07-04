@@ -23,7 +23,7 @@ public class QuickLoadSale extends Sale {
 	 * @param orders numbers of lineItem in this Sale.
 	 */
 	public QuickLoadSale(int id, String startTime, String endTime, String status, Double total, Integer orders, Integer customer_id) {
-		super(id, startTime, endTime, status, null);
+		super(id, startTime, endTime, status, null, customer_id);
 		this.total = total;
 		this.orders = orders;
 	}

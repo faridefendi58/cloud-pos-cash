@@ -29,7 +29,7 @@ public class Sale {
 	private Integer customer_id;
 
 	public Sale(int id, String startTime) {
-		this(id, startTime, startTime, "", new ArrayList<LineItem>());
+		this(id, startTime, startTime, "", new ArrayList<LineItem>(), 0);
 	}
 	
 	/**
@@ -40,12 +40,13 @@ public class Sale {
 	 * @param status status of this Sale.
 	 * @param items list of LineItem in this Sale.
 	 */
-	public Sale(int id, String startTime, String endTime, String status, List<LineItem> items) {
+	public Sale(int id, String startTime, String endTime, String status, List<LineItem> items, int customer_id) {
 		this.id = id;
 		this.startTime = startTime;
 		this.status = status;
 		this.endTime = endTime;
 		this.items = items;
+		this.customer_id = customer_id;
 	}
 	
 	/**
@@ -144,6 +145,16 @@ public class Sale {
 		map.put("status", getStatus());
 		map.put("total", CurrencyController.getInstance().moneyFormat(getTotal()) + "");
 		map.put("orders", getOrders() + "");
+		map.put("customer_id", customer_id +"");
+		String invoice_number = DateTimeStrategy.parseDate(endTime, "yyyy/MM/dd");
+		if (customer_id > 0) {
+			invoice_number = invoice_number+"/"+customer_id+"/"+id;
+		} else {
+			invoice_number = invoice_number+"/0/"+id;
+		}
+
+		map.put("invoiceNumber", invoice_number);
+
 		
 		return map;
 	}
@@ -168,8 +179,9 @@ public class Sale {
 	}
 
 	public int getCustomerId() {
-		return customer_id;
+		return this.customer_id;
 	}
+	public void setCustomerId(int id) {this.customer_id = id;}
 
 	public LineItem getLineItemByProductId(int id) {
 		if (id >= 0) {

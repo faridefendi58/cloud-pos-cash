@@ -129,13 +129,14 @@ public class SaleDaoAndroid implements SaleDao {
         List<Sale> list = new ArrayList<Sale>();
         for (Object object: objectList) {
         	ContentValues content = (ContentValues) object;
-        	list.add(new Sale(
-        			content.getAsInteger("_id"),
-        			content.getAsString("start_time"),
-        			content.getAsString("end_time"),
-        			content.getAsString("status"),
-        			getLineItem(content.getAsInteger("_id")))
-        			);
+        	Sale sale = new Sale(
+					content.getAsInteger("_id"),
+					content.getAsString("start_time"),
+					content.getAsString("end_time"),
+					content.getAsString("status"),
+					getLineItem(content.getAsInteger("_id")),
+					content.getAsInteger("customer_id"));
+        	list.add(sale);
         }
         return list.get(0);
 	}

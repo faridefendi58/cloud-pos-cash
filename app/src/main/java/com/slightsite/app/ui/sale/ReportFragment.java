@@ -29,6 +29,7 @@ import android.widget.TextView;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.DateTimeStrategy;
+import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.domain.sale.SaleLedger;
 import com.slightsite.app.techicalservices.NoDaoSetException;
@@ -179,12 +180,23 @@ public class ReportFragment extends UpdatableFragment {
 
 		saleList = new ArrayList<Map<String, String>>();
 		for (Sale sale : list) {
-			saleList.add(sale.toMap());
+			Map<String, String> salemap = sale.toMap();
+			salemap.put("customer_data", "-");
+			try {
+				Customer cust = saleLedger.getCustomerBySaleId(sale.getId());
+				if (cust.getName().length() > 0) {
+					salemap.put("customer_data", cust.getName() + " - " + cust.getPhone() + " - " + cust.getAddress());
+				}
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+
+			saleList.add(salemap);
 		}
 
 		sAdap = new SimpleAdapter(getActivity().getBaseContext() , saleList,
-				R.layout.listview_report, new String[] { "id", "startTime", "total"},
-				new int[] { R.id.sid, R.id.startTime , R.id.total});
+				R.layout.listview_report, new String[] { "id", "startTime", "total", "invoiceNumber", "customer_data"},
+				new int[] { R.id.sid, R.id.startTime , R.id.total, R.id.invoice_number, R.id.customer_data});
 		saleLedgerListView.setAdapter(sAdap);
 	}
 

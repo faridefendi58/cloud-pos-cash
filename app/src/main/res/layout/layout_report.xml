@@ -55,7 +55,7 @@
         <TableRow
             android:layout_width="0dp"
             android:layout_height="30dp"
-            android:layout_weight="0.2"
+            android:layout_weight="0.3"
             android:background="#FFFFFF"
             android:paddingBottom="1dip"
             android:paddingLeft="1dip"
@@ -68,7 +68,7 @@
                 android:background="@color/btnInfo"
                 android:gravity="center"
                 android:paddingRight="3dp"
-                android:text="@string/id"
+                android:text="@string/label_no_nota"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold" />
         </TableRow>
@@ -76,7 +76,7 @@
         <TableRow
             android:layout_width="0dp"
             android:layout_height="30dp"
-            android:layout_weight="0.4"
+            android:layout_weight="0.7"
             android:background="#FFFFFF"
             android:paddingBottom="1dip"
             android:paddingLeft="1dip"
@@ -89,7 +89,7 @@
                 android:background="@color/btnInfo"
                 android:gravity="center"
                 android:paddingRight="3dp"
-                android:text="@string/date"
+                android:text="@string/label_detail"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold" />
         </TableRow>
@@ -102,7 +102,8 @@
             android:paddingBottom="1dip"
             android:paddingLeft="1dip"
             android:paddingRight="1dip"
-            android:paddingTop="1dip" >
+            android:paddingTop="1dip"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="0dp"
