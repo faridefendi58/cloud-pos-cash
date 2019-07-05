@@ -77,6 +77,7 @@ public class SaleDetailActivity extends Activity{
 	private TextView dateBox;
 	private ListView lineitemListView;
 	private ListView paymentitemListView;
+	private ListView shippingitemListView;
 	private List<Map<String, String>> lineitemList;
 	private Sale sale;
 	private int saleId;
@@ -161,6 +162,7 @@ public class SaleDetailActivity extends Activity{
 		dateBox = (TextView) findViewById(R.id.dateBox);
 		lineitemListView = (ListView) findViewById(R.id.lineitemList);
 		paymentitemListView = (ListView) findViewById(R.id.paymentitemList);
+		shippingitemListView = (ListView) findViewById(R.id.shippingitemList);
 		customerBox = (TextView) findViewById(R.id.customerBox);
 		status = (TextView) findViewById(R.id.status);
         invoice_number = (TextView) findViewById(R.id.invoice_number);
@@ -172,7 +174,11 @@ public class SaleDetailActivity extends Activity{
 			paymentList = paymentCatalog.getPaymentBySaleId(saleId);
 			shippingCatalog = ShippingService.getInstance().getShippingCatalog();
 			shipping = shippingCatalog.getShippingBySaleId(saleId);
-			List<Shipping> list_shipping = shippingCatalog.getAllShipping();
+
+			getWarehouseList();
+
+			//List<Shipping> list_shipping = shippingCatalog.getAllShipping();
+			//Log.e(getClass().getSimpleName(), "list_shipping : "+ list_shipping.toString());
 
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
@@ -193,6 +199,7 @@ public class SaleDetailActivity extends Activity{
 				R.layout.listview_lineitem, new String[]{"name","quantity","price"}, new int[] {R.id.name,R.id.quantity,R.id.price});
 		lineitemListView.setAdapter(sAdap);
 
+		// building payment information
 		List<Map<String, String>> pyitemList = new ArrayList<Map<String, String>>();
 		for (Payment payment : paymentList) {
 			pyitemList.add(payment.toMap());
@@ -201,6 +208,22 @@ public class SaleDetailActivity extends Activity{
 		SimpleAdapter pAdap = new SimpleAdapter(SaleDetailActivity.this, pyitemList,
 				R.layout.listview_payment, new String[]{"formated_payment_channel","formated_amount"}, new int[] {R.id.title, R.id.price});
 		paymentitemListView.setAdapter(pAdap);
+
+		// building shipping information
+		List<Map<String, String>> shippingitemList = new ArrayList<Map<String, String>>();
+		Map<String, String> ship_map = new HashMap<String, String>();
+		String note = shipping.toMap().get("method_name");
+		if (shipping.getMethod() == 0) {
+			note += " di warehouse pada tanggal "+ shipping.getPickupDate();
+		} else if (shipping.getMethod() == 1) {
+			note += " pada tanggal "+ shipping.getPickupDate() + " di Warehouse "+ warehouse_names.get(shipping.getWarehouseId());
+		}
+		ship_map.put("note", note);
+		shippingitemList.add(ship_map);
+
+		SimpleAdapter spAdap = new SimpleAdapter(SaleDetailActivity.this, shippingitemList,
+				R.layout.listview_payment, new String[]{"note"}, new int[] {R.id.title});
+		shippingitemListView.setAdapter(spAdap);
 	}
 
 	@Override
@@ -467,4 +490,44 @@ public class SaleDetailActivity extends Activity{
 
 		Log.e(getClass().getSimpleName(), "Sale : "+ sale.toMap());
 	}
+
+	private ArrayList<String> warehouse_items = new ArrayList<String>();
+	private HashMap<String, String> warehouse_ids = new HashMap<String, String>();
+	private HashMap<Integer, String> warehouse_names = new HashMap<Integer, String>();
+	private JSONArray warehouse_data;
+
+	private void getWarehouseList() {
+		Map<String, String> params = new HashMap<String, String>();
+
+		warehouse_items.clear();
+
+		String url = Server.URL + "warehouse/list?api-key=" + Server.API_KEY;
+		_string_request(
+				Request.Method.GET,
+				url, params, false,
+				new VolleyCallback() {
+					@Override
+					public void onSuccess(String result) {
+						try {
+							JSONObject jObj = new JSONObject(result);
+							success = jObj.getInt(TAG_SUCCESS);
+							// Check for error node in json
+							if (success == 1) {
+								warehouse_data = jObj.getJSONArray("data");
+								for(int n = 0; n < warehouse_data.length(); n++)
+								{
+									JSONObject data_n = warehouse_data.getJSONObject(n);
+									warehouse_items.add(data_n.getString("title"));
+									warehouse_ids.put(data_n.getString("title"), data_n.getString("id"));
+									warehouse_names.put(data_n.getInt("id"), data_n.getString("title"));
+								}
+							}
+
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+	}
+
 }

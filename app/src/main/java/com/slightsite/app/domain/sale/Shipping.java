@@ -1,5 +1,7 @@
 package com.slightsite.app.domain.sale;
 
+import com.slightsite.app.techicalservices.Tools;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +14,8 @@ public class Shipping {
     private int warehouse_id;
     private String warehouse_name;
     private String date_added;
+    private String configs;
+    private String pickup_date;
 
     public static final int UNDEFINED = -1;
 
@@ -35,11 +39,16 @@ public class Shipping {
         Map<String, String> map = new HashMap<String, String>();
         map.put("sale_id", sale_id+"");
         map.put("method", method+"");
+        try {
+            String method_name = Tools.getPaymentMethod(method);
+            map.put("method_name", method_name);
+        } catch (Exception e){}
         map.put("date", date);
         map.put("address", address);
         map.put("warehouse_id", warehouse_id+"");
         map.put("warehouse_name", warehouse_name);
         map.put("date_added", date_added);
+        map.put("pickup_date", pickup_date);
 
         return map;
 
@@ -96,5 +105,19 @@ public class Shipping {
     }
     public String getDateAdded() {
         return date_added;
+    }
+
+    public void setConfigs(String configs) {
+        this.configs = configs;
+    }
+    public String getConfigs() {
+        return configs;
+    }
+
+    public void setPickupDate(String pickup_date) {
+        this.pickup_date = pickup_date;
+    }
+    public String getPickupDate() {
+        return pickup_date;
     }
 }

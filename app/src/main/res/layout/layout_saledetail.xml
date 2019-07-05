@@ -252,6 +252,33 @@
 
     </LinearLayout>
 
+    <!-- start of shipping information -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/spacing_large">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/blue_300"
+            android:text="Shipping Information" />
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/shippingitemList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/spacing_middle">
+    </ListView>
+    <!-- endof shipping information -->
+
+    <!-- start of payment information -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -275,6 +302,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/spacing_middle">
     </ListView>
+    <!-- endof shipping information -->
 
     <LinearLayout
         android:layout_width="match_parent"

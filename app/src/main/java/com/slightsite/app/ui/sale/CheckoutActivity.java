@@ -36,6 +36,7 @@ import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.params.Params;
 import com.slightsite.app.domain.sale.Checkout;
+import com.slightsite.app.domain.sale.PaymentItem;
 import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.domain.sale.Shipping;
 import com.slightsite.app.techicalservices.NoDaoSetException;
@@ -91,7 +92,7 @@ public class CheckoutActivity extends AppCompatActivity {
     private int current_warehouse_id = 0;
     private String current_warehouse_name = null;
 
-    private String[] ship_methods = new String[]{"Bawa Langsung", "Ambil Nanti", "Gojek", "Grab", "Kurir"};
+    private String[] ship_methods = Tools.getPaymentMethods();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +108,30 @@ public class CheckoutActivity extends AppCompatActivity {
                 current_warehouse_id = Integer.parseInt(whParam.getValue());
             }
             getWarehouseList();
+            if (register.getCustomer() != null) {
+                customer = register.getCustomer();
+                setCustomer(customer);
+                // build the default payment if any
+                if (register.getPaymentItems() != null) {
+                    HashMap< String, String> banks = new HashMap<String, String>();
+                    for(PaymentItem line : register.getPaymentItems()) {
+                        if (line.getTitle().equals("cash_receive")) {
+                            checkout_data.setCashReceive(line.getNominal().toString());
+                        }
+                        if (line.getTitle().equals("nominal_mandiri")
+                                || line.getTitle().equals("nominal_bca")
+                                || line.getTitle().equals("nominal_bni")) {
+                            banks.put(line.getTitle(), line.getNominal().toString());
+                        }
+                    }
+
+                    if (!banks.isEmpty()) {
+                        checkout_data.setUseTransferBank(true);
+                        checkout_data.setTransferBank(banks);
+                    }
+                    Log.e(getClass().getSimpleName(), "banks in checkout act :"+ banks.toString());
+                }
+            }
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }

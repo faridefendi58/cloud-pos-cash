@@ -37,6 +37,7 @@ import android.widget.Toast;
 import com.slightsite.app.R;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 public class Tools {
@@ -317,6 +318,14 @@ public class Tools {
         } catch (Exception e) {
             Toast.makeText(activity, "Ops, Cannot open url", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public static String[] getPaymentMethods() {
+        return new String[]{"Bawa Langsung", "Ambil Nanti", "Gojek", "Grab", "Kurir"};
+    }
+
+    public static String getPaymentMethod(int index) {
+        return Arrays.asList(getPaymentMethods()).get(index);
     }
 }
 

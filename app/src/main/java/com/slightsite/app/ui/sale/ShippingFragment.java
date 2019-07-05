@@ -67,7 +67,6 @@ public class ShippingFragment extends Fragment {
     private String customer_address;
 
     private String[] ship_methods = new String[]{};
-    private enum SMethod {DIRECT, LATER, GOJEK, GRAB, CURRIER }
 
     private ArrayList<String> warehouse_items = new ArrayList<String>();
     private HashMap<String, String> warehouse_ids = new HashMap<String, String>();

@@ -1,6 +1,7 @@
 package com.slightsite.app.techicalservices.shipping;
 
 import android.content.ContentValues;
+import android.util.Log;
 
 import com.slightsite.app.domain.sale.Shipping;
 import com.slightsite.app.techicalservices.Database;
@@ -28,7 +29,7 @@ public class ShippingDaoAndroid implements ShippingDao {
     public int addShipping(Shipping shipping) {
         ContentValues content = new ContentValues();
         content.put("sale_id", shipping.getSaleId());
-        content.put("method", shipping.getMethod());
+        content.put("method", shipping.toMap().get("method"));
         content.put("warehouse_id", shipping.getWarehouseId());
         content.put("pickup_date", shipping.getDate());
         content.put("address", shipping.getAddress());
@@ -61,6 +62,10 @@ public class ShippingDaoAndroid implements ShippingDao {
                     );
             _shipping.setSaleId(content.getAsInteger("sale_id"));
             _shipping.setDateAdded(content.getAsString("date_added"));
+            _shipping.setConfigs(content.getAsString("configs"));
+            _shipping.setMethod(content.getAsInteger("method"));
+            _shipping.setAddress(content.getAsString("address"));
+            _shipping.setPickupDate(content.getAsString("pickup_date"));
             list.add(_shipping);
         }
         return list;
