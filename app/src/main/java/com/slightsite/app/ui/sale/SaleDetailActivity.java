@@ -31,6 +31,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -98,6 +99,9 @@ public class SaleDetailActivity extends Activity{
 	ProgressDialog pDialog;
 	int success;
 
+	private final HashMap<Integer, String> warehouse_names = new HashMap<Integer, String>();
+	private JSONArray warehouse_data;
+
 	private static final String TAG = SaleDetailActivity.class.getSimpleName();
 	private static final String TAG_SUCCESS = "success";
 	private static final String TAG_MESSAGE = "message";
@@ -110,6 +114,7 @@ public class SaleDetailActivity extends Activity{
 		try {
 			saleLedger = SaleLedger.getInstance();
 			paramCatalog = ParamService.getInstance().getParamCatalog();
+			getWarehouseList();
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
 		}
@@ -175,8 +180,6 @@ public class SaleDetailActivity extends Activity{
 			shippingCatalog = ShippingService.getInstance().getShippingCatalog();
 			shipping = shippingCatalog.getShippingBySaleId(saleId);
 
-			getWarehouseList();
-
 			//List<Shipping> list_shipping = shippingCatalog.getAllShipping();
 			//Log.e(getClass().getSimpleName(), "list_shipping : "+ list_shipping.toString());
 
@@ -213,9 +216,10 @@ public class SaleDetailActivity extends Activity{
 		List<Map<String, String>> shippingitemList = new ArrayList<Map<String, String>>();
 		Map<String, String> ship_map = new HashMap<String, String>();
 		String note = shipping.toMap().get("method_name");
+
 		if (shipping.getMethod() == 0) {
-			note += " di warehouse pada tanggal "+ shipping.getPickupDate();
-		} else if (shipping.getMethod() == 1) {
+			note += " pada tanggal "+ shipping.getPickupDate();
+		} else {
 			note += " pada tanggal "+ shipping.getPickupDate() + " di Warehouse "+ warehouse_names.get(shipping.getWarehouseId());
 		}
 		ship_map.put("note", note);
@@ -274,7 +278,14 @@ public class SaleDetailActivity extends Activity{
 		status.setText(sale.getStatus());
 		Map<String, String> salemap = sale.toMap();
 		invoice_number.setText(salemap.get("invoiceNumber"));
-		showList(sale.getAllLineItem());
+
+		new android.os.Handler().postDelayed(
+				new Runnable() {
+					public void run() {
+						showList(sale.getAllLineItem());
+					}
+				},
+				2000);
 		customer_address.setText(customer.getAddress());
 		customer_phone.setText(customer.getPhone());
 	}
@@ -486,23 +497,11 @@ public class SaleDetailActivity extends Activity{
 		AppController.getInstance().addToRequestQueue(strReq, "json_obj_req");
 	}
 
-	private void editSale() {
-
-		Log.e(getClass().getSimpleName(), "Sale : "+ sale.toMap());
-	}
-
-	private ArrayList<String> warehouse_items = new ArrayList<String>();
-	private HashMap<String, String> warehouse_ids = new HashMap<String, String>();
-	private HashMap<Integer, String> warehouse_names = new HashMap<Integer, String>();
-	private JSONArray warehouse_data;
-
 	private void getWarehouseList() {
 		Map<String, String> params = new HashMap<String, String>();
 
-		warehouse_items.clear();
-
 		String url = Server.URL + "warehouse/list?api-key=" + Server.API_KEY;
-		_string_request(
+		_string_request2(
 				Request.Method.GET,
 				url, params, false,
 				new VolleyCallback() {
@@ -517,12 +516,10 @@ public class SaleDetailActivity extends Activity{
 								for(int n = 0; n < warehouse_data.length(); n++)
 								{
 									JSONObject data_n = warehouse_data.getJSONObject(n);
-									warehouse_items.add(data_n.getString("title"));
-									warehouse_ids.put(data_n.getString("title"), data_n.getString("id"));
 									warehouse_names.put(data_n.getInt("id"), data_n.getString("title"));
 								}
 							}
-
+							Log.e(getClass().getSimpleName(), "warehouse_names2 : "+ warehouse_names.toString());
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
@@ -530,4 +527,58 @@ public class SaleDetailActivity extends Activity{
 				});
 	}
 
+	private void _string_request2(int method, String url, final Map params, final Boolean show_dialog, final VolleyCallback callback) {
+		if (show_dialog) {
+			pDialog = new ProgressDialog(this);
+			pDialog.setCancelable(false);
+			pDialog.setMessage("Request data ...");
+			showDialog();
+		}
+
+		if (method == Request.Method.GET) { //get method doesnt support getParams
+			Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
+			while(iterator.hasNext())
+			{
+				Map.Entry<String, String> pair = iterator.next();
+				String pair_value = pair.getValue();
+				if (pair_value.contains(" "))
+					pair_value = pair.getValue().replace(" ", "%20");
+				url += "&" + pair.getKey() + "=" + pair_value;
+			}
+		}
+
+		StringRequest strReq = new StringRequest(method, url, new Response.Listener < String > () {
+
+			@Override
+			public void onResponse(String Response) {
+				callback.onSuccess(Response);
+			}
+		}, new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				error.printStackTrace();
+				Toast.makeText(getApplicationContext(),
+						error.getMessage(), Toast.LENGTH_LONG).show();
+				if (show_dialog) {
+					hideDialog();
+				}
+			}
+		})
+		{
+			// set headers
+			@Override
+			protected Map<String, String> getParams() {
+				return params;
+			}
+		};
+
+		strReq.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 0,
+				DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+		try {
+			AppController.getInstance().addToRequestQueue(strReq, "json_obj_req");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
