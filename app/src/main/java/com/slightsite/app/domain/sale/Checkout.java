@@ -53,6 +53,9 @@ public class Checkout implements Serializable {
     }
 
     public void setCashReceive(String nominal) {
+        if (nominal.contains(".")) {
+            nominal = nominal.split("\\.")[0];
+        }
         this.cash_receive = nominal;
     }
 

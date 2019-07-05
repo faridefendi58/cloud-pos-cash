@@ -108,8 +108,10 @@ public class CheckoutActivity extends AppCompatActivity {
                 current_warehouse_id = Integer.parseInt(whParam.getValue());
             }
             getWarehouseList();
-            if (register.getCustomer() != null) {
+            if (register.getCurrentSale().getStatus().equals("ENDED")) {
+                Log.e(getClass().getSimpleName(), "register.getCustomer() : "+ register.getCustomer().toMap().toString());
                 customer = register.getCustomer();
+                Log.e(getClass().getSimpleName(), "customer : "+ customer.toString());
                 setCustomer(customer);
                 // build the default payment if any
                 if (register.getPaymentItems() != null) {

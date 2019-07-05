@@ -238,7 +238,10 @@ public class PaymentFragment extends Fragment {
 
     private void initDefaultValue() {
         try {
-            if (c_data.getCashReceive().length() > 0 && Integer.parseInt(c_data.getCashReceive()) > 0) {
+            if (c_data.getCashReceive().length() > 0) {
+                if (c_data.getCashReceive().contains(".")) {
+                    c_data.setCashReceive(c_data.getCashReceive().split("\\.")[0]);
+                }
                 cash_receive.setText(c_data.getCashReceive());
             }
 
@@ -248,16 +251,26 @@ public class PaymentFragment extends Fragment {
                 if (!c_data.getTransferBank().isEmpty()) {
                     if (banks.containsKey("nominal_mandiri")) {
                         ed_nominal_mandiri.setText(c_data.getTransferBank().get("nominal_mandiri"));
+                        if (c_data.getTransferBank().get("nominal_mandiri").contains(".")) {
+                            ed_nominal_mandiri.setText(c_data.getTransferBank().get("nominal_mandiri").split("\\.")[0]);
+                        }
+
                         LinearLayout lyt_expand_bca = (LinearLayout) root.findViewById(R.id.lyt_expand_bca);
                         lyt_expand_bca.setVisibility(View.VISIBLE);
                     }
                     if (banks.containsKey("nominal_bca")) {
                         ed_nominal_bca.setText(c_data.getTransferBank().get("nominal_bca"));
+                        if (c_data.getTransferBank().get("nominal_bca").contains(".")) {
+                            ed_nominal_bca.setText(c_data.getTransferBank().get("nominal_bca").split("\\.")[0]);
+                        }
                         LinearLayout lyt_expand_mandiri = (LinearLayout) root.findViewById(R.id.lyt_expand_mandiri);
                         lyt_expand_mandiri.setVisibility(View.VISIBLE);
                     }
                     if (banks.containsKey("nominal_bni")) {
                         ed_nominal_bni.setText(c_data.getTransferBank().get("nominal_bni"));
+                        if (c_data.getTransferBank().get("nominal_bni").contains(".")) {
+                            ed_nominal_bni.setText(c_data.getTransferBank().get("nominal_bni").split("\\.")[0]);
+                        }
                         LinearLayout lyt_expand_bni = (LinearLayout) root.findViewById(R.id.lyt_expand_bni);
                         lyt_expand_bni.setVisibility(View.VISIBLE);
                     }

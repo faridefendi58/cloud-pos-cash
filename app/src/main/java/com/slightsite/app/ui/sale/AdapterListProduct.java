@@ -152,6 +152,15 @@ public class AdapterListProduct extends BaseAdapter{
             }
         });
 
+        holder.product_image.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(activity instanceof MainActivity){
+                    activity.optionOnClickHandler2(p.getId());
+                }
+            }
+        });
+
         holder.addCartButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
