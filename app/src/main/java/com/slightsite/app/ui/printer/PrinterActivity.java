@@ -31,6 +31,7 @@ import java.util.UUID;
 
 import com.slightsite.app.R;
 import com.slightsite.app.domain.DateTimeStrategy;
+import com.slightsite.app.domain.ParamsController;
 import com.slightsite.app.domain.ProfileController;
 import com.slightsite.app.domain.inventory.LineItem;
 import com.slightsite.app.domain.params.ParamCatalog;
@@ -313,7 +314,7 @@ public class PrinterActivity extends AppCompatActivity {
         String date_transaction = sale.getEndTime();
         try {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MMM-dd  hh:mm a");
-            date_transaction = DateTimeStrategy.parseDate(sale.getEndTime(), "yyyy/MM/dd");
+            date_transaction = DateTimeStrategy.parseDate(sale.getEndTime(), "yyMMdd");
 
         } catch (Exception e) {
 
@@ -321,10 +322,12 @@ public class PrinterActivity extends AppCompatActivity {
 
         sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
         adminData = ProfileController.getInstance().getDataByEmail(sharedpreferences.getString(LoginActivity.TAG_EMAIL, null));
+        String admin_id = ParamsController.getInstance().getParam("admin_id");
 
         String no_nota = date_transaction+"/"+sale.getId();
-        if (adminData != null) {
-            no_nota = date_transaction+"/"+ sharedpreferences.getString(LoginActivity.TAG_ID, null) +"/"+sale.getId();
+        if (admin_id != null) {
+            //no_nota = date_transaction+"/"+ sharedpreferences.getString(LoginActivity.TAG_ID, null) +"/"+sale.getId();
+            no_nota = date_transaction+"/"+ admin_id +"/"+sale.getId();
         }
 
         res += String.format("%1$-7s %2$-4s %3$-10s%n",

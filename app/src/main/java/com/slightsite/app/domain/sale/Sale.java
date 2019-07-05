@@ -10,6 +10,7 @@ import java.util.Map;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.LanguageController;
+import com.slightsite.app.domain.ParamsController;
 import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.inventory.LineItem;
 import com.slightsite.app.domain.inventory.Product;
@@ -146,9 +147,10 @@ public class Sale {
 		map.put("total", CurrencyController.getInstance().moneyFormat(getTotal()) + "");
 		map.put("orders", getOrders() + "");
 		map.put("customer_id", customer_id +"");
-		String invoice_number = DateTimeStrategy.parseDate(endTime, "yyyy/MM/dd");
-		if (customer_id > 0) {
-			invoice_number = invoice_number+"/"+customer_id+"/"+id;
+		String invoice_number = DateTimeStrategy.parseDate(endTime, "yyMMdd");
+		String admin_id = ParamsController.getInstance().getParam("admin_id");
+		if (admin_id != null) {
+			invoice_number = invoice_number+"/"+admin_id+"/"+id;
 		} else {
 			invoice_number = invoice_number+"/0/"+id;
 		}

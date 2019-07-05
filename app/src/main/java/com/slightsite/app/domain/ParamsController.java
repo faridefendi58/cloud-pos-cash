@@ -56,22 +56,15 @@ public class ParamsController {
         Log.d("CREATE DATABASE", "Create " + DatabaseContents.TABLE_PARAMS + " Successfully.");
     }
 
-    /**
-     * Returns current language.
-     * @return current language.
-     */
     public String getParam(String key) {
-        List<Object> contents = database.select("SELECT * FROM " + DatabaseContents.TABLE_PARAMS);
+        List<Object> contents = database.select("SELECT * FROM " + DatabaseContents.TABLE_PARAMS + " WHERE name ='"+ key +"'");
 
         if (contents.isEmpty()) {
-            ContentValues defualtLang = new ContentValues();
-            database.insert( DatabaseContents.TABLE_PARAMS.toString(), defualtLang);
-
-            return "text";
+            return null;
         }
 
         ContentValues content = (ContentValues) contents.get(0);
-        return content.getAsString(key);
+        return content.getAsString("value");
     }
 
     public Object getParams() {
