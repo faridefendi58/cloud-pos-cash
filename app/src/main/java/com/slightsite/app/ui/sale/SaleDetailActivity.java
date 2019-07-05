@@ -199,7 +199,7 @@ public class SaleDetailActivity extends Activity{
 		}
 
 		SimpleAdapter pAdap = new SimpleAdapter(SaleDetailActivity.this, pyitemList,
-				R.layout.listview_payment, new String[]{"payment_channel","amount"}, new int[] {R.id.title, R.id.price});
+				R.layout.listview_payment, new String[]{"formated_payment_channel","formated_amount"}, new int[] {R.id.title, R.id.price});
 		paymentitemListView.setAdapter(pAdap);
 	}
 

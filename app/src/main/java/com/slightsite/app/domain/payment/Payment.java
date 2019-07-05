@@ -1,5 +1,9 @@
 package com.slightsite.app.domain.payment;
 
+import com.slightsite.app.R;
+import com.slightsite.app.domain.CurrencyController;
+import com.slightsite.app.ui.sale.CheckoutActivity;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,7 +69,25 @@ public class Payment {
         map.put("sale_id", sale_id + "");
         map.put("payment_channel", payment_channel);
         map.put("amount", amount + "");
+        String formated_amount = CurrencyController.getInstance().moneyFormat(amount);
+        map.put("formated_amount", formated_amount);
+        String formated_payment_channel = payment_channel;
+        if (payment_channel != null) {
+            formated_payment_channel = getPaymentTypes().get(payment_channel);
+        }
+        map.put("formated_payment_channel", formated_payment_channel);
 
         return map;
+    }
+
+    public HashMap<String,String> getPaymentTypes() {
+        HashMap<String,String> types = new HashMap<String, String>();
+        types.put("cash_receive", "Cash");
+        types.put("nominal_mandiri", "Bank Mandiri");
+        types.put("nominal_bca", "Bank BCA");
+        types.put("nominal_bni", "Bank BNI");
+        types.put("nominal_edc", "EDC Payment");
+
+        return types;
     }
 }

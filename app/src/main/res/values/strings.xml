@@ -211,6 +211,7 @@
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>
     <string name="payment_bca">BCA Transfer</string>
+    <string name="payment_bni">BNI Transfer</string>
     <string name="payment_edc">EDC Payment</string>
 
     <string name="button_add_to_cart">Add To Cart</string>

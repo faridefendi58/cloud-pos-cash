@@ -110,6 +110,7 @@ public class Checkout implements Serializable {
         types.put("cash_receive", "Cash Payment");
         types.put("nominal_mandiri", "Transfer Bank Mandiri");
         types.put("nominal_bca", "Transfer Bank BCA");
+        types.put("nominal_bni", "Transfer Bank BNI");
         types.put("nominal_edc", "EDC Payment");
 
         return types;
