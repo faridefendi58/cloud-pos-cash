@@ -71,6 +71,10 @@ public class Customer {
         this.address = status;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     /**
      * Returns id of this customer.
      * @return id of this customer.

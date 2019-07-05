@@ -242,7 +242,9 @@ public class PaymentFragment extends Fragment {
                 if (c_data.getCashReceive().contains(".")) {
                     c_data.setCashReceive(c_data.getCashReceive().split("\\.")[0]);
                 }
-                cash_receive.setText(c_data.getCashReceive());
+                if (!c_data.getCashReceive().equals("0")) {
+                    cash_receive.setText(c_data.getCashReceive());
+                }
             }
 
             if (c_data.getUseTransferBank()) {
@@ -255,16 +257,17 @@ public class PaymentFragment extends Fragment {
                             ed_nominal_mandiri.setText(c_data.getTransferBank().get("nominal_mandiri").split("\\.")[0]);
                         }
 
-                        LinearLayout lyt_expand_bca = (LinearLayout) root.findViewById(R.id.lyt_expand_bca);
-                        lyt_expand_bca.setVisibility(View.VISIBLE);
+                        LinearLayout lyt_expand_mandiri = (LinearLayout) root.findViewById(R.id.lyt_expand_mandiri);
+                        lyt_expand_mandiri.setVisibility(View.VISIBLE);
                     }
                     if (banks.containsKey("nominal_bca")) {
                         ed_nominal_bca.setText(c_data.getTransferBank().get("nominal_bca"));
                         if (c_data.getTransferBank().get("nominal_bca").contains(".")) {
                             ed_nominal_bca.setText(c_data.getTransferBank().get("nominal_bca").split("\\.")[0]);
                         }
-                        LinearLayout lyt_expand_mandiri = (LinearLayout) root.findViewById(R.id.lyt_expand_mandiri);
-                        lyt_expand_mandiri.setVisibility(View.VISIBLE);
+
+                        LinearLayout lyt_expand_bca = (LinearLayout) root.findViewById(R.id.lyt_expand_bca);
+                        lyt_expand_bca.setVisibility(View.VISIBLE);
                     }
                     if (banks.containsKey("nominal_bni")) {
                         ed_nominal_bni.setText(c_data.getTransferBank().get("nominal_bni"));
@@ -286,6 +289,9 @@ public class PaymentFragment extends Fragment {
                     }
                     if (edcs.containsKey("nominal_edc")) {
                         edc_nominal.setText(c_data.getEdc().get("nominal_edc"));
+                        if (c_data.getEdc().get("nominal_edc").contains(".")) {
+                            edc_nominal.setText(c_data.getEdc().get("nominal_edc").split("\\.")[0]);
+                        }
                     }
                 }
             }

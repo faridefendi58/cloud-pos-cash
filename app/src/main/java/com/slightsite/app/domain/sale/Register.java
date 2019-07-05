@@ -252,6 +252,7 @@ public class Register {
 	public void setCustomer(Customer cst) {
 		if (currentSale != null) {
 			Log.e(getClass().getSimpleName(), "Ini mulai setup cust : "+ cst.toMap().toString());
+			Log.e(getClass().getSimpleName(), "currentSale : "+ currentSale.toMap().toString());
 			saleDao.setCustomerSale(currentSale, cst);
 			customer = cst;
 		} else {

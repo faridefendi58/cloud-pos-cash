@@ -65,6 +65,7 @@ public class ShippingFragment extends Fragment {
     private String customer_phone;
     private String customer_email;
     private String customer_address;
+    private int selected_cust_id = -1;
 
     private String[] ship_methods = new String[]{};
 
@@ -155,6 +156,7 @@ public class ShippingFragment extends Fragment {
                 email.setText(item.getEmail());
                 address.setText(item.getAddress());
                 //customer_id.setText(item.getId());
+                selected_cust_id = item.getId();
                 ((CheckoutActivity) getActivity()).setCustomer(item);
                 ((CheckoutActivity) getActivity()).hideKeyboard(getActivity());
                 return true;
@@ -187,6 +189,11 @@ public class ShippingFragment extends Fragment {
                     customer_name = name.getText().toString();
                     customer_email = email.getText().toString();
                     customer_address = address.getText().toString();
+                    int customer_id = c_data.getCustomer().getId();
+                    if (selected_cust_id > 0) {
+                        cust.setId(selected_cust_id);
+                    }
+                    Log.e(getClass().getSimpleName(), "Sebelum setup cust "+ cust.toMap().toString());
                     if (setType == "phone") {
                         if (!cust.getPhone().equals(s.toString())) {
                             cust.setPhone(s.toString());
@@ -363,6 +370,7 @@ public class ShippingFragment extends Fragment {
                 phone.setText(item.getPhone());
                 email.setText(item.getEmail());
                 address.setText(item.getAddress());
+                selected_cust_id = item.getId();
 
                 ((CheckoutActivity) getActivity()).setCustomer(item);
                 ((CheckoutActivity) getActivity()).hideKeyboard(getActivity());
