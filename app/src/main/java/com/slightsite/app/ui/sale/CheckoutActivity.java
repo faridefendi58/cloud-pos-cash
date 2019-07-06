@@ -2,7 +2,9 @@ package com.slightsite.app.ui.sale;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -32,16 +34,24 @@ import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.customer.CustomerCatalog;
 import com.slightsite.app.domain.customer.CustomerService;
+import com.slightsite.app.domain.inventory.LineItem;
 import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.params.Params;
+import com.slightsite.app.domain.payment.Payment;
+import com.slightsite.app.domain.payment.PaymentCatalog;
+import com.slightsite.app.domain.payment.PaymentService;
 import com.slightsite.app.domain.sale.Checkout;
 import com.slightsite.app.domain.sale.PaymentItem;
 import com.slightsite.app.domain.sale.Register;
+import com.slightsite.app.domain.sale.Sale;
+import com.slightsite.app.domain.sale.SaleLedger;
 import com.slightsite.app.domain.sale.Shipping;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.Tools;
+import com.slightsite.app.techicalservices.URLBuilder;
+import com.slightsite.app.ui.LoginActivity;
 import com.slightsite.app.ui.printer.PrinterActivity;
 
 import org.json.JSONArray;
@@ -51,7 +61,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
+import static com.slightsite.app.ui.LoginActivity.TAG_ID;
 
 public class CheckoutActivity extends AppCompatActivity {
 
@@ -94,6 +107,14 @@ public class CheckoutActivity extends AppCompatActivity {
 
     private String[] ship_methods = Tools.getPaymentMethods();
 
+    private SharedPreferences sharedpreferences;
+    private SaleLedger saleLedger;
+    private Sale sale;
+    private int saleId;
+    private List<Map<String, String>> lineitemList;
+    private List<Payment> paymentList;
+    private PaymentCatalog paymentCatalog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +122,8 @@ public class CheckoutActivity extends AppCompatActivity {
         try {
             register = Register.getInstance();
             customerCatalog = CustomerService.getInstance().getCustomerCatalog();
+            sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
+            saleLedger = SaleLedger.getInstance();
 
             paramCatalog = ParamService.getInstance().getParamCatalog();
             Params whParam = paramCatalog.getParamByName("warehouse_id");
@@ -177,8 +200,11 @@ public class CheckoutActivity extends AppCompatActivity {
                             register.setCustomer(customer);
                         }
                     }
+
                     int saleId = register.getCurrentSale().getId();
                     register.endSale(DateTimeStrategy.getCurrentTime());
+
+                    pushInvoice(saleId);
 
                     Intent newActivity = new Intent(CheckoutActivity.this, PrinterActivity.class);
                     newActivity.putExtra("saleId", saleId);
@@ -503,5 +529,132 @@ public class CheckoutActivity extends AppCompatActivity {
 
     public String[] getShippingMethods() {
         return ship_methods;
+    }
+
+    public void pushInvoice(int saleId) {
+        lineitemList = new ArrayList<Map<String, String>>();
+        try {
+            saleId = saleId;
+            sale = saleLedger.getSaleById(saleId);
+            for(LineItem line : sale.getAllLineItem()) {
+                lineitemList.add(line.toMap());
+            }
+            paymentCatalog = PaymentService.getInstance().getPaymentCatalog();
+            paymentList = paymentCatalog.getPaymentBySaleId(saleId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // building payment information
+        List<Map<String, String>> pyitemList = new ArrayList<Map<String, String>>();
+        for (Payment payment : paymentList) {
+            pyitemList.add(payment.toMap());
+        }
+
+        Map<String, Object> mObj = new HashMap<String, Object>();
+        ArrayList arrItems = new ArrayList();
+        for (int i = 0; i < lineitemList.size(); i++){
+            Map<String, String> mItem = new HashMap<String, String>();
+            try {
+                // use map
+                mItem.put("name", lineitemList.get(i).get("name"));
+                mItem.put("qty", lineitemList.get(i).get("quantity"));
+                mItem.put("unit_price", lineitemList.get(i).get("unit_price"));
+                mItem.put("base_price", lineitemList.get(i).get("base_price"));
+                mItem.put("id", lineitemList.get(i).get("id"));
+                mItem.put("barcode", lineitemList.get(i).get("barcode"));
+                arrItems.add(mItem);
+            } catch (Exception e) {}
+        }
+
+        Map<String, String> arrCust = new HashMap<String, String>();
+
+        ArrayList arrPaymentList = new ArrayList();
+        Map<String, String> arrPayment = new HashMap<String, String>();
+        try {
+            Customer cust = saleLedger.getCustomerBySaleId(saleId);
+            mObj.put("items_belanja", arrItems);
+
+            arrCust.put("email", cust.getEmail());
+            arrCust.put("name", cust.getName());
+            arrCust.put("phone", cust.getPhone());
+            mObj.put("customer", arrCust);
+
+            if (paymentList.size() > 0) {
+                for (Payment py : paymentList) {
+                    Map<String, String> arrPayment2 = new HashMap<String, String>();
+                    arrPayment2.put("type", py.getPaymentChannel());
+                    arrPayment2.put("amount_tendered", ""+ py.getAmount());
+                    arrPayment2.put("change_due", "0");
+                    arrPaymentList.add(arrPayment2);
+                }
+            } else {
+                arrPayment.put("type", "cash");
+                arrPayment.put("amount_tendered", ""+ sale.getTotal());
+                arrPayment.put("change_due", "0");
+                arrPaymentList.add(arrPayment);
+            }
+            mObj.put("payment", arrPaymentList);
+            // set warehouse_id if any
+            Params whParam = paramCatalog.getParamByName("warehouse_id");
+            if (whParam != null) {
+                mObj.put("warehouse_id", whParam.getValue());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            int server_invoice_id = saleLedger.getServerInvoiceId(saleId);
+            if (server_invoice_id <= 0) {
+                _execute(mObj);
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        "Data telah tercatat di server dengan id "+ server_invoice_id, Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    private void _execute(Map mObj) {
+        String _url = Server.URL + "transaction/create?api-key=" + Server.API_KEY;
+        String qry = URLBuilder.httpBuildQuery(mObj, "UTF-8");
+        _url += "&"+ qry;
+
+        Map<String, String> params = new HashMap<String, String>();
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        Params adminParam = paramCatalog.getParamByName("admin_id");
+        if (adminParam != null) {
+            admin_id = adminParam.getValue();
+        }
+
+        params.put("admin_id", admin_id);
+
+        _string_request(
+                Request.Method.POST,
+                _url,
+                params,
+                true,
+                new VolleyCallback(){
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            int server_invoice_id = jObj.getInt(TAG_ID);
+                            // Check for error node in json
+                            if (success == 1) {
+                                saleLedger.setServerInvoiceId(sale, server_invoice_id);
+                            }
+                            Toast.makeText(getApplicationContext(),
+                                    jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        hideDialog();
+                    }
+                });
     }
 }
