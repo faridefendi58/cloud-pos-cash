@@ -34,6 +34,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -88,6 +90,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     private Button signin_button;
     private View mProgressView;
     private View mLoginFormView;
+    private LinearLayout role_container;
+    private RadioGroup role_group;
 
     public final static String TAG_ID = "id";
     public final static String TAG_EMAIL = "email";
@@ -117,6 +121,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     ConnectivityManager conMgr;
 
     private ParamCatalog paramCatalog;
+    private Boolean is_cashier = true;
+    private Boolean success_register = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,6 +187,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         register_button = (Button) findViewById(R.id.register_button);
         signin_button = (Button) findViewById(R.id.signin_button);
         passwordRepeat = (EditText) findViewById(R.id.passwordRepeat);
+
+        role_container = (LinearLayout) findViewById(R.id.role_container);
+        role_group = (RadioGroup) findViewById(R.id.role_group);
     }
 
     private void populateAutoComplete() {
@@ -474,6 +483,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         register_button.setVisibility(View.GONE);
         signin_button.setVisibility(View.VISIBLE);
         passwordRepeat.setVisibility(View.VISIBLE);
+        role_container.setVisibility(View.VISIBLE);
     }
 
     public void signinRequest(View view) {
@@ -484,6 +494,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         register_button.setVisibility(View.VISIBLE);
         signin_button.setVisibility(View.GONE);
         passwordRepeat.setVisibility(View.GONE);
+        role_container.setVisibility(View.GONE);
     }
 
     private void attemptRegister() {
@@ -501,6 +512,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         String password_repeat = passwordRepeat.getText().toString();
         String full_name = nameBox.getText().toString();
         String phone = phoneBox.getText().toString();
+        int role_id = role_group.getCheckedRadioButtonId();
+        if (role_id == R.id.role_cashier) {
+            is_cashier = true;
+        } else {
+            is_cashier = false;
+        }
 
         boolean cancel = false;
         View focusView = null;
@@ -560,29 +577,57 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             showProgress(true);
 
             ContentValues content = new ContentValues();
+            content.put("username", email);
             content.put("email", email);
             content.put("name", full_name);
             content.put("password", password);
+            content.put("password_repeat", password_repeat);
             content.put("phone", phone);
+            int group_id = 5;
+            if (!is_cashier) {
+                group_id = 4;
+            }
+            content.put("group_id", ""+group_id);
             content.put("date_added", DateTimeStrategy.getCurrentTime());
 
-            int id = ProfileController.getInstance().register(content);
-            if (id > 0) {
-                if (conMgr.getActiveNetworkInfo() != null
-                        && conMgr.getActiveNetworkInfo().isAvailable()
-                        && conMgr.getActiveNetworkInfo().isConnected()) {
-                    if (password.equals(password_repeat)) {
-                        checkRegister(email, password, password_repeat, email, name, 5);
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Konfirmasi password harus sama dengan password.", Toast.LENGTH_LONG).show();
+            if (conMgr.getActiveNetworkInfo() != null
+                    && conMgr.getActiveNetworkInfo().isAvailable()
+                    && conMgr.getActiveNetworkInfo().isConnected()) {
+                if (password.equals(password_repeat)) {
+                    try {
+                        checkRegister(content);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 } else {
-                    Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Konfirmasi password harus sama dengan password.", Toast.LENGTH_LONG).show();
                 }
-
-                mAuthTask = new UserLoginTask(email, password);
-                mAuthTask.execute((Void) null);
+            } else {
+                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
             }
+
+            /*
+                int id = ProfileController.getInstance().register(content);
+                if (id > 0) {
+                    addRoleParams();
+
+                    mAuthTask = new UserLoginTask(email, password);
+                    mAuthTask.execute((Void) null);
+                }*/
+        }
+    }
+
+    private void doRegisterOnLocal(ContentValues content) {
+        content.remove("password_repeat");
+        content.remove("username");
+        content.remove("group_id");
+
+        int id = ProfileController.getInstance().register(content);
+        if (id > 0) {
+            addRoleParams();
+
+            mAuthTask = new UserLoginTask(content.getAsString("email"), content.getAsString("password"));
+            mAuthTask.execute((Void) null);
         }
     }
 
@@ -688,7 +733,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         AppController.getInstance().addToRequestQueue(strReq, tag_json_obj);
     }
 
-    private void checkRegister(final String username, final String password, final String confirm_password, final String email, final String name, final int group_id) {
+    private void checkRegister(final ContentValues content) {
+        Log.e(getClass().getSimpleName(), "content values : "+ content.toString());
+
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
         pDialog.setMessage("Register ...");
@@ -708,6 +755,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                     // Check for error node in json
                     if (success == 1) {
                         Log.e("Successfully Register!", jObj.toString());
+                        success_register = true;
+                        doRegisterOnLocal(content);
 
                         Toast.makeText(getApplicationContext(),
                                 jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
@@ -725,7 +774,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Login Error: " + error.getMessage());
+                Log.e(TAG, "Signup Error: " + error.getMessage());
                 Toast.makeText(getApplicationContext(),
                         error.getMessage(), Toast.LENGTH_LONG).show();
 
@@ -736,15 +785,16 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
             @Override
             protected Map<String, String> getParams() {
-                // Posting parameters to login url
+                // Posting parameters to register url
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("username", username);
-                params.put("password", password);
-                params.put("confirm_password", confirm_password);
-                params.put("name", name);
-                params.put("email", email);
+                params.put("username", content.getAsString("username"));
+                params.put("password", content.getAsString("password"));
+                params.put("confirm_password", content.getAsString("password_repeat"));
+                params.put("name", content.getAsString("name"));
+                params.put("email", content.getAsString("email"));
                 params.put("status", "1");
-                params.put("group_id", ""+ group_id);
+                params.put("group_id", content.getAsString("group_id"));
+                Log.e(getClass().getSimpleName(), "params to be submited : "+ params.toString());
 
                 return params;
             }
@@ -763,6 +813,27 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
+    }
+
+    private void addRoleParams() {
+        String role = "cashier";
+        if (!is_cashier) {
+            role = "cs";
+        }
+        Params prole = paramCatalog.getParamByName("role");
+        if (prole instanceof Params) {
+            if (prole.getValue() != role) {
+                prole.setValue(role);
+                Boolean save = paramCatalog.editParam(prole);
+            }
+        } else {
+            Boolean save = paramCatalog.addParam(
+                    "role",
+                    role,
+                    "text",
+                    "Admin role for apps"
+            );
+        }
     }
 }
 

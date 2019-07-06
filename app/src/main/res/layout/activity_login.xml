@@ -108,6 +108,55 @@
                 android:singleLine="true"
                 android:visibility="gone"/>
 
+            <!--<Spinner
+                android:id="@+id/available_warehouse"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt_phone"
+                android:imeActionId="6"
+                android:imeActionLabel="@string/action_sign_in_short"
+                android:imeOptions="actionUnspecified"/>-->
+
+            <LinearLayout
+                android:id="@+id/role_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <RadioGroup
+                    android:id="@+id/role_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_medium"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/role_cashier"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_role_cashier"
+                        android:checked="true"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                        android:textSize="@dimen/spacing_large" />
+
+                    <View
+                        android:layout_width="@dimen/spacing_mlarge"
+                        android:layout_height="0dp" />
+
+                    <RadioButton
+                        android:id="@+id/role_cs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_role_cs"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                        android:textSize="@dimen/spacing_large" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

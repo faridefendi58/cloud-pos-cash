@@ -201,6 +201,8 @@
     <string name="label_customer_name">Nama Pelanggan</string>
     <string name="label_customer_address">Alamat</string>
     <string name="label_customer_phone">No Telepon</string>
+    <string name="label_role_cs">Customer Support</string>
+    <string name="label_role_cashier">Kasir</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Mandiri</string>
