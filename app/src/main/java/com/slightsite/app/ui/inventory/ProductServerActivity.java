@@ -266,7 +266,7 @@ public class ProductServerActivity extends Activity {
         Map<String, String> params = new HashMap<String, String>();
         params.put("simply", "1");
         params.put("with_discount", "1");
-        //params.put("warehouse_name", warehouse_name);
+        params.put("warehouse_name", warehouse_name);
 
         final ArrayList<String> items = new ArrayList<String>();
         items.add("-");

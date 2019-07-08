@@ -414,6 +414,24 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 }
 
                 return true;
+            } else {
+                // check on server
+                if (mEmail.trim().length() > 0 && mPassword.trim().length() > 0) {
+                    if (conMgr.getActiveNetworkInfo() != null
+                            && conMgr.getActiveNetworkInfo().isAvailable()
+                            && conMgr.getActiveNetworkInfo().isConnected()) {
+                        try {
+                            checkLogin(mEmail, mPassword);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_LONG).show();
+                        return false;
+                    }
+
+                    return true;
+                }
             }
 
             return false;
@@ -655,6 +673,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                         String name = jObj.getString(TAG_NAME);
                         String email = jObj.getString(TAG_EMAIL);
                         String phone = jObj.getString(TAG_PHONE);
+                        int group_id = jObj.getInt("group_id");
 
                         // update the params first
                         Params admin_id = paramCatalog.getParamByName("admin_id");
@@ -670,6 +689,21 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                                     "text",
                                     "Admin id on server"
                             );
+                        }
+
+                        // insert the admin data if empty
+                        ContentValues content = new ContentValues();
+                        content.put("email", email);
+                        content.put("name", name);
+                        content.put("password", password);
+                        content.put("phone", phone);
+                        content.put("date_added", DateTimeStrategy.getCurrentTime());
+                        int new_id = ProfileController.getInstance().register(content);
+                        if (new_id > 0) {
+                            if (group_id != 5) {
+                                is_cashier = true;
+                            }
+                            addRoleParams();
                         }
 
                         Toast.makeText(getApplicationContext(), jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
