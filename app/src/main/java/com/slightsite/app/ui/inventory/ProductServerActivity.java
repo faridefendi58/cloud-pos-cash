@@ -181,7 +181,7 @@ public class ProductServerActivity extends Activity {
                                             selected_wh = n;
                                         }
                                     }
-                                    Log.e(getClass().getSimpleName(), "data_n : "+ data_n.toString());
+
                                     // updating or inserting the wh data on local
                                     Warehouses whs = warehouseCatalog.getWarehouseByWarehouseId(data_n.getInt("id"));
                                     if (whs == null) {
@@ -290,6 +290,7 @@ public class ProductServerActivity extends Activity {
         params.put("simply", "1");
         params.put("with_discount", "1");
         params.put("warehouse_name", warehouse_name);
+        params.put("with_stock", "1");
 
         final ArrayList<String> items = new ArrayList<String>();
         items.add("-");
@@ -306,6 +307,7 @@ public class ProductServerActivity extends Activity {
                             if (success == 1) {
                                 JSONArray data = jObj.getJSONArray("data");
                                 ArrayList<String> product_items = new ArrayList<String>();
+                                HashMap< Integer, Integer> stocks = new HashMap< Integer, Integer>();
                                 for(int n = 0; n < data.length(); n++)
                                 {
                                     JSONObject data_n = data.getJSONObject(n);
@@ -332,6 +334,8 @@ public class ProductServerActivity extends Activity {
                                             productCatalog.editProduct(pd);
                                         } catch (Exception e) {}
                                     }
+
+                                    stocks.put(data_n.getInt("id"), data_n.getInt("stock"));
                                 }
                                 // clear the discount data
                                 stock.clearProductDiscount();
@@ -369,6 +373,29 @@ public class ProductServerActivity extends Activity {
                                                 Log.e(TAG, e.getMessage());
                                             }
                                         }
+                                    }
+                                }
+
+                                // clear the discount data
+                                stock.clearStock();
+
+                                // also insert the stock
+                                for (Map.Entry<Integer, Integer> entry : stocks.entrySet()) {
+                                    Product pd = null;
+                                    try {
+                                        pd = productCatalog.getProductByBarcode(entry.getKey().toString());
+                                        List lot = stock.getProductLotByProductId(entry.getKey());
+                                        if (lot.size() > 0) {
+                                            stock.updateStockSum(entry.getKey(), entry.getValue());
+                                        } else {
+                                            stock.addProductLot(
+                                                    DateTimeStrategy.getCurrentTime(),
+                                                    entry.getValue(),
+                                                    pd,
+                                                    pd.getUnitPrice());
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
                                 }
                             }

@@ -144,8 +144,12 @@ public class InventoryDaoAndroid implements InventoryDao {
          ContentValues content2 = new ContentValues();
          content2.put("_id", productId);
          content2.put("quantity", getStockSumById(productId) + productLot.getQuantity());
-         Log.d("inventory dao android","" + getStockSumById(productId) + " " + productId + " " +productLot.getQuantity() );
-         database.update(DatabaseContents.TABLE_STOCK_SUM.toString(), content2);   
+
+         if (isEmptyData(productId)) {
+         	database.insert(DatabaseContents.TABLE_STOCK_SUM.toString(), content2);
+		 } else {
+         	database.update(DatabaseContents.TABLE_STOCK_SUM.toString(), content2);
+		 }
          
          return id;
 	}
@@ -214,6 +218,9 @@ public class InventoryDaoAndroid implements InventoryDao {
 	public int getStockSumById(int id) {
 		String queryString = "SELECT * FROM " + DatabaseContents.TABLE_STOCK_SUM + " WHERE _id = " + id;
 		List<Object> objectList = (database.select(queryString));
+		if (objectList.size() <= 0) {
+			return 0;
+		}
 		ContentValues content = (ContentValues) objectList.get(0);
 		int quantity = content.getAsInteger("quantity");
 		Log.d("inventoryDaoAndroid", "stock sum of "+ id + " is " + quantity);
@@ -370,4 +377,14 @@ public class InventoryDaoAndroid implements InventoryDao {
     public void clearProductDiscount() {
         database.execute("DELETE FROM " + DatabaseContents.TABLE_PRODUCT_DISCOUNT);
     }
+
+	public Boolean isEmptyData(int id) {
+		String queryString = "SELECT * FROM " + DatabaseContents.TABLE_STOCK_SUM + " WHERE _id = " + id;
+		List<Object> objectList = (database.select(queryString));
+		if (objectList.size() <= 0) {
+			return true;
+		}
+
+		return false;
+	}
 }
