@@ -187,6 +187,7 @@
     <string name="message_success_delete">Your data has been successfully deleted.</string>
     <string name="message_success_syncronize">Your data has been successfully syncronized.</string>
     <string name="message_success_payment">Your payment has been successfully saved.</string>
+    <string name="message_no_product">No product found. Please syncron your data to the server before start making transaction.</string>
 
     <string name="title_print_invoice">Print Invoice</string>
     <string name="title_list_printer">Devices</string>
@@ -217,6 +218,7 @@
     <string name="payment_edc">EDC Payment</string>
 
     <string name="button_add_to_cart">Add To Cart</string>
+    <string name="button_syncron">Syncronize Now</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
 

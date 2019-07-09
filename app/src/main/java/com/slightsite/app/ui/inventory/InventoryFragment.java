@@ -71,6 +71,7 @@ public class InventoryFragment extends UpdatableFragment {
 	private TextView cart_total;
 	private LinearLayout bottom_cart_container;
 	private MaterialRippleLayout lyt_next;
+	private LinearLayout no_product_container;
 
 	private ViewPager viewPager;
 	private Register register;
@@ -112,6 +113,7 @@ public class InventoryFragment extends UpdatableFragment {
 		cart_total = (TextView) view.findViewById(R.id.cart_total);
 		bottom_cart_container = (LinearLayout) view.findViewById(R.id.bottom_cart_container);
 		lyt_next = (MaterialRippleLayout) view.findViewById(R.id.lyt_next);
+		no_product_container = (LinearLayout) view.findViewById(R.id.no_product_container);
 
 		main = (MainActivity) getActivity();
 		viewPager = main.getViewPager();
@@ -207,6 +209,12 @@ public class InventoryFragment extends UpdatableFragment {
 		inventoryList = new ArrayList<Map<String, String>>();
 		for(Product product : list) {
 			inventoryList.add(product.toMap());
+		}
+
+		if (inventoryList.size() == 0) {
+			no_product_container.setVisibility(View.VISIBLE);
+		} else {
+			no_product_container.setVisibility(View.GONE);
 		}
 
 		/*ButtonAdapter sAdap = new ButtonAdapter(getActivity().getBaseContext(), inventoryList,

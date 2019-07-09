@@ -185,6 +185,7 @@
     <string name="message_success_delete">Data Anda telah berhasil dihapus.</string>
     <string name="message_success_syncronize">Data Anda telah berhasil disinkronisasi dengan server.</string>
     <string name="message_success_payment">Pembayaran telah berhasil disimpan.</string>
+    <string name="message_no_product">Data produk belum ada. Silakan sinkron data dengan server sebelum memulai transaksi.</string>
 
     <string name="title_print_invoice">Print Faktur</string>
     <string name="title_list_printer">Printer</string>
@@ -211,6 +212,7 @@
     <string name="payment_edc">Mesin EDC</string>
 
     <string name="button_add_to_cart">Tambah</string>
+    <string name="button_syncron">Sinkron Sekarang</string>
 
     <string name="confirm_edit">Anda yakin ingin mengubah data ini?</string>
 </resources>

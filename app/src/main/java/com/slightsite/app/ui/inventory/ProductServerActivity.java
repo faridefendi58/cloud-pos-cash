@@ -38,6 +38,9 @@ import com.slightsite.app.domain.inventory.Stock;
 import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.params.Params;
+import com.slightsite.app.domain.warehouse.WarehouseCatalog;
+import com.slightsite.app.domain.warehouse.WarehouseService;
+import com.slightsite.app.domain.warehouse.Warehouses;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.ui.MainActivity;
@@ -63,6 +66,7 @@ public class ProductServerActivity extends Activity {
 
     private Resources res;
     private ParamCatalog paramCatalog;
+    private WarehouseCatalog warehouseCatalog;
     private Spinner available_warehouse;
     private ArrayList<String> warehouse_items = new ArrayList<String>();
     private HashMap<String, String> warehouse_ids = new HashMap<String, String>();
@@ -138,6 +142,7 @@ public class ProductServerActivity extends Activity {
             paramCatalog = ParamService.getInstance().getParamCatalog();
             productCatalog = Inventory.getInstance().getProductCatalog();
             stock = Inventory.getInstance().getStock();
+            warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -175,6 +180,24 @@ public class ProductServerActivity extends Activity {
                                         if (Integer.parseInt(whParam.getValue()) == Integer.parseInt(data_n.getString("id"))) {
                                             selected_wh = n;
                                         }
+                                    }
+                                    Log.e(getClass().getSimpleName(), "data_n : "+ data_n.toString());
+                                    // updating or inserting the wh data on local
+                                    Warehouses whs = warehouseCatalog.getWarehouseByWarehouseId(data_n.getInt("id"));
+                                    if (whs == null) {
+                                        warehouseCatalog.addWarehouse(
+                                                data_n.getInt("id"),
+                                                data_n.getString("title"),
+                                                data_n.getString("address"),
+                                                data_n.getString("phone"),
+                                                data_n.getInt("active")
+                                                );
+                                    } else {
+                                        whs.setTitle(data_n.getString("title"));
+                                        whs.setAddress(data_n.getString("address"));
+                                        whs.setPhone(data_n.getString("phone"));
+                                        whs.setStatus(data_n.getInt("active"));
+                                        warehouseCatalog.editWarehouse(whs);
                                     }
                                 }
                             }

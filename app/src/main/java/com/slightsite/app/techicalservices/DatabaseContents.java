@@ -20,7 +20,9 @@ public enum DatabaseContents {
 	TABLE_PARAMS("params"),
 	TABLE_ADMIN("admin"),
 	TABLE_SALE_PAYMENT("sale_payment"),
-	TABLE_SALE_SHIPPING("sale_shipping");
+	TABLE_SALE_SHIPPING("sale_shipping"),
+	TABLE_WAREHOUSES("warehouses"),
+	TABLE_ADMIN_IN_WAREHOUSE("admin_in_warehouse");
 
 	private String name;
 	

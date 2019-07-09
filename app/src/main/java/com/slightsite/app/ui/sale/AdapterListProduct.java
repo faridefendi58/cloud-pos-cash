@@ -116,10 +116,10 @@ public class AdapterListProduct extends BaseAdapter{
 
             @Override
             public void onClick(View v) {
+                holder.addCartButton.setVisibility(View.GONE);
                 if (!stacks.containsKey(p.getId())) {
                     holder.add_qty_container.setVisibility(View.VISIBLE);
-                    //holder.optionView.setVisibility(View.GONE);
-                    holder.addCartButton.setVisibility(View.GONE);
+                    holder.optionView.setVisibility(View.GONE);
 
                     int tot_qty = Integer.parseInt(holder.quantity.getText().toString()) + 1;
                     if (tot_qty <= 0) {
@@ -134,9 +134,9 @@ public class AdapterListProduct extends BaseAdapter{
                     }
                 } else {
                     //holder.add_qty_container.setVisibility(View.VISIBLE);
-                    holder.addCartButton.setVisibility(View.VISIBLE);
+                    //holder.addCartButton.setVisibility(View.VISIBLE);
                     holder.optionView.setVisibility(View.GONE);
-                    int tot_qty = stacks.get(p.getId()) + 1;
+                    int tot_qty = stacks.get(p.getId());
                     holder.quantity.setText(""+ tot_qty);
                 }
                 fragment.triggerAddSubstractButton(holder.rowView, p.getId(), position);

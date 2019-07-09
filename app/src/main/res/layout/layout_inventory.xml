@@ -43,6 +43,39 @@
         android:layout_below="@+id/search_bar_wrapper"
         android:layout_marginTop="48dp">
 
+        <LinearLayout
+            android:id="@+id/no_product_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/no_product_warning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/spacing_large"
+                android:padding="@dimen/spacing_large"
+                android:gravity="center_horizontal"
+                android:text="@string/message_no_product"
+                android:background="@color/alertWarning"
+                ></TextView>
+
+            <Button
+                style="@style/ButtonText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_large"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/btn_blue"
+                android:text="@string/button_syncron"
+                android:textSize="@dimen/spacing_large"
+                android:clickable="true"
+                android:onClick="synProduct"/>
+
+        </LinearLayout>
+
         <GridView
             android:id="@+id/productListView"
             android:layout_width="match_parent"

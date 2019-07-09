@@ -39,8 +39,9 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 				+ "name TEXT(100),"
 				+ "barcode TEXT(100),"
 				+ "unit_price DOUBLE,"
+				+ "priority INTEGER DEFAULT 0,"
+				+ "images TEXT(256),"
 				+ "status TEXT(10)"
-				
 				+ ");");
 		Log.d("CREATE DATABASE", "Create " + DatabaseContents.TABLE_PRODUCT_CATALOG + " Successfully.");
 		
@@ -159,6 +160,8 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 				+ "phone TEXT(32),"
 				+ "status INTEGER DEFAULT 1,"
 				+ "is_super_admin INTEGER DEFAULT 0,"
+				+ "server_admin_id INTEGER DEFAULT 0,"
+				+ "server_group_id INTEGER DEFAULT 0,"
 				+ "date_added DATETIME"
 				+ ");");
 
@@ -183,6 +186,26 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 				+ "address TEXT(256),"
 				+ "notes TEXT(256),"
 				+ "configs TEXT(256),"
+				+ "date_added DATETIME"
+				+ ");");
+
+		database.execSQL("CREATE TABLE " + DatabaseContents.TABLE_WAREHOUSES + "("
+
+				+ "_id INTEGER PRIMARY KEY,"
+				+ "warehouse_id INTEGER,"
+				+ "title TEXT(128),"
+				+ "address TEXT(256),"
+				+ "phone TEXT(32),"
+				+ "status INTEGER DEFAULT 1,"
+				+ "date_added DATETIME"
+				+ ");");
+
+		database.execSQL("CREATE TABLE " + DatabaseContents.TABLE_ADMIN_IN_WAREHOUSE + "("
+
+				+ "_id INTEGER PRIMARY KEY,"
+				+ "admin_id INTEGER,"
+				+ "warehouse_id INTEGER,"
+				+ "status INTEGER DEFAULT 1,"
 				+ "date_added DATETIME"
 				+ ");");
 		

@@ -697,6 +697,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                         content.put("name", name);
                         content.put("password", password);
                         content.put("phone", phone);
+                        content.put("server_admin_id", id);
+                        content.put("server_group_id", group_id);
                         content.put("date_added", DateTimeStrategy.getCurrentTime());
                         int new_id = ProfileController.getInstance().register(content);
                         if (new_id > 0) {
@@ -790,6 +792,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                     if (success == 1) {
                         Log.e("Successfully Register!", jObj.toString());
                         success_register = true;
+                        content.put("server_admin_id", jObj.getString(TAG_ID));
+                        content.put("server_group_id", jObj.getString("group_id"));
                         doRegisterOnLocal(content);
 
                         Toast.makeText(getApplicationContext(),
