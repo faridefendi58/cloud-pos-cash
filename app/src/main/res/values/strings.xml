@@ -188,6 +188,8 @@
     <string name="message_success_syncronize">Your data has been successfully syncronized.</string>
     <string name="message_success_payment">Your payment has been successfully saved.</string>
     <string name="message_no_product">No product found. Please syncron your data to the server before start making transaction.</string>
+    <string name="message_syncronize">This page is about to syncron your local data into the server data.
+    Please choose a warehouse to get all the related product data.</string>
 
     <string name="title_print_invoice">Print Invoice</string>
     <string name="title_list_printer">Devices</string>
@@ -219,6 +221,7 @@
 
     <string name="button_add_to_cart">Add To Cart</string>
     <string name="button_syncron">Syncronize Now</string>
+    <string name="button_back">Back</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
 

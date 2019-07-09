@@ -76,13 +76,6 @@ public class ProductServerActivity extends Activity {
     private String warehouse_name;
     private Stock stock;
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.detail_menu, menu);
-        return true;
-    }
-
     @SuppressLint("NewApi")
     private void initiateActionBar() {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -502,5 +495,12 @@ public class ProductServerActivity extends Activity {
             Toast.makeText(getBaseContext(), getResources().getString(R.string.message_success_syncronize),
                     Toast.LENGTH_SHORT).show();
         //}
+    }
+
+    public void backToPrevActivity(View view)
+    {
+        Intent intent = new Intent(ProductServerActivity.this, MainActivity.class);
+        finish();
+        startActivity(intent);
     }
 }

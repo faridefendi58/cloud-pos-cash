@@ -106,10 +106,12 @@ public class AdapterListProduct extends BaseAdapter{
             holder.optionView.setVisibility(View.GONE);
             holder.quantity.setText(""+ stacks.get(p.getId()));
             holder.add_qty_container.setVisibility(View.VISIBLE);
+            holder.addCartButton.setVisibility(View.GONE);
         } else {
             holder.optionView.setVisibility(View.GONE);
             holder.quantity.setText("0");
             holder.add_qty_container.setVisibility(View.GONE);
+            holder.addCartButton.setVisibility(View.VISIBLE);
         }
 
         rowView.setOnClickListener(new OnClickListener() {

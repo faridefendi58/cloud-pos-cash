@@ -14,11 +14,13 @@
         android:padding="10dp">
 
         <TextView
-            android:text="@string/txt_form_requirement"
+            android:text="@string/message_syncronize"
             android:textSize="16dip"
             android:layout_columnSpan="2"
-            android:layout_gravity="left"
+            android:layout_gravity="center_horizontal"
             android:textStyle="bold"
+            android:background="@color/alertWarning"
+            android:padding="@dimen/spacing_large"
             />
 
         <TextView
@@ -47,7 +49,8 @@
             android:layout_height="wrap_content"
             android:text="@string/label_syncron_customer"
             android:layout_width="fill_parent"
-            android:layout_columnSpan="2">
+            android:layout_columnSpan="2"
+            android:visibility="gone">
         </CheckBox>
 
         <Space
@@ -57,17 +60,41 @@
             android:layout_gravity="fill"
             />
 
-        <Button
-            android:text="@string/action_submit"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_row="6"
             android:layout_column="1"
-            android:background="@color/btnInfo"
-            android:textColor="@color/colorWhite"
-            android:paddingHorizontal="20dp"
-            android:layout_marginTop="10dp"
-            android:onClick="syncronizeToServer"
-            android:clickable="true"
-            />
+            android:weightSum="1">
+
+            <Button
+                android:text="@string/button_back"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:background="@color/btnWarning"
+                android:textColor="@color/colorWhite"
+                android:paddingHorizontal="20dp"
+                android:layout_marginTop="10dp"
+                android:onClick="backToPrevActivity"
+                android:clickable="true"
+                />
+
+            <Button
+                android:text="@string/button_syncron"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:background="@color/btnInfo"
+                android:textColor="@color/colorWhite"
+                android:paddingHorizontal="20dp"
+                android:layout_marginTop="10dp"
+                android:onClick="syncronizeToServer"
+                android:clickable="true"
+                />
+
+        </LinearLayout>
+
     </GridLayout>
 
 </LinearLayout>

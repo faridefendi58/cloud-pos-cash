@@ -6,25 +6,43 @@
     android:padding="10dp"
     android:orientation="vertical" >
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/quantity"
-        android:textSize="20sp" />
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/spacing_large"
+        android:paddingBottom="@dimen/spacing_large"
+        android:layout_marginTop="@dimen/spacing_large"
+        android:weightSum="1">
 
-    <EditText
-        android:id="@+id/quantityBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="20"
-        android:inputType="number"
-        android:textSize="18sp" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="@string/quantity"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:textColor="@color/grey_40"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/quantityBox"
+            style="@style/EditText.Flat.Grey"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:ems="20"
+            android:inputType="number"
+            android:background="@drawable/edit_text_round_bg_outline"
+            android:textSize="18sp" />
+
+    </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/unit_price"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:visibility="gone"/>
 
     <EditText
         android:id="@+id/priceBox"
@@ -32,32 +50,35 @@
         android:layout_height="wrap_content"
         android:ems="20"
         android:inputType="numberDecimal"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:visibility="gone"/>
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="@dimen/spacing_middle">
 
         <Button
             android:id="@+id/removeButton"
-            style="@style/ButtonText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
-            android:background="@drawable/btn_red"
+            android:background="@drawable/btn_yellow"
+            android:textColor="@color/colorWhite"
+            android:layout_marginRight="@dimen/spacing_small"
             android:text="@string/remove" />
 
         <Button
             android:id="@+id/confirmButton"
-            style="@style/ButtonText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
-            android:background="@drawable/btn_green"
-            android:text="@string/confirm" />
+            android:background="@drawable/btn_blue"
+            android:textColor="@color/colorWhite"
+            android:layout_marginLeft="@dimen/spacing_small"
+            android:text="@string/update" />
     </LinearLayout>
 
 </LinearLayout>
