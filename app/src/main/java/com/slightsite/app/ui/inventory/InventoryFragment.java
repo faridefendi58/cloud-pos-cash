@@ -17,6 +17,9 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -103,6 +106,7 @@ public class InventoryFragment extends UpdatableFragment {
 		}
 
 		View view = inflater.inflate(R.layout.layout_inventory, container, false);
+		setHasOptionsMenu(true);
 
 		res = getResources();
 		inventoryListView = (GridView) view.findViewById(R.id.productListView);
@@ -432,6 +436,22 @@ public class InventoryFragment extends UpdatableFragment {
 			stacks.put(product_id, quantity);
 		} else {
 			stacks.remove(product_id);
+		}
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.menu_branch, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.nav_delete :
+				//showConfirmClearDialog();
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 	}
 }
