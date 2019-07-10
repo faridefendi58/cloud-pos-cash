@@ -70,6 +70,7 @@
     <string name="dialog_remove_customer">Anda yakin ingin MENGHAPUS pelanggan ini?</string>
     <string name="dialog_clear_sale">Anda yakin ingin MEMBERSIHKAN penjualan ini?</string>
     <string name="dialog_remove_invoice">Anda yakin ingin MENGHAPUS tagihan ini?</string>
+    <string name="dialog_change_warehouse">Anda yakin ingin merubah konfigurasi Warehouse/Cabang yang ada saat ini?</string>
     <string name="hint_empty_sale">Data penjualan kosong.</string>
     <string name="quit">Keluar</string>
     <string name="no">Tidak</string>
@@ -92,6 +93,7 @@
     <string name="title_reports">Laporan</string>
     <string name="title_update_cart">Ubah Item</string>
     <string name="title_update_sale">Ubah Data Penjualan</string>
+    <string name="title_change_warehouse">Ubah Warehouse</string>
 
     <string name="dashboard_income">Pendapatan</string>
     <string name="dashboard_transaction">Transaksi</string>
@@ -175,6 +177,7 @@
     <string name="label_new_password_confirm">Password Baru (diulang) :</string>
 
     <string name="label_warehouse_name">Warehouse :</string>
+    <string name="label_choose_warehouse">Pilih Warehouse :</string>
     <string name="label_syncron_product">Sesuaikan Data Produk</string>
     <string name="label_syncron_customer">Sesuaikan Data Pelanggan</string>
 
@@ -188,6 +191,7 @@
     <string name="message_no_product">Data produk belum ada. Silakan sinkron data dengan server sebelum memulai transaksi.</string>
     <string name="message_syncronize">Halaman ini akan membantu Anda mensinkronkan data lokal di ponsel dengan data di server.
     Pilih salah satu Warehouse untuk mendapatkan data produk, harga, serta stoknya.</string>
+    <string name="message_change_warehouse">Hati - hati!, merubah data warehouse akan merubah semua data produk Anda saat ini dengan data produk warehouse terbaru.</string>
 
     <string name="title_print_invoice">Print Faktur</string>
     <string name="title_list_printer">Printer</string>

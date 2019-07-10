@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -53,6 +55,7 @@ import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.component.ButtonAdapter;
 import com.slightsite.app.ui.component.UpdatableFragment;
 import com.slightsite.app.ui.sale.AdapterListProduct;
+import com.slightsite.app.ui.sale.ChangeWarehouseDialogFragment;
 
 /**
  * UI for Inventory, shows list of Product in the ProductCatalog.
@@ -448,10 +451,36 @@ public class InventoryFragment extends UpdatableFragment {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.nav_delete :
-				//showConfirmClearDialog();
+			case R.id.nav_branch :
+				showConfirmChangeBranchDialog();
 			default:
 				return super.onOptionsItemSelected(item);
 		}
+	}
+
+	private void showConfirmChangeBranchDialog() {
+		AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+		dialog.setTitle(res.getString(R.string.dialog_change_warehouse));
+		dialog.setPositiveButton(res.getString(R.string.change), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				changeWHPopup();
+			}
+		});
+
+		dialog.setNegativeButton(res.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+
+			}
+		});
+
+		dialog.show();
+	}
+
+	public void changeWHPopup() {
+		ChangeWarehouseDialogFragment newFragment = new ChangeWarehouseDialogFragment(InventoryFragment.this);
+		newFragment.show(getFragmentManager(), "");
 	}
 }

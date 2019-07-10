@@ -70,6 +70,7 @@
     <string name="dialog_remove_customer">Are you sure you want to REMOVE this customer?</string>
     <string name="dialog_clear_sale">Are you sure you want to CLEAR this sale?</string>
     <string name="dialog_remove_invoice">Are you sure you want to Remove this invoice?</string>
+    <string name="dialog_change_warehouse">Are you sure you want to CHANGE the Warehouse/Branch configuration?</string>
     <string name="hint_empty_sale">Sale is empty.</string>
     <string name="quit">Quit</string>
     <string name="no">No</string>
@@ -177,6 +178,7 @@
     <string name="label_new_password_confirm">New Password (repeat) :</string>
 
     <string name="label_warehouse_name">Warehouse :</string>
+    <string name="label_choose_warehouse">Choose Warehouse :</string>
     <string name="label_syncron_product">Syncron Product Data</string>
     <string name="label_syncron_customer">Syncron Customer Data</string>
 
@@ -190,11 +192,13 @@
     <string name="message_no_product">No product found. Please syncron your data to the server before start making transaction.</string>
     <string name="message_syncronize">This page is about to syncron your local data into the server data.
     Please choose a warehouse to get all the related product data.</string>
+    <string name="message_change_warehouse">Be carefull!, change Warehouse will replace all your current product data.</string>
 
     <string name="title_print_invoice">Print Invoice</string>
     <string name="title_list_printer">Devices</string>
     <string name="title_print_preview">Print Preview</string>
     <string name="title_print_config">Configs</string>
+    <string name="title_change_warehouse">Change Warehouse</string>
 
     <string name="label_print_char_length">Character Length :</string>
     <string name="label_print_header">Header :</string>
