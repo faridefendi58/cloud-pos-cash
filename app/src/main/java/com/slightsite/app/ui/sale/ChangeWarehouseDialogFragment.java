@@ -18,6 +18,9 @@ import android.widget.Toast;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
+import com.slightsite.app.domain.warehouse.AdminInWarehouse;
+import com.slightsite.app.domain.warehouse.AdminInWarehouseCatalog;
+import com.slightsite.app.domain.warehouse.AdminInWarehouseService;
 import com.slightsite.app.domain.warehouse.WarehouseCatalog;
 import com.slightsite.app.domain.warehouse.WarehouseService;
 import com.slightsite.app.domain.warehouse.Warehouses;
@@ -34,17 +37,20 @@ public class ChangeWarehouseDialogFragment extends DialogFragment {
 
     private WarehouseCatalog warehouseCatalog;
     private ParamCatalog paramCatalog;
+    private AdminInWarehouseCatalog adminInWarehouseCatalog;
     private Button confirmButton;
     private Button clearButton;
     private UpdatableFragment fragment;
     private Resources res;
     private Spinner available_warehouse;
     private ArrayList<String> warehouse_items = new ArrayList<String>();
+    private ArrayList<Integer> allowed_warehouses = new ArrayList<Integer>();
     private HashMap<String, String> warehouse_ids = new HashMap<String, String>();
     private List<Warehouses> warehousesList;
     private int selected_wh = 0;
     private String selected_wh_name;
     private String wh_id;
+    private String admin_id;
 
     /**
      * Construct a new AddProductDialogFragment
@@ -64,16 +70,55 @@ public class ChangeWarehouseDialogFragment extends DialogFragment {
             paramCatalog = ParamService.getInstance().getParamCatalog();
             wh_id = paramCatalog.getParamByName("warehouse_id").getValue();
             warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
-            warehousesList = warehouseCatalog.getAllWarehouses();
-            for (int n = 0; n < warehousesList.size(); n++) {
-                Warehouses wh = warehousesList.get(n);
-                warehouse_items.add(wh.getTitle());
-                warehouse_ids.put(wh.getTitle(), wh.getWarehouseId() +"");
-                if (wh.getWarehouseId() == Integer.parseInt(wh_id)) {
-                    selected_wh = n;
-                    selected_wh_name = wh.getTitle();
+            adminInWarehouseCatalog = AdminInWarehouseService.getInstance().getAdminInWarehouseCatalog();
+            admin_id = paramCatalog.getParamByName("admin_id").getValue();
+            if (admin_id != null) {
+                List<AdminInWarehouse> adminInWarehouses = adminInWarehouseCatalog.getDataByAdminId(Integer.parseInt(admin_id));
+                if (adminInWarehouses != null) {
+                    Log.e(getTag(), "adminInWarehouses : " + adminInWarehouses.toArray().toString());
+                } else {
+                    Log.e(getTag(), "no admin data in any wh");
+                }
+                if (adminInWarehouses != null && adminInWarehouses.size() > 0) {
+                    for (AdminInWarehouse aiw : adminInWarehouses) {
+                        allowed_warehouses.add(aiw.getWarehouseId());
+                    }
                 }
             }
+            Log.e(getTag(), "admin_id : "+ admin_id);
+            Log.e(getTag(), "allowed_warehouses : "+ allowed_warehouses.toString());
+
+            warehousesList = warehouseCatalog.getAllWarehouses();
+            if (allowed_warehouses.size() > 0) {
+                for (int n = 0; n < warehousesList.size(); n++) {
+                    Warehouses wh = warehousesList.get(n);
+                    if (allowed_warehouses.contains(wh.getWarehouseId())) {
+                        warehouse_items.add(wh.getTitle());
+                        warehouse_ids.put(wh.getTitle(), wh.getWarehouseId() + "");
+                        if (wh.getWarehouseId() == Integer.parseInt(wh_id)) {
+                            selected_wh_name = wh.getTitle();
+                        }
+                    }
+                }
+                if (selected_wh_name != null) {
+                    selected_wh = warehouse_items.indexOf(selected_wh_name);
+                }
+            } else {
+                for (int n = 0; n < warehousesList.size(); n++) {
+                    Warehouses wh = warehousesList.get(n);
+                    warehouse_items.add(wh.getTitle());
+                    warehouse_ids.put(wh.getTitle(), wh.getWarehouseId() +"");
+                    if (wh.getWarehouseId() == Integer.parseInt(wh_id)) {
+                        selected_wh = n;
+                        selected_wh_name = wh.getTitle();
+                    }
+                }
+            }
+
+            Log.e(getTag(), "warehouse_items : "+ warehouse_items.toString());
+            Log.e(getTag(), "warehouse_ids : "+ warehouse_ids.toString());
+            Log.e(getTag(), "selected_wh : "+ selected_wh);
+            Log.e(getTag(), "selected_wh_name : "+ selected_wh_name);
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }

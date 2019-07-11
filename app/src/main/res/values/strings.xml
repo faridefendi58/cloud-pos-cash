@@ -181,6 +181,7 @@
     <string name="label_choose_warehouse">Choose Warehouse :</string>
     <string name="label_syncron_product">Syncron Product Data</string>
     <string name="label_syncron_customer">Syncron Customer Data</string>
+    <string name="label_proceed">Proceed</string>
 
     <string name="message_success_save">Your data has been successfully saved.</string>
     <string name="message_success_update">Your data has been successfully updated.</string>

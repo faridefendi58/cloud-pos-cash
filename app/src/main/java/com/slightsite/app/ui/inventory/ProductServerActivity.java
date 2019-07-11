@@ -38,6 +38,9 @@ import com.slightsite.app.domain.inventory.Stock;
 import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.params.Params;
+import com.slightsite.app.domain.warehouse.AdminInWarehouse;
+import com.slightsite.app.domain.warehouse.AdminInWarehouseCatalog;
+import com.slightsite.app.domain.warehouse.AdminInWarehouseService;
 import com.slightsite.app.domain.warehouse.WarehouseCatalog;
 import com.slightsite.app.domain.warehouse.WarehouseService;
 import com.slightsite.app.domain.warehouse.Warehouses;
@@ -67,6 +70,7 @@ public class ProductServerActivity extends Activity {
     private Resources res;
     private ParamCatalog paramCatalog;
     private WarehouseCatalog warehouseCatalog;
+    private AdminInWarehouseCatalog adminInWarehouseCatalog;
     private Spinner available_warehouse;
     private ArrayList<String> warehouse_items = new ArrayList<String>();
     private HashMap<String, String> warehouse_ids = new HashMap<String, String>();
@@ -136,6 +140,7 @@ public class ProductServerActivity extends Activity {
             productCatalog = Inventory.getInstance().getProductCatalog();
             stock = Inventory.getInstance().getStock();
             warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
+            adminInWarehouseCatalog = AdminInWarehouseService.getInstance().getAdminInWarehouseCatalog();
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -481,20 +486,36 @@ public class ProductServerActivity extends Activity {
             }
         }
 
-        //if (success) {
-            try {
-                Params pWarehouseId = paramCatalog.getParamByName("warehouse_id");
-                if (pWarehouseId instanceof Params) {
-                    pWarehouseId.setValue(warehouse_ids.get(warehouse_name));
-                    Boolean saveParam = paramCatalog.editParam(pWarehouseId);
-                } else {
-                    Boolean saveParam = paramCatalog.addParam("warehouse_id", warehouse_ids.get(warehouse_name), "text", warehouse_name);
-                }
-            } catch (Exception e) { e.printStackTrace(); }
+        try {
+            Params pWarehouseId = paramCatalog.getParamByName("warehouse_id");
+            if (pWarehouseId instanceof Params) {
+                pWarehouseId.setValue(warehouse_ids.get(warehouse_name));
+                Boolean saveParam = paramCatalog.editParam(pWarehouseId);
+            } else {
+                Boolean saveParam = paramCatalog.addParam("warehouse_id", warehouse_ids.get(warehouse_name), "text", warehouse_name);
+            }
+        } catch (Exception e) { e.printStackTrace(); }
 
-            Toast.makeText(getBaseContext(), getResources().getString(R.string.message_success_syncronize),
-                    Toast.LENGTH_SHORT).show();
-        //}
+        Toast.makeText(getBaseContext(), getResources().getString(R.string.message_success_syncronize),
+                Toast.LENGTH_SHORT).show();
+
+        // insert wh id to wh access list
+        String wh_id = warehouse_ids.get(warehouse_name);
+        if (wh_id != null) {
+            try {
+                Params prms = paramCatalog.getParamByName("admin_id");
+                if (prms instanceof Params) {
+                    int admin_id = Integer.parseInt(prms.getValue());
+                    int warehouse_id = Integer.parseInt(wh_id);
+                    AdminInWarehouse aiw = adminInWarehouseCatalog.getDataByAdminAndWH(admin_id, warehouse_id);
+                    if (aiw == null) {
+                        Boolean save = adminInWarehouseCatalog.addAdminInWarehouse(admin_id, warehouse_id, 1);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void backToPrevActivity(View view)

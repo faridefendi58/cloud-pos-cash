@@ -180,6 +180,7 @@
     <string name="label_choose_warehouse">Pilih Warehouse :</string>
     <string name="label_syncron_product">Sesuaikan Data Produk</string>
     <string name="label_syncron_customer">Sesuaikan Data Pelanggan</string>
+    <string name="label_proceed">Lanjutkan</string>
 
     <string name="message_success_save">Data Anda telah berhasil disimpan.</string>
     <string name="message_success_update">Data Anda telah berhasil diubah.</string>
@@ -189,7 +190,7 @@
     <string name="message_success_syncronize">Data Anda telah berhasil disinkronisasi dengan server.</string>
     <string name="message_success_payment">Pembayaran telah berhasil disimpan.</string>
     <string name="message_no_product">Data produk belum ada. Silakan sinkron data dengan server sebelum memulai transaksi.</string>
-    <string name="message_syncronize">Halaman ini akan membantu Anda mensinkronkan data lokal di ponsel dengan data di server.
+    <string name="message_syncronize">Halaman ini akan membantu Anda menyamakan data lokal di ponsel dengan data di server.
     Pilih salah satu Warehouse untuk mendapatkan data produk, harga, serta stoknya.</string>
     <string name="message_change_warehouse">Hati - hati!, merubah data warehouse akan merubah semua data produk Anda saat ini dengan data produk warehouse terbaru.</string>
 
@@ -218,7 +219,7 @@
     <string name="payment_edc">Mesin EDC</string>
 
     <string name="button_add_to_cart">Tambah</string>
-    <string name="button_syncron">Sinkron Sekarang</string>
+    <string name="button_syncron">Sinkronkan</string>
     <string name="button_back">Kembali</string>
 
     <string name="confirm_edit">Anda yakin ingin mengubah data ini?</string>

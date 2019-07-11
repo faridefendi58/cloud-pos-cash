@@ -15,7 +15,7 @@ import com.slightsite.app.techicalservices.DatabaseContents;
  */
 public class LanguageController {
 	
-	private static final String DEFAULT_LANGUAGE = "en";
+	private static final String DEFAULT_LANGUAGE = "id";
 	private static Database database;
 	private static LanguageController instance;
 	
@@ -43,22 +43,6 @@ public class LanguageController {
 	 */
 	public void setLanguage(String localeString) {
 		database.execute("UPDATE " + DatabaseContents.LANGUAGE + " SET language = '" + localeString + "'");
-		//database.execute("DELETE FROM " + DatabaseContents.TABLE_SALE_LINEITEM);
-		//database.execute("DELETE FROM " + DatabaseContents.TABLE_SALE);
-		/*database.execute("CREATE TABLE " + DatabaseContents.TABLE_ADMIN + "("
-
-				+ "_id INTEGER PRIMARY KEY,"
-				+ "name TEXT(100),"
-				+ "username TEXT(32),"
-				+ "password TEXT(256),"
-				+ "email TEXT(32),"
-				+ "phone TEXT(32),"
-				+ "status INTEGER DEFAULT 1,"
-				+ "is_super_admin INTEGER DEFAULT 0,"
-				+ "date_added DATETIME"
-				+ ");");
-
-		Log.d("CREATE DATABASE", "Create " + DatabaseContents.TABLE_ADMIN + " Successfully.");*/
 	}
 	
 	/**

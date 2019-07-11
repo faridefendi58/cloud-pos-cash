@@ -28,6 +28,7 @@ import com.slightsite.app.domain.payment.PaymentService;
 import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.domain.sale.SaleLedger;
 import com.slightsite.app.domain.shipping.ShippingService;
+import com.slightsite.app.domain.warehouse.AdminInWarehouseService;
 import com.slightsite.app.domain.warehouse.WarehouseService;
 import com.slightsite.app.techicalservices.AndroidDatabase;
 import com.slightsite.app.techicalservices.Database;
@@ -44,6 +45,8 @@ import com.slightsite.app.techicalservices.sale.SaleDao;
 import com.slightsite.app.techicalservices.sale.SaleDaoAndroid;
 import com.slightsite.app.techicalservices.shipping.ShippingDao;
 import com.slightsite.app.techicalservices.shipping.ShippingDaoAndroid;
+import com.slightsite.app.techicalservices.warehouse.AdminInWarehouseDao;
+import com.slightsite.app.techicalservices.warehouse.AdminInWarehouseDaoAndroid;
 import com.slightsite.app.techicalservices.warehouse.WarehouseDao;
 import com.slightsite.app.techicalservices.warehouse.WarehouseDaoAndroid;
 
@@ -72,6 +75,7 @@ public class SplashScreenActivity extends Activity {
 		PaymentDao paymentDao = new PaymentDaoAndroid(database);
 		ShippingDao shippingDao = new ShippingDaoAndroid(database) {};
 		WarehouseDao warehouseDao = new WarehouseDaoAndroid(database) {};
+		AdminInWarehouseDao adminInWarehouseDao = new AdminInWarehouseDaoAndroid(database) {};
 
 		DatabaseExecutor.setDatabase(database);
 		LanguageController.setDatabase(database);
@@ -89,6 +93,7 @@ public class SplashScreenActivity extends Activity {
 		ShippingService.setShippingDao(shippingDao);
 		Register.setShippingDao(shippingDao);
 		WarehouseService.setWarehouseDao(warehouseDao);
+		AdminInWarehouseService.setAdminInWarehouseDao(adminInWarehouseDao);
 
 		DateTimeStrategy.setLocale("id", "ID");
 		setLanguage(LanguageController.getInstance().getLanguage());

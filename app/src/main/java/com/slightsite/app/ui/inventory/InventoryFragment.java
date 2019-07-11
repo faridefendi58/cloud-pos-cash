@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
@@ -48,6 +49,7 @@ import com.slightsite.app.domain.inventory.Product;
 import com.slightsite.app.domain.inventory.ProductCatalog;
 import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.domain.sale.Sale;
+import com.slightsite.app.domain.warehouse.Warehouses;
 import com.slightsite.app.techicalservices.DatabaseExecutor;
 import com.slightsite.app.techicalservices.Demo;
 import com.slightsite.app.techicalservices.NoDaoSetException;
@@ -444,8 +446,11 @@ public class InventoryFragment extends UpdatableFragment {
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.menu_branch, menu);
-		super.onCreateOptionsMenu(menu, inflater);
+		List<Warehouses> whs = ((MainActivity)getActivity()).getWarehouseList();
+		if (whs.size() > 0) {
+			inflater.inflate(R.menu.menu_branch, menu);
+			super.onCreateOptionsMenu(menu, inflater);
+		}
 	}
 
 	@Override
@@ -460,8 +465,8 @@ public class InventoryFragment extends UpdatableFragment {
 
 	private void showConfirmChangeBranchDialog() {
 		AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-		dialog.setTitle(res.getString(R.string.dialog_change_warehouse));
-		dialog.setPositiveButton(res.getString(R.string.change), new DialogInterface.OnClickListener() {
+		dialog.setTitle(Html.fromHtml("<small>"+res.getString(R.string.dialog_change_warehouse)+"</small>"));
+		dialog.setPositiveButton(res.getString(R.string.label_proceed), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				changeWHPopup();
