@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
+import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.domain.warehouse.AdminInWarehouse;
 import com.slightsite.app.domain.warehouse.AdminInWarehouseCatalog;
 import com.slightsite.app.domain.warehouse.AdminInWarehouseService;
@@ -52,6 +53,8 @@ public class ChangeWarehouseDialogFragment extends DialogFragment {
     private String wh_id;
     private String admin_id;
 
+    private Register register;
+
     /**
      * Construct a new AddProductDialogFragment
      * @param fragment
@@ -67,6 +70,7 @@ public class ChangeWarehouseDialogFragment extends DialogFragment {
                              Bundle savedInstanceState) {
 
         try {
+            register = Register.getInstance();
             paramCatalog = ParamService.getInstance().getParamCatalog();
             wh_id = paramCatalog.getParamByName("warehouse_id").getValue();
             warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
@@ -156,6 +160,20 @@ public class ChangeWarehouseDialogFragment extends DialogFragment {
                     Toast.makeText(getActivity().getBaseContext(), selected_wh_name +" is your current data. Please choose the other one!",
                             Toast.LENGTH_LONG).show();
                 } else {
+                    if (register.hasSale()) {
+                        try {
+                            if (!register.getCurrentSale().getStatus().equals("ENDED")) {
+                                register.cancleSale();
+                            } else {
+                                register.setCurrentSale(0);
+                            }
+                            ((MainActivity) getActivity()).updateInventoryFragment();
+                            ((MainActivity) getActivity()).updateSaleFragment();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                     // starting to do updating the data
                     Toast.makeText(getActivity().getBaseContext(), "Your data is successfully updated to "+ available_warehouse.getSelectedItem(),
                             Toast.LENGTH_LONG).show();
