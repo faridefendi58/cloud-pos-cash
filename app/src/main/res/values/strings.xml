@@ -217,6 +217,7 @@
     <string name="label_customer_phone">Phone Number</string>
     <string name="label_role_cs">Customer Support</string>
     <string name="label_role_cashier">Cashier</string>
+    <string name="label_total_amount">Total Amount</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>

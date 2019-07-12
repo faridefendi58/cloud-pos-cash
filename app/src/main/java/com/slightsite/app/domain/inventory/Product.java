@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.techicalservices.NoDaoSetException;
+import com.slightsite.app.techicalservices.Server;
 
 /**
  * Product or item represents the real product in store.
@@ -17,6 +18,8 @@ public class Product {
 	private String name;
 	private String barcode;
 	private double unitPrice;
+	private int priority = 0;
+	private String image;
 	
 	/**
 	 * Static value for UNDEFINED ID.
@@ -120,6 +123,12 @@ public class Product {
 		} else {
 			map.put("availability", "Out of stock");
 		}
+		map.put("priority", priority +"");
+		if (image != null) {
+			map.put("image", Server.BASE_API_URL +""+ image);
+		} else {
+			map.put("image", null);
+		}
 		return map;
 		
 	}
@@ -144,5 +153,21 @@ public class Product {
 		}
 
 		return stock;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public String getImage() {
+		return image;
 	}
 }

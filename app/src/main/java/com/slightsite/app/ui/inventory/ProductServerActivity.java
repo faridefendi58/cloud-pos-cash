@@ -78,6 +78,7 @@ public class ProductServerActivity extends Activity {
 
     private ProductCatalog productCatalog;
     private String warehouse_name;
+    private String warehouse_id;
     private Stock stock;
 
     @SuppressLint("NewApi")
@@ -287,7 +288,11 @@ public class ProductServerActivity extends Activity {
         Map<String, String> params = new HashMap<String, String>();
         params.put("simply", "1");
         params.put("with_discount", "1");
-        params.put("warehouse_name", warehouse_name);
+        if (warehouse_id != null) {
+            params.put("warehouse_id", warehouse_id);
+        } else {
+            params.put("warehouse_name", warehouse_name);
+        }
         params.put("with_stock", "1");
 
         final ArrayList<String> items = new ArrayList<String>();
@@ -309,6 +314,8 @@ public class ProductServerActivity extends Activity {
                                 for(int n = 0; n < data.length(); n++)
                                 {
                                     JSONObject data_n = data.getJSONObject(n);
+                                    JSONObject config = data_n.getJSONObject("config");
+
                                     items.add(data_n.getString("title"));
                                     product_items.add(data_n.getString("id"));
                                     Product pd = null;
@@ -317,10 +324,20 @@ public class ProductServerActivity extends Activity {
                                     } catch (Exception e) {}
                                     if (pd == null) {
                                         try {
-                                            productCatalog.addProduct(
-                                                    data_n.getString("title"),
-                                                    data_n.getString("id"),
-                                                    Double.parseDouble(data_n.getString("price")));
+                                            if (config.has("image")) {
+                                                String image = config.getString("image");
+                                                productCatalog.addProduct2(
+                                                        data_n.getString("title"),
+                                                        data_n.getString("id"),
+                                                        Double.parseDouble(data_n.getString("price")),
+                                                        data_n.getInt("priority"),
+                                                        image);
+                                            } else {
+                                                productCatalog.addProduct(
+                                                        data_n.getString("title"),
+                                                        data_n.getString("id"),
+                                                        Double.parseDouble(data_n.getString("price")));
+                                            }
                                         } catch (Exception e) {
                                             Log.e(TAG, e.getMessage());
                                         }
@@ -329,6 +346,12 @@ public class ProductServerActivity extends Activity {
                                             pd.setName(data_n.getString("title"));
                                             pd.setBarcode(data_n.getString("id"));
                                             pd.setUnitPrice(Double.parseDouble(data_n.getString("price")));
+                                            //Log.e(getClass().getSimpleName(), "config.has(\"image\") :"+ config.has("image"));
+                                            if (config.has("image")) {
+                                                pd.setImage(config.getString("image"));
+                                            }
+                                            //Log.e(getClass().getSimpleName(), "Priority : "+ data_n.getString("priority"));
+                                            pd.setPriority(data_n.getInt("priority"));
                                             productCatalog.editProduct(pd);
                                         } catch (Exception e) {}
                                     }
@@ -464,6 +487,11 @@ public class ProductServerActivity extends Activity {
     public void syncronizeToServer(View view)
     {
         warehouse_name = available_warehouse.getSelectedItem().toString();
+
+        if (warehouse_ids.containsKey(warehouse_name)) {
+            warehouse_id = warehouse_ids.get(warehouse_name);
+        }
+
         CheckBox sync_product = findViewById(R.id.sync_product);
         CheckBox sync_customer = findViewById(R.id.sync_customer);
 

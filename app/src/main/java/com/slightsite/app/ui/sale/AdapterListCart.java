@@ -1,6 +1,8 @@
 package com.slightsite.app.ui.sale;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +18,9 @@ import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.inventory.LineItem;
 import com.slightsite.app.domain.sale.Register;
+import com.slightsite.app.techicalservices.DownloadImageTask;
+import com.slightsite.app.techicalservices.Server;
+import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.ui.MainActivity;
 
 import java.util.ArrayList;
@@ -97,7 +102,23 @@ public class AdapterListCart extends RecyclerView.Adapter<RecyclerView.ViewHolde
             sub_total = prc * qty;
             view.price.setText("@ "+ CurrencyController.getInstance().moneyFormat(prc));
             //view.price_subtotal.setText(CurrencyController.getInstance().moneyFormat(sub_total));
-            view.image.setImageResource(R.drawable.ic_no_image);
+            if (p.getProduct().getImage() != null) {
+                Bitmap drawable = ((MainActivity)ctx).getImageStack(p.getId());
+                if (drawable != null) {
+                    view.image.setImageBitmap(drawable);
+                    Log.e(getClass().getSimpleName(), "Ini dari image stacks main activity");
+                } else {
+                    /*new DownloadImageTask(view.image)
+                            .execute(Server.BASE_API_URL +""+ p.getProduct().getImage());*/
+                    DownloadImageTask downloadImageTask = new DownloadImageTask(view.image);
+                    downloadImageTask.setActivity((MainActivity)ctx);
+                    downloadImageTask.setProductId(p.getId());
+                    downloadImageTask.execute(Server.BASE_API_URL + "" + p.getProduct().getImage());
+                }
+            } else {
+                view.image.setImageResource(R.drawable.ic_no_image);
+            }
+
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -193,6 +214,7 @@ public class AdapterListCart extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         cart_total.setText(CurrencyController.getInstance().moneyFormat(register.getTotal()));
         ((MainActivity)ctx).updateInventoryFragment();
+        ((MainActivity)ctx).updateSaleFragment();
     }
 }
 

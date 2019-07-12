@@ -1,6 +1,9 @@
 package com.slightsite.app.ui.sale;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -18,6 +21,9 @@ import android.widget.Toast;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.inventory.LineItem;
 import com.slightsite.app.domain.inventory.Product;
+import com.slightsite.app.techicalservices.DownloadImageTask;
+import com.slightsite.app.techicalservices.Server;
+import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.component.UpdatableFragment;
 import com.slightsite.app.ui.inventory.InventoryFragment;
@@ -100,6 +106,19 @@ public class AdapterListProduct extends BaseAdapter{
         Map<String, String> pmap = p.toMap();
         holder.name.setText(p.getName());
         holder.stock_counter.setText(pmap.get("availability"));
+        if (p.getImage() != null) {
+            if (activity.getImageStack(p.getId()) instanceof Bitmap) {
+                holder.product_image.setImageBitmap(activity.getImageStack(p.getId()));
+                Log.e(getClass().getSimpleName(), "Ini dari image stacks main activity");
+            } else {
+                /*new DownloadImageTask(holder.product_image)
+                        .execute(Server.BASE_API_URL + "" + p.getImage());*/
+                DownloadImageTask downloadImageTask = new DownloadImageTask(holder.product_image);
+                downloadImageTask.setActivity(activity);
+                downloadImageTask.setProductId(p.getId());
+                downloadImageTask.execute(Server.BASE_API_URL + "" + p.getImage());
+            }
+        }
 
         stacks = fragment.getStacks();
         if (stacks.containsKey(p.getId())) {
@@ -193,5 +212,4 @@ public class AdapterListProduct extends BaseAdapter{
 
         return rowView;
     }
-
 }

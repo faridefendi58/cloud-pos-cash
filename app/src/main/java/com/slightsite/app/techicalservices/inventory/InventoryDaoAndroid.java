@@ -37,6 +37,13 @@ public class InventoryDaoAndroid implements InventoryDao {
         content.put("name", product.getName());
         content.put("barcode", product.getBarcode());
         content.put("unit_price", product.getUnitPrice());
+        if (product.getPriority() > 0) {
+        	content.put("priority", product.getPriority());
+		}
+
+		if (product.getImage() != null) {
+        	content.put("images", product.getImage());
+		}
         content.put("status", "ACTIVE");
         
         int id = database.insert(DatabaseContents.TABLE_PRODUCT_CATALOG.toString(), content);
@@ -59,12 +66,15 @@ public class InventoryDaoAndroid implements InventoryDao {
 		List<Product> list = new ArrayList<Product>();
         for (Object object: objectList) {
         	ContentValues content = (ContentValues) object;
-                list.add(new Product(
-                		content.getAsInteger("_id"),
-                        content.getAsString("name"),
-                        content.getAsString("barcode"),
-                        content.getAsDouble("unit_price"))
-                );
+        	Product product = new Product(
+					content.getAsInteger("_id"),
+					content.getAsString("name"),
+					content.getAsString("barcode"),
+					content.getAsDouble("unit_price"));
+        	product.setPriority(content.getAsInteger("priority"));
+        	product.setImage(content.getAsString("images"));
+
+        	list.add(product);
         }
         return list;
 	}
@@ -127,6 +137,13 @@ public class InventoryDaoAndroid implements InventoryDao {
         content.put("barcode", product.getBarcode());
         content.put("status", "ACTIVE");
         content.put("unit_price", product.getUnitPrice());
+        if (product.getPriority() > 0) {
+            content.put("priority", product.getPriority());
+        }
+        if (product.getImage() != null) {
+            content.put("images", product.getImage());
+        }
+        //Log.e(getClass().getSimpleName(), "Before update : "+ content.toString());
 		return database.update(DatabaseContents.TABLE_PRODUCT_CATALOG.toString(), content);
 	}
 	

@@ -15,7 +15,7 @@
     <string name="total">Total</string>
     <string name="barcode">Barcode</string>
     <string name="cancel">Batal</string>
-    <string name="clear">Bersihkan</string>
+    <string name="clear">Batalkan</string>
     <string name="clear_transaction">Batalkan Transaksi</string>
     <string name="edit">Ubah</string>
     <string name="save">Simpan</string>
@@ -68,7 +68,7 @@
     <string name="dialog_quit">Anda yakin ingin KELUAR?</string>
     <string name="dialog_remove_product">Anda yakin ingin MENGHAPUS produk ini?</string>
     <string name="dialog_remove_customer">Anda yakin ingin MENGHAPUS pelanggan ini?</string>
-    <string name="dialog_clear_sale">Anda yakin ingin MEMBERSIHKAN penjualan ini?</string>
+    <string name="dialog_clear_sale">Anda yakin ingin MEMBATALKAN transaksi ini?</string>
     <string name="dialog_remove_invoice">Anda yakin ingin MENGHAPUS tagihan ini?</string>
     <string name="dialog_change_warehouse">Anda yakin ingin merubah konfigurasi Warehouse/Outlet yang ada saat ini?</string>
     <string name="hint_empty_sale">Data penjualan kosong.</string>
@@ -211,6 +211,7 @@
     <string name="label_customer_phone">No Telepon</string>
     <string name="label_role_cs">Customer Support</string>
     <string name="label_role_cashier">Kasir</string>
+    <string name="label_total_amount">Jumlah Total</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Mandiri</string>
