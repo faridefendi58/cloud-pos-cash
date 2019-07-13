@@ -218,6 +218,10 @@
     <string name="label_role_cs">Customer Support</string>
     <string name="label_role_cashier">Cashier</string>
     <string name="label_total_amount">Total Amount</string>
+    <string name="label_next">Next</string>
+    <string name="label_contact_detail">Contact Detail</string>
+    <string name="label_shipping_method">Shipping Method</string>
+    <string name="label_checkout_save_order">Checkout / Save Order</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>
@@ -230,5 +234,10 @@
     <string name="button_back">Back</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
+
+    <string name="shipping_method_direct">Buy Directly</string>
+    <string name="shipping_method_take_it_later">Take It Later</string>
+    <string name="shipping_method_gojek_grab">Gojek / Grab</string>
+    <string name="shipping_method_tokopedia">Tokopedia</string>
 
 </resources>

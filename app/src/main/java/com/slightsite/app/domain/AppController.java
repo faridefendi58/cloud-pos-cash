@@ -1,6 +1,7 @@
 package com.slightsite.app.domain;
 
 import android.app.Application;
+import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +11,11 @@ import android.widget.ListView;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.slightsite.app.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 public class AppController extends Application {
@@ -92,6 +95,20 @@ public class AppController extends Application {
         params.height = (totalHeight
                 + (myListView.getDividerHeight() * (adapterCount))) + add_height;
         myListView.setLayoutParams(params);
+    }
+
+    public static String[] getPaymentMethods() {
+        Context context = getInstance().getApplicationContext();
+        return new String[]{
+                context.getString(R.string.shipping_method_direct),
+                context.getString(R.string.shipping_method_take_it_later),
+                context.getString(R.string.shipping_method_gojek_grab),
+                context.getString(R.string.shipping_method_tokopedia)
+        };
+    }
+
+    public static String getPaymentMethod(int index) {
+        return Arrays.asList(getPaymentMethods()).get(index);
     }
 }
 

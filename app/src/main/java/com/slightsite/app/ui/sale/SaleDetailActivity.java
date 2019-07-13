@@ -54,6 +54,9 @@ import com.slightsite.app.domain.sale.SaleLedger;
 import com.slightsite.app.domain.sale.Shipping;
 import com.slightsite.app.domain.shipping.ShippingCatalog;
 import com.slightsite.app.domain.shipping.ShippingService;
+import com.slightsite.app.domain.warehouse.WarehouseCatalog;
+import com.slightsite.app.domain.warehouse.WarehouseService;
+import com.slightsite.app.domain.warehouse.Warehouses;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.URLBuilder;
@@ -95,6 +98,7 @@ public class SaleDetailActivity extends Activity{
 	private ParamCatalog paramCatalog;
 	private ShippingCatalog shippingCatalog;
 	private Shipping shipping;
+	private WarehouseCatalog warehouseCatalog;
 
 	ProgressDialog pDialog;
 	int success;
@@ -114,6 +118,7 @@ public class SaleDetailActivity extends Activity{
 		try {
 			saleLedger = SaleLedger.getInstance();
 			paramCatalog = ParamService.getInstance().getParamCatalog();
+			warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
 			getWarehouseList();
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
@@ -279,13 +284,18 @@ public class SaleDetailActivity extends Activity{
 		Map<String, String> salemap = sale.toMap();
 		invoice_number.setText(salemap.get("invoiceNumber"));
 
-		new android.os.Handler().postDelayed(
+		if (warehouse_data != null) {
+			new android.os.Handler().postDelayed(
 				new Runnable() {
 					public void run() {
 						showList(sale.getAllLineItem());
 					}
 				},
 				2000);
+		} else {
+			showList(sale.getAllLineItem());
+		}
+
 		customer_address.setText(customer.getAddress());
 		customer_phone.setText(customer.getPhone());
 	}
@@ -498,10 +508,16 @@ public class SaleDetailActivity extends Activity{
 	}
 
 	private void getWarehouseList() {
-		Map<String, String> params = new HashMap<String, String>();
+		List<Warehouses> whs = warehouseCatalog.getAllWarehouses();
+		if (whs != null) {
+			for (Warehouses wh : whs) {
+				warehouse_names.put(wh.getWarehouseId(), wh.getTitle());
+			}
+		} else {
+			Map<String, String> params = new HashMap<String, String>();
 
-		String url = Server.URL + "warehouse/list?api-key=" + Server.API_KEY;
-		_string_request2(
+			String url = Server.URL + "warehouse/list?api-key=" + Server.API_KEY;
+			_string_request2(
 				Request.Method.GET,
 				url, params, false,
 				new VolleyCallback() {
@@ -525,6 +541,7 @@ public class SaleDetailActivity extends Activity{
 						}
 					}
 				});
+		}
 	}
 
 	private void _string_request2(int method, String url, final Map params, final Boolean show_dialog, final VolleyCallback callback) {

@@ -47,6 +47,9 @@ import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.domain.sale.SaleLedger;
 import com.slightsite.app.domain.sale.Shipping;
+import com.slightsite.app.domain.warehouse.WarehouseCatalog;
+import com.slightsite.app.domain.warehouse.WarehouseService;
+import com.slightsite.app.domain.warehouse.Warehouses;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.Tools;
@@ -105,7 +108,7 @@ public class CheckoutActivity extends AppCompatActivity {
     private int current_warehouse_id = 0;
     private String current_warehouse_name = null;
 
-    private String[] ship_methods = Tools.getPaymentMethods();
+    private String[] ship_methods = new String[]{};
 
     private SharedPreferences sharedpreferences;
     private SaleLedger saleLedger;
@@ -114,6 +117,7 @@ public class CheckoutActivity extends AppCompatActivity {
     private List<Map<String, String>> lineitemList;
     private List<Payment> paymentList;
     private PaymentCatalog paymentCatalog;
+    private WarehouseCatalog warehouseCatalog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +134,8 @@ public class CheckoutActivity extends AppCompatActivity {
             if (whParam != null) {
                 current_warehouse_id = Integer.parseInt(whParam.getValue());
             }
+
+            warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
             getWarehouseList();
             if (register.getCurrentSale().getStatus().equals("ENDED")) {
                 Log.e(getClass().getSimpleName(), "register.getCustomer() : "+ register.getCustomer().toMap().toString());
@@ -157,6 +163,8 @@ public class CheckoutActivity extends AppCompatActivity {
                     Log.e(getClass().getSimpleName(), "banks in checkout act :"+ banks.toString());
                 }
             }
+
+            ship_methods = AppController.getPaymentMethods();
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -389,40 +397,52 @@ public class CheckoutActivity extends AppCompatActivity {
     }
 
     private void getWarehouseList() {
-        Map<String, String> params = new HashMap<String, String>();
-
         warehouse_items.clear();
 
-        String url = Server.URL + "warehouse/list?api-key=" + Server.API_KEY;
-        _string_request(
-                Request.Method.GET,
-                url, params, false,
-                new VolleyCallback() {
-                    @Override
-                    public void onSuccess(String result) {
-                        try {
-                            JSONObject jObj = new JSONObject(result);
-                            success = jObj.getInt(TAG_SUCCESS);
-                            // Check for error node in json
-                            if (success == 1) {
-                                warehouse_data = jObj.getJSONArray("data");
-                                for(int n = 0; n < warehouse_data.length(); n++)
-                                {
-                                    JSONObject data_n = warehouse_data.getJSONObject(n);
-                                    warehouse_items.add(data_n.getString("title"));
-                                    warehouse_ids.put(data_n.getString("title"), data_n.getString("id"));
-                                    warehouse_names.put(data_n.getInt("id"), data_n.getString("title"));
-                                    if (data_n.getInt("id") == current_warehouse_id) {
-                                        current_warehouse_name = data_n.getString("title");
+        List<Warehouses> whs = warehouseCatalog.getAllWarehouses();
+        if (whs != null) {
+            for (Warehouses wh : whs) {
+                warehouse_items.add(wh.getTitle());
+                warehouse_ids.put(wh.getTitle(), wh.getWarehouseId()+"");
+                warehouse_names.put(wh.getWarehouseId(), wh.getTitle());
+                if (wh.getWarehouseId() == current_warehouse_id) {
+                    current_warehouse_name = wh.getTitle();
+                }
+            }
+        } else {
+            Map<String, String> params = new HashMap<String, String>();
+
+            String url = Server.URL + "warehouse/list?api-key=" + Server.API_KEY;
+            _string_request(
+                    Request.Method.GET,
+                    url, params, false,
+                    new VolleyCallback() {
+                        @Override
+                        public void onSuccess(String result) {
+                            try {
+                                JSONObject jObj = new JSONObject(result);
+                                success = jObj.getInt(TAG_SUCCESS);
+                                // Check for error node in json
+                                if (success == 1) {
+                                    warehouse_data = jObj.getJSONArray("data");
+                                    for(int n = 0; n < warehouse_data.length(); n++)
+                                    {
+                                        JSONObject data_n = warehouse_data.getJSONObject(n);
+                                        warehouse_items.add(data_n.getString("title"));
+                                        warehouse_ids.put(data_n.getString("title"), data_n.getString("id"));
+                                        warehouse_names.put(data_n.getInt("id"), data_n.getString("title"));
+                                        if (data_n.getInt("id") == current_warehouse_id) {
+                                            current_warehouse_name = data_n.getString("title");
+                                        }
                                     }
                                 }
-                            }
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
-                    }
-                });
+                    });
+        }
     }
 
     public interface VolleyCallback {

@@ -212,6 +212,10 @@
     <string name="label_role_cs">Customer Support</string>
     <string name="label_role_cashier">Kasir</string>
     <string name="label_total_amount">Jumlah Total</string>
+    <string name="label_next">Selanjutnya</string>
+    <string name="label_contact_detail">Rincian Data Pelanggan</string>
+    <string name="label_shipping_method">Metode Pengiriman</string>
+    <string name="label_checkout_save_order">Checkout / Simpan Pesanan</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Mandiri</string>
@@ -224,4 +228,9 @@
     <string name="button_back">Kembali</string>
 
     <string name="confirm_edit">Anda yakin ingin mengubah data ini?</string>
+
+    <string name="shipping_method_direct">Beli Langsung</string>
+    <string name="shipping_method_take_it_later">Ambil Nanti</string>
+    <string name="shipping_method_gojek_grab">Gojek / Grab</string>
+    <string name="shipping_method_tokopedia">Tokopedia</string>
 </resources>

@@ -14,9 +14,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CONTACT DETAILS"
+            android:text="@string/label_contact_detail"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:textColor="@color/grey_40"
+            android:textAllCaps="true"
             app:fontFamily="sans-serif-medium" />
 
         <TextView
@@ -72,7 +73,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_large"
-            android:text="SHIPPING METHOD"
+            android:text="@string/label_shipping_method"
+            android:textAllCaps="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:textColor="@color/grey_40"
             app:fontFamily="sans-serif-medium" />
@@ -91,8 +93,8 @@
             android:paddingLeft="@dimen/spacing_middle"
             android:paddingRight="@dimen/spacing_middle"
             android:layout_marginTop="@dimen/spacing_large"
-            android:text="Bawa Langsung"
-            android:hint="Cara Pengiriman"/>
+            android:text="@string/shipping_method_direct"
+            android:hint="@string/label_shipping_method"/>
 
         <AutoCompleteTextView
             android:id="@+id/shipping_warehouse"
@@ -136,60 +138,6 @@
             android:hint="Alamat Pengiriman"
             android:minHeight="@dimen/spacing_xmlarge"
             android:visibility="gone"/>
-
-        <!--<LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_middle"
-            android:orientation="horizontal">
-
-            <EditText
-                style="@style/EditText.Flat.Grey"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/edit_text_round_bg_outline"
-                android:hint="Country"
-                android:drawableEnd="@drawable/ic_expand_arrow"
-                android:drawableRight="@drawable/ic_expand_arrow"
-                android:minHeight="@dimen/spacing_xmlarge" />
-
-            <View
-                android:layout_width="@dimen/spacing_middle"
-                android:layout_height="0dp" />
-
-            <EditText
-                style="@style/EditText.Flat.Grey"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/edit_text_round_bg_outline"
-                android:hint="ZIP Code"
-                android:minHeight="@dimen/spacing_xmlarge" />
-
-        </LinearLayout>
-
-        <EditText
-            style="@style/EditText.Flat.Grey"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_middle"
-            android:drawableEnd="@drawable/ic_expand_arrow"
-            android:drawableRight="@drawable/ic_expand_arrow"
-            android:background="@drawable/edit_text_round_bg_outline"
-            android:hint="City"
-            android:minHeight="@dimen/spacing_xmlarge" />
-
-        <EditText
-            style="@style/EditText.Flat.Grey"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_middle"
-            android:drawableEnd="@drawable/ic_expand_arrow"
-            android:drawableRight="@drawable/ic_expand_arrow"
-            android:background="@drawable/edit_text_round_bg_outline"
-            android:hint="State / Province"
-            android:minHeight="@dimen/spacing_xmlarge" />-->
 
     </LinearLayout>
 

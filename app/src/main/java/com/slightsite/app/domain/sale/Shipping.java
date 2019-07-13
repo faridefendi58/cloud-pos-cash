@@ -1,5 +1,6 @@
 package com.slightsite.app.domain.sale;
 
+import com.slightsite.app.domain.AppController;
 import com.slightsite.app.techicalservices.Tools;
 
 import java.util.HashMap;
@@ -40,7 +41,7 @@ public class Shipping {
         map.put("sale_id", sale_id+"");
         map.put("method", method+"");
         try {
-            String method_name = Tools.getPaymentMethod(method);
+            String method_name = AppController.getPaymentMethod(method);
             map.put("method_name", method_name);
         } catch (Exception e){}
         map.put("date", date);
