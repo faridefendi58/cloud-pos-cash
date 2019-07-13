@@ -43,14 +43,14 @@ public class PaymentFragment extends Fragment {
     private EditText cash_receive;
     private EditText ed_nominal_mandiri;
     private EditText ed_nominal_bca;
-    private EditText ed_nominal_bni;
+    private EditText ed_nominal_bri;
     private EditText edc_card_type;
     private EditText edc_card_number;
     private EditText edc_nominal;
     private TextView total_order;
     private ImageButton bt_toggle_mandiri;
     private ImageButton bt_toggle_bca;
-    private ImageButton bt_toggle_bni;
+    private ImageButton bt_toggle_bri;
 
     private Register register;
 
@@ -89,14 +89,14 @@ public class PaymentFragment extends Fragment {
         cash_receive = (EditText) root.findViewById(R.id.cash_receive);
         ed_nominal_mandiri = (EditText) root.findViewById(R.id.nominal_mandiri);
         ed_nominal_bca = (EditText) root.findViewById(R.id.nominal_bca);
-        ed_nominal_bni = (EditText) root.findViewById(R.id.nominal_bni);
+        ed_nominal_bri = (EditText) root.findViewById(R.id.nominal_bri);
         edc_card_type = (EditText) root.findViewById(R.id.edc_card_type);
         edc_card_number  = (EditText) root.findViewById(R.id.edc_card_number);
         edc_nominal  = (EditText) root.findViewById(R.id.edc_nominal);
         total_order  = (TextView) root.findViewById(R.id.total_order);
         bt_toggle_mandiri = (ImageButton) root.findViewById(R.id.bt_toggle_mandiri);
         bt_toggle_bca = (ImageButton) root.findViewById(R.id.bt_toggle_bca);
-        bt_toggle_bni = (ImageButton) root.findViewById(R.id.bt_toggle_bni);
+        bt_toggle_bri = (ImageButton) root.findViewById(R.id.bt_toggle_bri);
     }
 
     private void initAction() {
@@ -137,7 +137,7 @@ public class PaymentFragment extends Fragment {
         setTextChangeListener(cash_receive, "cashReceive");
         setTextChangeListener(ed_nominal_mandiri, "nominal_mandiri");
         setTextChangeListener(ed_nominal_bca, "nominal_bca");
-        setTextChangeListener(ed_nominal_bni, "nominal_bni");
+        setTextChangeListener(ed_nominal_bri, "nominal_bri");
         setTextChangeListener(edc_card_number, "card_number");
         setTextChangeListener(edc_nominal, "nominal_edc");
 
@@ -171,16 +171,16 @@ public class PaymentFragment extends Fragment {
             }
         });
 
-        bt_toggle_bni.setOnClickListener(new View.OnClickListener() {
+        bt_toggle_bri.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LinearLayout lyt_expand_text = (LinearLayout) v.getRootView().findViewById(R.id.lyt_expand_bni);
+                LinearLayout lyt_expand_text = (LinearLayout) v.getRootView().findViewById(R.id.lyt_expand_bri);
                 if (lyt_expand_text.getVisibility() == View.VISIBLE) {
                     lyt_expand_text.setVisibility(View.GONE);
-                    bt_toggle_bni.setImageDrawable(getResources().getDrawable(R.drawable.ic_add_black));
+                    bt_toggle_bri.setImageDrawable(getResources().getDrawable(R.drawable.ic_add_black));
                 } else {
                     lyt_expand_text.setVisibility(View.VISIBLE);
-                    bt_toggle_bni.setImageDrawable(getResources().getDrawable(R.drawable.ic_remove_black));
+                    bt_toggle_bri.setImageDrawable(getResources().getDrawable(R.drawable.ic_remove_black));
                 }
             }
         });
@@ -214,7 +214,7 @@ public class PaymentFragment extends Fragment {
                         banks.put(setType, s.toString());
                         Log.e(getTag(), "Banks : " + banks.toString());
                         c_data.setTransferBank(banks);
-                    } else if (setType == "nominal_bni") {
+                    } else if (setType == "nominal_bri") {
                         if (banks.containsKey(setType)) {
                             banks.remove(setType);
                         }
@@ -269,13 +269,13 @@ public class PaymentFragment extends Fragment {
                         LinearLayout lyt_expand_bca = (LinearLayout) root.findViewById(R.id.lyt_expand_bca);
                         lyt_expand_bca.setVisibility(View.VISIBLE);
                     }
-                    if (banks.containsKey("nominal_bni")) {
-                        ed_nominal_bni.setText(c_data.getTransferBank().get("nominal_bni"));
-                        if (c_data.getTransferBank().get("nominal_bni").contains(".")) {
-                            ed_nominal_bni.setText(c_data.getTransferBank().get("nominal_bni").split("\\.")[0]);
+                    if (banks.containsKey("nominal_bri")) {
+                        ed_nominal_bri.setText(c_data.getTransferBank().get("nominal_bri"));
+                        if (c_data.getTransferBank().get("nominal_bri").contains(".")) {
+                            ed_nominal_bri.setText(c_data.getTransferBank().get("nominal_bri").split("\\.")[0]);
                         }
-                        LinearLayout lyt_expand_bni = (LinearLayout) root.findViewById(R.id.lyt_expand_bni);
-                        lyt_expand_bni.setVisibility(View.VISIBLE);
+                        LinearLayout lyt_expand_bri = (LinearLayout) root.findViewById(R.id.lyt_expand_bri);
+                        lyt_expand_bri.setVisibility(View.VISIBLE);
                     }
                 }
             }

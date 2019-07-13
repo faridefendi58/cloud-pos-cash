@@ -151,7 +151,7 @@ public class CheckoutActivity extends AppCompatActivity {
                         }
                         if (line.getTitle().equals("nominal_mandiri")
                                 || line.getTitle().equals("nominal_bca")
-                                || line.getTitle().equals("nominal_bni")) {
+                                || line.getTitle().equals("nominal_bri")) {
                             banks.put(line.getTitle(), line.getNominal().toString());
                         }
                     }

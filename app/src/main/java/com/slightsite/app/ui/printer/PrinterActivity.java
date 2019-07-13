@@ -485,7 +485,7 @@ public class PrinterActivity extends AppCompatActivity {
         result.put("cash_receive", R.string.payment_cash);
         result.put("nominal_mandiri", R.string.payment_mandiri);
         result.put("nominal_bca", R.string.payment_bca);
-        result.put("nominal_bni", R.string.payment_bni);
+        result.put("nominal_bri", R.string.payment_bri);
         result.put("nominal_edc", R.string.payment_edc);
 
         return result.get(channel);

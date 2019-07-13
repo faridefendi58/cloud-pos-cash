@@ -221,7 +221,7 @@
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Mandiri</string>
     <string name="payment_bca">Transfer BCA</string>
-    <string name="payment_bni">Transfer BNI</string>
+    <string name="payment_bri">Transfer BRI</string>
     <string name="payment_edc">Mesin EDC</string>
 
     <string name="button_add_to_cart">Tambah</string>

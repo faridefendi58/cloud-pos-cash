@@ -85,7 +85,7 @@ public class Payment {
         types.put("cash_receive", "Cash");
         types.put("nominal_mandiri", "Bank Mandiri");
         types.put("nominal_bca", "Bank BCA");
-        types.put("nominal_bni", "Bank BNI");
+        types.put("nominal_bri", "Bank BRI");
         types.put("nominal_edc", "EDC Payment");
 
         return types;
