@@ -144,6 +144,7 @@
     <string name="prompt_password_repeat">Password (Repeat)</string>
     <string name="prompt_name">Full Name</string>
     <string name="prompt_phone">Phone Number</string>
+    <string name="prompt_outlet">Outlet</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="action_register">Create new account?</string>

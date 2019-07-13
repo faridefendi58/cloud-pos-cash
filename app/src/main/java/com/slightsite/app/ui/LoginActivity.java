@@ -30,20 +30,24 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -55,9 +59,16 @@ import com.slightsite.app.domain.ProfileController;
 import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.params.Params;
+import com.slightsite.app.domain.warehouse.AdminInWarehouse;
+import com.slightsite.app.domain.warehouse.AdminInWarehouseCatalog;
+import com.slightsite.app.domain.warehouse.AdminInWarehouseService;
+import com.slightsite.app.domain.warehouse.WarehouseCatalog;
+import com.slightsite.app.domain.warehouse.WarehouseService;
+import com.slightsite.app.domain.warehouse.Warehouses;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -92,6 +103,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     private View mLoginFormView;
     private LinearLayout role_container;
     private RadioGroup role_group;
+    private Spinner available_warehouse;
+    private LinearLayout wh_container;
 
     public final static String TAG_ID = "id";
     public final static String TAG_EMAIL = "email";
@@ -121,8 +134,17 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     ConnectivityManager conMgr;
 
     private ParamCatalog paramCatalog;
+    private WarehouseCatalog warehouseCatalog;
+    private AdminInWarehouseCatalog adminInWarehouseCatalog;
     private Boolean is_cashier = true;
     private Boolean success_register = false;
+
+    private final HashMap<Integer, String> warehouse_names = new HashMap<Integer, String>();
+    private JSONArray warehouse_data;
+    private ArrayList<String> warehouse_items = new ArrayList<String>();
+    private HashMap<String, String> warehouse_ids = new HashMap<String, String>();
+    private int warehouse_id = 0;
+    private int register_admin_id = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +153,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         try {
             paramCatalog = ParamService.getInstance().getParamCatalog();
+            warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
+            if (warehouse_names.size() == 0) {
+                getWarehouseList();
+            }
+            adminInWarehouseCatalog = AdminInWarehouseService.getInstance().getAdminInWarehouseCatalog();
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -190,6 +217,16 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         role_container = (LinearLayout) findViewById(R.id.role_container);
         role_group = (RadioGroup) findViewById(R.id.role_group);
+        available_warehouse = (Spinner) findViewById(R.id.available_warehouse);
+        wh_container = (LinearLayout) findViewById(R.id.wh_container);
+
+        if (warehouse_items.size() > 0) {
+            ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(
+                    getApplicationContext(),
+                    R.layout.spinner_item, warehouse_items);
+            whAdapter.notifyDataSetChanged();
+            available_warehouse.setAdapter(whAdapter);
+        }
     }
 
     private void populateAutoComplete() {
@@ -383,6 +420,148 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         int IS_PRIMARY = 1;
     }
 
+    private void getWarehouseList() {
+        warehouse_items.clear();
+
+        List<Warehouses> whs = warehouseCatalog.getAllWarehouses();
+        if (whs != null && whs.size() > 0) {
+            Log.e(getClass().getSimpleName(), "whs : "+ whs.size());
+            for (Warehouses wh : whs) {
+                warehouse_names.put(wh.getWarehouseId(), wh.getTitle());
+                warehouse_items.add(wh.getTitle());
+            }
+        } else {
+            Log.e(getClass().getSimpleName(), "Tidak ada data");
+            Map<String, String> params = new HashMap<String, String>();
+
+            String url = Server.URL + "warehouse/list?api-key=" + Server.API_KEY;
+            _string_request(
+                    Request.Method.GET,
+                    url, params, false,
+                    new VolleyCallback() {
+                        @Override
+                        public void onSuccess(String result) {
+                            try {
+                                JSONObject jObj = new JSONObject(result);
+                                success = jObj.getInt(TAG_SUCCESS);
+                                // Check for error node in json
+                                if (success == 1) {
+                                    warehouse_data = jObj.getJSONArray("data");
+                                    for(int n = 0; n < warehouse_data.length(); n++)
+                                    {
+                                        JSONObject data_n = warehouse_data.getJSONObject(n);
+                                        warehouse_names.put(data_n.getInt("id"), data_n.getString("title"));
+                                        warehouse_items.add(data_n.getString("title"));
+                                        warehouse_ids.put(data_n.getString("title"), data_n.getString("id"));
+
+                                        // updating or inserting the wh data on local
+                                        Warehouses whs = warehouseCatalog.getWarehouseByWarehouseId(data_n.getInt("id"));
+                                        if (whs == null) {
+                                            warehouseCatalog.addWarehouse(
+                                                    data_n.getInt("id"),
+                                                    data_n.getString("title"),
+                                                    data_n.getString("address"),
+                                                    data_n.getString("phone"),
+                                                    data_n.getInt("active")
+                                            );
+                                        } else {
+                                            whs.setTitle(data_n.getString("title"));
+                                            whs.setAddress(data_n.getString("address"));
+                                            whs.setPhone(data_n.getString("phone"));
+                                            whs.setStatus(data_n.getInt("active"));
+                                            warehouseCatalog.editWarehouse(whs);
+                                        }
+                                    }
+
+                                    ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(
+                                            getApplicationContext(),
+                                            R.layout.spinner_item, warehouse_items);
+                                    whAdapter.notifyDataSetChanged();
+                                    available_warehouse.setAdapter(whAdapter);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+        }
+    }
+
+    private void _string_request(int method, String url, final Map params, final Boolean show_dialog, final VolleyCallback callback) {
+        if (show_dialog) {
+            pDialog = new ProgressDialog(this);
+            pDialog.setCancelable(false);
+            pDialog.setMessage("Request data ...");
+            showDialog();
+        }
+
+        if (method == Request.Method.GET) { //get method doesnt support getParams
+            Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
+            while(iterator.hasNext())
+            {
+                Map.Entry<String, String> pair = iterator.next();
+                String pair_value = pair.getValue();
+                if (pair_value.contains(" "))
+                    pair_value = pair.getValue().replace(" ", "%20");
+                url += "&" + pair.getKey() + "=" + pair_value;
+            }
+        }
+
+        StringRequest strReq = new StringRequest(method, url, new Response.Listener < String > () {
+
+            @Override
+            public void onResponse(String Response) {
+                callback.onSuccess(Response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                if (show_dialog) {
+                    hideDialog();
+                }
+            }
+        })
+        {
+            // set headers
+            @Override
+            protected Map<String, String> getParams() {
+                return params;
+            }
+        };
+
+        strReq.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        try {
+            AppController.getInstance().addToRequestQueue(strReq, "json_obj_req");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public interface VolleyCallback {
+        void onSuccess(String result);
+    }
+
+    public void hideSoftKeyboard() {
+        Log.e(getClass().getSimpleName(), "Mustinya hide keyboranya");
+        if(getCurrentFocus()!=null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+    }
+
+    /**
+     * Shows the soft keyboard
+     */
+    public void showSoftKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        view.requestFocus();
+        inputMethodManager.showSoftInput(view, 0);
+    }
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -502,6 +681,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         signin_button.setVisibility(View.VISIBLE);
         passwordRepeat.setVisibility(View.VISIBLE);
         role_container.setVisibility(View.VISIBLE);
+        wh_container.setVisibility(View.VISIBLE);
+        hideSoftKeyboard();
     }
 
     public void signinRequest(View view) {
@@ -513,6 +694,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         signin_button.setVisibility(View.GONE);
         passwordRepeat.setVisibility(View.GONE);
         role_container.setVisibility(View.GONE);
+        wh_container.setVisibility(View.GONE);
     }
 
     private void attemptRegister() {
@@ -535,6 +717,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             is_cashier = true;
         } else {
             is_cashier = false;
+        }
+        String warehouse_name = available_warehouse.getSelectedItem().toString();
+        if (warehouse_ids.containsKey(warehouse_name)) {
+            warehouse_id = Integer.parseInt(warehouse_ids.get(warehouse_name));
         }
 
         boolean cancel = false;
@@ -642,6 +828,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         int id = ProfileController.getInstance().register(content);
         if (id > 0) {
+            register_admin_id = id;
             addRoleParams();
 
             mAuthTask = new UserLoginTask(content.getAsString("email"), content.getAsString("password"));
@@ -871,6 +1058,25 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                     "text",
                     "Admin role for apps"
             );
+        }
+
+        if (warehouse_id > 0) {
+            try {
+                Params pWarehouseId = paramCatalog.getParamByName("warehouse_id");
+                if (pWarehouseId instanceof Params) {
+                    pWarehouseId.setValue(warehouse_id + "");
+                    Boolean saveParam = paramCatalog.editParam(pWarehouseId);
+                } else {
+                    Boolean saveParam = paramCatalog.addParam("warehouse_id", warehouse_id + "", "text", warehouse_names.get(warehouse_id));
+                }
+
+                if (register_admin_id > 0) {
+                    AdminInWarehouse aiw = adminInWarehouseCatalog.getDataByAdminAndWH(register_admin_id, warehouse_id);
+                    if (aiw == null) {
+                        Boolean save = adminInWarehouseCatalog.addAdminInWarehouse(register_admin_id, warehouse_id, 1);
+                    }
+                }
+            } catch (Exception e){e.printStackTrace();}
         }
     }
 }

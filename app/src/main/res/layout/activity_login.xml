@@ -108,15 +108,35 @@
                 android:singleLine="true"
                 android:visibility="gone"/>
 
-            <!--<Spinner
-                android:id="@+id/available_warehouse"
-                style="?android:textAppearanceSmall"
+            <LinearLayout
+                android:id="@+id/wh_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/prompt_phone"
-                android:imeActionId="6"
-                android:imeActionLabel="@string/action_sign_in_short"
-                android:imeOptions="actionUnspecified"/>-->
+                android:orientation="horizontal"
+                android:weightSum="1"
+                android:layout_marginTop="@dimen/spacing_large"
+                android:layout_marginBottom="@dimen/spacing_large"
+                android:paddingLeft="@dimen/spacing_small"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
+                    android:text="@string/prompt_outlet"/>
+
+                <Spinner
+                    android:id="@+id/available_warehouse"
+                    style="?android:textAppearanceSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.6"
+                    android:hint="@string/prompt_outlet"
+                    android:imeActionId="6"
+                    android:imeActionLabel="@string/action_sign_in_short"
+                    android:imeOptions="actionUnspecified" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/role_container"

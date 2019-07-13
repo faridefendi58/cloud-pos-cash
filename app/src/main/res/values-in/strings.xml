@@ -145,6 +145,7 @@
     <string name="prompt_password_repeat">Password (Diulang)</string>
     <string name="prompt_name">Nama Lengkap</string>
     <string name="prompt_phone">Nomor Telepon</string>
+    <string name="prompt_outlet">Outlet</string>
     <string name="action_sign_in">Masuk atau mendaftar</string>
     <string name="action_sign_in_short">Masuk</string>
     <string name="action_register">Buat akun baru?</string>
