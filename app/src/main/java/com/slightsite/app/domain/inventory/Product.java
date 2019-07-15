@@ -20,6 +20,7 @@ public class Product {
 	private double unitPrice;
 	private int priority = 0;
 	private String image;
+	private String status = "ACTIVE";
 	
 	/**
 	 * Static value for UNDEFINED ID.
@@ -169,5 +170,13 @@ public class Product {
 
 	public String getImage() {
 		return image;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getStatus() {
+		return status;
 	}
 }

@@ -340,11 +340,14 @@ public class SaleDaoAndroid implements SaleDao {
 	}
 
 	@Override
-	public void setPushedSale(Sale sale, int server_invoice_id) {
+	public void setPushedSale(Sale sale, int server_invoice_id, String server_invoice_number) {
 		ContentValues content = new ContentValues();
 		content.put("_id", sale.getId());
 		content.put("pushed", server_invoice_id);
 		content.put("status", "PUSHED");
+		if (server_invoice_number != null) {
+			content.put("server_invoice_number", server_invoice_number);
+		}
 		database.update(DatabaseContents.TABLE_SALE.toString(), content);
 	}
 

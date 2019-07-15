@@ -111,5 +111,5 @@ public class ProductCatalog {
 		inventoryDao.suspendProduct(product);
 	}
 
-	
+	public void suspendAllProduct() {inventoryDao.suspendAllProduct();}
 }

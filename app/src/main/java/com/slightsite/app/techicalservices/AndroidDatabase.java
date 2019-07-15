@@ -78,7 +78,8 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 				+ "end_time DATETIME,"
 				+ "customer_id INTEGER,"
 				+ "orders INTEGER,"
-				+ "pushed INTEGER DEFAULT 0"
+				+ "pushed INTEGER DEFAULT 0,"
+				+ "server_invoice_number TEXT(32)"
 				+ ");");
 		Log.d("CREATE DATABASE", "Create " + DatabaseContents.TABLE_SALE + " Successfully.");
 		

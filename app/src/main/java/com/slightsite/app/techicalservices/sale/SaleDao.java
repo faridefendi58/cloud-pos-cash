@@ -104,7 +104,7 @@ public interface SaleDao {
 
 	int getTotalTransaction(String time_frame);
 
-	void setPushedSale(Sale sale, int server_invoice_id);
+	void setPushedSale(Sale sale, int server_invoice_id, String server_invoice_number);
 
 	int getServerInvoiceId(int sale_id);
 }

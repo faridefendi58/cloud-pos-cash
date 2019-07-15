@@ -135,7 +135,11 @@ public class InventoryDaoAndroid implements InventoryDao {
 		content.put("_id", product.getId());
 		content.put("name", product.getName());
         content.put("barcode", product.getBarcode());
-        content.put("status", "ACTIVE");
+        String status = "ACTIVE";
+        if (product.getStatus() != null) {
+        	status = product.getStatus();
+		}
+        content.put("status", status);
         content.put("unit_price", product.getUnitPrice());
         if (product.getPriority() > 0) {
             content.put("priority", product.getPriority());
@@ -272,6 +276,11 @@ public class InventoryDaoAndroid implements InventoryDao {
 		content.put("status", "INACTIVE");
 		content.put("unit_price", product.getUnitPrice());
 		database.update(DatabaseContents.TABLE_PRODUCT_CATALOG.toString(), content);
+	}
+
+	@Override
+	public void suspendAllProduct() {
+		database.execute("UPDATE " + DatabaseContents.TABLE_PRODUCT_CATALOG + " SET status='INACTIVE' WHERE status='ACTIVE'");
 	}
 
 	@Override

@@ -663,9 +663,10 @@ public class CheckoutActivity extends AppCompatActivity {
                             JSONObject jObj = new JSONObject(result);
                             success = jObj.getInt(TAG_SUCCESS);
                             int server_invoice_id = jObj.getInt(TAG_ID);
+                            String server_invoice_number = jObj.getString("invoice_number");
                             // Check for error node in json
                             if (success == 1) {
-                                saleLedger.setServerInvoiceId(sale, server_invoice_id);
+                                saleLedger.setServerInvoiceId(sale, server_invoice_id, server_invoice_number);
                             }
                             Toast.makeText(getApplicationContext(),
                                     jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();

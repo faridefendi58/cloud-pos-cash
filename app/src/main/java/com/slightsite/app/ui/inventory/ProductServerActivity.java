@@ -149,70 +149,107 @@ public class ProductServerActivity extends Activity {
     }
 
     private void getWarehouseList() {
+        List<Warehouses> whs = warehouseCatalog.getAllWarehouses();
+        Params adParam = paramCatalog.getParamByName("admin_id");
+        List<AdminInWarehouse> adminInWarehouses = adminInWarehouseCatalog.getDataByAdminId(Integer.parseInt(adParam.getValue()));
 
-        Map<String, String> params = new HashMap<String, String>();
-
-        warehouse_items.clear();
-
-        String url = Server.URL + "warehouse/list?api-key=" + Server.API_KEY;
-        _string_request(
-                Request.Method.GET,
-                url, params, false,
-                new VolleyCallback() {
-                    @Override
-                    public void onSuccess(String result) {
-                        try {
-                            Params whParam = paramCatalog.getParamByName("warehouse_id");
-                            int selected_wh = 0;
-
-                            JSONObject jObj = new JSONObject(result);
-                            success = jObj.getInt(TAG_SUCCESS);
-                            // Check for error node in json
-                            if (success == 1) {
-                                warehouse_data = jObj.getJSONArray("data");
-                                for(int n = 0; n < warehouse_data.length(); n++)
-                                {
-                                    JSONObject data_n = warehouse_data.getJSONObject(n);
-                                    warehouse_items.add(data_n.getString("title"));
-                                    warehouse_ids.put(data_n.getString("title"), data_n.getString("id"));
-                                    if (whParam != null) {
-                                        if (Integer.parseInt(whParam.getValue()) == Integer.parseInt(data_n.getString("id"))) {
-                                            selected_wh = n;
-                                        }
-                                    }
-
-                                    // updating or inserting the wh data on local
-                                    Warehouses whs = warehouseCatalog.getWarehouseByWarehouseId(data_n.getInt("id"));
-                                    if (whs == null) {
-                                        warehouseCatalog.addWarehouse(
-                                                data_n.getInt("id"),
-                                                data_n.getString("title"),
-                                                data_n.getString("address"),
-                                                data_n.getString("phone"),
-                                                data_n.getInt("active")
-                                                );
-                                    } else {
-                                        whs.setTitle(data_n.getString("title"));
-                                        whs.setAddress(data_n.getString("address"));
-                                        whs.setPhone(data_n.getString("phone"));
-                                        whs.setStatus(data_n.getInt("active"));
-                                        warehouseCatalog.editWarehouse(whs);
-                                    }
-                                }
-                            }
-
-                            ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(
-                                    getApplicationContext(),
-                                    R.layout.spinner_item, warehouse_items);
-                            whAdapter.notifyDataSetChanged();
-                            available_warehouse.setAdapter(whAdapter);
-                            available_warehouse.setSelection(selected_wh);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+        ArrayList<Integer> allowed_warehouses = new ArrayList<Integer>();
+        if (adminInWarehouses != null && adminInWarehouses.size() > 0) {
+            for (AdminInWarehouse aiw : adminInWarehouses) {
+                if (aiw.getWarehouseId() > 0) {
+                    allowed_warehouses.add(aiw.getWarehouseId());
+                }
+            }
+        }
+        Log.e(getClass().getSimpleName(), "whs apakah ada : "+ whs.size());
+        if (whs != null) {
+            Params whParam = paramCatalog.getParamByName("warehouse_id");
+            int no = 0;
+            int selected_wh = 0;
+            for (Warehouses wh : whs) {
+                if (allowed_warehouses.contains(wh.getWarehouseId())) {
+                    warehouse_items.add(wh.getTitle());
+                    warehouse_ids.put(wh.getTitle(), wh.getWarehouseId() + "");
+                    if (whParam != null) {
+                        if (Integer.parseInt(whParam.getValue()) == wh.getWarehouseId()) {
+                            selected_wh = no;
                         }
                     }
-                });
+                    no = no + 1;
+                }
+            }
+
+            ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(
+                    getApplicationContext(),
+                    R.layout.spinner_item, warehouse_items);
+            whAdapter.notifyDataSetChanged();
+            available_warehouse.setAdapter(whAdapter);
+            available_warehouse.setSelection(selected_wh);
+        } else {
+            Map<String, String> params = new HashMap<String, String>();
+
+            warehouse_items.clear();
+
+            String url = Server.URL + "warehouse/list?api-key=" + Server.API_KEY;
+            _string_request(
+                    Request.Method.GET,
+                    url, params, false,
+                    new VolleyCallback() {
+                        @Override
+                        public void onSuccess(String result) {
+                            try {
+                                Params whParam = paramCatalog.getParamByName("warehouse_id");
+                                int selected_wh = 0;
+
+                                JSONObject jObj = new JSONObject(result);
+                                success = jObj.getInt(TAG_SUCCESS);
+                                // Check for error node in json
+                                if (success == 1) {
+                                    warehouse_data = jObj.getJSONArray("data");
+                                    for(int n = 0; n < warehouse_data.length(); n++)
+                                    {
+                                        JSONObject data_n = warehouse_data.getJSONObject(n);
+                                        warehouse_items.add(data_n.getString("title"));
+                                        warehouse_ids.put(data_n.getString("title"), data_n.getString("id"));
+                                        if (whParam != null) {
+                                            if (Integer.parseInt(whParam.getValue()) == Integer.parseInt(data_n.getString("id"))) {
+                                                selected_wh = n;
+                                            }
+                                        }
+
+                                        // updating or inserting the wh data on local
+                                        Warehouses whs = warehouseCatalog.getWarehouseByWarehouseId(data_n.getInt("id"));
+                                        if (whs == null) {
+                                            warehouseCatalog.addWarehouse(
+                                                    data_n.getInt("id"),
+                                                    data_n.getString("title"),
+                                                    data_n.getString("address"),
+                                                    data_n.getString("phone"),
+                                                    data_n.getInt("active")
+                                            );
+                                        } else {
+                                            whs.setTitle(data_n.getString("title"));
+                                            whs.setAddress(data_n.getString("address"));
+                                            whs.setPhone(data_n.getString("phone"));
+                                            whs.setStatus(data_n.getInt("active"));
+                                            warehouseCatalog.editWarehouse(whs);
+                                        }
+                                    }
+                                }
+
+                                ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(
+                                        getApplicationContext(),
+                                        R.layout.spinner_item, warehouse_items);
+                                whAdapter.notifyDataSetChanged();
+                                available_warehouse.setAdapter(whAdapter);
+                                available_warehouse.setSelection(selected_wh);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+        }
     }
 
     public interface VolleyCallback {
@@ -309,6 +346,15 @@ public class ProductServerActivity extends Activity {
                             // Check for error node in json
                             if (success == 1) {
                                 JSONArray data = jObj.getJSONArray("data");
+                                Log.e(getClass().getSimpleName(), "product data on sync to server : "+ data.toString());
+
+                                if (data.length() > 0) {
+                                    try {
+                                        // suspending all the product data
+                                        productCatalog.suspendAllProduct();
+                                    } catch (Exception e){e.printStackTrace();}
+                                }
+
                                 ArrayList<String> product_items = new ArrayList<String>();
                                 HashMap< Integer, Integer> stocks = new HashMap< Integer, Integer>();
                                 for(int n = 0; n < data.length(); n++)
@@ -401,11 +447,14 @@ public class ProductServerActivity extends Activity {
                                 stock.clearStock();
 
                                 // also insert the stock
+                                Log.e(getClass().getSimpleName(), "padahal datanta : "+ stocks.toString());
                                 for (Map.Entry<Integer, Integer> entry : stocks.entrySet()) {
                                     Product pd = null;
                                     try {
                                         pd = productCatalog.getProductByBarcode(entry.getKey().toString());
                                         List lot = stock.getProductLotByProductId(entry.getKey());
+                                        Log.e(getClass().getSimpleName(), "product id : "+ entry.getKey());
+                                        Log.e(getClass().getSimpleName(), "stok : "+ entry.getValue());
                                         if (lot.size() > 0) {
                                             stock.updateStockSum(entry.getKey(), entry.getValue());
                                         } else {
@@ -443,6 +492,7 @@ public class ProductServerActivity extends Activity {
                             // Check for error node in json
                             if (success == 1) {
                                 JSONArray data = jObj.getJSONArray("data");
+                                Log.e(getClass().getSimpleName(), "product data on insert new stock :"+ data.toString());
                                 HashMap< Integer, Integer> stocks = new HashMap< Integer, Integer>();
                                 for(int n = 0; n < data.length(); n++)
                                 {

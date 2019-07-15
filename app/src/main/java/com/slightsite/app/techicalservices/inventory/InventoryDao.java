@@ -147,4 +147,6 @@ public interface InventoryDao {
 	ContentValues getDiscountDataByQuantity(int productId, int quantity);
 
 	void clearProductDiscount();
+
+	void suspendAllProduct();
 }
