@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Ucok Point Of Sales</string>
-    <string name="greeting">Welcome To UcokPOS</string>
+    <string name="greeting">Welcome To Ucok POS!</string>
 
     <string name="action_settings">Settings</string>
     <string name="action_help">Help</string>
@@ -164,6 +164,7 @@
     </string>
     <string name="login_header_information">Please fill in this form with your login account,
         or create an account first to be able to use this application.</string>
+    <string name="login_information">Please log in or register to start your transaction</string>
 
     <string name="title_activity_profile">Profile</string>
     <string name="tab_profile_data">Profile Data</string>
@@ -233,6 +234,8 @@
     <string name="button_add_to_cart">Add To Cart</string>
     <string name="button_syncron">Syncronize Now</string>
     <string name="button_back">Back</string>
+    <string name="button_login">Log In</string>
+    <string name="button_register">Register</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
 

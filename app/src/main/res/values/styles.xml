@@ -30,14 +30,15 @@
         <item name="android:textColorSecondary">@android:color/white</item>
         <item name="actionMenuTextColor">@android:color/white</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorControlNormal">@color/colorPrimary</item>
-        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="colorPrimary">@color/greenUcok</item>
+        <item name="colorPrimaryDark">@color/yellowDarkUcok</item>
+        <item name="colorAccent">@color/yellowUcok</item>
+        <item name="colorControlNormal">@color/greenUcok</item>
+        <item name="colorControlActivated">@color/yellowUcok</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="android:actionModeBackground">@color/blue_grey_600</item>
         <item name="android:dialogTheme">@style/Dialog.Theme</item>
+        <item name="background">@color/colorWhite</item>
     </style>
 
     <style name="RippleStyleWhite">

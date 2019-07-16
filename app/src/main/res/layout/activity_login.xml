@@ -9,6 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/colorWhite"
     tools:context=".ui.LoginActivity">
 
     <!-- Login progress -->
@@ -20,10 +21,111 @@
         android:layout_marginBottom="8dp"
         android:visibility="gone" />
 
+    <LinearLayout
+        android:id="@+id/header_container"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:weightSum="1"
+        android:orientation="horizontal"
+        android:layout_marginBottom="@dimen/spacing_large">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:src="@drawable/ic_logo"
+            android:maxHeight="@dimen/spacing_small"
+            />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"/>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_iconfinder_flag_indonesia"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/pre_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="1"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.7"
+            android:src="@drawable/login_illustration" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.2"
+            android:weightSum="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.3"
+                android:text="@string/greeting"
+                android:textColor="@color/grey_800"
+                android:textSize="@dimen/spacing_large"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.7"
+                android:text="@string/login_information"
+                android:textSize="@dimen/spacing_large"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.1"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="@string/button_login"
+                android:textColor="@color/greenUcok"
+                android:background="@drawable/btn_bordered"
+                android:layout_marginRight="@dimen/spacing_small"
+                android:clickable="true"
+                android:onClick="signinRequest"
+                />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="@string/button_register"
+                android:textColor="@color/yellowDarkUcok"
+                android:background="@drawable/btn_bordered"
+                android:layout_marginLeft="@dimen/spacing_small"
+                android:clickable="true"
+                android:onClick="registerRequest"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/email_login_form"
@@ -237,4 +339,5 @@
 
         </LinearLayout>
     </ScrollView>
+
 </LinearLayout>

@@ -105,6 +105,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     private RadioGroup role_group;
     private Spinner available_warehouse;
     private LinearLayout wh_container;
+    private LinearLayout pre_form;
+    private LinearLayout header_container;
 
     public final static String TAG_ID = "id";
     public final static String TAG_EMAIL = "email";
@@ -219,6 +221,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         role_group = (RadioGroup) findViewById(R.id.role_group);
         available_warehouse = (Spinner) findViewById(R.id.available_warehouse);
         wh_container = (LinearLayout) findViewById(R.id.wh_container);
+        pre_form = (LinearLayout) findViewById(R.id.pre_form);
+        header_container = (LinearLayout) findViewById(R.id.header_container);
 
         if (warehouse_items.size() > 0) {
             ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(
@@ -673,6 +677,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
 
     public void registerRequest(View view) {
+        header_container.setVisibility(View.GONE);
+        pre_form.setVisibility(View.GONE);
+        mLoginFormView.setVisibility(View.VISIBLE);
         nameBox.setVisibility(View.VISIBLE);
         phoneBox.setVisibility(View.VISIBLE);
         mEmailSignInButton.setVisibility(View.GONE);
@@ -686,6 +693,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
 
     public void signinRequest(View view) {
+        header_container.setVisibility(View.GONE);
+        pre_form.setVisibility(View.GONE);
+        mLoginFormView.setVisibility(View.VISIBLE);
         nameBox.setVisibility(View.GONE);
         phoneBox.setVisibility(View.GONE);
         mEmailSignInButton.setVisibility(View.VISIBLE);

@@ -61,7 +61,8 @@
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
         <activity
             android:name=".ui.LoginActivity"
-            android:label="@string/title_activity_login" />
+            android:label="@string/title_activity_login"
+            android:theme="@style/AppCompatTheme" />
         <activity
             android:name=".ui.profile.ProfileActivity"
             android:label="@string/title_activity_profile"></activity>

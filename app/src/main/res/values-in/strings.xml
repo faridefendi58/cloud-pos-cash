@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Ucok Point Of Sales</string>
-    <string name="grreting">Welcome To UcokPOS</string>
+    <string name="greeting">Selamat Datang di Ucok POS!</string>
 
     <string name="action_settings">Pengaturan</string>
     <string name="action_help">Bantuan</string>
@@ -163,6 +163,7 @@
     <string name="error_empty_payment_data">Mohon lengkapi data pembayaran</string>
     <string name="login_header_information">Isilah form ini dengan akun login anda,
         atau buat akun terlebih dahulu untuk dapat menggunakan aplikasi ini.</string>
+    <string name="login_information">Silakan masuk atau mendaftar untuk dapat memulai transaksi.</string>
 
     <string name="title_activity_profile">Profil</string>
     <string name="tab_profile_data">Ubah Profil</string>
@@ -227,6 +228,8 @@
     <string name="button_add_to_cart">Tambah</string>
     <string name="button_syncron">Sinkronkan</string>
     <string name="button_back">Kembali</string>
+    <string name="button_login">Masuk</string>
+    <string name="button_register">Daftar</string>
 
     <string name="confirm_edit">Anda yakin ingin mengubah data ini?</string>
 
