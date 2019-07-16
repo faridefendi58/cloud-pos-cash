@@ -240,155 +240,163 @@ public class ChangeWarehouseDialogFragment extends DialogFragment {
                     @Override
                     public void onSuccess(String result) {
                         try {
-                            JSONObject jObj = new JSONObject(result);
-                            int success = jObj.getInt("success");
-                            // Check for error node in json
-                            if (success == 1) {
-                                JSONArray data = jObj.getJSONArray("data");
+                            if (result.contains("success")) {
+                                JSONObject jObj = new JSONObject(result);
+                                int success = jObj.getInt("success");
+                                // Check for error node in json
+                                if (success == 1) {
+                                    JSONArray data = jObj.getJSONArray("data");
 
-                                if (data.length() > 0) {
-                                    try {
-                                        // suspending the old product
-                                        //productCatalog.suspendAllProduct();
-                                        Log.e(getTag(), "product list after suspend :"+ productCatalog.getAllProduct().toArray().toString());
-                                        for(Product pd : current_products) {
-                                            productCatalog.suspendProduct(pd);
-                                        }
-                                    } catch (Exception e){e.printStackTrace();}
-                                }
-
-                                ArrayList<String> product_items = new ArrayList<String>();
-                                HashMap< Integer, Integer> stocks = new HashMap< Integer, Integer>();
-                                for(int n = 0; n < data.length(); n++)
-                                {
-                                    JSONObject data_n = data.getJSONObject(n);
-                                    JSONObject config = data_n.getJSONObject("config");
-
-                                    items.add(data_n.getString("title"));
-                                    product_items.add(data_n.getString("id"));
-                                    Product pd = null;
-                                    try {
-                                        pd = productCatalog.getProductByBarcode(data_n.getString("id"));
-                                    } catch (Exception e) {}
-                                    if (pd == null) {
+                                    if (data.length() > 0) {
                                         try {
-                                            if (config.has("image")) {
-                                                String image = config.getString("image");
-                                                productCatalog.addProduct2(
-                                                        data_n.getString("title"),
-                                                        data_n.getString("id"),
-                                                        Double.parseDouble(data_n.getString("price")),
-                                                        data_n.getInt("priority"),
-                                                        image);
-                                            } else {
-                                                productCatalog.addProduct(
-                                                        data_n.getString("title"),
-                                                        data_n.getString("id"),
-                                                        Double.parseDouble(data_n.getString("price")));
+                                            // suspending the old product
+                                            //productCatalog.suspendAllProduct();
+                                            Log.e(getTag(), "product list after suspend :" + productCatalog.getAllProduct().toArray().toString());
+                                            for (Product pd : current_products) {
+                                                productCatalog.suspendProduct(pd);
                                             }
                                         } catch (Exception e) {
-                                            Log.e(getTag(), e.getMessage());
+                                            e.printStackTrace();
                                         }
-                                    } else {
+                                    }
+
+                                    ArrayList<String> product_items = new ArrayList<String>();
+                                    HashMap<Integer, Integer> stocks = new HashMap<Integer, Integer>();
+                                    for (int n = 0; n < data.length(); n++) {
+                                        JSONObject data_n = data.getJSONObject(n);
+                                        JSONObject config = data_n.getJSONObject("config");
+
+                                        items.add(data_n.getString("title"));
+                                        product_items.add(data_n.getString("id"));
+                                        Product pd = null;
                                         try {
-                                            pd.setName(data_n.getString("title"));
-                                            pd.setBarcode(data_n.getString("id"));
-                                            pd.setUnitPrice(Double.parseDouble(data_n.getString("price")));
-                                            //Log.e(getClass().getSimpleName(), "config.has(\"image\") :"+ config.has("image"));
-                                            if (config.has("image")) {
-                                                pd.setImage(config.getString("image"));
-                                            }
-                                            //Log.e(getClass().getSimpleName(), "Priority : "+ data_n.getString("priority"));
-                                            pd.setPriority(data_n.getInt("priority"));
-                                            pd.setStatus("ACTIVE");
-
-                                            productCatalog.editProduct(pd);
-                                        } catch (Exception e) {}
-                                    }
-
-                                    stocks.put(data_n.getInt("id"), data_n.getInt("stock"));
-                                }
-                                // clear the discount data
-                                stock.clearProductDiscount();
-                                Log.e(getTag(), "Clearing product discount");
-
-                                JSONArray discounts = jObj.getJSONArray("discount");
-                                for(int p = 0; p < data.length(); p++)
-                                {
-                                    Product pd = null;
-                                    try {
-                                        pd = productCatalog.getProductByBarcode(product_items.get(p));
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-
-                                    JSONArray discount_items = discounts.getJSONArray(p);
-                                    if (discount_items.length() > 0 && pd != null) {
-                                        for(int q = 0; q < discount_items.length(); q++)
-                                        {
-                                            JSONObject data_q = discount_items.getJSONObject(q);
+                                            pd = productCatalog.getProductByBarcode(data_n.getString("id"));
+                                        } catch (Exception e) {
+                                        }
+                                        if (pd == null) {
                                             try {
-                                                ContentValues disc = stock.getDiscountDataByQuantity(Integer.parseInt(product_items.get(p)),data_q.getInt("quantity"));
-                                                if (disc != null) {
-                                                    stock.updateProductDiscount(
-                                                            disc.getAsInteger("_id"),
-                                                            Integer.parseInt(data_q.getString("quantity")),
-                                                            Integer.parseInt(data_q.getString("quantity_max")),
-                                                            Double.parseDouble(data_q.getString("price")));
+                                                if (config.has("image")) {
+                                                    String image = config.getString("image");
+                                                    productCatalog.addProduct2(
+                                                            data_n.getString("title"),
+                                                            data_n.getString("id"),
+                                                            Double.parseDouble(data_n.getString("price")),
+                                                            data_n.getInt("priority"),
+                                                            image);
                                                 } else {
-                                                    stock.addProductDiscount(
-                                                            DateTimeStrategy.getCurrentTime(),
-                                                            Integer.parseInt(data_q.getString("quantity")),
-                                                            Integer.parseInt(data_q.getString("quantity_max")),
-                                                            pd,
-                                                            Double.parseDouble(data_q.getString("price")));
+                                                    productCatalog.addProduct(
+                                                            data_n.getString("title"),
+                                                            data_n.getString("id"),
+                                                            Double.parseDouble(data_n.getString("price")));
                                                 }
                                             } catch (Exception e) {
                                                 Log.e(getTag(), e.getMessage());
                                             }
+                                        } else {
+                                            try {
+                                                pd.setName(data_n.getString("title"));
+                                                pd.setBarcode(data_n.getString("id"));
+                                                pd.setUnitPrice(Double.parseDouble(data_n.getString("price")));
+                                                //Log.e(getClass().getSimpleName(), "config.has(\"image\") :"+ config.has("image"));
+                                                if (config.has("image")) {
+                                                    pd.setImage(config.getString("image"));
+                                                }
+                                                //Log.e(getClass().getSimpleName(), "Priority : "+ data_n.getString("priority"));
+                                                pd.setPriority(data_n.getInt("priority"));
+                                                pd.setStatus("ACTIVE");
+
+                                                productCatalog.editProduct(pd);
+                                            } catch (Exception e) {
+                                            }
+                                        }
+
+                                        stocks.put(data_n.getInt("id"), data_n.getInt("stock"));
+                                    }
+                                    // clear the discount data
+                                    stock.clearProductDiscount();
+                                    Log.e(getTag(), "Clearing product discount");
+
+                                    JSONArray discounts = jObj.getJSONArray("discount");
+                                    for (int p = 0; p < data.length(); p++) {
+                                        Product pd = null;
+                                        try {
+                                            pd = productCatalog.getProductByBarcode(product_items.get(p));
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
+                                        JSONArray discount_items = discounts.getJSONArray(p);
+                                        if (discount_items.length() > 0 && pd != null) {
+                                            for (int q = 0; q < discount_items.length(); q++) {
+                                                JSONObject data_q = discount_items.getJSONObject(q);
+                                                try {
+                                                    ContentValues disc = stock.getDiscountDataByQuantity(Integer.parseInt(product_items.get(p)), data_q.getInt("quantity"));
+                                                    if (disc != null) {
+                                                        stock.updateProductDiscount(
+                                                                disc.getAsInteger("_id"),
+                                                                Integer.parseInt(data_q.getString("quantity")),
+                                                                Integer.parseInt(data_q.getString("quantity_max")),
+                                                                Double.parseDouble(data_q.getString("price")));
+                                                    } else {
+                                                        stock.addProductDiscount(
+                                                                DateTimeStrategy.getCurrentTime(),
+                                                                Integer.parseInt(data_q.getString("quantity")),
+                                                                Integer.parseInt(data_q.getString("quantity_max")),
+                                                                pd,
+                                                                Double.parseDouble(data_q.getString("price")));
+                                                    }
+                                                } catch (Exception e) {
+                                                    Log.e(getTag(), e.getMessage());
+                                                }
+                                            }
                                         }
                                     }
-                                }
 
-                                // clear the discount data
-                                stock.clearStock();
-                                Log.e(getTag(), "Clearing all the stock");
+                                    // clear the discount data
+                                    stock.clearStock();
+                                    Log.e(getTag(), "Clearing all the stock");
 
-                                // also insert the stock
-                                for (Map.Entry<Integer, Integer> entry : stocks.entrySet()) {
-                                    Product pd = null;
+                                    // also insert the stock
+                                    for (Map.Entry<Integer, Integer> entry : stocks.entrySet()) {
+                                        Product pd = null;
+                                        try {
+                                            pd = productCatalog.getProductByBarcode(entry.getKey().toString());
+                                            List lot = stock.getProductLotByProductId(pd.getId());
+                                            if (lot.size() > 0) {
+                                                stock.updateStockSum(pd.getId(), entry.getValue());
+                                            } else {
+                                                stock.addProductLot(
+                                                        DateTimeStrategy.getCurrentTime(),
+                                                        entry.getValue(),
+                                                        pd,
+                                                        pd.getUnitPrice());
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
                                     try {
-                                        pd = productCatalog.getProductByBarcode(entry.getKey().toString());
-                                        List lot = stock.getProductLotByProductId(entry.getKey());
-                                        if (lot.size() > 0) {
-                                            stock.updateStockSum(entry.getKey(), entry.getValue());
+                                        Params pWarehouseId = paramCatalog.getParamByName("warehouse_id");
+                                        if (pWarehouseId instanceof Params) {
+                                            pWarehouseId.setValue(warehouse_id);
+                                            Boolean saveParam = paramCatalog.editParam(pWarehouseId);
                                         } else {
-                                            stock.addProductLot(
-                                                    DateTimeStrategy.getCurrentTime(),
-                                                    entry.getValue(),
-                                                    pd,
-                                                    pd.getUnitPrice());
+                                            Boolean saveParam = paramCatalog.addParam("warehouse_id", warehouse_id, "text", warehouse_name);
                                         }
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
+
+                                    Toast.makeText(getActivity().getBaseContext(), "Your data is successfully updated to " + available_warehouse.getSelectedItem(),
+                                            Toast.LENGTH_LONG).show();
+
+                                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                                    startActivity(intent);
                                 }
-
-                                try {
-                                    Params pWarehouseId = paramCatalog.getParamByName("warehouse_id");
-                                    if (pWarehouseId instanceof Params) {
-                                        pWarehouseId.setValue(warehouse_id);
-                                        Boolean saveParam = paramCatalog.editParam(pWarehouseId);
-                                    } else {
-                                        Boolean saveParam = paramCatalog.addParam("warehouse_id", warehouse_id, "text", warehouse_name);
-                                    }
-                                } catch (Exception e) { e.printStackTrace(); }
-
-                                Toast.makeText(getActivity().getBaseContext(), "Your data is successfully updated to "+ available_warehouse.getSelectedItem(),
+                            } else {
+                                Toast.makeText(getActivity().getBaseContext(), "Failed!, No product data in " + available_warehouse.getSelectedItem(),
                                         Toast.LENGTH_LONG).show();
-
-                                Intent intent = new Intent(getActivity(), MainActivity.class);
-                                startActivity(intent);
                             }
 
                         } catch (JSONException e) {

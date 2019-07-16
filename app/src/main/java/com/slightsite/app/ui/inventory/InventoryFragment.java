@@ -458,7 +458,9 @@ public class InventoryFragment extends UpdatableFragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.nav_branch :
-				showConfirmChangeBranchDialog();
+				//showConfirmChangeBranchDialog();
+				// no confirm dialog
+				changeWHPopup();
 			default:
 				return super.onOptionsItemSelected(item);
 		}

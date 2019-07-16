@@ -216,7 +216,7 @@
     <string name="label_next">Selanjutnya</string>
     <string name="label_contact_detail">Rincian Data Pelanggan</string>
     <string name="label_shipping_method">Metode Pengiriman</string>
-    <string name="label_checkout_save_order">Checkout / Simpan Pesanan</string>
+    <string name="label_checkout_save_order">Checkout / Save Order</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Mandiri</string>

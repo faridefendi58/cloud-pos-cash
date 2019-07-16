@@ -896,21 +896,27 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                         }
 
                         // get the roles form server if any
-                        JSONObject roles = jObj.getJSONObject("roles");
-                        if (roles.length() > 0) {
-                            Log.e(getClass().getSimpleName(), "roles : "+ roles.toString());
-                            Iterator<String> iter = roles.keys();
-                            while (iter.hasNext()) {
-                                String key = iter.next();
-                                try {
-                                    AdminInWarehouse aiw = adminInWarehouseCatalog.getDataByAdminAndWH(Integer.parseInt(id), Integer.parseInt(key));
-                                    if (aiw == null) {
-                                        Boolean save = adminInWarehouseCatalog.addAdminInWarehouse(Integer.parseInt(id), Integer.parseInt(key), 1);
+                        try {
+                            if (jObj.get("roles") != null || jObj.get("roles") != "false" || jObj.getBoolean("roles") == false) {
+                                JSONObject roles = jObj.getJSONObject("roles");
+                                if (roles.length() > 0) {
+                                    Log.e(getClass().getSimpleName(), "roles : " + roles.toString());
+                                    Iterator<String> iter = roles.keys();
+                                    while (iter.hasNext()) {
+                                        String key = iter.next();
+                                        try {
+                                            AdminInWarehouse aiw = adminInWarehouseCatalog.getDataByAdminAndWH(Integer.parseInt(id), Integer.parseInt(key));
+                                            if (aiw == null) {
+                                                Boolean save = adminInWarehouseCatalog.addAdminInWarehouse(Integer.parseInt(id), Integer.parseInt(key), 1);
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
                                     }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
                                 }
                             }
+                        } catch (Exception e){
+                            e.printStackTrace();
                         }
 
                         Toast.makeText(getApplicationContext(), jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
