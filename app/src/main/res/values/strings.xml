@@ -93,6 +93,7 @@
     <string name="title_reports">Reports</string>
     <string name="title_update_cart">Update Item</string>
     <string name="title_update_sale">Update Invoice</string>
+    <string name="title_change_language">Change Language</string>
 
     <string name="dashboard_income">Income</string>
     <string name="dashboard_transaction">Transaction</string>
@@ -164,7 +165,8 @@
     </string>
     <string name="login_header_information">Please fill in this form with your login account,
         or create an account first to be able to use this application.</string>
-    <string name="login_information">Please log in or register to start your transaction</string>
+    <string name="login_information">Are you ready to bring our company to the next level?, Let`s Go!</string>
+    <string name="change_language_information">Which language do yo prefer?</string>
 
     <string name="title_activity_profile">Profile</string>
     <string name="tab_profile_data">Profile Data</string>

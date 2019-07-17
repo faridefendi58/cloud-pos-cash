@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.support.annotation.NonNull;
 
@@ -24,6 +25,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.design.widget.BottomSheetDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -35,6 +37,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -45,6 +49,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -55,6 +60,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.AppController;
 import com.slightsite.app.domain.DateTimeStrategy;
+import com.slightsite.app.domain.LanguageController;
 import com.slightsite.app.domain.ProfileController;
 import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
@@ -107,6 +113,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     private LinearLayout wh_container;
     private LinearLayout pre_form;
     private LinearLayout header_container;
+    private ImageView current_lang_flag;
 
     public final static String TAG_ID = "id";
     public final static String TAG_EMAIL = "email";
@@ -147,6 +154,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     private HashMap<String, String> warehouse_ids = new HashMap<String, String>();
     private int warehouse_id = 0;
     private int register_admin_id = 0;
+    private String current_lang;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,6 +168,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 getWarehouseList();
             }
             adminInWarehouseCatalog = AdminInWarehouseService.getInstance().getAdminInWarehouseCatalog();
+            current_lang = LanguageController.getInstance().getLanguage();
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -223,6 +232,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         wh_container = (LinearLayout) findViewById(R.id.wh_container);
         pre_form = (LinearLayout) findViewById(R.id.pre_form);
         header_container = (LinearLayout) findViewById(R.id.header_container);
+        current_lang_flag = (ImageView) findViewById(R.id.current_lang_flag);
 
         if (warehouse_items.size() > 0) {
             ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(
@@ -230,6 +240,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                     R.layout.spinner_item, warehouse_items);
             whAdapter.notifyDataSetChanged();
             available_warehouse.setAdapter(whAdapter);
+        }
+
+        if (current_lang.equals("id")) {
+            current_lang_flag.setImageDrawable(getResources().getDrawable(R.drawable.ic_iconfinder_flag_indonesia));
+        } else {
+            current_lang_flag.setImageDrawable(getResources().getDrawable(R.drawable.ic_iconfinder_flag_uk));
         }
     }
 
@@ -1112,6 +1128,79 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 }
             } catch (Exception e){e.printStackTrace();}
         }
+    }
+
+    private BottomSheetDialog bottomSheetDialog;
+
+    public void changeLanguageRequest(View view) {
+        bottomSheetDialog = new BottomSheetDialog(LoginActivity.this);
+        View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_language, null);
+        bottomSheetDialog.setContentView(sheetView);
+
+        bottomSheetDialog.show();
+
+        triggerBottomDialogButton(sheetView);
+    }
+
+    private void triggerBottomDialogButton(View view) {
+        LinearLayout lang_id_container = (LinearLayout) view.findViewById(R.id.lang_id_container);
+        LinearLayout lang_en_container = (LinearLayout) view.findViewById(R.id.lang_en_container);
+        ImageButton btn_close_sheet = (ImageButton) view.findViewById(R.id.btn_close_sheet);
+
+        final ImageView lang_id_checked = (ImageView) view.findViewById(R.id.lang_id_checked);
+        final ImageView lang_en_checked = (ImageView) view.findViewById(R.id.lang_en_checked);
+
+        if (current_lang.equals("id")) {
+            lang_id_checked.setImageDrawable(getDrawable(R.drawable.ic_check_circle_green_24dp));
+        } else if (current_lang.equals("en")) {
+            lang_en_checked.setImageDrawable(getDrawable(R.drawable.ic_check_circle_green_24dp));
+        }
+
+        lang_id_container.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lang_id_checked.setImageDrawable(getDrawable(R.drawable.ic_check_circle_green_24dp));
+                lang_en_checked.setImageDrawable(getDrawable(R.drawable.ic_check_circle_grey_24dp));
+                try {
+                    setLanguage("id");
+                } catch (Exception e){e.printStackTrace();}
+            }
+        });
+
+        lang_en_container.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lang_id_checked.setImageDrawable(getDrawable(R.drawable.ic_check_circle_grey_24dp));
+                lang_en_checked.setImageDrawable(getDrawable(R.drawable.ic_check_circle_green_24dp));
+                try {
+                    setLanguage("en");
+                } catch (Exception e){e.printStackTrace();}
+            }
+        });
+
+        btn_close_sheet.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheetDialog.dismiss();
+            }
+        });
+    }
+
+    private void setLanguage(String localeString) {
+        Locale locale = new Locale(localeString);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        LanguageController.getInstance().setLanguage(localeString);
+
+        getBaseContext().getResources().updateConfiguration(config,
+                getBaseContext().getResources().getDisplayMetrics());
+
+        bottomSheetDialog.dismiss();
+
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 }
 

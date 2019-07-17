@@ -94,6 +94,7 @@
     <string name="title_update_cart">Ubah Item</string>
     <string name="title_update_sale">Ubah Data Penjualan</string>
     <string name="title_change_warehouse">Ubah Warehouse</string>
+    <string name="title_change_language">Pilihan Bahasa</string>
 
     <string name="dashboard_income">Pendapatan</string>
     <string name="dashboard_transaction">Transaksi</string>
@@ -163,7 +164,8 @@
     <string name="error_empty_payment_data">Mohon lengkapi data pembayaran</string>
     <string name="login_header_information">Isilah form ini dengan akun login anda,
         atau buat akun terlebih dahulu untuk dapat menggunakan aplikasi ini.</string>
-    <string name="login_information">Silakan masuk atau mendaftar untuk dapat memulai transaksi.</string>
+    <string name="login_information">Siap untuk membawa perusahaan kita ke level selanjutnya?, Ayo Mulai!</string>
+    <string name="change_language_information">Mau pakai bahasa apa?</string>
 
     <string name="title_activity_profile">Profil</string>
     <string name="tab_profile_data">Ubah Profil</string>

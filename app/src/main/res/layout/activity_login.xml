@@ -43,11 +43,13 @@
             android:layout_weight="0.3"/>
 
         <ImageView
+            android:id="@+id/current_lang_flag"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.2"
             android:layout_alignParentRight="true"
-            android:src="@drawable/ic_iconfinder_flag_indonesia"/>
+            android:src="@drawable/ic_iconfinder_flag_indonesia"
+            android:onClick="changeLanguageRequest"/>
 
     </LinearLayout>
 
