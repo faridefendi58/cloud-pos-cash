@@ -146,8 +146,8 @@
     <string name="prompt_name">Full Name</string>
     <string name="prompt_phone">Phone Number</string>
     <string name="prompt_outlet">Outlet</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_sign_in">Log In or Register</string>
+    <string name="action_sign_in_short">Log In</string>
     <string name="action_register">Create new account?</string>
     <string name="action_have_account">Already have an account?</string>
     <string name="action_submit">Submit</string>
@@ -164,8 +164,8 @@
         completions."
     </string>
     <string name="login_header_information">Please fill in this form with your login account,
-        or create an account first to be able to use this application.</string>
-    <string name="login_information">Are you ready to bring our company to the next level?, Let`s Go!</string>
+        or create new account.</string>
+    <string name="login_information">Ready to get the next level with technology?, Let`s Go!</string>
     <string name="change_language_information">Which language do yo prefer?</string>
 
     <string name="title_activity_profile">Profile</string>
@@ -226,6 +226,7 @@
     <string name="label_contact_detail">Contact Detail</string>
     <string name="label_shipping_method">Shipping Method</string>
     <string name="label_checkout_save_order">Checkout / Save Order</string>
+    <string name="label_role">Register As</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>
@@ -245,5 +246,7 @@
     <string name="shipping_method_take_it_later">Take It Later</string>
     <string name="shipping_method_gojek_grab">Gojek / Grab</string>
     <string name="shipping_method_tokopedia">Tokopedia</string>
+
+    <string name="hint_email">E.g: john@gmail.com</string>
 
 </resources>

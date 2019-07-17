@@ -163,8 +163,8 @@
     <string name="error_empty_customer_data">Mohon lengkapi kolom Nama, Telepon, dan Alamat</string>
     <string name="error_empty_payment_data">Mohon lengkapi data pembayaran</string>
     <string name="login_header_information">Isilah form ini dengan akun login anda,
-        atau buat akun terlebih dahulu untuk dapat menggunakan aplikasi ini.</string>
-    <string name="login_information">Siap untuk membawa perusahaan kita ke level selanjutnya?, Ayo Mulai!</string>
+        atau buat akun baru.</string>
+    <string name="login_information">Siap naik kelas dengan teknologi?, Ayo Mulai Sekarang!</string>
     <string name="change_language_information">Mau pakai bahasa apa?</string>
 
     <string name="title_activity_profile">Profil</string>
@@ -220,6 +220,7 @@
     <string name="label_contact_detail">Rincian Data Pelanggan</string>
     <string name="label_shipping_method">Metode Pengiriman</string>
     <string name="label_checkout_save_order">Checkout / Save Order</string>
+    <string name="label_role">Daftar Sebagai</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Mandiri</string>
@@ -239,4 +240,6 @@
     <string name="shipping_method_take_it_later">Ambil Nanti</string>
     <string name="shipping_method_gojek_grab">Gojek / Grab</string>
     <string name="shipping_method_tokopedia">Tokopedia</string>
+
+    <string name="hint_email">Contoh: john@gmail.com</string>
 </resources>

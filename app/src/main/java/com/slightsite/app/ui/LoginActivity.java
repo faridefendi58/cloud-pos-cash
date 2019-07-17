@@ -113,7 +113,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     private LinearLayout wh_container;
     private LinearLayout pre_form;
     private LinearLayout header_container;
+    private LinearLayout custom_title_bar;
     private ImageView current_lang_flag;
+    private LinearLayout passwordRepeatContainer;
+    private LinearLayout nameBoxContainer;
+    private LinearLayout phoneBoxContainer;
 
     public final static String TAG_ID = "id";
     public final static String TAG_EMAIL = "email";
@@ -232,7 +236,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         wh_container = (LinearLayout) findViewById(R.id.wh_container);
         pre_form = (LinearLayout) findViewById(R.id.pre_form);
         header_container = (LinearLayout) findViewById(R.id.header_container);
+        custom_title_bar = (LinearLayout) findViewById(R.id.custom_title_bar);
         current_lang_flag = (ImageView) findViewById(R.id.current_lang_flag);
+
+        passwordRepeatContainer = (LinearLayout) findViewById(R.id.passwordRepeatContainer);
+        nameBoxContainer = (LinearLayout) findViewById(R.id.nameBoxContainer);
+        phoneBoxContainer = (LinearLayout) findViewById(R.id.phoneBoxContainer);
 
         if (warehouse_items.size() > 0) {
             ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(
@@ -694,6 +703,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
     public void registerRequest(View view) {
         header_container.setVisibility(View.GONE);
+        custom_title_bar.setVisibility(View.VISIBLE);
         pre_form.setVisibility(View.GONE);
         mLoginFormView.setVisibility(View.VISIBLE);
         nameBox.setVisibility(View.VISIBLE);
@@ -705,11 +715,15 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         passwordRepeat.setVisibility(View.VISIBLE);
         role_container.setVisibility(View.VISIBLE);
         wh_container.setVisibility(View.VISIBLE);
+        passwordRepeatContainer.setVisibility(View.VISIBLE);
+        nameBoxContainer.setVisibility(View.VISIBLE);
+        phoneBoxContainer.setVisibility(View.VISIBLE);
         hideSoftKeyboard();
     }
 
     public void signinRequest(View view) {
         header_container.setVisibility(View.GONE);
+        custom_title_bar.setVisibility(View.VISIBLE);
         pre_form.setVisibility(View.GONE);
         mLoginFormView.setVisibility(View.VISIBLE);
         nameBox.setVisibility(View.GONE);
@@ -721,6 +735,16 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         passwordRepeat.setVisibility(View.GONE);
         role_container.setVisibility(View.GONE);
         wh_container.setVisibility(View.GONE);
+        passwordRepeatContainer.setVisibility(View.GONE);
+        nameBoxContainer.setVisibility(View.GONE);
+        phoneBoxContainer.setVisibility(View.GONE);
+    }
+
+    public void backRequest(View view) {
+        header_container.setVisibility(View.VISIBLE);
+        custom_title_bar.setVisibility(View.GONE);
+        pre_form.setVisibility(View.VISIBLE);
+        mLoginFormView.setVisibility(View.GONE);
     }
 
     private void attemptRegister() {

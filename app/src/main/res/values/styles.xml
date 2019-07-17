@@ -39,6 +39,7 @@
         <item name="android:actionModeBackground">@color/blue_grey_600</item>
         <item name="android:dialogTheme">@style/Dialog.Theme</item>
         <item name="background">@color/colorWhite</item>
+        <item name="android:fontFamily">@font/neo_sans_pro_family</item>
     </style>
 
     <style name="RippleStyleWhite">
