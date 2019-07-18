@@ -1,6 +1,7 @@
 package com.slightsite.app.ui.sale;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -20,6 +21,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.otaliastudios.autocomplete.Autocomplete;
@@ -294,7 +296,8 @@ public class ShippingFragment extends Fragment {
         ship.setWarehouseName(c_act.getCurrentWarehouseName());
         try {
             long date = Calendar.getInstance().getTimeInMillis();
-            ship.setDate(Tools.getFormattedDateFlat(date));
+            //ship.setDate(Tools.getFormattedDateFlat(date));
+            ship.setDate(Tools.getFormattedDateTimeFlat(date));
         } catch (Exception e) {}
 
         c_data.setShipping(ship);
@@ -332,6 +335,10 @@ public class ShippingFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 ship.setMethod(i);
+                if (cust != null && cust.getName() != null) {
+                    c_data.setCustomer(cust);
+                }
+                Log.e(getTag(), "c_data pas buka dialog shipping : "+ c_data.getCustomer().toMap().toString());
                 ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
                 setupShippingForm(i);
                 ((EditText) v).setText(ship_methods[i]);
@@ -342,7 +349,7 @@ public class ShippingFragment extends Fragment {
     }
 
     private void dialogDatePickerLight(final View v) {
-        Calendar cur_calender = Calendar.getInstance();
+        final Calendar cur_calender = Calendar.getInstance();
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
                 new DatePickerDialog.OnDateSetListener() {
@@ -356,6 +363,19 @@ public class ShippingFragment extends Fragment {
                 ((EditText) v).setText(Tools.getFormattedDateShort(date));
                 ship.setDate(Tools.getFormattedDateFlat(date));
                 ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
+
+                new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        Calendar cur_time = Calendar.getInstance();
+                        cur_time.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                        cur_time.set(Calendar.MINUTE, minute);
+                        long date2 = cur_time.getTimeInMillis();
+                        ((EditText) v).setText(Tools.getFormattedDateTimeShort(date2));
+                        ship.setDate(Tools.getFormattedDateFlat(date2));
+                        ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
+                    }
+                }, cur_calender.get(Calendar.HOUR_OF_DAY), cur_calender.get(Calendar.MINUTE), false).show();
             }
 
         }, cur_calender.get(Calendar.YEAR), cur_calender.get(Calendar.MONTH), cur_calender.get(Calendar.DAY_OF_MONTH));

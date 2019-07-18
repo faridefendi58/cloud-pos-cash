@@ -47,6 +47,9 @@ import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.domain.sale.SaleLedger;
 import com.slightsite.app.domain.sale.Shipping;
+import com.slightsite.app.domain.warehouse.AdminInWarehouse;
+import com.slightsite.app.domain.warehouse.AdminInWarehouseCatalog;
+import com.slightsite.app.domain.warehouse.AdminInWarehouseService;
 import com.slightsite.app.domain.warehouse.WarehouseCatalog;
 import com.slightsite.app.domain.warehouse.WarehouseService;
 import com.slightsite.app.domain.warehouse.Warehouses;
@@ -118,6 +121,9 @@ public class CheckoutActivity extends AppCompatActivity {
     private List<Payment> paymentList;
     private PaymentCatalog paymentCatalog;
     private WarehouseCatalog warehouseCatalog;
+    private AdminInWarehouseCatalog adminInWarehouseCatalog;
+    private String admin_id;
+    private ArrayList<Integer> allowed_warehouses = new ArrayList<Integer>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +139,20 @@ public class CheckoutActivity extends AppCompatActivity {
             Params whParam = paramCatalog.getParamByName("warehouse_id");
             if (whParam != null) {
                 current_warehouse_id = Integer.parseInt(whParam.getValue());
+            }
+
+            adminInWarehouseCatalog = AdminInWarehouseService.getInstance().getAdminInWarehouseCatalog();
+            admin_id = paramCatalog.getParamByName("admin_id").getValue();
+            if (admin_id != null) {
+                List<AdminInWarehouse> adminInWarehouses = adminInWarehouseCatalog.getDataByAdminId(Integer.parseInt(admin_id));
+
+                if (adminInWarehouses != null && adminInWarehouses.size() > 0) {
+                    for (AdminInWarehouse aiw : adminInWarehouses) {
+                        if (aiw.getWarehouseId() > 0) {
+                            allowed_warehouses.add(aiw.getWarehouseId());
+                        }
+                    }
+                }
             }
 
             warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
@@ -222,6 +242,7 @@ public class CheckoutActivity extends AppCompatActivity {
                     if (array_state[idx_state] == State.SHIPPING) {
                         // cek customer data dl
                         Log.e(TAG, "shipping data on SHIPPING : "+ checkout_data.getShipping().toMap().toString());
+                        Log.e(TAG, "customer data on SHIPPING : "+ checkout_data.getCustomer().toMap().toString());
                         if (checkout_data.getCustomer().equals("null")
                                 || checkout_data.getCustomer().getEmail() == "email@email.com"
                                 || (checkout_data.getCustomer().getName().length() == 0)) {
@@ -400,12 +421,25 @@ public class CheckoutActivity extends AppCompatActivity {
 
         List<Warehouses> whs = warehouseCatalog.getAllWarehouses();
         if (whs != null) {
-            for (Warehouses wh : whs) {
-                warehouse_items.add(wh.getTitle());
-                warehouse_ids.put(wh.getTitle(), wh.getWarehouseId()+"");
-                warehouse_names.put(wh.getWarehouseId(), wh.getTitle());
-                if (wh.getWarehouseId() == current_warehouse_id) {
-                    current_warehouse_name = wh.getTitle();
+            if (allowed_warehouses.size() > 0) {
+                for (Warehouses wh : whs) {
+                    if (allowed_warehouses.contains(wh.getWarehouseId())) {
+                        warehouse_items.add(wh.getTitle());
+                        warehouse_ids.put(wh.getTitle(), wh.getWarehouseId() + "");
+                        warehouse_names.put(wh.getWarehouseId(), wh.getTitle());
+                        if (wh.getWarehouseId() == current_warehouse_id) {
+                            current_warehouse_name = wh.getTitle();
+                        }
+                    }
+                }
+            } else {
+                for (Warehouses wh : whs) {
+                    warehouse_items.add(wh.getTitle());
+                    warehouse_ids.put(wh.getTitle(), wh.getWarehouseId() + "");
+                    warehouse_names.put(wh.getWarehouseId(), wh.getTitle());
+                    if (wh.getWarehouseId() == current_warehouse_id) {
+                        current_warehouse_name = wh.getTitle();
+                    }
                 }
             }
         } else {

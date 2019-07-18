@@ -124,6 +124,16 @@ public class Tools {
         return newFormat.format(new Date(dateTime));
     }
 
+    public static String getFormattedDateTimeFlat(Long dateTime) {
+        SimpleDateFormat newFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        return newFormat.format(new Date(dateTime));
+    }
+
+    public static String getFormattedDateTimeShort(Long dateTime) {
+        SimpleDateFormat newFormat = new SimpleDateFormat("dd MMM yyyy HH:mm");
+        return newFormat.format(new Date(dateTime));
+    }
+
     public static String getEmailFromName(String name) {
         if (name != null && !name.equals("")) {
             String email = name.replaceAll(" ", ".").toLowerCase().concat("@mail.com");
