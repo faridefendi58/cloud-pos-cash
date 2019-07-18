@@ -14,10 +14,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.otaliastudios.autocomplete.Autocomplete;
 import com.otaliastudios.autocomplete.AutocompleteCallback;
@@ -28,6 +31,7 @@ import com.slightsite.app.domain.customer.CustomerCatalog;
 import com.slightsite.app.domain.customer.CustomerService;
 import com.slightsite.app.domain.sale.Checkout;
 import com.slightsite.app.domain.sale.Shipping;
+import com.slightsite.app.techicalservices.AutoCompleteAdapter;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.ui.inventory.ProductServerActivity;
@@ -41,6 +45,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
 
 public class ShippingFragment extends Fragment {
 
@@ -73,7 +79,12 @@ public class ShippingFragment extends Fragment {
     private HashMap<String, String> warehouse_ids = new HashMap<String, String>();
     private String current_warehouse_name;
 
+    private HashMap<String, Customer> customerHashMap = new HashMap<String, Customer>();
+
     private Shipping ship;
+
+    private AutoCompleteTextView customer_name_autocomplete;
+    private AutoCompleteTextView customer_phone_autocomplete;
 
     public ShippingFragment() {
     }
@@ -99,6 +110,8 @@ public class ShippingFragment extends Fragment {
             String customer_email = getArguments().getString("customer_email");
             String customer_address = getArguments().getString("customer_address");
 
+            customer_name_autocomplete.setText(customer_name);
+            customer_phone_autocomplete.setText(customer_phone);
             name.setText(customer_name);
             phone.setText(customer_phone);
             email.setText(customer_email);
@@ -106,7 +119,10 @@ public class ShippingFragment extends Fragment {
 
             String _shipping_method = getArguments().getString("shipping_method");
             String _shipping_warehouse = getArguments().getString("shipping_warehouse_pickup");
-            int _shipping_warehouse_id = getArguments().getInt("shipping_warehouse_id");
+            int _shipping_warehouse_id = 0;
+            if (getArguments().get("shipping_warehouse_id") != null && getArguments().get("shipping_warehouse_id").toString() != "0") {
+                _shipping_warehouse_id = getArguments().getInt("shipping_warehouse_id");
+            }
             String _shipping_date = getArguments().getString("shipping_date");
             String _shipping_address = getArguments().getString("shipping_address");
             int _shipping_method_id = Arrays.asList(ship_methods).indexOf(_shipping_method);
@@ -146,7 +162,7 @@ public class ShippingFragment extends Fragment {
         final TextView customer_id = (TextView) root.findViewById(R.id.customer_id);
         float elevation = 6f;
         Drawable backgroundDrawable = new ColorDrawable(Color.WHITE);
-        AutocompletePresenter<Customer> presenter = new UserPresenter(getContext(), customers);
+        /*AutocompletePresenter<Customer> presenter = new UserPresenter(getContext(), customers);
         AutocompleteCallback<Customer> callback = new AutocompleteCallback<Customer>() {
             @Override
             public boolean onPopupItemClicked(Editable editable, Customer item) {
@@ -170,7 +186,44 @@ public class ShippingFragment extends Fragment {
                 .with(backgroundDrawable)
                 .with(presenter)
                 .with(callback)
-                .build();
+                .build();*/
+
+        customer_name_autocomplete = (AutoCompleteTextView) root.findViewById(R.id.customer_name_autocomplete);
+        AutoCompleteAdapter adapter = new AutoCompleteAdapter(getContext(), R.layout.spinner_item);
+        customer_name_autocomplete.setAdapter(adapter);
+        adapter.setShippingFragment(this);
+
+        setAutoCompleteListener(customer_name_autocomplete);
+    }
+
+    private void setAutoCompleteListener(final AutoCompleteTextView actv) {
+        actv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    if (customerHashMap.size() > 0) {
+                        cust = customerHashMap.get(actv.getText().toString());
+                        if (cust != null) {
+                            ((CheckoutActivity) getActivity()).setCustomer(cust);
+                            customer_name = cust.getName();
+                            customer_email = cust.getEmail();
+                            customer_address = cust.getAddress();
+
+                            name.setText(cust.getName());
+                            customer_name_autocomplete.setText(cust.getName());
+                            customer_phone_autocomplete.setText(cust.getPhone());
+                            phone.setText(cust.getPhone());
+                            email.setText(cust.getEmail());
+                            if (cust.getAddress() != null) {
+                                address.setText(cust.getAddress());
+                            }
+
+                            hideSoftKeyboard();
+                        }
+                    }
+                } catch (Exception e){e.printStackTrace();}
+            }
+        });
     }
 
     private void setTextChangeListener(EditText etv, final String setType) {
@@ -358,7 +411,7 @@ public class ShippingFragment extends Fragment {
     }
 
     private void setupPhoneAutoComplete() {
-        float elevation = 6f;
+        /*float elevation = 6f;
         Drawable backgroundDrawable = new ColorDrawable(Color.WHITE);
         AutocompletePresenter<Customer> presenter = new PhonePresenter(getContext(), customers);
         AutocompleteCallback<Customer> callback = new AutocompleteCallback<Customer>() {
@@ -385,6 +438,26 @@ public class ShippingFragment extends Fragment {
                 .with(backgroundDrawable)
                 .with(presenter)
                 .with(callback)
-                .build();
+                .build();*/
+
+        customer_phone_autocomplete = (AutoCompleteTextView) root.findViewById(R.id.customer_phone_autocomplete);
+        AutoCompleteAdapter adapter = new AutoCompleteAdapter(getContext(), R.layout.spinner_item);
+        adapter.setDelimeter("telephone");
+        adapter.setShippingFragment(this);
+        customer_phone_autocomplete.setAdapter(adapter);
+
+        setAutoCompleteListener(customer_phone_autocomplete);
+    }
+
+    public void setCustomerHashMap(HashMap<String, Customer> cust_map) {
+        this.customerHashMap = cust_map;
+    }
+
+    public void hideSoftKeyboard() {
+
+        if(getActivity().getCurrentFocus()!=null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+        }
     }
 }

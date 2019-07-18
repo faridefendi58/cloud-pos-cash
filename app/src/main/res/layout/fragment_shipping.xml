@@ -35,6 +35,18 @@
             android:background="@drawable/edit_text_round_bg_outline"
             android:hint="@string/prompt_name"
             android:minHeight="@dimen/spacing_xmlarge"
+            android:text=""
+            android:visibility="gone"/>
+
+        <AutoCompleteTextView
+            style="@style/EditText.Flat.Grey"
+            android:id="@+id/customer_name_autocomplete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:background="@drawable/edit_text_round_bg_outline"
+            android:hint="@string/prompt_name"
+            android:minHeight="@dimen/spacing_xmlarge"
             android:text="" />
 
         <EditText
@@ -57,7 +69,20 @@
             android:background="@drawable/edit_text_round_bg_outline"
             android:hint="@string/prompt_phone"
             android:minHeight="@dimen/spacing_xmlarge"
-            android:text="" />
+            android:text=""
+            android:visibility="gone"/>
+
+        <AutoCompleteTextView
+            style="@style/EditText.Flat.Grey"
+            android:id="@+id/customer_phone_autocomplete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:background="@drawable/edit_text_round_bg_outline"
+            android:hint="@string/prompt_phone"
+            android:minHeight="@dimen/spacing_xmlarge"
+            android:text=""
+            android:inputType="phone" />
 
         <EditText
             style="@style/EditText.Flat.Grey"
