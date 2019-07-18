@@ -83,15 +83,18 @@ public class AutoCompleteAdapter extends ArrayAdapter<String> implements Filtera
                                 Customer customer = new Customer(
                                         "-", "-", "-", "-", 0
                                 );
-                                customer.setId(data_n.getInt("id"));
+
                                 customer.setName(data_n.getString("name"));
                                 customer.setEmail(data_n.getString("email"));
                                 customer.setPhone(data_n.getString("telephone"));
-                                if (data_n.getString("address") != null || data_n.getString("address") != "null") {
+                                if (data_n.getString("address") != null && data_n.getString("address") != "null" && !data_n.getString("address").equals(null)) {
                                     customer.setAddress(data_n.getString("address"));
+                                } else {
+                                    customer.setAddress("-");
                                 }
-                                //Log.e(getClass().getSimpleName(), "data_n.getString(\"address\") : "+ data_n.getString("address"));
-                                customer.setStatus(data_n.getString("status"));
+
+                                customer.setStatus(data_n.getInt("status"));
+                                customer.setServerCustomerId(data_n.getInt("id"));
 
                                 customers.put(term, customer);
                             }

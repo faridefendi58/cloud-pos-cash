@@ -128,8 +128,8 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 				+ "phone TEXT(20),"
 				+ "address TEXT(256),"
 				+ "status INTEGER,"
+				+ "server_customer_id INTEGER DEFAULT 0,"
 				+ "date_added DATETIME"
-
 				+ ");");
 		Log.d("CREATE DATABASE", "Create " + DatabaseContents.TABLE_CUSTOMER + " Successfully.");
 

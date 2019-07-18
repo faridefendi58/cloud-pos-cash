@@ -90,6 +90,8 @@ public class InventoryFragment extends UpdatableFragment {
 
 	private Map<Integer, Integer> stacks = new HashMap<Integer, Integer>();
 
+	private View fragment_view;
+
 	/**
 	 * Construct a new InventoryFragment.
 	 * @param saleFragment
@@ -112,6 +114,8 @@ public class InventoryFragment extends UpdatableFragment {
 
 		View view = inflater.inflate(R.layout.layout_inventory, container, false);
 		setHasOptionsMenu(true);
+
+		fragment_view = view;
 
 		res = getResources();
 		inventoryListView = (GridView) view.findViewById(R.id.productListView);
@@ -249,6 +253,10 @@ public class InventoryFragment extends UpdatableFragment {
 	 * Search.
 	 */
 	private void search() {
+		if (searchBox == null) {
+			return;
+		}
+
 		String search = searchBox.getText().toString();
 
 		if (search.equals("/demo")) {

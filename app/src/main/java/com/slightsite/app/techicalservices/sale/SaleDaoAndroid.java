@@ -205,7 +205,7 @@ public class SaleDaoAndroid implements SaleDao {
 
 	@Override
 	public Customer getCustomerBySaleId(int id) {
-		String queryString = "SELECT t._id, t.customer_id, c.name, c.email, c.phone, c.address, c.status " +
+		String queryString = "SELECT t._id, t.customer_id, c.name, c.email, c.phone, c.address, c.status, c.server_customer_id " +
 				"FROM " + DatabaseContents.TABLE_SALE + " t " +
 				"LEFT JOIN " + DatabaseContents.TABLE_CUSTOMER + " c ON c._id = t.customer_id " +
 				"WHERE t._id = " + id;
@@ -217,13 +217,16 @@ public class SaleDaoAndroid implements SaleDao {
 				ContentValues content = (ContentValues) object;
 				Log.e("SaleDAO", "content : "+ content.toString());
 				if (content != null) {
-					list.add(new Customer(
+					Customer customer = new Customer(
 							(content.get("name") != null)? content.getAsString("name") : "-",
 							(content.get("email") != null)? content.getAsString("email") : "-",
 							(content.get("phone") != null)? content.getAsString("phone") : "-",
 							(content.get("address") != null)? content.getAsString("address") : "-",
 							(content.get("status") != null)? content.getAsInteger("status") : 0
-					));
+					);
+					customer.setId(content.getAsInteger("_id"));
+					customer.setServerCustomerId(content.getAsInteger("server_customer_id"));
+					list.add(customer);
 				} else {
 					list.add(new Customer(
 							"-", "-", "-", "-", 0

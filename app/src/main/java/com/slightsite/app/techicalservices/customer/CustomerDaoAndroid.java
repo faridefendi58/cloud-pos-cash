@@ -34,6 +34,7 @@ public class CustomerDaoAndroid implements CustomerDao {
         content.put("email", customer.getEmail());
         content.put("phone", customer.getPhone());
         content.put("address", customer.getAddress());
+        content.put("server_customer_id", customer.getServerCustomerId());
         content.put("status", 1);
 
         int id = database.insert(DatabaseContents.TABLE_CUSTOMER.toString(), content);
@@ -50,14 +51,16 @@ public class CustomerDaoAndroid implements CustomerDao {
         List<Customer> list = new ArrayList<Customer>();
         for (Object object: objectList) {
             ContentValues content = (ContentValues) object;
-            list.add(new Customer(
+            Customer customer = new Customer(
                     content.getAsInteger("_id"),
                     content.getAsString("name"),
                     content.getAsString("email"),
                     content.getAsString("phone"),
                     content.getAsString("address"),
-                    content.getAsInteger("status"))
-            );
+                    content.getAsInteger("status"));
+            customer.setServerCustomerId(((ContentValues) object).getAsInteger("server_customer_id"));
+
+            list.add(customer);
         }
         return list;
     }
@@ -121,6 +124,8 @@ public class CustomerDaoAndroid implements CustomerDao {
         content.put("phone", customer.getPhone());
         content.put("address", customer.getAddress());
         content.put("status", 1);
+        content.put("server_customer_id", customer.getServerCustomerId());
+
         return database.update(DatabaseContents.TABLE_CUSTOMER.toString(), content);
     }
 
@@ -150,4 +155,3 @@ public class CustomerDaoAndroid implements CustomerDao {
         database.update(DatabaseContents.TABLE_CUSTOMER.toString(), content);
     }
 }
-

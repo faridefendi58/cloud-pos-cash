@@ -108,5 +108,10 @@ public class CustomerCatalog {
         int id = customerDao.addCustomer(customer);
         return id;
     }
+
+    public int createCustomer2(Customer customer) {
+        int id = customerDao.addCustomer(customer);
+        return id;
+    }
 }
 

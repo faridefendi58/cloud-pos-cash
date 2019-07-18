@@ -127,6 +127,7 @@ public class SaleDetailActivity extends Activity{
 		saleId = Integer.parseInt(getIntent().getStringExtra("id"));
 		sale = saleLedger.getSaleById(saleId);
 		customer = saleLedger.getCustomerBySaleId(saleId);
+		Log.e(getClass().getSimpleName(), "customer : "+ customer.toMap().toString());
 		sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
 
 		String dt = DateTimeStrategy.getCurrentTime();
@@ -239,10 +240,7 @@ public class SaleDetailActivity extends Activity{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
-				Intent newActivity = new Intent(SaleDetailActivity.this, MainActivity.class);
-				newActivity.putExtra("fragment",2);
 				finish();
-				startActivity(newActivity);
 				return true;
 			case R.id.action_edit:
 				new AlertDialog.Builder(SaleDetailActivity.this)

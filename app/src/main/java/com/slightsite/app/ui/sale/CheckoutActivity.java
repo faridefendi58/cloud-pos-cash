@@ -198,11 +198,10 @@ public class CheckoutActivity extends AppCompatActivity {
                 if (idx_state == array_state.length - 1) {
                     // add customer first
                     if (customer.getId() <= 0) {
-                        int c_id = customerCatalog.createCustomer(
-                                customer.getName(),
-                                customer.getEmail(),
-                                customer.getPhone(),
-                                customer.getAddress(), 1);
+                        if (customer.getStatus() == 0) {
+                            customer.setStatus(1);
+                        }
+                        int c_id = customerCatalog.createCustomer2(customer);
                         if (c_id > 0) {
                             customer = customerCatalog.getCustomerById(c_id);
                             register.setCustomer(customer);

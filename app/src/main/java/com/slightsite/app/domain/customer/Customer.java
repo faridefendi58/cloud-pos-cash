@@ -18,6 +18,7 @@ public class Customer {
     private String phone;
     private String address;
     private int status;
+    private int server_customer_id;
 
     /**
      * Static value for UNDEFINED ID.
@@ -67,12 +68,16 @@ public class Customer {
         this.address = address;
     }
 
-    public void setStatus(String status) {
-        this.address = status;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setServerCustomerId(int _server_customer_id) {
+        this.server_customer_id = _server_customer_id;
     }
 
     /**
@@ -99,6 +104,10 @@ public class Customer {
         return status;
     }
 
+    public int getServerCustomerId() {
+        return server_customer_id;
+    }
+
     /**
      * Returns the description of this Customer in Map format.
      * @return the description of this Customer in Map format.
@@ -111,6 +120,7 @@ public class Customer {
         map.put("phone", phone);
         map.put("address", address);
         map.put("status", status + "");
+        map.put("server_customer_id", server_customer_id + "");
 
         return map;
 
