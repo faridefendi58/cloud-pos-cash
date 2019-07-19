@@ -48,6 +48,8 @@ public class PaymentFragment extends Fragment {
     private EditText edc_card_number;
     private EditText edc_nominal;
     private TextView total_order;
+    private EditText total_discount;
+    private TextView grand_total;
     private ImageButton bt_toggle_mandiri;
     private ImageButton bt_toggle_bca;
     private ImageButton bt_toggle_bri;
@@ -94,6 +96,8 @@ public class PaymentFragment extends Fragment {
         edc_card_number  = (EditText) root.findViewById(R.id.edc_card_number);
         edc_nominal  = (EditText) root.findViewById(R.id.edc_nominal);
         total_order  = (TextView) root.findViewById(R.id.total_order);
+        total_discount  = (EditText) root.findViewById(R.id.total_discount);
+        grand_total  = (TextView) root.findViewById(R.id.grand_total);
         bt_toggle_mandiri = (ImageButton) root.findViewById(R.id.bt_toggle_mandiri);
         bt_toggle_bca = (ImageButton) root.findViewById(R.id.bt_toggle_bca);
         bt_toggle_bri = (ImageButton) root.findViewById(R.id.bt_toggle_bri);
@@ -141,7 +145,9 @@ public class PaymentFragment extends Fragment {
         setTextChangeListener(edc_card_number, "card_number");
         setTextChangeListener(edc_nominal, "nominal_edc");
 
-        total_order.setText(CurrencyController.getInstance().moneyFormat(register.getTotal()));
+        String tot_order = CurrencyController.getInstance().moneyFormat(register.getTotal());
+        total_order.setText(tot_order);
+        grand_total.setText(tot_order);
 
         bt_toggle_mandiri.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,6 +189,26 @@ public class PaymentFragment extends Fragment {
                     bt_toggle_bri.setImageDrawable(getResources().getDrawable(R.drawable.ic_remove_black));
                 }
             }
+        });
+
+        total_discount.addTextChangedListener(new TextWatcher(){
+            public void afterTextChanged(Editable s) {
+                if (s.length() >= 3) {
+                    try {
+                        int discount_val = Integer.parseInt(s.toString());
+                        String tot_order = CurrencyController.getInstance().moneyFormat(register.getTotal());
+                        tot_order = tot_order.replace(".", "");
+                        int grand_total_now = Integer.parseInt(tot_order);
+                        int grand_total_current = 0;
+                        if (discount_val < grand_total_now) {
+                            grand_total_current = grand_total_now - discount_val;
+                        }
+                        grand_total.setText(grand_total_current+"");
+                    } catch (Exception e){e.printStackTrace();}
+                }
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void onTextChanged(CharSequence s, int start, int before, int count){}
         });
     }
 

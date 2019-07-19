@@ -37,7 +37,7 @@
     <string name="change">Change</string>
     <string name="hint_search">Enter name or barcode</string>
     <string name="hint_search_customer">Enter name or email</string>
-    <string name="hint_cash">Enter cash here</string>
+    <string name="hint_cash">Cash Received</string>
     <string name="hint_transfer">Enter transfer nominal here</string>
     <string name="add_new_product">Add New Product</string>
     <string name="add_stock">Add Stock</string>
@@ -227,6 +227,9 @@
     <string name="label_shipping_method">Shipping Method</string>
     <string name="label_checkout_save_order">Checkout / Save Order</string>
     <string name="label_role">Register As</string>
+    <string name="label_sub_total">Sub Total</string>
+    <string name="label_discount">Discount</string>
+    <string name="label_grand_total">Grand Total</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>
@@ -249,4 +252,6 @@
 
     <string name="hint_email">E.g: john@gmail.com</string>
 
+    <string name="heading_billing_information">Billing Information</string>
+    <string name="heading_payment_method">Payment Method</string>
 </resources>
