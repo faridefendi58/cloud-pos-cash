@@ -1,5 +1,6 @@
 package com.slightsite.app.domain.customer;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +11,7 @@ import com.slightsite.app.techicalservices.NoDaoSetException;
  * @author Customer
  *
  */
-public class Customer {
+public class Customer implements Serializable {
 
     private int id;
     private String name;

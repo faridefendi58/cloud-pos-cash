@@ -121,6 +121,7 @@
                         android:drawableRight="@drawable/ic_discount"
                         android:minHeight="@dimen/spacing_xmedium"
                         android:inputType="number"
+                        android:hint="0"
                         android:singleLine="true"
                         android:imeOptions="actionDone"/>
 

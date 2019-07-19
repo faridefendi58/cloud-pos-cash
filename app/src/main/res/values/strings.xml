@@ -230,6 +230,8 @@
     <string name="label_sub_total">Sub Total</string>
     <string name="label_discount">Discount</string>
     <string name="label_grand_total">Grand Total</string>
+    <string name="label_shipping_date">Shipping Date</string>
+    <string name="label_shipping_location">Shipping Location</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>
@@ -254,4 +256,8 @@
 
     <string name="heading_billing_information">Billing Information</string>
     <string name="heading_payment_method">Payment Method</string>
+    <string name="heading_customer_detail">Customer Detail</string>
+    <string name="heading_shipping_detail">Shipping Detail</string>
+    <string name="heading_payment_detail">Payment Detail</string>
+    <string name="heading_product_detail">Product Detail</string>
 </resources>

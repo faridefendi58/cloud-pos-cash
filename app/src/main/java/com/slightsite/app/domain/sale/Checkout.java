@@ -1,5 +1,6 @@
 package com.slightsite.app.domain.sale;
 
+import android.location.Location;
 import android.util.Log;
 
 import com.slightsite.app.domain.customer.Customer;
@@ -20,6 +21,8 @@ public class Checkout implements Serializable {
     private List<PaymentItem> payment_items;
     private Shipping shipping;
     private int discount;
+
+    public Checkout() {}
 
     public HashMap< String, String> getTransferBank() {
         if (transfer_bank == null)

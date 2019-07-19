@@ -224,6 +224,8 @@
     <string name="label_sub_total">Sub Total</string>
     <string name="label_discount">Diskon</string>
     <string name="label_grand_total">Total Order</string>
+    <string name="label_shipping_date">Tanggal Ambil/Kirim</string>
+    <string name="label_shipping_location">Lokasi Pengambilan</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Mandiri</string>
@@ -248,4 +250,8 @@
 
     <string name="heading_billing_information">Informasi Tagihan</string>
     <string name="heading_payment_method">Cara Pembayaran</string>
+    <string name="heading_customer_detail">Rincian Pelanggan</string>
+    <string name="heading_shipping_detail">Rincian Pengiriman</string>
+    <string name="heading_payment_detail">Rincian Pembayaran</string>
+    <string name="heading_product_detail">Rincian Barang</string>
 </resources>

@@ -3,10 +3,11 @@ package com.slightsite.app.domain.sale;
 import com.slightsite.app.domain.AppController;
 import com.slightsite.app.techicalservices.Tools;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Shipping {
+public class Shipping implements Serializable {
     private int id;
     private int method;
     private int sale_id;

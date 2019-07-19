@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/grey_5">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,20 +23,29 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
+                <ImageView
+                    android:layout_width="@dimen/spacing_middle"
+                    android:layout_height="@dimen/spacing_middle"
+                    android:layout_margin="@dimen/spacing_medium"
+                    android:src="@drawable/shape_circle"
+                    android:tint="@color/greenUcok" />
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="CUSTOMER DETAIL:"
+                    android:text="@string/heading_customer_detail"
                     android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                     android:textColor="@color/grey_40"
-                    app:fontFamily="sans-serif-medium" />
+                    android:textAllCaps="true"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/edit_customer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Edit"
+                    android:text=" "
+                    android:drawableLeft="@drawable/ic_edit_grey_24dp"
                     android:clickable="true"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textColor="@color/colorPrimary"
@@ -43,29 +53,49 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/conf_customer_name"
-                android:layout_width="wrap_content"
+            <!-- start of customer detail card -->
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_middle"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:textColor="@color/grey_90"
-                app:fontFamily="sans-serif-medium" />
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="1dp"
+                app:cardElevation="3dp"
+                app:cardUseCompatPadding="true">
 
-            <TextView
-                android:id="@+id/conf_customer_address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:textColor="@color/grey_90"
-                app:fontFamily="sans-serif-medium" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/conf_customer_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/spacing_middle"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:textColor="@color/grey_90"
+                        app:fontFamily="sans-serif-medium" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/grey_10" />
+
+                    <TextView
+                        android:id="@+id/conf_customer_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/spacing_middle"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:textColor="@color/grey_90"
+                        app:fontFamily="sans-serif-medium" />
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+            <!-- endof customer detail card -->
 
         </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/grey_10" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -78,109 +108,121 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
+                <ImageView
+                    android:layout_width="@dimen/spacing_middle"
+                    android:layout_height="@dimen/spacing_middle"
+                    android:layout_margin="@dimen/spacing_medium"
+                    android:src="@drawable/shape_circle"
+                    android:tint="@color/greenUcok" />
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="SHIPMENT DETAILS:"
+                    android:text="@string/heading_shipping_detail"
                     android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                     android:textColor="@color/grey_40"
-                    app:fontFamily="sans-serif-medium" />
+                    android:textAllCaps="true"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/edit_shipment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Edit"
+                    android:text=" "
+                    android:drawableLeft="@drawable/ic_edit_grey_24dp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textColor="@color/colorPrimary"
                     app:fontFamily="sans-serif-medium" />
 
             </LinearLayout>
 
-            <LinearLayout
+            <!-- start of shipping detail card -->
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingTop="@dimen/spacing_middle"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_middle"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="1dp"
+                app:cardElevation="3dp"
+                app:cardUseCompatPadding="true">
 
-                <TextView
-                    android:id="@+id/shipping_method"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:textColor="@color/grey_90"
-                    app:fontFamily="sans-serif-medium"
-                    android:textStyle="bold"/>
+                    android:orientation="vertical">
 
-            </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="@dimen/spacing_middle"
+                        android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingTop="@dimen/spacing_middle"
-                android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                            android:textColor="@color/grey_90"
+                            app:fontFamily="sans-serif-medium"
+                            android:text="@string/label_shipping_date"
+                            android:drawableRight="@drawable/ic_arrow_forward_24dp"/>
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:textColor="@color/grey_90"
-                    app:fontFamily="sans-serif-medium"
-                    android:text="Tanggal Ambil/Kirim"
-                    android:drawableRight="@drawable/ic_arrow_forward_24dp"/>
+                        <TextView
+                            android:id="@+id/shipping_date"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingLeft="@dimen/spacing_middle"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                            android:textColor="@color/grey_90"
+                            app:fontFamily="sans-serif-medium"
+                            android:textAlignment="textEnd"
+                            android:text="28 Feb 2019"/>
 
-                <TextView
-                    android:id="@+id/shipping_date"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingLeft="@dimen/spacing_middle"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:textColor="@color/grey_90"
-                    app:fontFamily="sans-serif-medium"
-                    android:textAlignment="textEnd"
-                    android:text="28 Feb 2019"/>
+                    </LinearLayout>
 
-            </LinearLayout>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/grey_10" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingTop="@dimen/spacing_middle"
-                android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="@dimen/spacing_middle"
+                        android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:textColor="@color/grey_90"
-                    app:fontFamily="sans-serif-medium"
-                    android:text="WH Pengambilan"
-                    android:drawableRight="@drawable/ic_arrow_forward_24dp"/>
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                            android:textColor="@color/grey_90"
+                            app:fontFamily="sans-serif-medium"
+                            android:text="@string/label_shipping_location"
+                            android:drawableRight="@drawable/ic_arrow_forward_24dp"/>
 
-                <TextView
-                    android:id="@+id/shipping_warehouse"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingLeft="@dimen/spacing_middle"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:textColor="@color/grey_90"
-                    app:fontFamily="sans-serif-medium"
-                    android:textAlignment="textEnd"
-                    android:text="WH Jl Kabupaten"/>
+                        <TextView
+                            android:id="@+id/shipping_warehouse"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingLeft="@dimen/spacing_middle"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                            android:textColor="@color/grey_90"
+                            app:fontFamily="sans-serif-medium"
+                            android:textAlignment="textEnd"
+                            android:text="WH Jl Kabupaten"/>
 
-            </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+            <!-- endof shipping detail card -->
 
         </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/grey_10" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -193,47 +235,63 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
+                <ImageView
+                    android:layout_width="@dimen/spacing_middle"
+                    android:layout_height="@dimen/spacing_middle"
+                    android:layout_margin="@dimen/spacing_medium"
+                    android:src="@drawable/shape_circle"
+                    android:tint="@color/greenUcok" />
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="PAYMENT DETAILS:"
+                    android:text="@string/heading_payment_detail"
                     android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                     android:textColor="@color/grey_40"
-                    app:fontFamily="sans-serif-medium" />
+                    android:textAllCaps="true"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/edit_payment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Edit"
+                    android:text=" "
+                    android:drawableLeft="@drawable/ic_edit_grey_24dp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textColor="@color/colorPrimary"
                     app:fontFamily="sans-serif-medium" />
 
             </LinearLayout>
 
-            <LinearLayout
+            <!-- start of payment detail card -->
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingTop="@dimen/spacing_middle"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_middle"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="1dp"
+                app:cardElevation="3dp"
+                app:cardUseCompatPadding="true">
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/payment_List"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scrollbars="vertical"
-                    android:scrollingCache="true" />
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_middle">
 
-            </LinearLayout>
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/payment_List"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scrollbars="vertical"
+                        android:scrollingCache="true" />
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+            <!-- endof payment detail card -->
 
         </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/grey_10" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -246,40 +304,61 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
+                <ImageView
+                    android:layout_width="@dimen/spacing_middle"
+                    android:layout_height="@dimen/spacing_middle"
+                    android:layout_margin="@dimen/spacing_medium"
+                    android:src="@drawable/shape_circle"
+                    android:tint="@color/greenUcok" />
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="PRODUCT ORDER:"
+                    android:text="@string/heading_product_detail"
                     android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                     android:textColor="@color/grey_40"
-                    app:fontFamily="sans-serif-medium" />
+                    android:textAllCaps="true"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/edit_cart"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Edit"
+                    android:text=" "
+                    android:drawableLeft="@drawable/ic_edit_grey_24dp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textColor="@color/colorPrimary"
                     app:fontFamily="sans-serif-medium" />
 
             </LinearLayout>
 
-            <LinearLayout
+            <!-- start of product detail card -->
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="@dimen/spacing_middle">
+                android:layout_marginTop="@dimen/spacing_middle"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="1dp"
+                app:cardElevation="3dp"
+                app:cardUseCompatPadding="true">
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/sale_List"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scrollbars="vertical"
-                    android:scrollingCache="true" />
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_middle">
 
-            </LinearLayout>
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/sale_List"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scrollbars="vertical"
+                        android:scrollingCache="true" />
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+            <!-- endof product detail card -->
 
         </LinearLayout>
 
