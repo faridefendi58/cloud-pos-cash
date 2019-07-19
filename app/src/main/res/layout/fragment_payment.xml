@@ -120,7 +120,9 @@
                         android:layout_marginTop="@dimen/spacing_middle"
                         android:drawableRight="@drawable/ic_discount"
                         android:minHeight="@dimen/spacing_xmedium"
-                        android:inputType="number"/>
+                        android:inputType="number"
+                        android:singleLine="true"
+                        android:imeOptions="actionDone"/>
 
 
                 </LinearLayout>
@@ -141,7 +143,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/label_grand_total"
+                        android:text="@string/total"
                         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                         android:textColor="@color/grey_40"
                         android:textStyle="bold"
@@ -223,7 +225,7 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.3"
+                        android:layout_weight="0.5"
                         android:text="@string/payment_cash"
                         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                         android:textColor="@color/grey_40"
@@ -236,14 +238,16 @@
                         android:id="@+id/cash_receive"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.7"
+                        android:layout_weight="0.5"
                         android:background="@drawable/edit_text_round_bg_outline"
                         android:drawableEnd="@drawable/ic_expand_arrow"
                         android:layout_marginTop="@dimen/spacing_middle"
                         android:drawableRight="@drawable/ic_money_black_24dp"
-                        android:hint="@string/hint_cash"
+                        android:hint="0"
                         android:minHeight="@dimen/spacing_xmlarge"
-                        android:inputType="number"/>
+                        android:inputType="number"
+                        android:singleLine="true"
+                        android:imeOptions="actionDone"/>
 
 
                 </LinearLayout>

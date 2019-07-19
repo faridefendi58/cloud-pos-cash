@@ -203,7 +203,10 @@ public class PaymentFragment extends Fragment {
                         if (discount_val < grand_total_now) {
                             grand_total_current = grand_total_now - discount_val;
                         }
-                        grand_total.setText(grand_total_current+"");
+
+                        // save the discount value
+                        c_data.setDiscount(discount_val);
+                        grand_total.setText(CurrencyController.getInstance().moneyFormat(Double.parseDouble(grand_total_current+"")));
                     } catch (Exception e){e.printStackTrace();}
                 }
             }
@@ -320,6 +323,18 @@ public class PaymentFragment extends Fragment {
                         }
                     }
                 }
+            }
+
+            if (c_data.getDiscount() > 0) {
+                total_discount.setText(c_data.getDiscount()+"");
+                String tot_order = CurrencyController.getInstance().moneyFormat(register.getTotal());
+                tot_order = tot_order.replace(".", "");
+                int grand_total_now = Integer.parseInt(tot_order);
+                int grand_total_current = 0;
+                if (c_data.getDiscount() < grand_total_now) {
+                    grand_total_current = grand_total_now - c_data.getDiscount();
+                }
+                grand_total.setText(CurrencyController.getInstance().moneyFormat(Double.parseDouble(grand_total_current+"")));
             }
         } catch (Exception e) {
             e.printStackTrace();
