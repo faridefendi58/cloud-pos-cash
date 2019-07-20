@@ -311,8 +311,15 @@ public class CheckoutActivity extends AppCompatActivity {
                 bundle.putString("customer_address", customer.getAddress());
 
                 bundle.putString("shipping_method", ship_methods[shipping.getMethod()]);
-                bundle.putString("shipping_warehouse_pickup", warehouse_names.get(shipping.getWarehouseId()));
-                bundle.putString("shipping_warehouse_id", shipping.getWarehouseId()+"");
+                int shipping_wh_id = shipping.getWarehouseId();
+                if (shipping_wh_id == 0) {
+                    Params wh_params = paramCatalog.getParamByName("warehouse_id");
+                    if (wh_params instanceof Params) {
+                        shipping_wh_id = Integer.parseInt(wh_params.getValue());
+                    }
+                }
+                bundle.putString("shipping_warehouse_pickup", warehouse_names.get(shipping_wh_id));
+                bundle.putString("shipping_warehouse_id", shipping_wh_id+"");
                 bundle.putString("shipping_date", shipping.getDate());
                 bundle.putString("shipping_address", shipping.getAddress());
                 fragment.setArguments(bundle);
@@ -322,7 +329,7 @@ public class CheckoutActivity extends AppCompatActivity {
                     setCurrentWarehouseName(current_warehouse_name);
                 }
 
-                Log.e(TAG, "bundle : "+ bundle.toString());
+                Log.e(TAG, "bundle on displayFragment : "+ bundle.toString());
 
                 checkout_data.setCustomer(customer);
                 checkout_data.setShipping(shipping);

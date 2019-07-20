@@ -178,7 +178,7 @@ public class ConfirmationFragment extends Fragment {
             }
             if (c_data.getTotalPaymentReceived() > 0) {
                 totalPayment.setText(CurrencyController.getInstance().moneyFormat(c_data.getTotalPaymentReceived()));
-                Double change_due = c_data.getTotalPaymentReceived() - register.getTotal() - c_data.getDiscount();
+                Double change_due = c_data.getTotalPaymentReceived() - (register.getTotal() - c_data.getDiscount());
                 changeDue.setText(CurrencyController.getInstance().moneyFormat(change_due));
                 if (change_due < 0) {
                     change_due_label.setText(getResources().getString(R.string.label_dept));
@@ -198,7 +198,8 @@ public class ConfirmationFragment extends Fragment {
                     Log.e(getTag(), "Date current : "+ shipping.getDate());
                 }
                 shipping_date.setText(shipping.getDate());
-                shipping_warehouse.setText(shipping.getWarehouseId());
+                Log.e(getTag(), "shipping.getWarehouseId() : "+ shipping.getWarehouseId());
+                shipping_warehouse.setText(shipping.getWarehouseName());
             }
         } catch (Exception e) { }
     }

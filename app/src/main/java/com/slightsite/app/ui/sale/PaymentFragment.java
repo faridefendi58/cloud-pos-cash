@@ -23,12 +23,17 @@ import android.widget.Toast;
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
+import com.slightsite.app.domain.params.ParamCatalog;
+import com.slightsite.app.domain.params.ParamService;
+import com.slightsite.app.domain.params.Params;
 import com.slightsite.app.domain.sale.Checkout;
 import com.slightsite.app.domain.sale.Register;
+import com.slightsite.app.domain.sale.Shipping;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -55,10 +60,13 @@ public class PaymentFragment extends Fragment {
     private ImageButton bt_toggle_bri;
 
     private Register register;
+    private ParamCatalog paramCatalog;
 
     private Checkout c_data;
     private HashMap< String, String> banks = new HashMap< String, String>();
     private HashMap< String, String> edcs = new HashMap< String, String>();
+
+    private ArrayList<String> warehouse_items = new ArrayList<String>();
 
     public PaymentFragment() {
     }
@@ -67,6 +75,7 @@ public class PaymentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         try {
             register = Register.getInstance();
+            paramCatalog = ParamService.getInstance().getParamCatalog();
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -112,6 +121,14 @@ public class PaymentFragment extends Fragment {
 
         if (!c_data.getEdc().isEmpty()) {
             edcs = c_data.getEdc();
+        }
+
+        if (c_data.getShipping().getWarehouseId() == 0) {
+            Shipping shp = c_data.getShipping();
+            CheckoutActivity checkoutActivity = ((CheckoutActivity)getActivity());
+            shp.setWarehouseId(checkoutActivity.getCurrentWarehouseId());
+            shp.setWarehouseName(checkoutActivity.getCurrentWarehouseName());
+            checkoutActivity.setShipping(shp, c_data);
         }
 
         switch_tranfer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

@@ -35,7 +35,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/heading_customer_detail"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textColor="@color/grey_40"
                     android:textAllCaps="true"
                     android:textStyle="bold" />
@@ -73,7 +73,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/spacing_middle"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="@color/grey_90"
                         app:fontFamily="sans-serif-medium" />
 
@@ -87,7 +87,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/spacing_middle"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="@color/grey_90"
                         app:fontFamily="sans-serif-medium" />
 
@@ -101,7 +101,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/spacing_middle"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="@color/grey_90"
                         app:fontFamily="sans-serif-medium" />
 
@@ -134,7 +134,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/heading_shipping_detail"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textColor="@color/grey_40"
                     android:textAllCaps="true"
                     android:textStyle="bold" />
@@ -176,7 +176,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
                             android:textColor="@color/grey_90"
                             app:fontFamily="sans-serif-medium"
                             android:text="@string/label_shipping_method"/>
@@ -186,7 +186,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingLeft="@dimen/spacing_middle"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
                             android:textColor="@color/grey_90"
                             app:fontFamily="sans-serif-medium"
                             android:textAlignment="textEnd"
@@ -209,7 +209,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
                             android:textColor="@color/grey_90"
                             app:fontFamily="sans-serif-medium"
                             android:text="@string/label_shipping_date"/>
@@ -219,7 +219,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingLeft="@dimen/spacing_middle"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
                             android:textColor="@color/grey_90"
                             app:fontFamily="sans-serif-medium"
                             android:textAlignment="textEnd"
@@ -242,7 +242,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
                             android:textColor="@color/grey_90"
                             app:fontFamily="sans-serif-medium"
                             android:text="@string/label_shipping_location"/>
@@ -252,11 +252,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingLeft="@dimen/spacing_middle"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
                             android:textColor="@color/grey_90"
                             app:fontFamily="sans-serif-medium"
                             android:textAlignment="textEnd"
-                            android:text="WH Jl Kabupaten"/>
+                            android:text="-"/>
 
                     </LinearLayout>
 
@@ -290,7 +290,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/heading_product_detail"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textColor="@color/grey_40"
                     android:textAllCaps="true"
                     android:textStyle="bold" />
@@ -359,7 +359,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/heading_payment_detail"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textColor="@color/grey_40"
                     android:textAllCaps="true"
                     android:textStyle="bold" />
@@ -403,7 +403,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/label_sub_total"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
                             android:textColor="@color/grey_40"
                             app:fontFamily="sans-serif-medium" />
 
@@ -434,7 +434,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/label_discount"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
                             android:textColor="@color/grey_40"
                             app:fontFamily="sans-serif-medium" />
 
@@ -472,7 +472,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/label_payment_total_receieved"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
                             android:textColor="@color/grey_40"
                             app:fontFamily="sans-serif-medium" />
 
@@ -504,7 +504,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/label_payment_change_due"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
                             android:textColor="@color/grey_40"
                             app:fontFamily="sans-serif-medium" />
 

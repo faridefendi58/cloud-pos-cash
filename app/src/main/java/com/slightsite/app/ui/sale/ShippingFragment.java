@@ -32,6 +32,9 @@ import com.slightsite.app.R;
 import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.customer.CustomerCatalog;
 import com.slightsite.app.domain.customer.CustomerService;
+import com.slightsite.app.domain.params.ParamCatalog;
+import com.slightsite.app.domain.params.ParamService;
+import com.slightsite.app.domain.params.Params;
 import com.slightsite.app.domain.sale.Checkout;
 import com.slightsite.app.domain.sale.Shipping;
 import com.slightsite.app.techicalservices.AutoCompleteAdapter;
@@ -59,6 +62,7 @@ public class ShippingFragment extends Fragment {
     private Autocomplete userAutocomplete;
     private Autocomplete phoneAutocomplete;
     private CustomerCatalog customerCatalog;
+    private ParamCatalog paramCatalog;
     private List<Customer> customers;
     private Customer cust;
 
@@ -101,6 +105,7 @@ public class ShippingFragment extends Fragment {
         try {
             customerCatalog = CustomerService.getInstance().getCustomerCatalog();
             ship_methods = ((CheckoutActivity)getActivity()).getShippingMethods();
+            paramCatalog = ParamService.getInstance().getParamCatalog();
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -127,7 +132,13 @@ public class ShippingFragment extends Fragment {
             int _shipping_warehouse_id = 0;
             if (getArguments().get("shipping_warehouse_id") != null && getArguments().get("shipping_warehouse_id").toString() != "0") {
                 _shipping_warehouse_id = getArguments().getInt("shipping_warehouse_id");
+            } else {
+                Params whParam = paramCatalog.getParamByName("warehouse_id");
+                if (whParam instanceof Params) {
+                    _shipping_warehouse_id = Integer.parseInt(whParam.getValue());
+                }
             }
+
             String _shipping_date = getArguments().getString("shipping_date");
             String _shipping_address = getArguments().getString("shipping_address");
             int _shipping_method_id = Arrays.asList(ship_methods).indexOf(_shipping_method);
