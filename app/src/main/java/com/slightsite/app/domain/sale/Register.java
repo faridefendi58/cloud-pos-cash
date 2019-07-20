@@ -1,12 +1,15 @@
 package com.slightsite.app.domain.sale;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import java.awt.font.TextAttribute;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.customer.Customer;
@@ -297,5 +300,15 @@ public class Register {
 
 	public Shipping getShipping() {
 		return shipping;
+	}
+
+	private Map<Integer, Bitmap> image_stacks = new HashMap<Integer, Bitmap>();
+
+	public void setImageStacks(Map<Integer, Bitmap> _image_stacks) {
+		this.image_stacks = _image_stacks;
+	}
+
+	public Map<Integer, Bitmap> getImageStacks() {
+		return image_stacks;
 	}
 }

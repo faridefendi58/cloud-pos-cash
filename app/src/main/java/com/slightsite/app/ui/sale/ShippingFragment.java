@@ -3,6 +3,7 @@ package com.slightsite.app.ui.sale;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -36,6 +37,7 @@ import com.slightsite.app.domain.sale.Shipping;
 import com.slightsite.app.techicalservices.AutoCompleteAdapter;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Tools;
+import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.inventory.ProductServerActivity;
 
 import java.text.SimpleDateFormat;
@@ -46,6 +48,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;

@@ -2,6 +2,7 @@ package com.slightsite.app.ui.sale;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +30,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +38,7 @@ public class ConfirmationFragment extends Fragment {
 
     private View root;
     private TextView conf_customer_name;
+    private TextView conf_customer_phone;
     private TextView conf_customer_address;
 
     private Checkout c_data;
@@ -49,6 +52,7 @@ public class ConfirmationFragment extends Fragment {
     private RecyclerView saleListView;
     private Resources res;
     private TextView totalPrice;
+    private TextView total_discount;
     private TextView edit_customer;
     private TextView edit_payment;
     private TextView edit_cart;
@@ -97,8 +101,10 @@ public class ConfirmationFragment extends Fragment {
 
     private void initView() {
         conf_customer_name = (TextView) root.findViewById(R.id.conf_customer_name);
+        conf_customer_phone = (TextView) root.findViewById(R.id.conf_customer_phone);
         conf_customer_address = (TextView) root.findViewById(R.id.conf_customer_address);
         totalPrice = (TextView) root.findViewById(R.id.totalPrice);
+        total_discount = (TextView) root.findViewById(R.id.total_discount);
 
         paymentListView = (RecyclerView) root.findViewById(R.id.payment_List);
         paymentListView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -132,6 +138,9 @@ public class ConfirmationFragment extends Fragment {
             showList(register.getCurrentSale().getAllLineItem());
 
             totalPrice.setText(CurrencyController.getInstance().moneyFormat(register.getTotal()) + "");
+            if (c_data.getDiscount() > 0) {
+                total_discount.setText(CurrencyController.getInstance().moneyFormat(Double.parseDouble(c_data.getDiscount()+"")) + "");
+            }
         }
 
         showPaymentList(c_data.getPaymentItems());
@@ -164,11 +173,12 @@ public class ConfirmationFragment extends Fragment {
             if (!c_data.getCustomer().equals(null)) {
                 customer = c_data.getCustomer();
                 conf_customer_name.setText(customer.getName());
+                conf_customer_phone.setText(customer.getPhone());
                 conf_customer_address.setText(customer.getAddress());
             }
             if (c_data.getTotalPaymentReceived() > 0) {
                 totalPayment.setText(CurrencyController.getInstance().moneyFormat(c_data.getTotalPaymentReceived()));
-                Double change_due = c_data.getTotalPaymentReceived() - register.getTotal();
+                Double change_due = c_data.getTotalPaymentReceived() - register.getTotal() - c_data.getDiscount();
                 changeDue.setText(CurrencyController.getInstance().moneyFormat(change_due));
                 if (change_due < 0) {
                     change_due_label.setText(getResources().getString(R.string.label_dept));
@@ -182,7 +192,7 @@ public class ConfirmationFragment extends Fragment {
                 Log.e(getTag(), "Shipping data on confirmation :"+ shipping.toMap().toString());
                 shipping_method.setText(ship_methods[shipping.getMethod()]);
                 if (shipping.getDate().equals(null) || shipping.getDate().length() == 0) {
-                    DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+                    DateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm");
                     String date = df.format(Calendar.getInstance().getTime());
                     shipping.setDate(date);
                     Log.e(getTag(), "Date current : "+ shipping.getDate());

@@ -3,12 +3,13 @@ package com.slightsite.app.domain.sale;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.inventory.Product;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PaymentItem {
+public class PaymentItem implements Serializable {
     private String title;
     private double nominal;
 

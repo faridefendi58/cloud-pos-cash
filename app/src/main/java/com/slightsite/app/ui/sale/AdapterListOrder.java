@@ -1,6 +1,7 @@
 package com.slightsite.app.ui.sale;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,9 +15,12 @@ import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.inventory.LineItem;
 import com.slightsite.app.domain.sale.Register;
+import com.slightsite.app.ui.MainActivity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AdapterListOrder extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<LineItem> items = new ArrayList<>();
@@ -25,6 +29,7 @@ public class AdapterListOrder extends RecyclerView.Adapter<RecyclerView.ViewHold
     private OnItemClickListener mOnItemClickListener;
     private Register register;
     private TextView cart_total;
+    private Map<Integer, Bitmap> image_stacks = new HashMap<Integer, Bitmap>();
 
     public interface OnItemClickListener {
         void onItemClick(View view, LineItem obj, int position);
@@ -39,6 +44,7 @@ public class AdapterListOrder extends RecyclerView.Adapter<RecyclerView.ViewHold
         ctx = context;
         this.register = register;
         this.cart_total = cart_total;
+        this.image_stacks = register.getImageStacks();
     }
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
@@ -48,6 +54,7 @@ public class AdapterListOrder extends RecyclerView.Adapter<RecyclerView.ViewHold
         public TextView price_subtotal;
         public TextView quantity;
         public View lyt_parent;
+        public View line_separator;
 
         public OriginalViewHolder(View v) {
             super(v);
@@ -57,6 +64,7 @@ public class AdapterListOrder extends RecyclerView.Adapter<RecyclerView.ViewHold
             //price_subtotal = (TextView) v.findViewById(R.id.price_subtotal);
             quantity = (TextView) v.findViewById(R.id.quantity);
             lyt_parent = (View) v.findViewById(R.id.lyt_parent);
+            line_separator = (View) v.findViewById(R.id.line_separator);
         }
     }
 
@@ -91,6 +99,15 @@ public class AdapterListOrder extends RecyclerView.Adapter<RecyclerView.ViewHold
             view.price.setText(CurrencyController.getInstance().moneyFormat(sub_total));
 
             view.image.setImageResource(R.drawable.ic_no_image);
+            try {
+                if (image_stacks.size() > 0 && image_stacks.get(p.getProduct().getId()) != null) {
+                    view.image.setImageBitmap(image_stacks.get(p.getProduct().getId()));
+                    Log.e(getClass().getSimpleName(), "image_stacks : "+ image_stacks.toString());
+                } else {
+                    Log.e(getClass().getSimpleName(), "image_stacks tidak ada size : "+ image_stacks.size());
+                }
+            } catch (Exception e){e.printStackTrace();}
+
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -99,6 +116,11 @@ public class AdapterListOrder extends RecyclerView.Adapter<RecyclerView.ViewHold
                     }
                 }
             });
+
+            int last_item_position = getItemCount() - 1;
+            if (position == last_item_position) {
+                view.line_separator.setVisibility(View.GONE);
+            }
         }
     }
 

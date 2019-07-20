@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -58,6 +59,7 @@ import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.techicalservices.URLBuilder;
 import com.slightsite.app.ui.LoginActivity;
+import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.printer.PrinterActivity;
 
 import org.json.JSONArray;

@@ -54,7 +54,7 @@ public class AutoCompleteAdapter extends ArrayAdapter<String> implements Filtera
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults results = new FilterResults();
-                if (constraint != null) {
+                if (constraint != null && constraint.length() >= 2) {
                     HttpURLConnection conn = null;
                     InputStream input = null;
                     try {
