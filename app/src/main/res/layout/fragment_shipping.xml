@@ -208,7 +208,7 @@
                     android:drawableEnd="@drawable/ic_arrow_drop_grey"
                     android:drawableRight="@drawable/ic_arrow_drop_grey"
                     android:editable="false"
-                    android:hint="Lokasi Pengambilan"
+                    android:hint="@string/label_shipping_location"
                     android:focusable="false"
                     android:maxLines="1"
                     android:singleLine="true"
@@ -224,7 +224,7 @@
                     android:drawableEnd="@drawable/ic_arrow_drop_grey"
                     android:drawableRight="@drawable/ic_arrow_drop_grey"
                     android:editable="false"
-                    android:hint="Tanggal Kirim/Ambil"
+                    android:hint="@string/label_shipping_date"
                     android:focusable="false"
                     android:maxLines="1"
                     android:singleLine="true"
@@ -237,8 +237,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_large"
                     android:background="@drawable/edit_text_round_bg_outline"
-                    android:hint="Alamat Pengiriman"
+                    android:hint="@string/label_shipping_address"
                     android:minHeight="@dimen/spacing_xmlarge"
+                    android:singleLine="true"
+                    android:imeOptions="actionDone"
                     android:visibility="gone"/>
 
             </LinearLayout>

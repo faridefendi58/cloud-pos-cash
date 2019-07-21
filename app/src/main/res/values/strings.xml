@@ -232,6 +232,7 @@
     <string name="label_grand_total">Grand Total</string>
     <string name="label_shipping_date">Shipping Date</string>
     <string name="label_shipping_location">Shipping Location</string>
+    <string name="label_shipping_address">Shipping Location</string>
     <string name="label_payment_total_receieved">Total Payment Received</string>
     <string name="label_payment_change_due">Change Due</string>
 

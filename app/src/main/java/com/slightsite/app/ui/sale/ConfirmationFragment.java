@@ -3,6 +3,7 @@ package com.slightsite.app.ui.sale;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -65,6 +66,7 @@ public class ConfirmationFragment extends Fragment {
     private TextView shipping_method;
     private TextView shipping_date;
     private TextView shipping_warehouse;
+    private TextView label_shipping_warehouse;
     private Shipping shipping;
     private String[] ship_methods;
 
@@ -128,6 +130,7 @@ public class ConfirmationFragment extends Fragment {
         shipping_method = (TextView) root.findViewById(R.id.shipping_method);
         shipping_date = (TextView) root.findViewById(R.id.shipping_date);
         shipping_warehouse = (TextView) root.findViewById(R.id.shipping_warehouse);
+        label_shipping_warehouse = (TextView) root.findViewById(R.id.label_shipping_warehouse);
     }
 
     private void initAction() {
@@ -182,6 +185,12 @@ public class ConfirmationFragment extends Fragment {
                 changeDue.setText(CurrencyController.getInstance().moneyFormat(change_due));
                 if (change_due < 0) {
                     change_due_label.setText(getResources().getString(R.string.label_dept));
+                    change_due_label.setTypeface(Typeface.DEFAULT_BOLD);
+                    change_due_label.setTextColor(getResources().getColor(R.color.red_300));
+                    Double change_due2 = -1*change_due;
+                    changeDue.setText(CurrencyController.getInstance().moneyFormat(change_due2));
+                    changeDue.setTypeface(Typeface.DEFAULT_BOLD);
+                    changeDue.setTextColor(getResources().getColor(R.color.red_300));
                 } else {
                     change_due_label.setText(getResources().getString(R.string.label_change_due));
                 }
@@ -189,17 +198,27 @@ public class ConfirmationFragment extends Fragment {
 
             if (!c_data.getShipping().equals(null)) {
                 shipping = c_data.getShipping();
-                Log.e(getTag(), "Shipping data on confirmation :"+ shipping.toMap().toString());
+                //Log.e(getTag(), "Shipping data on confirmation :"+ shipping.toMap().toString());
                 shipping_method.setText(ship_methods[shipping.getMethod()]);
                 if (shipping.getDate().equals(null) || shipping.getDate().length() == 0) {
                     DateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm");
+                    if (shipping.getMethod() == 0) {
+                        df = new SimpleDateFormat("dd MMM yyyy");
+                    }
                     String date = df.format(Calendar.getInstance().getTime());
                     shipping.setDate(date);
-                    Log.e(getTag(), "Date current : "+ shipping.getDate());
                 }
                 shipping_date.setText(shipping.getDate());
-                Log.e(getTag(), "shipping.getWarehouseId() : "+ shipping.getWarehouseId());
                 shipping_warehouse.setText(shipping.getWarehouseName());
+                if (shipping.getAddress() != null && shipping.getMethod() > 1) {
+                    shipping_warehouse.setText(shipping.getAddress());
+                    label_shipping_warehouse.setText(getResources().getString(R.string.label_shipping_address));
+
+                    shipping_date.setText(shipping.getPickupDate());
+                    if (shipping.getAddress().length() >= 25) {
+                        label_shipping_warehouse.setText(getResources().getString(R.string.address));
+                    }
+                }
             }
         } catch (Exception e) { }
     }

@@ -3,7 +3,6 @@ package com.slightsite.app.ui.sale;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -26,8 +25,6 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.otaliastudios.autocomplete.Autocomplete;
-import com.otaliastudios.autocomplete.AutocompleteCallback;
-import com.otaliastudios.autocomplete.AutocompletePresenter;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.customer.CustomerCatalog;
@@ -40,19 +37,13 @@ import com.slightsite.app.domain.sale.Shipping;
 import com.slightsite.app.techicalservices.AutoCompleteAdapter;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Tools;
-import com.slightsite.app.ui.MainActivity;
-import com.slightsite.app.ui.inventory.ProductServerActivity;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
@@ -94,6 +85,8 @@ public class ShippingFragment extends Fragment {
 
     private AutoCompleteTextView customer_name_autocomplete;
     private AutoCompleteTextView customer_phone_autocomplete;
+
+    private Boolean need_time_picker = false;
 
     public ShippingFragment() {
     }
@@ -262,7 +255,7 @@ public class ShippingFragment extends Fragment {
                     if (selected_cust_id > 0) {
                         cust.setId(selected_cust_id);
                     }
-                    Log.e(getClass().getSimpleName(), "Sebelum setup cust "+ cust.toMap().toString());
+                    //Log.e(getClass().getSimpleName(), "Sebelum setup cust "+ cust.toMap().toString());
                     if (setType == "phone") {
                         if (!cust.getPhone().equals(s.toString())) {
                             cust.setPhone(s.toString());
@@ -285,7 +278,11 @@ public class ShippingFragment extends Fragment {
                         }
                     }
                     if (setType == "shipping_address") {
-                        ship.setAddress(s.toString());
+                        if (s.toString().length() > 5) {
+                            //Log.e(getClass().getSimpleName(), "Pas edit shipping_address " + s.toString());
+                            ship.setAddress(s.toString());
+                            ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -337,10 +334,19 @@ public class ShippingFragment extends Fragment {
             }
         });
 
-        setTextChangeListener(shipping_warehouse, "shipping_address");
+        setTextChangeListener(shipping_address, "shipping_address");
     }
 
     private void showShippingMethodDialog(final View v) {
+        if (cust.getName().length() == 0){
+            Log.e(getTag(), "customer masih null");
+            customer_name_autocomplete.setFocusable(true);
+            Toast.makeText(getActivity().getBaseContext(),
+                    getResources().getString(R.string.error_empty_customer_data), Toast.LENGTH_SHORT)
+                    .show();
+            return;
+        }
+
         current_warehouse_name = ((CheckoutActivity)getActivity()).getCurrentWarehouseName();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -352,10 +358,13 @@ public class ShippingFragment extends Fragment {
                 if (cust != null && cust.getName() != null) {
                     c_data.setCustomer(cust);
                 }
-                Log.e(getTag(), "c_data pas buka dialog shipping : "+ c_data.getCustomer().toMap().toString());
+                //Log.e(getTag(), "c_data pas buka dialog shipping : "+ c_data.getCustomer().toMap().toString());
                 ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
                 setupShippingForm(i);
                 ((EditText) v).setText(ship_methods[i]);
+                if (i == 1 || i == 2) {
+                    need_time_picker = true;
+                }
                 dialogInterface.dismiss();
             }
         });
@@ -376,20 +385,24 @@ public class ShippingFragment extends Fragment {
                 long date = newDate.getTimeInMillis();
                 ((EditText) v).setText(Tools.getFormattedDateShort(date));
                 ship.setDate(Tools.getFormattedDateFlat(date));
+                ship.setPickupDate(Tools.getFormattedDateFlat(date));
                 ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
 
-                new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        Calendar cur_time = Calendar.getInstance();
-                        cur_time.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                        cur_time.set(Calendar.MINUTE, minute);
-                        long date2 = cur_time.getTimeInMillis();
-                        ((EditText) v).setText(Tools.getFormattedDateTimeShort(date2));
-                        ship.setDate(Tools.getFormattedDateFlat(date2));
-                        ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
-                    }
-                }, cur_calender.get(Calendar.HOUR_OF_DAY), cur_calender.get(Calendar.MINUTE), false).show();
+                if (need_time_picker) {
+                    new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                            Calendar cur_time = Calendar.getInstance();
+                            cur_time.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                            cur_time.set(Calendar.MINUTE, minute);
+                            long date2 = cur_time.getTimeInMillis();
+                            ((EditText) v).setText(Tools.getFormattedDateTimeShort(date2));
+                            ship.setDate(Tools.getFormattedDateFlat(date2));
+                            ship.setPickupDate(Tools.getFormattedDateTimeShort(date2));
+                            ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
+                        }
+                    }, cur_calender.get(Calendar.HOUR_OF_DAY), cur_calender.get(Calendar.MINUTE), false).show();
+                }
             }
 
         }, cur_calender.get(Calendar.YEAR), cur_calender.get(Calendar.MONTH), cur_calender.get(Calendar.DAY_OF_MONTH));

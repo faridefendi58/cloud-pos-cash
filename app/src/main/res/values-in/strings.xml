@@ -203,7 +203,7 @@
     <string name="title_print_preview">Print Preview</string>
     <string name="title_print_config">Konfigurasi</string>
 
-    <string name="label_change_due">Kembali</string>
+    <string name="label_change_due">Uang Kembali</string>
     <string name="label_dept">Hutang</string>
     <string name="label_date">Tanggal</string>
     <string name="label_hour">Jam</string>
@@ -226,7 +226,8 @@
     <string name="label_grand_total">Total Order</string>
     <string name="label_shipping_date">Tanggal Ambil/Kirim</string>
     <string name="label_shipping_location">Lokasi Pengambilan</string>
-    <string name="label_payment_total_receieved">Total Pembayaran Diterima</string>
+    <string name="label_shipping_address">Alamat Pengiriman</string>
+    <string name="label_payment_total_receieved">Total Dibayarkan</string>
     <string name="label_payment_change_due">Kembali</string>
 
     <string name="payment_cash">Tunai</string>
