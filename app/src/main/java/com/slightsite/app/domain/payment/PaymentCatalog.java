@@ -79,4 +79,8 @@ public class PaymentCatalog {
     public void suspendPayment(Payment payment) {
         paymentDao.suspendPayment(payment);
     }
+
+    public Double getTotalPaymentBySaleId(int sale_id) {
+        return paymentDao.getTotalPayment(sale_id);
+    }
 }

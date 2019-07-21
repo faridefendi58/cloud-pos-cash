@@ -131,4 +131,17 @@ public class PaymentDaoAndroid implements PaymentDao {
     public void removePayment(int id) {
         database.delete(DatabaseContents.TABLE_SALE_PAYMENT.toString(), id);
     }
+
+    @Override
+    public Double getTotalPayment(int sale_id) {
+        String queryString = "SELECT SUM(amount) AS total FROM " + DatabaseContents.TABLE_SALE_PAYMENT.toString()  + " WHERE sale_id="+ sale_id;
+        List<Object> objectList = (database.select(queryString));
+
+        if (objectList.size() <= 0) {
+            return 0.0;
+        }
+
+        ContentValues content = (ContentValues) objectList.get(0);
+        return content.getAsDouble("total");
+    }
 }

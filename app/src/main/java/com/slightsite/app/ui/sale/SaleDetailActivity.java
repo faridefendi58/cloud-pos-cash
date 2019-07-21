@@ -26,6 +26,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -92,6 +93,13 @@ public class SaleDetailActivity extends Activity{
 	private TextView invoice_number;
 	private TextView customer_address;
 	private TextView customer_phone;
+	private TextView payment_subtotal;
+	private TextView payment_discount;
+	private TextView payment_grand_total;
+	private TextView payment_total_received;
+	private LinearLayout payment_debt_container;
+	private TextView payment_debt;
+	private View spacer_debt;
 
 	private PaymentCatalog paymentCatalog;
 	private List<Payment> paymentList;
@@ -127,7 +135,7 @@ public class SaleDetailActivity extends Activity{
 		saleId = Integer.parseInt(getIntent().getStringExtra("id"));
 		sale = saleLedger.getSaleById(saleId);
 		customer = saleLedger.getCustomerBySaleId(saleId);
-		Log.e(getClass().getSimpleName(), "customer : "+ customer.toMap().toString());
+
 		sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
 
 		String dt = DateTimeStrategy.getCurrentTime();
@@ -179,6 +187,13 @@ public class SaleDetailActivity extends Activity{
         invoice_number = (TextView) findViewById(R.id.invoice_number);
 		customer_address = (TextView) findViewById(R.id.customer_address);
 		customer_phone = (TextView) findViewById(R.id.customer_phone);
+		payment_subtotal = (TextView) findViewById(R.id.payment_subtotal);
+		payment_discount = (TextView) findViewById(R.id.payment_discount);
+		payment_grand_total = (TextView) findViewById(R.id.payment_grand_total);
+		payment_total_received = (TextView) findViewById(R.id.payment_total_received);
+		payment_debt_container = (LinearLayout) findViewById(R.id.payment_debt_container);
+		payment_debt = (TextView) findViewById(R.id.payment_debt);
+		spacer_debt = (View) findViewById(R.id.spacer_debt);
 
 		try {
 			paymentCatalog = PaymentService.getInstance().getPaymentCatalog();
@@ -234,6 +249,24 @@ public class SaleDetailActivity extends Activity{
 		SimpleAdapter spAdap = new SimpleAdapter(SaleDetailActivity.this, shippingitemList,
 				R.layout.listview_payment, new String[]{"note"}, new int[] {R.id.title});
 		shippingitemListView.setAdapter(spAdap);
+
+		payment_subtotal.setText(CurrencyController.getInstance().moneyFormat(sale.getTotal()) + "");
+		payment_discount.setText(CurrencyController.getInstance().moneyFormat(sale.getDiscount()) + "");
+		try {
+			Double tot_order = sale.getTotal() - sale.getDiscount();
+			payment_grand_total.setText(CurrencyController.getInstance().moneyFormat(tot_order) + "");
+
+			Double getTotalPaymentBySaleId = paymentCatalog.getTotalPaymentBySaleId(saleId);
+			payment_total_received.setText(CurrencyController.getInstance().moneyFormat(getTotalPaymentBySaleId) + "");
+
+			if (getTotalPaymentBySaleId < tot_order) {
+				Double debt = tot_order - getTotalPaymentBySaleId;
+				payment_debt.setText(CurrencyController.getInstance().moneyFormat(debt) + "");
+				payment_debt_container.setVisibility(View.VISIBLE);
+				spacer_debt.setVisibility(View.VISIBLE);
+			}
+
+		} catch (Exception e) {e.printStackTrace();}
 	}
 
 	@Override

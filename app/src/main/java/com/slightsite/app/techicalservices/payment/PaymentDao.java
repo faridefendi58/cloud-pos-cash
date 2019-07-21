@@ -28,4 +28,6 @@ public interface PaymentDao {
     void suspendPayment(Payment payment);
 
     void removePayment(int id);
+
+    Double getTotalPayment(int sale_id);
 }
