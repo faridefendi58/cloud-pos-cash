@@ -198,7 +198,7 @@
     Pilih salah satu Warehouse untuk mendapatkan data produk, harga, serta stoknya.</string>
     <string name="message_change_warehouse">Hati - hati!, merubah data warehouse akan merubah semua data produk Anda saat ini dengan data produk warehouse terbaru.</string>
 
-    <string name="title_print_invoice">Print Faktur</string>
+    <string name="title_print_invoice">Print Preview</string>
     <string name="title_list_printer">Printer</string>
     <string name="title_print_preview">Print Preview</string>
     <string name="title_print_config">Konfigurasi</string>
@@ -241,6 +241,7 @@
     <string name="button_back">Kembali</string>
     <string name="button_login">Masuk</string>
     <string name="button_register">Daftar</string>
+    <string name="button_new_transaction">Transaksi Baru</string>
 
     <string name="confirm_edit">Anda yakin ingin mengubah data ini?</string>
 

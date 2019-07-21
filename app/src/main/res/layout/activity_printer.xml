@@ -9,11 +9,33 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/greenUcok"
-        app:layout_scrollFlags="scroll|enterAlways"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        android:background="@color/grey_3"
+        app:contentInsetStartWithNavigation="0dp"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/Toolbar.Light">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_marginEnd="@dimen/spacing_large"
+            android:layout_marginRight="@dimen/spacing_large"
+            android:paddingTop="@dimen/spacing_large"
+            android:gravity="left"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_print_preview"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/grey_80"
+                app:fontFamily="sans-serif-medium" />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.Toolbar>
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tabLayout"
@@ -22,7 +44,8 @@
         app:tabTextColor="@color/colorBlack"
         app:tabSelectedTextColor="@color/greenUcok"
         app:tabIndicatorColor="@color/btnInfo"
-        app:tabMode="fixed"/>
+        app:tabMode="fixed"
+        android:visibility="gone"/>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewPager"

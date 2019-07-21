@@ -1,5 +1,7 @@
 package com.slightsite.app.ui.printer;
 
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -7,6 +9,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
@@ -14,6 +20,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.io.InputStream;
@@ -36,12 +43,17 @@ import com.slightsite.app.domain.ProfileController;
 import com.slightsite.app.domain.inventory.LineItem;
 import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
+import com.slightsite.app.domain.params.Params;
 import com.slightsite.app.domain.payment.Payment;
 import com.slightsite.app.domain.payment.PaymentCatalog;
 import com.slightsite.app.domain.payment.PaymentService;
 import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.domain.sale.SaleLedger;
+import com.slightsite.app.domain.warehouse.WarehouseCatalog;
+import com.slightsite.app.domain.warehouse.WarehouseService;
+import com.slightsite.app.domain.warehouse.Warehouses;
 import com.slightsite.app.techicalservices.NoDaoSetException;
+import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.ui.LoginActivity;
 
 public class PrinterActivity extends AppCompatActivity {
@@ -69,9 +81,11 @@ public class PrinterActivity extends AppCompatActivity {
     private int saleId;
     private SaleLedger saleLedger;
     private PaymentCatalog paymentCatalog;
+    private WarehouseCatalog warehouseCatalog;
     private List<Payment> paymentList;
     private List<Map<String, String>> lineitemList;
-    private int cuk;
+    private int warehouse_id;
+    private Warehouses warehouse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +96,8 @@ public class PrinterActivity extends AppCompatActivity {
         InitPrinterConfigs();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_close);
+        toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.grey_60), PorterDuff.Mode.SRC_ATOP);
         setSupportActionBar(toolbar);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -89,6 +105,22 @@ public class PrinterActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewPager);//setting tab over viewpager
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
+        Tools.setSystemBarColor(this, android.R.color.white);
+        Tools.setSystemBarLight(this);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        } else {
+            Toast.makeText(getApplicationContext(), item.getTitle(), Toast.LENGTH_SHORT).show();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void IntentPrint(String txtvalue) {
@@ -287,6 +319,14 @@ public class PrinterActivity extends AppCompatActivity {
             if (saleId > 0) {
                 paymentList = paymentCatalog.getPaymentBySaleId(saleId);
             }
+
+            warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
+
+            Params whParam = paramCatalog.getParamByName("warehouse_id");
+            if (whParam instanceof Params) {
+                warehouse_id = Integer.parseInt(whParam.getValue());
+                warehouse = warehouseCatalog.getWarehouseByWarehouseId(warehouse_id);
+            }
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -294,7 +334,18 @@ public class PrinterActivity extends AppCompatActivity {
         int char_length = Integer.parseInt(printerConfigs.get("char_length"));
 
         String res = "\n";
-        res += printerConfigs.get("header");
+        if (warehouse != null) {
+            Params store_name = paramCatalog.getParamByName("store_name");
+            if (store_name instanceof Params) {
+                res += String.format("%s%n", store_name.getValue() +" "+warehouse.getTitle());
+            } else {
+                res += String.format("%s%n", warehouse.getTitle());
+            }
+            res += String.format("%s%n", warehouse.getAddress());
+            res += String.format("%s%n", warehouse.getPhone());
+        } else {
+            res += printerConfigs.get("header");
+        }
 
         res += String.format("%s%n", str_repeat("=", char_length));
 
