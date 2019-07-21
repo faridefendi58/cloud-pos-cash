@@ -107,4 +107,8 @@ public interface SaleDao {
 	void setPushedSale(Sale sale, int server_invoice_id, String server_invoice_number);
 
 	int getServerInvoiceId(int sale_id);
+
+	void setDiscount(Sale sale);
+
+	int getDiscount(int sale_id);
 }

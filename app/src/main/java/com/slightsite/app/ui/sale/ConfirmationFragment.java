@@ -23,6 +23,7 @@ import com.slightsite.app.domain.payment.Payment;
 import com.slightsite.app.domain.sale.Checkout;
 import com.slightsite.app.domain.sale.PaymentItem;
 import com.slightsite.app.domain.sale.Register;
+import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.domain.sale.Shipping;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.ui.MainActivity;
@@ -95,8 +96,13 @@ public class ConfirmationFragment extends Fragment {
             _ship.setSaleId(register.getCurrentSale().getId());
             _ship.setDateAdded(register.getCurrentSale().getStartTime());
             register.setShipping(_ship);
+            // setup the discount
+            register.getCurrentSale().setDiscount(c_data.getDiscount());
+            register.setDiscount();
+
             c_data.setShipping(_ship);
-            Log.e(getTag(), "Shipping data on onCreateView conf fragment: "+ register.getShipping().toMap().toString());
+            Sale test = register.getCurrentSale();
+            //Log.e(getTag(), "Shipping data on onCreateView conf fragment: "+ register.getShipping().toMap().toString());
         } catch (Exception e){ }
         return root;
     }

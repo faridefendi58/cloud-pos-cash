@@ -74,6 +74,7 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 				+ "status TEXT(40),"
 				+ "payment TEXT(50),"
 				+ "total DOUBLE,"
+				+ "discount INTEGER DEFAULT 0,"
 				+ "start_time DATETIME,"
 				+ "end_time DATETIME,"
 				+ "customer_id INTEGER,"

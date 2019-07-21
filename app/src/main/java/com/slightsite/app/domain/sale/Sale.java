@@ -28,6 +28,8 @@ public class Sale {
 	private String status;
 	private List<LineItem> items;
 	private Integer customer_id;
+	private String server_invoice_number;
+	private int discount = 0;
 
 	public Sale(int id, String startTime) {
 		this(id, startTime, startTime, "", new ArrayList<LineItem>(), 0);
@@ -194,5 +196,21 @@ public class Sale {
 			}
 		}
 		return null;
+	}
+
+	public void setServerInvoiceNumber(String _server_invoice_number) {
+		this.server_invoice_number = _server_invoice_number;
+	}
+
+	public String getServerInvoiceNumber() {
+		return server_invoice_number;
+	}
+
+	public void setDiscount(int discount) {
+		this.discount = discount;
+	}
+
+	public int getDiscount() {
+		return discount;
 	}
 }

@@ -51,6 +51,9 @@ public class SaleDaoAndroid implements SaleDao {
         content.put("status", "ENDED");
         content.put("payment", "n/a");
         content.put("total", sale.getTotal());
+        if (sale.getDiscount() > 0) {
+			content.put("discount", sale.getDiscount());
+		}
         content.put("orders", sale.getOrders());
         content.put("start_time", sale.getStartTime());
         content.put("end_time", endTime);
@@ -136,6 +139,9 @@ public class SaleDaoAndroid implements SaleDao {
 					content.getAsString("status"),
 					getLineItem(content.getAsInteger("_id")),
 					content.getAsInteger("customer_id"));
+        	sale.setDiscount(content.getAsInteger("discount"));
+        	sale.setServerInvoiceNumber(content.getAsString("server_invoice_number"));
+
         	list.add(sale);
         }
         return list.get(0);
@@ -369,5 +375,30 @@ public class SaleDaoAndroid implements SaleDao {
 		}
 
 		return inv_id;
+	}
+
+	@Override
+	public void setDiscount(Sale sale) {
+		ContentValues content = new ContentValues();
+		content.put("_id", sale.getId());
+		content.put("discount", sale.getDiscount());
+		database.update(DatabaseContents.TABLE_SALE.toString(), content);
+	}
+
+	@Override
+	public int getDiscount(int sale_id) {
+		String queryString = "SELECT discount FROM " + DatabaseContents.TABLE_SALE + " WHERE _id = " + sale_id;
+		List<Object> objectList = database.select(queryString);
+		int discount = 0;
+		for (Object object: objectList) {
+			ContentValues content = (ContentValues) object;
+			if (content != null
+					&& content.containsKey("discount")
+					&& content.getAsString("discount") != null) {
+				discount = content.getAsInteger("discount");
+			}
+		}
+
+		return discount;
 	}
 }

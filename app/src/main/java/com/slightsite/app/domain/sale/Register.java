@@ -121,7 +121,7 @@ public class Register {
 		if (currentSale != null) {
 			saleDao.endSale(currentSale, endTime);
 			for(LineItem line : currentSale.getAllLineItem()){
-				Log.e(getClass().getSimpleName(), "end sale -> "+ line.getProduct().getName());
+				//Log.e(getClass().getSimpleName(), "end sale -> "+ line.getProduct().getName());
 				stock.updateStockSum(line.getProduct().getId(), line.getQuantity());
 			}
 
@@ -156,8 +156,8 @@ public class Register {
 			} catch (Exception e){
 				e.printStackTrace();
 			}
-			Log.e(getClass().getSimpleName(), "Payment Data on end payment : "+ payment_items.toString());
-			Log.e(getClass().getSimpleName(), "Shipping Data on end payment : "+ shipping.toMap().toString());
+			//Log.e(getClass().getSimpleName(), "Payment Data on end payment : "+ payment_items.toString());
+			//Log.e(getClass().getSimpleName(), "Shipping Data on end payment : "+ shipping.toMap().toString());
 			currentSale = null;
 		}
 	}
@@ -254,12 +254,10 @@ public class Register {
 
 	public void setCustomer(Customer cst) {
 		if (currentSale != null) {
-			Log.e(getClass().getSimpleName(), "Ini mulai setup cust : "+ cst.toMap().toString());
-			Log.e(getClass().getSimpleName(), "currentSale : "+ currentSale.toMap().toString());
+			//Log.e(getClass().getSimpleName(), "Ini mulai setup cust : "+ cst.toMap().toString());
+			//Log.e(getClass().getSimpleName(), "currentSale : "+ currentSale.toMap().toString());
 			saleDao.setCustomerSale(currentSale, cst);
 			customer = cst;
-		} else {
-			Log.e("Register", "currentSale : ga ada.");
 		}
 	}
 
@@ -310,5 +308,11 @@ public class Register {
 
 	public Map<Integer, Bitmap> getImageStacks() {
 		return image_stacks;
+	}
+
+	public void setDiscount() {
+		if (currentSale != null) {
+			saleDao.setDiscount(currentSale);
+		}
 	}
 }

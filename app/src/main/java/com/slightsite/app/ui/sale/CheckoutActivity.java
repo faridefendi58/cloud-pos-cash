@@ -48,6 +48,7 @@ import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.domain.sale.SaleLedger;
 import com.slightsite.app.domain.sale.Shipping;
+import com.slightsite.app.domain.shipping.ShippingService;
 import com.slightsite.app.domain.warehouse.AdminInWarehouse;
 import com.slightsite.app.domain.warehouse.AdminInWarehouseCatalog;
 import com.slightsite.app.domain.warehouse.AdminInWarehouseService;
@@ -160,9 +161,9 @@ public class CheckoutActivity extends AppCompatActivity {
             warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
             getWarehouseList();
             if (register.getCurrentSale().getStatus().equals("ENDED")) {
-                Log.e(getClass().getSimpleName(), "register.getCustomer() : "+ register.getCustomer().toMap().toString());
+                //Log.e(getClass().getSimpleName(), "register.getCustomer() : "+ register.getCustomer().toMap().toString());
                 customer = register.getCustomer();
-                Log.e(getClass().getSimpleName(), "customer : "+ customer.toString());
+                //Log.e(getClass().getSimpleName(), "customer : "+ customer.toString());
                 setCustomer(customer);
                 // build the default payment if any
                 if (register.getPaymentItems() != null) {
@@ -243,8 +244,8 @@ public class CheckoutActivity extends AppCompatActivity {
                 } else {
                     if (array_state[idx_state] == State.SHIPPING) {
                         // cek customer data dl
-                        Log.e(TAG, "shipping data on SHIPPING : "+ checkout_data.getShipping().toMap().toString());
-                        Log.e(TAG, "customer data on SHIPPING : "+ checkout_data.getCustomer().toMap().toString());
+                        //Log.e(TAG, "shipping data on SHIPPING : "+ checkout_data.getShipping().toMap().toString());
+                        //Log.e(TAG, "customer data on SHIPPING : "+ checkout_data.getCustomer().toMap().toString());
                         if (checkout_data.getCustomer().equals("null")
                                 || checkout_data.getCustomer().getEmail() == "email@email.com"
                                 || (checkout_data.getCustomer().getName().length() == 0)) {
@@ -255,7 +256,7 @@ public class CheckoutActivity extends AppCompatActivity {
                             return;
                         }
                     } else if (array_state[idx_state] == State.PAYMENT) {
-                        Log.e(TAG, "shipping data on payment : "+ checkout_data.getShipping().toMap().toString());
+                        //Log.e(TAG, "shipping data on payment : "+ checkout_data.getShipping().toMap().toString());
                         if (checkout_data.getTotalPaymentReceived() <= 0) {
                             Toast.makeText(getBaseContext(),
                                     getResources().getString(R.string.error_empty_payment_data), Toast.LENGTH_SHORT)
@@ -633,6 +634,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
         ArrayList arrPaymentList = new ArrayList();
         Map<String, String> arrPayment = new HashMap<String, String>();
+        ArrayList arrShippingList = new ArrayList();
         try {
             Customer cust = saleLedger.getCustomerBySaleId(saleId);
             mObj.put("items_belanja", arrItems);
@@ -662,6 +664,11 @@ public class CheckoutActivity extends AppCompatActivity {
             if (whParam != null) {
                 mObj.put("warehouse_id", whParam.getValue());
             }
+
+            mObj.put("discount", sale.getDiscount());
+
+            arrShippingList.add(shipping.toMap());
+            mObj.put("shipping", arrShippingList);
         } catch (Exception e) {
             e.printStackTrace();
         }
