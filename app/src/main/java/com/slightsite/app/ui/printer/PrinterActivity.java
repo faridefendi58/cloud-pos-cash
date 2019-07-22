@@ -19,6 +19,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -37,6 +38,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.slightsite.app.R;
+import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.ParamsController;
 import com.slightsite.app.domain.ProfileController;
@@ -456,6 +458,169 @@ public class PrinterActivity extends AppCompatActivity {
             res += String.format("%1$-12s %2$-4s %3$,-2d%n%n",
                     getResources().getString(R.string.label_dept), ":", change_due);
         }
+
+        res += printerConfigs.get("footer");
+        res += "\n";
+
+        return res;
+    }
+
+    public String getFormatedReceiptHtml() {
+        // geting the transaction data
+        try {
+            saleId = Integer.parseInt(getIntent().getExtras().get("saleId").toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            saleLedger = SaleLedger.getInstance();
+            paymentCatalog = PaymentService.getInstance().getPaymentCatalog();
+            if (saleId > 0) {
+                paymentList = paymentCatalog.getPaymentBySaleId(saleId);
+            }
+
+            warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
+
+            Params whParam = paramCatalog.getParamByName("warehouse_id");
+            if (whParam instanceof Params) {
+                warehouse_id = Integer.parseInt(whParam.getValue());
+                warehouse = warehouseCatalog.getWarehouseByWarehouseId(warehouse_id);
+            }
+        } catch (NoDaoSetException e) {
+            e.printStackTrace();
+        }
+
+        int char_length = Integer.parseInt(printerConfigs.get("char_length"));
+
+        String res = "\n";
+        if (warehouse != null) {
+            Params store_name = paramCatalog.getParamByName("store_name");
+            if (store_name instanceof Params) {
+                res += "<p><center><b>"+ store_name.getValue() +" "+warehouse.getTitle() +"</b></center></p>";
+            } else {
+                res += String.format("%s%n", warehouse.getTitle());
+            }
+            res += "<p><center>"+ warehouse.getAddress() +"<br/>";
+            res += warehouse.getPhone() +"</center></p>";
+        } else {
+            res += printerConfigs.get("header");
+        }
+
+        res += "<hr/>";
+
+        String current_time =  DateTimeStrategy.getCurrentTime();
+
+        sale = saleLedger.getSaleById(saleId);
+        Double sale_total = 0.00;
+        Double amount_tendered = 0.00;
+        try {
+            current_time = sale.getEndTime();
+            sale_total = sale.getTotal();
+        } catch (Exception e) { e.printStackTrace(); }
+
+        String[] separated = current_time.split(" ");
+        res += "<table>";
+        res += "<tr><td>"+ getResources().getString(R.string.label_date)+ "</td><td> : "+ separated[0] +"</td>";
+        String date_transaction = sale.getEndTime();
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MMM-dd  hh:mm a");
+            date_transaction = DateTimeStrategy.parseDate(sale.getEndTime(), "yyMMdd");
+
+        } catch (Exception e) {
+
+        }
+
+        sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
+        adminData = ProfileController.getInstance().getDataByEmail(sharedpreferences.getString(LoginActivity.TAG_EMAIL, null));
+        String admin_id = ParamsController.getInstance().getParam("admin_id");
+
+        String no_nota = date_transaction+"/"+sale.getId();
+        if (admin_id != null) {
+            //no_nota = date_transaction+"/"+ sharedpreferences.getString(LoginActivity.TAG_ID, null) +"/"+sale.getId();
+            no_nota = date_transaction+"/"+ admin_id +"/"+sale.getId();
+        }
+
+        res += "<tr><td>"+ getResources().getString(R.string.label_no_nota)+ "</td><td> : "+ no_nota +"</td>";
+        res += "<tr><td>"+ getResources().getString(R.string.label_hour)+ "</td><td> : "+ separated[1] +"</td>";
+
+        if (adminData != null) {
+            res += "<tr><td>"+ getResources().getString(R.string.label_cashier)+ "</td><td> : "+ adminData.getAsString(LoginActivity.TAG_NAME) +"</td>";
+        }
+
+        List<LineItem> list = sale.getAllLineItem();
+        lineitemList = new ArrayList<Map<String, String>>();
+        for(LineItem line : list) {
+            lineitemList.add(line.toMap());
+        }
+
+        res += "</table>";
+        res += "<hr/>";
+        res += "<table width=\"100%\">";
+
+        int sub_total = 0;
+        int ppn = 0;
+        for (int i = 0; i < lineitemList.size(); ++i) {
+            res += "<tr><td colspan=\"2\">"+ lineitemList.get(i).get("name") +"</td></tr>";
+            int qty = Integer.parseInt(lineitemList.get(i).get("quantity"));
+            int prc = Integer.parseInt(lineitemList.get(i).get("price").replace(".", ""));
+            int tot = prc * qty;
+            res += "<tr><td style=\"padding-left:20px;\">"+ qty +" x "+ CurrencyController.getInstance().moneyFormat(prc) +"</td>";
+            res += "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(tot) +"</td></tr>";
+
+            sub_total = sub_total + tot;
+        }
+        res += "</table>";
+        res += "<hr/>";
+
+        res += "<table width=\"100%\" style=\"margin-top:10px;\">";
+        res += "<tr><td colspan=\"2\" style=\"text-align:right;\">Sub Total :</td><td style=\"text-align:right;\">"+ sub_total +"</td>";
+        res += "<tr><td colspan=\"2\" style=\"text-align:right;\">PPN :</td><td style=\"text-align:right;\">"+ ppn +"</td>";
+        res += "<tr><td colspan=\"2\" style=\"text-align:right;\">Diskon :</td><td style=\"text-align:right;\">0</td>";
+
+        int grand_total = sub_total + ppn;
+        if (sale_total > 0) {
+            Double myDouble = Double.valueOf(sale_total);
+            Integer int_sale_total = Integer.valueOf(myDouble.intValue());
+            if (grand_total != int_sale_total) {
+                grand_total = int_sale_total;
+            }
+        }
+
+        int cash = grand_total;
+        int change_due = grand_total - cash;
+        res += "<tr><td colspan=\"2\" style=\"text-align:right;\">Grand Total :</td><td style=\"text-align:right;\">"+ grand_total +"</td>";
+
+        if (paymentList != null && !paymentList.isEmpty()) {
+            int payment_total = 0;
+            for (int j = 0; j < paymentList.size(); ++j) {
+                Payment py = paymentList.get(j);
+                int amnt = 0;
+                String amnt_str = String.format("%.0f", py.getAmount());
+                try {
+                    amnt = Integer.parseInt(amnt_str);
+                    payment_total = payment_total + amnt;
+                } catch (Exception e){
+                    Log.e(getClass().getSimpleName(), e.getMessage());
+                }
+
+                res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(getPaymentChannel(py.getPaymentChannel())) +" :</td>" +
+                        "<td style=\"text-align:right;\">"+ amnt +"</td>";
+            }
+            change_due = payment_total - grand_total;
+        } else {
+            res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(R.string.payment_cash) +" :</td>" +
+                    "<td style=\"text-align:right;\">"+ cash +"</td>";
+        }
+
+        if (change_due >= 0) {
+            res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_change_due) +" :</td>" +
+                    "<td style=\"text-align:right;\">"+ change_due +"</td>";
+        } else {
+            res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_dept) +" :</td>" +
+                    "<td style=\"text-align:right;\">"+ change_due +"</td>";
+        }
+        res += "</table>";
 
         res += printerConfigs.get("footer");
         res += "\n";

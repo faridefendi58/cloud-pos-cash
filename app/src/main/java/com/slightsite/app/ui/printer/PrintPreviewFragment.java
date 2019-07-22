@@ -2,12 +2,23 @@ package com.slightsite.app.ui.printer;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Html;
+import android.text.Layout;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.AlignmentSpan;
+import android.text.style.StyleSpan;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.slightsite.app.R;
@@ -16,6 +27,7 @@ import com.slightsite.app.ui.MainActivity;
 public class PrintPreviewFragment extends Fragment {
     private Context context;
     private GridListAdapter adapter;
+    private WebView print_webview;
 
     public PrintPreviewFragment() {
     }
@@ -40,10 +52,15 @@ public class PrintPreviewFragment extends Fragment {
     }
 
     private void loadPreview(View view) {
-        TextView listView = (TextView) view.findViewById(R.id.print_preview);
+        TextView print_preview = (TextView) view.findViewById(R.id.print_preview);
+        WebView print_webview = (WebView) view.findViewById(R.id.print_webview);
 
-        String formated_receipt = ((PrinterActivity)getActivity()).getFormatedReceipt();
-        listView.setText(formated_receipt);
+        String formated_receipt = ((PrinterActivity)getActivity()).getFormatedReceiptHtml();
+
+        print_webview.loadDataWithBaseURL(null, "<html><body>"+ formated_receipt +"</body></html>", "text/html", "utf-8", null);
+
+        //Spanned result = Html.fromHtml(formated_receipt);
+        //print_preview.setText(result);
     }
 
     private void onClickEvent(View view) {
