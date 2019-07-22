@@ -229,6 +229,8 @@
     <string name="label_shipping_address">Alamat Pengiriman</string>
     <string name="label_payment_total_receieved">Total Dibayarkan</string>
     <string name="label_payment_change_due">Kembali</string>
+    <string name="label_created_by">Dibuat Oleh</string>
+    <string name="label_processed_by">Diproses Oleh</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Mandiri</string>

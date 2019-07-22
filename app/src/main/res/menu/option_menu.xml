@@ -2,12 +2,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_edit"
+        android:id="@+id/action_print"
         android:orderInCategory="100"
         app:showAsAction="ifRoom"
         android:showAsAction="always"
-        android:icon="@android:drawable/ic_menu_edit"
-        android:title="@string/edit"/>
+        android:icon="@drawable/ic_print_white_24dp"
+        android:title="@string/print_invoice"/>
+
+    <item
+        android:id="@+id/action_edit"
+        android:title="@string/edit">
+    </item>
 
     <item
         android:id="@+id/action_remove"
@@ -15,12 +20,8 @@
     </item>
 
     <item
-        android:id="@+id/action_print"
-        android:title="@string/print_invoice">
-    </item>
-
-    <item
         android:id="@+id/action_push"
-        android:title="@string/push">
+        android:title="@string/push"
+        android:visible="false">
     </item>
 </menu>

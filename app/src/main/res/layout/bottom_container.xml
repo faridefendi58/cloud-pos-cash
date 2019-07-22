@@ -23,8 +23,8 @@
         android:layout_marginLeft="@dimen/spacing_small"
         android:layout_weight="1"
         android:text="@string/print_invoice"
-        android:textColor="@color/yellow_800"
-        android:background="@drawable/btn_bordered"
+        android:textColor="@color/yellowDarkUcok"
+        android:background="@drawable/btn_bordered_warning"
         android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
 </LinearLayout>

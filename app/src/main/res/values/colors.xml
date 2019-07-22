@@ -28,9 +28,9 @@
     <color name="btnDanger">#dc3545</color>
     <color name="btnWarning">#ffc107</color>
     <color name="btnInfo">#17a2b8</color>
-    <color name="greenUcok">#1ABC9C</color>
-    <color name="yellowUcok">#eecb1d</color>
-    <color name="yellowDarkUcok">#bbaa18</color>
+    <color name="greenUcok">#019e47</color>
+    <color name="yellowUcok">#ffff00</color>
+    <color name="yellowDarkUcok">#bdae31</color>
 
     <color name="overlay_dark_10">#1A000000</color>
     <color name="overlay_dark_20">#33000000</color>

@@ -235,6 +235,8 @@
     <string name="label_shipping_address">Shipping Location</string>
     <string name="label_payment_total_receieved">Total Payment Received</string>
     <string name="label_payment_change_due">Change Due</string>
+    <string name="label_created_by">Created By</string>
+    <string name="label_processed_by">Processed By</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>

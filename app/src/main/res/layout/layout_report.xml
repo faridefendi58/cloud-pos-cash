@@ -50,7 +50,8 @@
         android:baselineAligned="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <TableRow
             android:layout_width="0dp"
@@ -65,7 +66,7 @@
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="2"
-                android:background="@color/btnInfo"
+                android:background="@color/yellowDarkUcok"
                 android:gravity="center"
                 android:paddingRight="3dp"
                 android:text="@string/label_no_nota"
@@ -86,7 +87,7 @@
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1.5"
-                android:background="@color/btnInfo"
+                android:background="@color/yellowDarkUcok"
                 android:gravity="center"
                 android:paddingRight="3dp"
                 android:text="@string/label_detail"
@@ -109,7 +110,7 @@
                 android:layout_width="0dp"
                 android:layout_height="30dp"
                 android:layout_weight="0.75"
-                android:background="@color/btnInfo"
+                android:background="@color/yellowDarkUcok"
                 android:gravity="center"
                 android:paddingRight="3dp"
                 android:text="@string/total"
@@ -130,6 +131,7 @@
             android:layout_width="match_parent"
             android:layout_height="fill_parent" >
         </ListView>
+
     </LinearLayout>
 
     <LinearLayout
@@ -151,7 +153,7 @@
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="2"
-                android:background="@color/btnInfo"
+                android:background="@color/yellowDarkUcok"
                 android:gravity="center"
                 android:paddingRight="3dp"
                 android:text="@string/total"
@@ -174,7 +176,7 @@
                 android:layout_width="0dp"
                 android:layout_height="30dp"
                 android:layout_weight="0.75"
-                android:background="@color/btnInfo"
+                android:background="@color/yellowDarkUcok"
                 android:gravity="right|center_vertical"
                 android:paddingRight="10dp"
                 android:textColor="#FFFFFF"

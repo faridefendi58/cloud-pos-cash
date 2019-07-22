@@ -42,6 +42,9 @@ import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.ParamsController;
 import com.slightsite.app.domain.ProfileController;
+import com.slightsite.app.domain.customer.Customer;
+import com.slightsite.app.domain.customer.CustomerCatalog;
+import com.slightsite.app.domain.customer.CustomerService;
 import com.slightsite.app.domain.inventory.LineItem;
 import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
@@ -84,10 +87,12 @@ public class PrinterActivity extends AppCompatActivity {
     private SaleLedger saleLedger;
     private PaymentCatalog paymentCatalog;
     private WarehouseCatalog warehouseCatalog;
+    private CustomerCatalog customerCatalog;
     private List<Payment> paymentList;
     private List<Map<String, String>> lineitemList;
     private int warehouse_id;
     private Warehouses warehouse;
+    private Customer customer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -481,6 +486,13 @@ public class PrinterActivity extends AppCompatActivity {
             }
 
             warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
+            customerCatalog = CustomerService.getInstance().getCustomerCatalog();
+
+            sale = saleLedger.getSaleById(saleId);
+
+            if (sale.getCustomerId() > 0) {
+                customer = customerCatalog.getCustomerById(sale.getCustomerId());
+            }
 
             Params whParam = paramCatalog.getParamByName("warehouse_id");
             if (whParam instanceof Params) {
@@ -493,16 +505,16 @@ public class PrinterActivity extends AppCompatActivity {
 
         int char_length = Integer.parseInt(printerConfigs.get("char_length"));
 
-        String res = "\n";
+        String res = "<style>p, table td{font-size:14px !important;}</style>";
         if (warehouse != null) {
             Params store_name = paramCatalog.getParamByName("store_name");
             if (store_name instanceof Params) {
-                res += "<p><center><b>"+ store_name.getValue() +" "+warehouse.getTitle() +"</b></center></p>";
+                res += "<table width=\"100%\" style=\"margin-top:30px;\"><tr><td><center><b>"+ store_name.getValue() +" "+warehouse.getTitle() +"</b></center></td></tr>";
             } else {
                 res += String.format("%s%n", warehouse.getTitle());
             }
-            res += "<p><center>"+ warehouse.getAddress() +"<br/>";
-            res += warehouse.getPhone() +"</center></p>";
+            res += "<tr><td><center>"+ warehouse.getAddress() +"</center></td></tr>";
+            res += "<tr><td><center>"+ warehouse.getPhone() +"</center></td></tr></table>";
         } else {
             res += printerConfigs.get("header");
         }
@@ -511,7 +523,6 @@ public class PrinterActivity extends AppCompatActivity {
 
         String current_time =  DateTimeStrategy.getCurrentTime();
 
-        sale = saleLedger.getSaleById(saleId);
         Double sale_total = 0.00;
         Double amount_tendered = 0.00;
         try {
@@ -527,25 +538,33 @@ public class PrinterActivity extends AppCompatActivity {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MMM-dd  hh:mm a");
             date_transaction = DateTimeStrategy.parseDate(sale.getEndTime(), "yyMMdd");
 
-        } catch (Exception e) {
-
-        }
+        } catch (Exception e) { e.printStackTrace(); }
 
         sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
         adminData = ProfileController.getInstance().getDataByEmail(sharedpreferences.getString(LoginActivity.TAG_EMAIL, null));
         String admin_id = ParamsController.getInstance().getParam("admin_id");
 
         String no_nota = date_transaction+"/"+sale.getId();
-        if (admin_id != null) {
-            //no_nota = date_transaction+"/"+ sharedpreferences.getString(LoginActivity.TAG_ID, null) +"/"+sale.getId();
-            no_nota = date_transaction+"/"+ admin_id +"/"+sale.getId();
+        if (sale.getServerInvoiceNumber() != null) {
+            no_nota = sale.getServerInvoiceNumber();
+        } else {
+            if (admin_id != null) {
+                no_nota = date_transaction + "/" + admin_id + "/" + sale.getId();
+            }
         }
 
-        res += "<tr><td>"+ getResources().getString(R.string.label_no_nota)+ "</td><td> : "+ no_nota +"</td>";
-        res += "<tr><td>"+ getResources().getString(R.string.label_hour)+ "</td><td> : "+ separated[1] +"</td>";
+        res += "<tr><td>"+ getResources().getString(R.string.label_no_nota)+ "</td><td> : "+ no_nota +"</td></tr>";
+        res += "<tr><td>"+ getResources().getString(R.string.label_hour)+ "</td><td> : "+ separated[1] +"</td></tr>";
 
         if (adminData != null) {
-            res += "<tr><td>"+ getResources().getString(R.string.label_cashier)+ "</td><td> : "+ adminData.getAsString(LoginActivity.TAG_NAME) +"</td>";
+            res += "<tr><td>"+ getResources().getString(R.string.label_created_by)+ "</td><td> : "+ adminData.getAsString(LoginActivity.TAG_NAME) +"</td></tr>";
+            res += "<tr><td>"+ getResources().getString(R.string.label_processed_by)+ "</td><td> : "+ adminData.getAsString(LoginActivity.TAG_NAME) +"</td></tr>";
+        }
+
+        if (customer != null) {
+            res += "<tr><td>"+ getResources().getString(R.string.label_customer_name)+ "</td><td> : "+ customer.getName() +"</td></tr>";
+            res += "<tr><td>"+ getResources().getString(R.string.label_customer_address)+ "</td><td> : "+ customer.getAddress() +"</td></tr>";
+            res += "<tr><td>"+ getResources().getString(R.string.label_customer_phone)+ "</td><td> : "+ customer.getPhone() +"</td></tr>";
         }
 
         List<LineItem> list = sale.getAllLineItem();
@@ -574,22 +593,26 @@ public class PrinterActivity extends AppCompatActivity {
         res += "<hr/>";
 
         res += "<table width=\"100%\" style=\"margin-top:10px;\">";
-        res += "<tr><td colspan=\"2\" style=\"text-align:right;\">Sub Total :</td><td style=\"text-align:right;\">"+ sub_total +"</td>";
-        res += "<tr><td colspan=\"2\" style=\"text-align:right;\">PPN :</td><td style=\"text-align:right;\">"+ ppn +"</td>";
-        res += "<tr><td colspan=\"2\" style=\"text-align:right;\">Diskon :</td><td style=\"text-align:right;\">0</td>";
+        res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_sub_total) +" :</td>" +
+                "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(sub_total) +"</td>";
+        //res += "<tr><td colspan=\"2\" style=\"text-align:right;\">PPN :</td><td style=\"text-align:right;\">"+ ppn +"</td>";
+        int discount = sale.getDiscount();
+        res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_discount) +" :</td>" +
+                "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(discount) +"</td>";
 
-        int grand_total = sub_total + ppn;
-        if (sale_total > 0) {
+        int grand_total = sub_total + ppn - discount;
+        /*if (sale_total > 0) {
             Double myDouble = Double.valueOf(sale_total);
             Integer int_sale_total = Integer.valueOf(myDouble.intValue());
             if (grand_total != int_sale_total) {
                 grand_total = int_sale_total;
             }
-        }
+        }*/
 
         int cash = grand_total;
         int change_due = grand_total - cash;
-        res += "<tr><td colspan=\"2\" style=\"text-align:right;\">Grand Total :</td><td style=\"text-align:right;\">"+ grand_total +"</td>";
+        res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_grand_total) +" :</td>" +
+                "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(grand_total) +"</td>";
 
         if (paymentList != null && !paymentList.isEmpty()) {
             int payment_total = 0;
@@ -605,25 +628,25 @@ public class PrinterActivity extends AppCompatActivity {
                 }
 
                 res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(getPaymentChannel(py.getPaymentChannel())) +" :</td>" +
-                        "<td style=\"text-align:right;\">"+ amnt +"</td>";
+                        "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(amnt) +"</td>";
             }
             change_due = payment_total - grand_total;
         } else {
             res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(R.string.payment_cash) +" :</td>" +
-                    "<td style=\"text-align:right;\">"+ cash +"</td>";
+                    "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(cash) +"</td>";
         }
 
         if (change_due >= 0) {
             res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_change_due) +" :</td>" +
-                    "<td style=\"text-align:right;\">"+ change_due +"</td>";
+                    "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(change_due) +"</td>";
         } else {
+            int debt = -1 * change_due;
             res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_dept) +" :</td>" +
-                    "<td style=\"text-align:right;\">"+ change_due +"</td>";
+                    "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(debt) +"</td>";
         }
         res += "</table>";
 
-        res += printerConfigs.get("footer");
-        res += "\n";
+        res += "<table style=\"width:100%;margin-top:30px;\"><tr><td><center>"+ printerConfigs.get("footer") +"</center></td></tr></table>";
 
         return res;
     }

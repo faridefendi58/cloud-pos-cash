@@ -195,7 +195,7 @@ public class ReportFragment extends UpdatableFragment {
 		}
 
 		sAdap = new SimpleAdapter(getActivity().getBaseContext() , saleList,
-				R.layout.listview_report, new String[] { "id", "startTime", "total", "invoiceNumber", "customer_data"},
+				R.layout.listview_report_v2, new String[] { "id", "startTime", "total", "invoiceNumber", "customer_data"},
 				new int[] { R.id.sid, R.id.startTime , R.id.total, R.id.invoice_number, R.id.customer_data});
 		saleLedgerListView.setAdapter(sAdap);
 	}
