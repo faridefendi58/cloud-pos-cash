@@ -32,9 +32,9 @@
         <item name="android:windowNoTitle">true</item>
         <item name="colorPrimary">@color/greenUcok</item>
         <item name="colorPrimaryDark">@color/yellowDarkUcok</item>
-        <item name="colorAccent">@color/yellowUcok</item>
+        <item name="colorAccent">@color/red_600</item>
         <item name="colorControlNormal">@color/greenUcok</item>
-        <item name="colorControlActivated">@color/yellowUcok</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="android:actionModeBackground">@color/blue_grey_600</item>
         <item name="android:dialogTheme">@style/Dialog.Theme</item>

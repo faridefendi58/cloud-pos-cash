@@ -48,7 +48,7 @@ public class ProfileActivity extends Activity {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             ActionBar actionBar = getActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1ABC9C")));
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#019e47")));
             actionBar.setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#e2e3e5")));
         }
     }

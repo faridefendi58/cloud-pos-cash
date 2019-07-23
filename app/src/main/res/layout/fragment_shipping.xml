@@ -230,18 +230,84 @@
                     android:singleLine="true"
                     android:visibility="gone"/>
 
-                <EditText
-                    style="@style/EditText.Flat.Grey"
-                    android:id="@+id/shipping_address"
+                <LinearLayout
+                    android:id="@+id/shipping_name_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_large"
-                    android:background="@drawable/edit_text_round_bg_outline"
-                    android:hint="@string/label_shipping_address"
-                    android:minHeight="@dimen/spacing_xmlarge"
-                    android:singleLine="true"
-                    android:imeOptions="actionDone"
-                    android:visibility="gone"/>
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <EditText
+                        style="@style/EditText.Flat.Grey"
+                        android:id="@+id/shipping_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_large"
+                        android:background="@drawable/edit_text_round_bg_outline"
+                        android:hint="@string/label_shipping_name"
+                        android:minHeight="@dimen/spacing_xmlarge"
+                        android:inputType="textPersonName"
+                        android:singleLine="true"/>
+
+                    <EditText
+                        style="@style/EditText.Flat.Grey"
+                        android:id="@+id/shipping_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_large"
+                        android:background="@drawable/edit_text_round_bg_outline"
+                        android:hint="@string/label_shipping_phone"
+                        android:minHeight="@dimen/spacing_xmlarge"
+                        android:inputType="phone"
+                        android:singleLine="true"/>
+
+                    <EditText
+                        style="@style/EditText.Flat.Grey"
+                        android:id="@+id/shipping_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_large"
+                        android:background="@drawable/edit_text_round_bg_outline"
+                        android:hint="@string/label_shipping_address"
+                        android:minHeight="@dimen/spacing_xmlarge"
+                        android:singleLine="true"
+                        android:imeOptions="actionDone"
+                        android:visibility="gone"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:paddingTop="@dimen/spacing_large"
+                        android:paddingLeft="@dimen/spacing_middle"
+                        android:clickable="true"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/label_shipping_use_customer_data"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textColor="@color/grey_40"
+                            android:textStyle="italic"
+                            android:gravity="right"
+                            app:fontFamily="sans-serif-medium" />
+
+                        <View
+                            android:layout_width="@dimen/spacing_middle"
+                            android:layout_height="wrap_content" />
+
+                        <android.support.v7.widget.SwitchCompat
+                            android:id="@+id/switch_use_customer_data"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="false"
+                            app:thumbTint="@color/switch_color_primary"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
 
             </LinearLayout>
 

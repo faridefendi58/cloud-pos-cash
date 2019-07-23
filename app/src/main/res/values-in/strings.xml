@@ -54,6 +54,7 @@
     <string name="language">Bahasa</string>
     <string name="payment">Pembayaran</string>
     <string name="next_to_payment">Lanjut ke Pembayaran</string>
+    <string name="next_to_checkout">Lanjut ke Checkout</string>
     <string name="update">Ubah</string>
     <string name="favorite">Paling Disukai</string>
     <string name="all_list">Semua Daftar</string>
@@ -227,6 +228,9 @@
     <string name="label_shipping_date">Tanggal Ambil/Kirim</string>
     <string name="label_shipping_location">Lokasi Pengambilan</string>
     <string name="label_shipping_address">Alamat Pengiriman</string>
+    <string name="label_shipping_name">Nama Penerima</string>
+    <string name="label_shipping_phone">No Telepon Penerima</string>
+    <string name="label_shipping_use_customer_data">Sama dengan data pelanggan</string>
     <string name="label_payment_total_receieved">Total Dibayarkan</string>
     <string name="label_payment_change_due">Kembali</string>
     <string name="label_created_by">Dibuat Oleh</string>
@@ -238,7 +242,7 @@
     <string name="payment_bri">Transfer BRI</string>
     <string name="payment_edc">Mesin EDC</string>
 
-    <string name="button_add_to_cart">Tambah</string>
+    <string name="button_add_to_cart">Tambahkan</string>
     <string name="button_syncron">Sinkronkan</string>
     <string name="button_back">Kembali</string>
     <string name="button_login">Masuk</string>

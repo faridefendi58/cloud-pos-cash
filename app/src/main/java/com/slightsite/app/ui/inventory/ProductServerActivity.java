@@ -89,7 +89,7 @@ public class ProductServerActivity extends Activity {
             ActionBar actionBar = getActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(res.getString(R.string.action_syncronize));
-            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1ABC9C")));
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#019e47")));
             actionBar.setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#e2e3e5")));
         }
     }

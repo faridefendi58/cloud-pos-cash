@@ -210,9 +210,10 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/next_checkout_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/label_checkout_save_order"
+                        android:text="@string/next_to_payment"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
                         android:textColor="@android:color/white" />
 

@@ -87,7 +87,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
     private View line_first, line_second;
     private ImageView image_shipping, image_payment, image_confirm;
-    private TextView tv_shipping, tv_payment, tv_confirm;
+    private TextView tv_shipping, tv_payment, tv_confirm, next_checkout_button;
 
     private int idx_state = 0;
 
@@ -209,6 +209,7 @@ public class CheckoutActivity extends AppCompatActivity {
         tv_shipping = (TextView) findViewById(R.id.tv_shipping);
         tv_payment = (TextView) findViewById(R.id.tv_payment);
         tv_confirm = (TextView) findViewById(R.id.tv_confirm);
+        next_checkout_button = (TextView) findViewById(R.id.next_checkout_button);
 
         image_payment.setColorFilter(getResources().getColor(R.color.grey_10), PorterDuff.Mode.SRC_ATOP);
         image_confirm.setColorFilter(getResources().getColor(R.color.grey_10), PorterDuff.Mode.SRC_ATOP);
@@ -275,7 +276,7 @@ public class CheckoutActivity extends AppCompatActivity {
         (findViewById(R.id.lyt_previous)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (idx_state < 1) return;
+                if (idx_state < 1) {finish();return;};
                 idx_state--;
                 displayFragment(array_state[idx_state]);
             }
@@ -323,6 +324,8 @@ public class CheckoutActivity extends AppCompatActivity {
                 bundle.putString("shipping_warehouse_id", shipping_wh_id+"");
                 bundle.putString("shipping_date", shipping.getDate());
                 bundle.putString("shipping_address", shipping.getAddress());
+                bundle.putString("shipping_name", shipping.getName());
+                bundle.putString("shipping_phone", shipping.getPhone());
                 fragment.setArguments(bundle);
 
                 if (shipping.getWarehouseName() == null && bundle.getString("shipping_warehouse").length() > 0) {
@@ -334,6 +337,8 @@ public class CheckoutActivity extends AppCompatActivity {
 
                 checkout_data.setCustomer(customer);
                 checkout_data.setShipping(shipping);
+
+                next_checkout_button.setText(getResources().getString(R.string.next_to_payment));
             } catch (Exception e) {}
 
             tv_shipping.setTextColor(getResources().getColor(R.color.grey_90));
@@ -349,13 +354,16 @@ public class CheckoutActivity extends AppCompatActivity {
             if (!checkout_data.getCustomer().equals(null)) {
                 register.setCustomer(checkout_data.getCustomer());
             }
-            //Log.e(TAG, "CUK2 : "+ getShipping().toMap().toString());
+
+            next_checkout_button.setText(getResources().getString(R.string.next_to_checkout));
         } else if (state.name().equalsIgnoreCase(State.CONFIRMATION.name())) {
             fragment = new ConfirmationFragment();
             line_second.setBackgroundColor(getResources().getColor(R.color.greenUcok));
             image_payment.setColorFilter(getResources().getColor(R.color.greenUcok), PorterDuff.Mode.SRC_ATOP);
             image_confirm.clearColorFilter();
             tv_confirm.setTextColor(getResources().getColor(R.color.grey_90));
+
+            next_checkout_button.setText(getResources().getString(R.string.label_checkout_save_order));
         }
 
         if (fragment == null) return;

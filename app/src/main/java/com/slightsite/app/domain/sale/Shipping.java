@@ -12,12 +12,15 @@ public class Shipping implements Serializable {
     private int method;
     private int sale_id;
     private String date;
+    private String name;
+    private String phone;
     private String address;
     private int warehouse_id;
     private String warehouse_name;
     private String date_added;
     private String configs;
     private String pickup_date;
+    private Boolean use_customer_data = false;
 
     public static final int UNDEFINED = -1;
 
@@ -81,6 +84,20 @@ public class Shipping implements Serializable {
         return date;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getName() {
+        return name;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    public String getPhone() {
+        return phone;
+    }
+
     public void setAddress(String address) {
         this.address = address;
     }
@@ -121,5 +138,12 @@ public class Shipping implements Serializable {
     }
     public String getPickupDate() {
         return pickup_date;
+    }
+
+    public void setUseCustomerData(Boolean _use_cust_data) {
+        this.use_customer_data = _use_cust_data;
+    }
+    public Boolean getUseCustomerData() {
+        return use_customer_data;
     }
 }

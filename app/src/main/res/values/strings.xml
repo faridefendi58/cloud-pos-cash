@@ -54,6 +54,7 @@
     <string name="language">Language</string>
     <string name="payment">Payment</string>
     <string name="next_to_payment">Next to Payment</string>
+    <string name="next_to_checkout">Next to Checkout</string>
     <string name="update">Update</string>
     <string name="favorite">Favorite</string>
     <string name="all_list">All List</string>
@@ -233,6 +234,9 @@
     <string name="label_shipping_date">Shipping Date</string>
     <string name="label_shipping_location">Shipping Location</string>
     <string name="label_shipping_address">Shipping Location</string>
+    <string name="label_shipping_name">Recipient Name</string>
+    <string name="label_shipping_phone">Recipient Phone</string>
+    <string name="label_shipping_use_customer_data">Same as customer data</string>
     <string name="label_payment_total_receieved">Total Payment Received</string>
     <string name="label_payment_change_due">Change Due</string>
     <string name="label_created_by">Created By</string>

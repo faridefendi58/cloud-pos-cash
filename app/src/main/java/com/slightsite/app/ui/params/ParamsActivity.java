@@ -80,7 +80,7 @@ public class ParamsActivity extends Activity {
             ActionBar actionBar = getActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(getResources().getString(R.string.params));
-            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1ABC9C")));
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#019e47")));
             actionBar.setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#e2e3e5")));
         }
     }

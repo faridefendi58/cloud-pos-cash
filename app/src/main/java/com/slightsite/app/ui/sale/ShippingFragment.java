@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.SwitchCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -18,8 +19,10 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -65,6 +68,10 @@ public class ShippingFragment extends Fragment {
     private AutoCompleteTextView shipping_date;
     private AutoCompleteTextView shipping_warehouse;
     private EditText shipping_address;
+    private EditText shipping_name;
+    private EditText shipping_phone;
+    private LinearLayout shipping_name_container;
+    private SwitchCompat switch_use_customer_data;
 
     private Checkout c_data;
     private String customer_name;
@@ -134,6 +141,8 @@ public class ShippingFragment extends Fragment {
 
             String _shipping_date = getArguments().getString("shipping_date");
             String _shipping_address = getArguments().getString("shipping_address");
+            String _shipping_name = getArguments().getString("shipping_name");
+            String _shipping_phone = getArguments().getString("shipping_phone");
             int _shipping_method_id = Arrays.asList(ship_methods).indexOf(_shipping_method);
 
             if (_shipping_method != null) {
@@ -143,12 +152,17 @@ public class ShippingFragment extends Fragment {
                 ship.setWarehouseName(_shipping_warehouse);
                 ship.setWarehouseId(_shipping_warehouse_id);
                 ship.setDate(_shipping_date);
+                ship.setName(_shipping_name);
+                ship.setPhone(_shipping_phone);
                 ship.setAddress(_shipping_address);
                 ((CheckoutActivity)getActivity()).setShipping(ship, c_data);
             }
             shipping_warehouse.setText(_shipping_warehouse);
             shipping_date.setText(_shipping_date);
+            shipping_name.setText(_shipping_name);
+            shipping_phone.setText(_shipping_phone);
             shipping_address.setText(_shipping_address);
+            switch_use_customer_data.setChecked(ship.getUseCustomerData());
 
             setupShippingForm(_shipping_method_id);
         } catch (Exception e) {
@@ -166,7 +180,11 @@ public class ShippingFragment extends Fragment {
         shipping_method = (EditText) root.findViewById(R.id.shipping_method);
         shipping_date = (AutoCompleteTextView) root.findViewById(R.id.shipping_date);
         shipping_address = (EditText) root.findViewById(R.id.shipping_address);
+        shipping_name = (EditText) root.findViewById(R.id.shipping_name);
+        shipping_phone = (EditText) root.findViewById(R.id.shipping_phone);
         shipping_warehouse = (AutoCompleteTextView) root.findViewById(R.id.shipping_warehouse);
+        shipping_name_container = (LinearLayout) root.findViewById(R.id.shipping_name_container);
+        switch_use_customer_data = (SwitchCompat) root.findViewById(R.id.switch_use_customer_data);
 
         final TextView customer_id = (TextView) root.findViewById(R.id.customer_id);
         float elevation = 6f;
@@ -279,8 +297,19 @@ public class ShippingFragment extends Fragment {
                     }
                     if (setType == "shipping_address") {
                         if (s.toString().length() > 5) {
-                            //Log.e(getClass().getSimpleName(), "Pas edit shipping_address " + s.toString());
                             ship.setAddress(s.toString());
+                            ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
+                        }
+                    }
+                    if (setType == "shipping_name") {
+                        if (s.toString().length() > 2) {
+                            ship.setName(s.toString());
+                            ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
+                        }
+                    }
+                    if (setType == "shipping_phone") {
+                        if (s.toString().length() > 2) {
+                            ship.setPhone(s.toString());
                             ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
                         }
                     }
@@ -334,7 +363,34 @@ public class ShippingFragment extends Fragment {
             }
         });
 
+        setTextChangeListener(shipping_name, "shipping_name");
+        setTextChangeListener(shipping_phone, "shipping_phone");
         setTextChangeListener(shipping_address, "shipping_address");
+
+        switch_use_customer_data.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    shipping_name.setText(cust.getName());
+                    shipping_phone.setText(cust.getPhone());
+                    shipping_address.setText(cust.getAddress());
+
+                    ship.setName(cust.getName());
+                    ship.setPhone(cust.getPhone());
+                    ship.setAddress(cust.getAddress());
+                } else {
+                    shipping_name.setText("");
+                    shipping_phone.setText("");
+                    shipping_address.setText("");
+
+                    ship.setName("");
+                    ship.setPhone("");
+                    ship.setAddress("");
+                }
+
+                ship.setUseCustomerData(isChecked);
+                ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
+            }
+        });
     }
 
     private void showShippingMethodDialog(final View v) {
@@ -397,7 +453,7 @@ public class ShippingFragment extends Fragment {
                             cur_time.set(Calendar.MINUTE, minute);
                             long date2 = cur_time.getTimeInMillis();
                             ((EditText) v).setText(Tools.getFormattedDateTimeShort(date2));
-                            ship.setDate(Tools.getFormattedDateFlat(date2));
+                            ship.setDate(Tools.getFormattedDateTimeFlat(date2));
                             ship.setPickupDate(Tools.getFormattedDateTimeShort(date2));
                             ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
                         }
@@ -442,10 +498,12 @@ public class ShippingFragment extends Fragment {
         if (i == 0) {
             shipping_date.setVisibility(View.GONE);
             shipping_address.setVisibility(View.GONE);
+            shipping_name_container.setVisibility(View.GONE);
             shipping_warehouse.setVisibility(View.GONE);
         } else if (i == 1) {
             shipping_date.setVisibility(View.VISIBLE);
             shipping_address.setVisibility(View.GONE);
+            shipping_name_container.setVisibility(View.GONE);
             shipping_warehouse.setVisibility(View.VISIBLE);
             if (current_warehouse_name != null) {
                 shipping_warehouse.setText(current_warehouse_name);
@@ -453,6 +511,7 @@ public class ShippingFragment extends Fragment {
         } else if (i > 1) {
             shipping_date.setVisibility(View.VISIBLE);
             shipping_address.setVisibility(View.VISIBLE);
+            shipping_name_container.setVisibility(View.VISIBLE);
             shipping_warehouse.setVisibility(View.GONE);
         }
     }

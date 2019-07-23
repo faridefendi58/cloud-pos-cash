@@ -95,7 +95,7 @@ public class ProductDetailActivity extends Activity {
 			actionBar.setDisplayHomeAsUpEnabled(true);
 			//actionBar.setTitle(res.getString(R.string.product_detail));
 			actionBar.setTitle(product.getName());
-			actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1ABC9C")));
+			actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#019e47")));
 		}
 	}
 	
