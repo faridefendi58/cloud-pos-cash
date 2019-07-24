@@ -33,6 +33,7 @@ import com.slightsite.app.techicalservices.NoDaoSetException;
 
 import org.w3c.dom.Text;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -209,10 +210,13 @@ public class PaymentFragment extends Fragment {
         });
 
         total_discount.addTextChangedListener(new TextWatcher(){
+            private String current_discount_val;
             public void afterTextChanged(Editable s) {
                 if (s.length() >= 3) {
                     try {
-                        int discount_val = Integer.parseInt(s.toString());
+                        String cleanString = s.toString().replaceAll("[.]", "");
+
+                        int discount_val = Integer.parseInt(cleanString);
                         String tot_order = CurrencyController.getInstance().moneyFormat(register.getTotal());
                         tot_order = tot_order.replace(".", "");
                         int grand_total_now = Integer.parseInt(tot_order);
@@ -222,49 +226,81 @@ public class PaymentFragment extends Fragment {
                         }
 
                         // save the discount value
+                        current_discount_val = discount_val+"";
                         c_data.setDiscount(discount_val);
+                        //s.setText(CurrencyController.getInstance().moneyFormat(discount_val));
                         grand_total.setText(CurrencyController.getInstance().moneyFormat(Double.parseDouble(grand_total_current+"")));
                     } catch (Exception e){e.printStackTrace();}
                 }
             }
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-            public void onTextChanged(CharSequence s, int start, int before, int count){}
+            public void onTextChanged(CharSequence s, int start, int before, int count){
+                if(!s.toString().equals(current_discount_val)){
+                    total_discount.removeTextChangedListener(this);
+
+                    String cleanString = s.toString().replaceAll("[.]", "");
+
+                    double parsed = Double.parseDouble(cleanString);
+                    String formatted = CurrencyController.getInstance().moneyFormat(parsed);
+
+                    current_discount_val = formatted;
+                    total_discount.setText(formatted);
+                    total_discount.setSelection(formatted.length());
+                    total_discount.addTextChangedListener(this);
+                }
+            }
         });
     }
 
-    private void setTextChangeListener(EditText etv, final String setType) {
+    private void setTextChangeListener(final EditText etv, final String setType) {
         etv.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
+            private String current_val;
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(!s.toString().equals(current_val)){
+                    String cleanString = s.toString().replaceAll("[.]", "");
+                    if (cleanString.length() >= 3) {
+                        etv.removeTextChangedListener(this);
+
+                        double parsed = Double.parseDouble(cleanString);
+                        String formatted = CurrencyController.getInstance().moneyFormat(parsed);
+
+                        current_val = formatted;
+                        etv.setText(formatted);
+                        etv.setSelection(formatted.length());
+                        etv.addTextChangedListener(this);
+                    }
+                }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
                 try {
+                    String cleanString = s.toString().replaceAll("[.]", "");
                     if (setType == "cashReceive") {
-                        c_data.setCashReceive(s.toString());
+                        c_data.setCashReceive(cleanString);
                     } else if (setType == "nominal_mandiri") {
                         if (banks.containsKey(setType)) {
                             banks.remove(setType);
                         }
-                        banks.put(setType, s.toString());
+                        banks.put(setType, cleanString);
                         c_data.setTransferBank(banks);
                     } else if (setType == "nominal_bca") {
                         if (banks.containsKey(setType)) {
                             banks.remove(setType);
                         }
-                        banks.put(setType, s.toString());
-                        Log.e(getTag(), "Banks : " + banks.toString());
+                        banks.put(setType, cleanString);
                         c_data.setTransferBank(banks);
                     } else if (setType == "nominal_bri") {
                         if (banks.containsKey(setType)) {
                             banks.remove(setType);
                         }
-                        banks.put(setType, s.toString());
+                        banks.put(setType, cleanString);
                         c_data.setTransferBank(banks);
                     } else if (setType == "card_number") {
                         c_data.setCardNumber(s.toString());
@@ -272,8 +308,20 @@ public class PaymentFragment extends Fragment {
                         if (edcs.containsKey(setType)) {
                             edcs.remove(setType);
                         }
-                        edcs.put(setType, s.toString());
+                        edcs.put(setType, cleanString);
                         c_data.setEdc(edcs);
+                    }
+
+                    if (setType == "card_number") {
+                        current_val = s.toString();
+                    } else {
+                        if (cleanString.length() >= 3) {
+                            double parsed = Double.parseDouble(cleanString);
+                            String formatted = CurrencyController.getInstance().moneyFormat(parsed);
+                            current_val = formatted;
+                        } else {
+                            current_val = s.toString();
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
