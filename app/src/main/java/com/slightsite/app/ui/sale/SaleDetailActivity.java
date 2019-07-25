@@ -1,6 +1,9 @@
 package com.slightsite.app.ui.sale;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -20,6 +23,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -80,9 +85,8 @@ public class SaleDetailActivity extends Activity{
 	
 	private TextView totalBox;
 	private TextView dateBox;
-	private ListView lineitemListView;
+	private RecyclerView lineitemListRecycle;
 	private ListView paymentitemListView;
-	private ListView shippingitemListView;
 	private List<Map<String, String>> lineitemList;
 	private Sale sale;
 	private int saleId;
@@ -101,11 +105,21 @@ public class SaleDetailActivity extends Activity{
 	private TextView payment_debt;
 	private View spacer_debt;
 
+	/** shipping detail */
+	private TextView shipping_method;
+	private TextView shipping_date;
+	private TextView shipping_warehouse;
+	private TextView label_shipping_warehouse;
+	private LinearLayout recipient_name_container;
+	private TextView shipping_recipient_name;
+	private TextView shipping_recipient_phone;
+
 	private PaymentCatalog paymentCatalog;
 	private List<Payment> paymentList;
 	private ParamCatalog paramCatalog;
 	private ShippingCatalog shippingCatalog;
 	private Shipping shipping;
+	private String[] ship_methods;
 	private WarehouseCatalog warehouseCatalog;
 
 	ProgressDialog pDialog;
@@ -119,6 +133,7 @@ public class SaleDetailActivity extends Activity{
 	private static final String TAG_MESSAGE = "message";
 
 	private SharedPreferences sharedpreferences;
+	private Register register;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -127,6 +142,8 @@ public class SaleDetailActivity extends Activity{
 			saleLedger = SaleLedger.getInstance();
 			paramCatalog = ParamService.getInstance().getParamCatalog();
 			warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
+			register = Register.getInstance();
+
 			getWarehouseList();
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
@@ -179,9 +196,7 @@ public class SaleDetailActivity extends Activity{
 		
 		totalBox = (TextView) findViewById(R.id.totalBox);
 		dateBox = (TextView) findViewById(R.id.dateBox);
-		lineitemListView = (ListView) findViewById(R.id.lineitemList);
 		paymentitemListView = (ListView) findViewById(R.id.paymentitemList);
-		shippingitemListView = (ListView) findViewById(R.id.shippingitemList);
 		customerBox = (TextView) findViewById(R.id.customerBox);
 		status = (TextView) findViewById(R.id.status);
         invoice_number = (TextView) findViewById(R.id.invoice_number);
@@ -195,14 +210,26 @@ public class SaleDetailActivity extends Activity{
 		payment_debt = (TextView) findViewById(R.id.payment_debt);
 		spacer_debt = (View) findViewById(R.id.spacer_debt);
 
+		lineitemListRecycle = (RecyclerView) findViewById(R.id.lineitemListRecycle);
+		lineitemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+		lineitemListRecycle.setHasFixedSize(true);
+		lineitemListRecycle.setNestedScrollingEnabled(false);
+
+		// for shipping detail
+		shipping_method = (TextView) findViewById(R.id.shipping_method);
+		shipping_date = (TextView) findViewById(R.id.shipping_date);
+		shipping_warehouse = (TextView) findViewById(R.id.shipping_warehouse);
+		label_shipping_warehouse = (TextView) findViewById(R.id.label_shipping_warehouse);
+		shipping_recipient_name = (TextView) findViewById(R.id.shipping_recipient_name);
+		shipping_recipient_phone = (TextView) findViewById(R.id.shipping_recipient_phone);
+		recipient_name_container = (LinearLayout) findViewById(R.id.recipient_name_container);
+
 		try {
 			paymentCatalog = PaymentService.getInstance().getPaymentCatalog();
 			paymentList = paymentCatalog.getPaymentBySaleId(saleId);
 			shippingCatalog = ShippingService.getInstance().getShippingCatalog();
 			shipping = shippingCatalog.getShippingBySaleId(saleId);
-
-			//List<Shipping> list_shipping = shippingCatalog.getAllShipping();
-			//Log.e(getClass().getSimpleName(), "list_shipping : "+ list_shipping.toString());
+			ship_methods = AppController.getPaymentMethods();
 
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
@@ -219,9 +246,8 @@ public class SaleDetailActivity extends Activity{
 			lineitemList.add(line.toMap());
 		}
 
-		SimpleAdapter sAdap = new SimpleAdapter(SaleDetailActivity.this, lineitemList,
-				R.layout.listview_lineitem, new String[]{"name","quantity","price"}, new int[] {R.id.name,R.id.quantity,R.id.price});
-		lineitemListView.setAdapter(sAdap);
+		AdapterListOrder sAdap = new AdapterListOrder(SaleDetailActivity.this, list, register, totalBox);
+		lineitemListRecycle.setAdapter(sAdap);
 
 		// building payment information
 		List<Map<String, String>> pyitemList = new ArrayList<Map<String, String>>();
@@ -234,21 +260,44 @@ public class SaleDetailActivity extends Activity{
 		paymentitemListView.setAdapter(pAdap);
 
 		// building shipping information
-		List<Map<String, String>> shippingitemList = new ArrayList<Map<String, String>>();
-		Map<String, String> ship_map = new HashMap<String, String>();
-		String note = shipping.toMap().get("method_name");
+		if (!shipping.equals(null)) {
+			if (shipping.toMap().get("configs") != null) {
+				try {
+					JSONObject jsonObject = new JSONObject(shipping.toMap().get("configs"));
+					if (jsonObject.has("recipient_name")) {
+						shipping.setName(jsonObject.getString("recipient_name"));
+						shipping.setPhone(jsonObject.getString("recipient_phone"));
+					}
+				} catch (Exception e){e.printStackTrace();}
+			}
+			Log.e(getClass().getSimpleName(), "shipping : "+ shipping.toMap());
+			shipping_method.setText(ship_methods[shipping.getMethod()]);
+			if (shipping.getDate().equals(null) || shipping.getDate().length() == 0) {
+				DateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm");
+				if (shipping.getMethod() == 0) {
+					df = new SimpleDateFormat("dd MMM yyyy");
+				}
+				String date = df.format(Calendar.getInstance().getTime());
+				shipping.setDate(date);
+			}
+			shipping_date.setText(shipping.getDate());
+			shipping_warehouse.setText(shipping.getWarehouseName());
+			if (shipping.getAddress() != null && shipping.getMethod() > 1) {
+				shipping_warehouse.setText(shipping.getAddress());
+				label_shipping_warehouse.setText(getResources().getString(R.string.label_shipping_address));
 
-		if (shipping.getMethod() == 0) {
-			note += " pada tanggal "+ shipping.getPickupDate();
-		} else {
-			note += " pada tanggal "+ shipping.getPickupDate() + " di Warehouse "+ warehouse_names.get(shipping.getWarehouseId());
+				shipping_date.setText(shipping.getPickupDate());
+				if (shipping.getAddress().length() >= 25) {
+					label_shipping_warehouse.setText(getResources().getString(R.string.address));
+				}
+			}
+
+			if (shipping.getName() != null && shipping.getMethod() > 1) {
+				recipient_name_container.setVisibility(View.VISIBLE);
+				shipping_recipient_name.setText(shipping.getName());
+				shipping_recipient_phone.setText(shipping.getPhone());
+			}
 		}
-		ship_map.put("note", note);
-		shippingitemList.add(ship_map);
-
-		SimpleAdapter spAdap = new SimpleAdapter(SaleDetailActivity.this, shippingitemList,
-				R.layout.listview_payment, new String[]{"note"}, new int[] {R.id.title});
-		shippingitemListView.setAdapter(spAdap);
 
 		payment_subtotal.setText(CurrencyController.getInstance().moneyFormat(sale.getTotal()) + "");
 		payment_discount.setText(CurrencyController.getInstance().moneyFormat(sale.getDiscount()) + "");
@@ -313,7 +362,7 @@ public class SaleDetailActivity extends Activity{
 		customerBox.setText(customer.getName());
 		status.setText(sale.getStatus());
 		Map<String, String> salemap = sale.toMap();
-		invoice_number.setText(salemap.get("invoiceNumber"));
+		invoice_number.setText(salemap.get("server_invoice_number"));
 
 		if (warehouse_data != null) {
 			new android.os.Handler().postDelayed(

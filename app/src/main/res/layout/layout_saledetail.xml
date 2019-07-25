@@ -52,6 +52,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="right"
+                            android:padding="@dimen/spacing_middle"
                             android:textAppearance="@style/TextAppearance.AppCompat.Small"
                             android:textColor="@color/grey_90"
                             app:fontFamily="sans-serif-medium"
@@ -66,7 +67,8 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal" >
+                        android:orientation="horizontal"
+                        android:visibility="gone">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -79,6 +81,32 @@
 
                         <TextView
                             android:id="@+id/totalBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="right"
+                            android:padding="@dimen/spacing_middle"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                            android:textColor="@color/grey_90"
+                            app:fontFamily="sans-serif-medium" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_created_by"
+                            android:padding="@dimen/spacing_middle"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                            android:textColor="@color/grey_90"
+                            app:fontFamily="sans-serif-medium" />
+
+                        <TextView
+                            android:id="@+id/created_by"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="right"
@@ -182,12 +210,12 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <ListView
-                        android:id="@+id/lineitemList"
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/lineitemListRecycle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/spacing_middle">
-                    </ListView>
+                        android:scrollbars="vertical"
+                        android:scrollingCache="true" />
 
                 </LinearLayout>
             </android.support.v7.widget.CardView>
@@ -373,19 +401,11 @@
                 app:cardElevation="3dp"
                 app:cardUseCompatPadding="true">
 
-                <LinearLayout
+                <include
+                    android:id="@+id/shipment_container"
+                    layout="@layout/_shipping_detail"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <ListView
-                        android:id="@+id/shippingitemList"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="@dimen/spacing_middle">
-                    </ListView>
-
-                </LinearLayout>
+                    android:layout_height="wrap_content" />
 
             </android.support.v7.widget.CardView>
 

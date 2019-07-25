@@ -8,10 +8,12 @@ import com.slightsite.app.techicalservices.Database;
 import com.slightsite.app.techicalservices.DatabaseContents;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.json.JSONStringer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ShippingDaoAndroid implements ShippingDao {
 
@@ -35,9 +37,15 @@ public class ShippingDaoAndroid implements ShippingDao {
         content.put("address", shipping.getAddress());
         content.put("notes", "");
         content.put("configs", shipping.toMap().toString());
-        /*JSONArray json = new JSONArray();
-        String configs = json.put(shipping.toMap()).toString();
-        content.put("configs", configs);*/
+        // create json format if possible
+        try {
+            JSONObject jsonObj = new JSONObject();
+            for (Map.Entry<String, String> entry : shipping.toMap().entrySet()) {
+                jsonObj.put(entry.getKey(), entry.getValue());
+            }
+            content.put("configs", jsonObj.toString());
+        } catch (Exception e){}
+
         content.put("date_added", shipping.getDateAdded());
 
         int id = database.insert(DatabaseContents.TABLE_SALE_SHIPPING.toString(), content);

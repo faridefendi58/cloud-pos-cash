@@ -3,6 +3,8 @@ package com.slightsite.app.domain.sale;
 import com.slightsite.app.domain.AppController;
 import com.slightsite.app.techicalservices.Tools;
 
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,6 +56,9 @@ public class Shipping implements Serializable {
         map.put("warehouse_name", warehouse_name);
         map.put("date_added", date_added);
         map.put("pickup_date", pickup_date);
+        map.put("configs", configs);
+        map.put("recipient_name", name);
+        map.put("recipient_phone", phone);
 
         return map;
 

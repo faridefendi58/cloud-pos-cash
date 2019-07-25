@@ -158,7 +158,7 @@ public class Sale {
 		}
 
 		map.put("invoiceNumber", invoice_number);
-		//map.put("server_invoice_number", server_invoice_number);
+		map.put("server_invoice_number", server_invoice_number);
 		
 		return map;
 	}
