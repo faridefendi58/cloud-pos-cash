@@ -231,16 +231,19 @@
     <string name="label_sub_total">Sub Total</string>
     <string name="label_discount">Discount</string>
     <string name="label_grand_total">Grand Total</string>
+    <string name="label_shipping">Shipping</string>
     <string name="label_shipping_date">Shipping Date</string>
     <string name="label_shipping_location">Shipping Location</string>
     <string name="label_shipping_address">Shipping Location</string>
     <string name="label_shipping_name">Recipient Name</string>
     <string name="label_shipping_phone">Recipient Phone</string>
     <string name="label_shipping_use_customer_data">Same as customer data</string>
+    <string name="label_payment">Payment</string>
     <string name="label_payment_total_receieved">Total Payment Received</string>
     <string name="label_payment_change_due">Change Due</string>
     <string name="label_created_by">Created By</string>
     <string name="label_processed_by">Processed By</string>
+    <string name="label_resume">Resume</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>

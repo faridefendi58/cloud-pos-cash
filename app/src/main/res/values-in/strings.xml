@@ -225,16 +225,19 @@
     <string name="label_sub_total">Sub Total</string>
     <string name="label_discount">Diskon</string>
     <string name="label_grand_total">Total Order</string>
+    <string name="label_shipping">Pengiriman</string>
     <string name="label_shipping_date">Tanggal Ambil/Kirim</string>
     <string name="label_shipping_location">Lokasi Pengambilan</string>
     <string name="label_shipping_address">Alamat Pengiriman</string>
     <string name="label_shipping_name">Nama Penerima</string>
     <string name="label_shipping_phone">No Telepon Penerima</string>
     <string name="label_shipping_use_customer_data">Sama dengan data pelanggan</string>
+    <string name="label_payment">Pembayaran</string>
     <string name="label_payment_total_receieved">Total Dibayarkan</string>
     <string name="label_payment_change_due">Kembali</string>
     <string name="label_created_by">Dibuat Oleh</string>
     <string name="label_processed_by">Diproses Oleh</string>
+    <string name="label_resume">Ringkasan</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Mandiri</string>

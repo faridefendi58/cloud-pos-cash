@@ -355,7 +355,7 @@ public class CheckoutActivity extends AppCompatActivity {
                 register.setCustomer(checkout_data.getCustomer());
             }
 
-            next_checkout_button.setText(getResources().getString(R.string.next_to_checkout));
+            next_checkout_button.setText(getResources().getString(R.string.label_next));
         } else if (state.name().equalsIgnoreCase(State.CONFIRMATION.name())) {
             fragment = new ConfirmationFragment();
             line_second.setBackgroundColor(getResources().getColor(R.color.greenUcok));
