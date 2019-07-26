@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.ContentValues;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.slightsite.app.domain.inventory.Product;
@@ -43,6 +45,9 @@ public class InventoryDaoAndroid implements InventoryDao {
 
 		if (product.getImage() != null) {
         	content.put("images", product.getImage());
+        	if (product.getImageBitmap() != null) {
+				content.put("image_bitmap", product.getBitmapAsByteArray());
+			}
 		}
         content.put("status", "ACTIVE");
         
@@ -73,6 +78,10 @@ public class InventoryDaoAndroid implements InventoryDao {
 					content.getAsDouble("unit_price"));
         	product.setPriority(content.getAsInteger("priority"));
         	product.setImage(content.getAsString("images"));
+        	if (content.getAsByteArray("image_bitmap") != null) {
+				Bitmap bitmap = BitmapFactory.decodeByteArray(content.getAsByteArray("image_bitmap"), 0, content.getAsByteArray("image_bitmap").length);
+				product.setImageBitmap(bitmap);
+			}
 
         	list.add(product);
         }
@@ -147,7 +156,12 @@ public class InventoryDaoAndroid implements InventoryDao {
         if (product.getImage() != null) {
             content.put("images", product.getImage());
         }
-        //Log.e(getClass().getSimpleName(), "Before update : "+ content.toString());
+
+        if (product.getImageBitmap() != null) {
+        	content.put("image_bitmap", product.getBitmapAsByteArray());
+		}
+
+        Log.e(getClass().getSimpleName(), "Before update : "+ content.toString());
 		return database.update(DatabaseContents.TABLE_PRODUCT_CATALOG.toString(), content);
 	}
 	

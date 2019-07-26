@@ -1,5 +1,8 @@
 package com.slightsite.app.domain.inventory;
 
+import android.graphics.Bitmap;
+
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +24,7 @@ public class Product {
 	private int priority = 0;
 	private String image;
 	private String status = "ACTIVE";
+	private Bitmap image_bitmap;
 	
 	/**
 	 * Static value for UNDEFINED ID.
@@ -178,5 +182,20 @@ public class Product {
 
 	public String getStatus() {
 		return status;
+	}
+
+	public void setImageBitmap(Bitmap image_bitmap) {
+		this.image_bitmap = image_bitmap;
+	}
+
+	public Bitmap getImageBitmap() {
+		return image_bitmap;
+	}
+
+	public byte[] getBitmapAsByteArray() {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		image_bitmap.compress(Bitmap.CompressFormat.PNG, 0, outputStream);
+		
+		return outputStream.toByteArray();
 	}
 }

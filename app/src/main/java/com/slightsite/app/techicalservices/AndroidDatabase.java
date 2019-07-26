@@ -41,6 +41,7 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 				+ "unit_price DOUBLE,"
 				+ "priority INTEGER DEFAULT 0,"
 				+ "images TEXT(256),"
+				+ "image_bitmap BLOB,"
 				+ "status TEXT(10)"
 				+ ");");
 		Log.d("CREATE DATABASE", "Create " + DatabaseContents.TABLE_PRODUCT_CATALOG + " Successfully.");
@@ -80,7 +81,9 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 				+ "customer_id INTEGER,"
 				+ "orders INTEGER,"
 				+ "pushed INTEGER DEFAULT 0,"
-				+ "server_invoice_number TEXT(32)"
+				+ "server_invoice_id INTEGER DEFAULT 0,"
+				+ "server_invoice_number TEXT(32),"
+				+ "configs TEXT(256)"
 				+ ");");
 		Log.d("CREATE DATABASE", "Create " + DatabaseContents.TABLE_SALE + " Successfully.");
 		
@@ -233,8 +236,13 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 						ContentValues content = new ContentValues();
 						String[] columnNames = cursor.getColumnNames();
 						for (String columnName : columnNames) {
-							content.put(columnName, cursor.getString(cursor
-									.getColumnIndex(columnName)));
+							if (columnName.contains("bitmap")) {
+								content.put(columnName, cursor.getBlob(cursor
+										.getColumnIndex(columnName)));
+							} else {
+								content.put(columnName, cursor.getString(cursor
+										.getColumnIndex(columnName)));
+							}
 						}
 						list.add(content);
 					} while (cursor.moveToNext());

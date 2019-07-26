@@ -180,6 +180,7 @@ public class ProductServerActivity extends Activity {
                     no = no + 1;
                 }
             }
+            Log.e(getClass().getSimpleName(), "data wh dah ada di db");
 
             ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(
                     getApplicationContext(),
@@ -188,6 +189,7 @@ public class ProductServerActivity extends Activity {
             available_warehouse.setAdapter(whAdapter);
             available_warehouse.setSelection(selected_wh);
         } else {
+            Log.e(getClass().getSimpleName(), "cari data wh dari server");
             Map<String, String> params = new HashMap<String, String>();
 
             warehouse_items.clear();

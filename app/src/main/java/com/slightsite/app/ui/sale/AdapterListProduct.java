@@ -111,12 +111,14 @@ public class AdapterListProduct extends BaseAdapter{
                 holder.product_image.setImageBitmap(activity.getImageStack(p.getId()));
                 Log.e(getClass().getSimpleName(), "Ini dari image stacks main activity");
             } else {
-                /*new DownloadImageTask(holder.product_image)
-                        .execute(Server.BASE_API_URL + "" + p.getImage());*/
-                DownloadImageTask downloadImageTask = new DownloadImageTask(holder.product_image);
-                downloadImageTask.setActivity(activity);
-                downloadImageTask.setProductId(p.getId());
-                downloadImageTask.execute(Server.BASE_API_URL + "" + p.getImage());
+                if (p.getImageBitmap() == null) {
+                    DownloadImageTask downloadImageTask = new DownloadImageTask(holder.product_image);
+                    downloadImageTask.setActivity(activity);
+                    downloadImageTask.setProductId(p.getId());
+                    downloadImageTask.execute(Server.BASE_API_URL + "" + p.getImage());
+                } else {
+                    holder.product_image.setImageBitmap(p.getImageBitmap());
+                }
             }
         }
 
