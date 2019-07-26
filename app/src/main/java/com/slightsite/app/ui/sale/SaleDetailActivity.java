@@ -113,6 +113,7 @@ public class SaleDetailActivity extends Activity{
 	private LinearLayout recipient_name_container;
 	private TextView shipping_recipient_name;
 	private TextView shipping_recipient_phone;
+	private TextView created_by;
 
 	private PaymentCatalog paymentCatalog;
 	private List<Payment> paymentList;
@@ -127,6 +128,7 @@ public class SaleDetailActivity extends Activity{
 
 	private final HashMap<Integer, String> warehouse_names = new HashMap<Integer, String>();
 	private JSONArray warehouse_data;
+	private JSONObject server_invoice_data;
 
 	private static final String TAG = SaleDetailActivity.class.getSimpleName();
 	private static final String TAG_SUCCESS = "success";
@@ -209,6 +211,7 @@ public class SaleDetailActivity extends Activity{
 		payment_debt_container = (LinearLayout) findViewById(R.id.payment_debt_container);
 		payment_debt = (TextView) findViewById(R.id.payment_debt);
 		spacer_debt = (View) findViewById(R.id.spacer_debt);
+		created_by = (TextView) findViewById(R.id.created_by);
 
 		lineitemListRecycle = (RecyclerView) findViewById(R.id.lineitemListRecycle);
 		lineitemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -230,7 +233,7 @@ public class SaleDetailActivity extends Activity{
 			shippingCatalog = ShippingService.getInstance().getShippingCatalog();
 			shipping = shippingCatalog.getShippingBySaleId(saleId);
 			ship_methods = AppController.getPaymentMethods();
-
+			getDetailFromServer();
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
 		}
@@ -678,5 +681,58 @@ public class SaleDetailActivity extends Activity{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void getDetailFromServer() {
+		Map<String, String> params = new HashMap<String, String>();
+
+		String admin_id = sharedpreferences.getString(TAG_ID, null);
+		params.put("admin_id", admin_id);
+		params.put("invoice_id", sale.getServerInvoiceId()+"");
+
+		String url = Server.URL + "transaction/detail?api-key=" + Server.API_KEY;
+		_string_request2(
+				Request.Method.GET,
+				url, params, false,
+				new VolleyCallback() {
+					@Override
+					public void onSuccess(String result) {
+						try {
+							JSONObject jObj = new JSONObject(result);
+							success = jObj.getInt(TAG_SUCCESS);
+							Log.e(getClass().getSimpleName(), "jObj : "+ jObj.toString());
+							// Check for error node in json
+							if (success == 1) {
+								server_invoice_data = jObj.getJSONObject("data");
+								created_by.setText(server_invoice_data.getString("created_by_name"));
+								if (server_invoice_data.has("shipping")) {
+									JSONArray arr_shipping = server_invoice_data.getJSONArray("shipping");
+									JSONObject obj_shipping = arr_shipping.getJSONObject(0);
+									shipping.setWarehouseId(obj_shipping.getInt("warehouse_id"));
+									shipping.setWarehouseName(obj_shipping.getString("warehouse_name"));
+
+									shipping_warehouse.setText(shipping.getWarehouseName());
+									if (shipping.getAddress() != null && shipping.getMethod() > 1) {
+										shipping_warehouse.setText(shipping.getAddress());
+										label_shipping_warehouse.setText(getResources().getString(R.string.label_shipping_address));
+
+										shipping_date.setText(shipping.getPickupDate());
+										if (shipping.getAddress().length() >= 25) {
+											label_shipping_warehouse.setText(getResources().getString(R.string.address));
+										}
+									}
+
+									if (shipping.getName() != null && shipping.getMethod() > 1) {
+										recipient_name_container.setVisibility(View.VISIBLE);
+										shipping_recipient_name.setText(shipping.getName());
+										shipping_recipient_phone.setText(shipping.getPhone());
+									}
+								}
+							}
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				});
 	}
 }

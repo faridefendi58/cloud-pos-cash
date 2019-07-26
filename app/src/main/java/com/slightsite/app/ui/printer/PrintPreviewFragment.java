@@ -55,9 +55,14 @@ public class PrintPreviewFragment extends Fragment {
         TextView print_preview = (TextView) view.findViewById(R.id.print_preview);
         WebView print_webview = (WebView) view.findViewById(R.id.print_webview);
 
-        String formated_receipt = ((PrinterActivity)getActivity()).getFormatedReceiptHtml();
-
-        print_webview.loadDataWithBaseURL(null, "<html><body>"+ formated_receipt +"</body></html>", "text/html", "utf-8", null);
+        try {
+            ((PrinterActivity)getActivity()).buildDataFromServer(print_webview);
+        } catch (Exception e){
+            e.printStackTrace();
+            // build from local data
+            String formated_receipt = ((PrinterActivity)getActivity()).getFormatedReceiptHtml();
+            print_webview.loadDataWithBaseURL(null, "<html><body>"+ formated_receipt +"</body></html>", "text/html", "utf-8", null);
+        }
 
         //Spanned result = Html.fromHtml(formated_receipt);
         //print_preview.setText(result);

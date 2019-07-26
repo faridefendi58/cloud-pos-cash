@@ -104,6 +104,9 @@ public class AdapterListOrder extends RecyclerView.Adapter<RecyclerView.ViewHold
                     view.image.setImageBitmap(image_stacks.get(p.getProduct().getId()));
                     Log.e(getClass().getSimpleName(), "image_stacks : "+ image_stacks.toString());
                 } else {
+                    if (p.getProduct().getImageBitmap() != null) {
+                        view.image.setImageBitmap(p.getProduct().getImageBitmap());
+                    }
                     Log.e(getClass().getSimpleName(), "image_stacks tidak ada size : "+ image_stacks.size());
                 }
             } catch (Exception e){e.printStackTrace();}

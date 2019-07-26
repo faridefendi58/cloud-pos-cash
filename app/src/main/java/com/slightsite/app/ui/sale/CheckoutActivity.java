@@ -650,20 +650,23 @@ public class CheckoutActivity extends AppCompatActivity {
             arrCust.put("email", cust.getEmail());
             arrCust.put("name", cust.getName());
             arrCust.put("phone", cust.getPhone());
+            arrCust.put("address", cust.getAddress());
             mObj.put("customer", arrCust);
 
+            Double total_tendered = 0.0;
             if (paymentList.size() > 0) {
                 for (Payment py : paymentList) {
                     Map<String, String> arrPayment2 = new HashMap<String, String>();
                     arrPayment2.put("type", py.getPaymentChannel());
                     arrPayment2.put("amount_tendered", ""+ py.getAmount());
-                    arrPayment2.put("change_due", "0");
+                    //arrPayment2.put("change_due", "0");
                     arrPaymentList.add(arrPayment2);
+                    total_tendered = total_tendered + py.getAmount();
                 }
             } else {
                 arrPayment.put("type", "cash");
                 arrPayment.put("amount_tendered", ""+ sale.getTotal());
-                arrPayment.put("change_due", "0");
+                //arrPayment.put("change_due", "0");
                 arrPaymentList.add(arrPayment);
             }
             mObj.put("payment", arrPaymentList);
@@ -674,6 +677,11 @@ public class CheckoutActivity extends AppCompatActivity {
             }
 
             mObj.put("discount", sale.getDiscount());
+
+            Double tot_tagihan = sale.getTotal() - sale.getDiscount();
+            if (total_tendered < tot_tagihan) {
+                mObj.put("transaction_type", 0);
+            }
 
             arrShippingList.add(shipping.toMap());
             mObj.put("shipping", arrShippingList);

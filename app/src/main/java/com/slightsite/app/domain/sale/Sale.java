@@ -30,6 +30,13 @@ public class Sale {
 	private Integer customer_id;
 	private String server_invoice_number;
 	private int discount = 0;
+	private int server_invoice_id;
+	private int created_by;
+	private String created_by_name;
+	private int paid_by;
+	private String paid_by_name;
+	private int refunded_by;
+	private String refunded_by_name;
 
 	public Sale(int id, String startTime) {
 		this(id, startTime, startTime, "", new ArrayList<LineItem>(), 0);
@@ -212,5 +219,61 @@ public class Sale {
 
 	public int getDiscount() {
 		return discount;
+	}
+
+	public void setServerInvoiceId(int _server_invoice_id) {
+		this.server_invoice_id = _server_invoice_id;
+	}
+
+	public int getServerInvoiceId() {
+		return server_invoice_id;
+	}
+
+	public void setCreatedBy(int created_by) {
+		this.created_by = created_by;
+	}
+
+	public int getCreatedBy() {
+		return created_by;
+	}
+
+	public void setPaidBy(int paid_by) {
+		this.paid_by = paid_by;
+	}
+
+	public int getPaidBy() {
+		return paid_by;
+	}
+
+	public void setRefundedBy(int refunded_by) {
+		this.refunded_by = refunded_by;
+	}
+
+	public int getRefundedBy() {
+		return refunded_by;
+	}
+
+	public void setCreatedByName(String created_by_name) {
+		this.created_by_name = created_by_name;
+	}
+
+	public String getCreatedByName() {
+		return created_by_name;
+	}
+
+	public void setPaidByName(String paid_by_name) {
+		this.paid_by_name = paid_by_name;
+	}
+
+	public String getPaidByName() {
+		return paid_by_name;
+	}
+
+	public void setRefundedByName(String refunded_by_name) {
+		this.refunded_by_name = refunded_by_name;
+	}
+
+	public String getRefundedByName() {
+		return refunded_by_name;
 	}
 }

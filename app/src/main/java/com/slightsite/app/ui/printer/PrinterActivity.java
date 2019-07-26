@@ -2,6 +2,7 @@ package com.slightsite.app.ui.printer;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -22,6 +23,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 import java.io.InputStream;
@@ -32,12 +35,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.slightsite.app.R;
+import com.slightsite.app.domain.AppController;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.ParamsController;
@@ -58,11 +68,23 @@ import com.slightsite.app.domain.warehouse.WarehouseCatalog;
 import com.slightsite.app.domain.warehouse.WarehouseService;
 import com.slightsite.app.domain.warehouse.Warehouses;
 import com.slightsite.app.techicalservices.NoDaoSetException;
+import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.ui.LoginActivity;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import static com.slightsite.app.ui.LoginActivity.TAG_ID;
+
 public class PrinterActivity extends AppCompatActivity {
     public static final String TAG = PrinterActivity.class.getSimpleName();
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_MESSAGE = "message";
+
+    ProgressDialog pDialog;
+    int success;
 
     BluetoothAdapter bluetoothAdapter;
     BluetoothSocket socket;
@@ -93,6 +115,7 @@ public class PrinterActivity extends AppCompatActivity {
     private int warehouse_id;
     private Warehouses warehouse;
     private Customer customer;
+    private JSONObject server_invoice_data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +141,33 @@ public class PrinterActivity extends AppCompatActivity {
         getSupportActionBar().setIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
         Tools.setSystemBarColor(this, android.R.color.white);
         Tools.setSystemBarLight(this);
+
+        // geting the transaction data
+        try {
+            saleId = Integer.parseInt(getIntent().getExtras().get("saleId").toString());
+            saleLedger = SaleLedger.getInstance();
+            paymentCatalog = PaymentService.getInstance().getPaymentCatalog();
+            if (saleId > 0) {
+                paymentList = paymentCatalog.getPaymentBySaleId(saleId);
+            }
+
+            warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
+            customerCatalog = CustomerService.getInstance().getCustomerCatalog();
+
+            sale = saleLedger.getSaleById(saleId);
+
+            if (sale.getCustomerId() > 0) {
+                customer = customerCatalog.getCustomerById(sale.getCustomerId());
+            }
+
+            Params whParam = paramCatalog.getParamByName("warehouse_id");
+            if (whParam instanceof Params) {
+                warehouse_id = Integer.parseInt(whParam.getValue());
+                warehouse = warehouseCatalog.getWarehouseByWarehouseId(warehouse_id);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -471,40 +521,6 @@ public class PrinterActivity extends AppCompatActivity {
     }
 
     public String getFormatedReceiptHtml() {
-        // geting the transaction data
-        try {
-            saleId = Integer.parseInt(getIntent().getExtras().get("saleId").toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            saleLedger = SaleLedger.getInstance();
-            paymentCatalog = PaymentService.getInstance().getPaymentCatalog();
-            if (saleId > 0) {
-                paymentList = paymentCatalog.getPaymentBySaleId(saleId);
-            }
-
-            warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
-            customerCatalog = CustomerService.getInstance().getCustomerCatalog();
-
-            sale = saleLedger.getSaleById(saleId);
-
-            if (sale.getCustomerId() > 0) {
-                customer = customerCatalog.getCustomerById(sale.getCustomerId());
-            }
-
-            Params whParam = paramCatalog.getParamByName("warehouse_id");
-            if (whParam instanceof Params) {
-                warehouse_id = Integer.parseInt(whParam.getValue());
-                warehouse = warehouseCatalog.getWarehouseByWarehouseId(warehouse_id);
-            }
-        } catch (NoDaoSetException e) {
-            e.printStackTrace();
-        }
-
-        int char_length = Integer.parseInt(printerConfigs.get("char_length"));
-
         String res = "<style>p, table td{font-size:14px !important;}</style>";
         if (warehouse != null) {
             Params store_name = paramCatalog.getParamByName("store_name");
@@ -540,7 +556,9 @@ public class PrinterActivity extends AppCompatActivity {
 
         } catch (Exception e) { e.printStackTrace(); }
 
-        sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
+        if (sharedpreferences == null) {
+            sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
+        }
         adminData = ProfileController.getInstance().getDataByEmail(sharedpreferences.getString(LoginActivity.TAG_EMAIL, null));
         String admin_id = ParamsController.getInstance().getParam("admin_id");
 
@@ -556,9 +574,16 @@ public class PrinterActivity extends AppCompatActivity {
         res += "<tr><td>"+ getResources().getString(R.string.label_no_nota)+ "</td><td> : "+ no_nota +"</td></tr>";
         res += "<tr><td>"+ getResources().getString(R.string.label_hour)+ "</td><td> : "+ separated[1] +"</td></tr>";
 
-        if (adminData != null) {
-            res += "<tr><td>"+ getResources().getString(R.string.label_created_by)+ "</td><td> : "+ adminData.getAsString(LoginActivity.TAG_NAME) +"</td></tr>";
-            res += "<tr><td>"+ getResources().getString(R.string.label_processed_by)+ "</td><td> : "+ adminData.getAsString(LoginActivity.TAG_NAME) +"</td></tr>";
+        if (sale.getCreatedBy() > 0) {
+            res += "<tr><td>" + getResources().getString(R.string.label_created_by) + "</td><td> : " + sale.getCreatedByName() + "</td></tr>";
+            if (sale.getPaidBy() > 0) {
+                res += "<tr><td>" + getResources().getString(R.string.label_processed_by) + "</td><td> : " + sale.getPaidByName() + "</td></tr>";
+            }
+        } else {
+            if (adminData != null) {
+                res += "<tr><td>" + getResources().getString(R.string.label_created_by) + "</td><td> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
+                res += "<tr><td>" + getResources().getString(R.string.label_processed_by) + "</td><td> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
+            }
         }
 
         if (customer != null) {
@@ -728,5 +753,123 @@ public class PrinterActivity extends AppCompatActivity {
         result.put("nominal_edc", R.string.payment_edc);
 
         return result.get(channel);
+    }
+
+    public interface VolleyCallback {
+        void onSuccess(String result);
+    }
+
+    private void showDialog() {
+        if (!pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hideDialog() {
+        if (pDialog.isShowing())
+            pDialog.dismiss();
+    }
+
+    private void _string_request(int method, String url, final Map params, final Boolean show_dialog, final VolleyCallback callback) {
+        if (show_dialog) {
+            pDialog = new ProgressDialog(this);
+            pDialog.setCancelable(false);
+            pDialog.setMessage("Request data ...");
+            showDialog();
+        }
+
+        if (method == Request.Method.GET) { //get method doesnt support getParams
+            Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
+            while(iterator.hasNext())
+            {
+                Map.Entry<String, String> pair = iterator.next();
+                String pair_value = pair.getValue();
+                if (pair_value.contains(" "))
+                    pair_value = pair.getValue().replace(" ", "%20");
+                url += "&" + pair.getKey() + "=" + pair_value;
+            }
+        }
+
+        StringRequest strReq = new StringRequest(method, url, new Response.Listener < String > () {
+
+            @Override
+            public void onResponse(String Response) {
+                callback.onSuccess(Response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                if (show_dialog) {
+                    hideDialog();
+                }
+            }
+        })
+        {
+            // set headers
+            @Override
+            protected Map<String, String> getParams() {
+                return params;
+            }
+        };
+
+        strReq.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        try {
+            AppController.getInstance().addToRequestQueue(strReq, "json_obj_req");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void buildDataFromServer(final WebView print_webview) {
+        Map<String, String> params = new HashMap<String, String>();
+
+        if (sharedpreferences == null) {
+            sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
+        }
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        params.put("admin_id", admin_id);
+        params.put("invoice_id", sale.getServerInvoiceId()+"");
+
+        String url = Server.URL + "transaction/detail?api-key=" + Server.API_KEY;
+        _string_request(
+                Request.Method.GET,
+                url, params, false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            Log.e(getClass().getSimpleName(), "jObj : "+ jObj.toString());
+                            // Check for error node in json
+                            if (success == 1) {
+                                server_invoice_data = jObj.getJSONObject("data");
+                                if (server_invoice_data.has("shipping")) {
+                                    JSONArray arr_shipping = server_invoice_data.getJSONArray("shipping");
+                                    JSONObject obj_shipping = arr_shipping.getJSONObject(0);
+                                }
+
+                                // setup the sale
+                                sale.setServerInvoiceNumber(server_invoice_data.getString("invoice_number"));
+                                sale.setCreatedBy(server_invoice_data.getInt("created_by"));
+                                sale.setCreatedByName(server_invoice_data.getString("created_by_name"));
+                                sale.setPaidBy(server_invoice_data.getInt("paid_by"));
+                                sale.setPaidByName(server_invoice_data.getString("paid_by_name"));
+                                sale.setRefundedBy(server_invoice_data.getInt("refunded_by"));
+                                sale.setRefundedByName(server_invoice_data.getString("refunded_by_name"));
+
+                                String formated_receipt = getFormatedReceiptHtml();
+
+                                print_webview.loadDataWithBaseURL(null, "<html><body>"+ formated_receipt +"</body></html>", "text/html", "utf-8", null);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 }

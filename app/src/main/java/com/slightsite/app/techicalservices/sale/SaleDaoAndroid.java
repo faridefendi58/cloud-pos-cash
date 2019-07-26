@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.content.ContentValues;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.slightsite.app.domain.DateTimeStrategy;
@@ -141,6 +143,7 @@ public class SaleDaoAndroid implements SaleDao {
 					content.getAsInteger("customer_id"));
         	sale.setDiscount(content.getAsInteger("discount"));
         	sale.setServerInvoiceNumber(content.getAsString("server_invoice_number"));
+        	sale.setServerInvoiceId(content.getAsInteger("server_invoice_id"));
 
         	list.add(sale);
         }
@@ -168,7 +171,13 @@ public class SaleDaoAndroid implements SaleDao {
 			List<Product> productList = new ArrayList<Product>();
 			for (Object object2: objectList2) {
 				ContentValues content2 = (ContentValues) object2;
-				productList.add(new Product(productId, content2.getAsString("name"), content2.getAsString("barcode"), content2.getAsDouble("unit_price")));
+				Product prod = new Product(productId, content2.getAsString("name"), content2.getAsString("barcode"), content2.getAsDouble("unit_price"));
+				prod.setImage(content2.getAsString("images"));
+				if (content2.getAsByteArray("image_bitmap") != null) {
+					Bitmap bitmap = BitmapFactory.decodeByteArray(content2.getAsByteArray("image_bitmap"), 0, content2.getAsByteArray("image_bitmap").length);
+					prod.setImageBitmap(bitmap);
+				}
+				productList.add(prod);
 			}
 
 			list.add(new LineItem(content.getAsInteger("_id") , productList.get(0), content.getAsInteger("quantity"), content.getAsDouble("unit_price"), tot_qty));
@@ -355,6 +364,7 @@ public class SaleDaoAndroid implements SaleDao {
 		content.put("pushed", server_invoice_id);
 		content.put("status", "PUSHED");
 		if (server_invoice_number != null) {
+			content.put("server_invoice_id", server_invoice_id);
 			content.put("server_invoice_number", server_invoice_number);
 		}
 		database.update(DatabaseContents.TABLE_SALE.toString(), content);
@@ -362,15 +372,15 @@ public class SaleDaoAndroid implements SaleDao {
 
 	@Override
 	public int getServerInvoiceId(int sale_id) {
-		String queryString = "SELECT pushed FROM " + DatabaseContents.TABLE_SALE + " WHERE _id = " + sale_id;
+		String queryString = "SELECT server_invoice_id FROM " + DatabaseContents.TABLE_SALE + " WHERE _id = " + sale_id;
 		List<Object> objectList = database.select(queryString);
 		int inv_id = 0;
 		for (Object object: objectList) {
 			ContentValues content = (ContentValues) object;
 			if (content != null
-					&& content.containsKey("pushed")
-					&& content.getAsString("pushed") != null) {
-				inv_id = content.getAsInteger("pushed");
+					&& content.containsKey("server_invoice_id")
+					&& content.getAsString("server_invoice_id") != null) {
+				inv_id = content.getAsInteger("server_invoice_id");
 			}
 		}
 
