@@ -198,6 +198,9 @@
     <string name="message_syncronize">Halaman ini akan membantu Anda menyamakan data lokal di ponsel dengan data di server.
     Pilih salah satu Warehouse untuk mendapatkan data produk, harga, serta stoknya.</string>
     <string name="message_change_warehouse">Hati - hati!, merubah data warehouse akan merubah semua data produk Anda saat ini dengan data produk warehouse terbaru.</string>
+    <string name="message_paid">Lunas</string>
+    <string name="message_unpaid">Belum Lunas</string>
+    <string name="message_refunded">Refund</string>
 
     <string name="title_print_invoice">Print Preview</string>
     <string name="title_list_printer">Printer</string>

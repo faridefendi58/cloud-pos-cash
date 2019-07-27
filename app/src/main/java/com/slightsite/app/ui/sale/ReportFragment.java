@@ -8,8 +8,11 @@ import java.util.Map;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,6 +33,8 @@ import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.customer.Customer;
+import com.slightsite.app.domain.payment.PaymentCatalog;
+import com.slightsite.app.domain.payment.PaymentService;
 import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.domain.sale.SaleLedger;
 import com.slightsite.app.techicalservices.NoDaoSetException;
@@ -45,6 +50,7 @@ public class ReportFragment extends UpdatableFragment {
 	private SaleLedger saleLedger;
 	List<Map<String, String>> saleList;
 	private ListView saleLedgerListView;
+	private RecyclerView lineitemListRecycle;
 	private TextView totalBox;
 	private Spinner spinner;
 	private Button previousButton;
@@ -54,6 +60,8 @@ public class ReportFragment extends UpdatableFragment {
 	private DatePickerDialog datePicker;
 	private EditText searchBox;
 	private SimpleAdapter sAdap;
+
+	private PaymentCatalog paymentCatalog;
 	
 	public static final int DAILY = 0;
 	public static final int WEEKLY = 1;
@@ -65,6 +73,7 @@ public class ReportFragment extends UpdatableFragment {
 		
 		try {
 			saleLedger = SaleLedger.getInstance();
+			paymentCatalog = PaymentService.getInstance().getPaymentCatalog();
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
 		}
@@ -78,6 +87,11 @@ public class ReportFragment extends UpdatableFragment {
 		totalBox = (TextView) view.findViewById(R.id.totalBox);
 		spinner = (Spinner) view.findViewById(R.id.spinner1);
 		searchBox = (EditText) view.findViewById(R.id.searchBox);
+
+		lineitemListRecycle = (RecyclerView) view.findViewById(R.id.lineitemListRecycle);
+		lineitemListRecycle.setLayoutManager(new LinearLayoutManager(getContext()));
+		lineitemListRecycle.setHasFixedSize(true);
+		lineitemListRecycle.setNestedScrollingEnabled(false);
 		
 		initUI();
 
@@ -177,7 +191,6 @@ public class ReportFragment extends UpdatableFragment {
 	 * @param list
 	 */
 	private void showList(List<Sale> list) {
-
 		saleList = new ArrayList<Map<String, String>>();
 		for (Sale sale : list) {
 			Map<String, String> salemap = sale.toMap();
@@ -187,6 +200,15 @@ public class ReportFragment extends UpdatableFragment {
 				if (cust.getName().length() > 0) {
 					salemap.put("customer_data", cust.getName() + " - " + cust.getPhone() + " - " + cust.getAddress());
 				}
+				Double tot = sale.getTotal() - sale.getDiscount();
+				Double tot_payment = paymentCatalog.getTotalPaymentBySaleId(sale.getId());
+				if (tot_payment >= tot) {
+					salemap.put("status", getResources().getString(R.string.message_paid));
+					salemap.put("is_paid", "1");
+				} else {
+					salemap.put("status", getResources().getString(R.string.message_unpaid));
+					salemap.put("is_paid", "0");
+				}
 			} catch (Exception e){
 				e.printStackTrace();
 			}
@@ -194,10 +216,13 @@ public class ReportFragment extends UpdatableFragment {
 			saleList.add(salemap);
 		}
 
-		sAdap = new SimpleAdapter(getActivity().getBaseContext() , saleList,
-				R.layout.listview_report_v2, new String[] { "id", "startTime", "total", "invoiceNumber", "customer_data"},
-				new int[] { R.id.sid, R.id.startTime , R.id.total, R.id.invoice_number, R.id.customer_data});
-		saleLedgerListView.setAdapter(sAdap);
+		/*sAdap = new SimpleAdapter(getActivity().getBaseContext() , saleList,
+				R.layout.listview_report_v2, new String[] { "id", "startTime", "total", "invoiceNumber", "customer_data", "status"},
+				new int[] { R.id.sid, R.id.startTime , R.id.total, R.id.invoice_number, R.id.customer_data, R.id.status});
+		saleLedgerListView.setAdapter(sAdap);*/
+
+		AdapterListInvoice invAdapter = new AdapterListInvoice(getActivity().getBaseContext() , saleList);
+		lineitemListRecycle.setAdapter(invAdapter);
 	}
 
 	@Override

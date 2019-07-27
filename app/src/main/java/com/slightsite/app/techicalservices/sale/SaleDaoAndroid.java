@@ -108,16 +108,18 @@ public class SaleDaoAndroid implements SaleDao {
         List<Sale> list = new ArrayList<Sale>();
         for (Object object: objectList) {
         	ContentValues content = (ContentValues) object;
-        	list.add(new QuickLoadSale(
-        			content.getAsInteger("_id"),
-        			content.getAsString("start_time"),
-        			content.getAsString("end_time"),
-        			content.getAsString("status"),
-        			content.getAsDouble("total"),
-        			content.getAsInteger("orders"),
-        			content.getAsInteger("customer_id")
-        			)
-        	);
+			QuickLoadSale the_sale = new QuickLoadSale(
+					content.getAsInteger("_id"),
+					content.getAsString("start_time"),
+					content.getAsString("end_time"),
+					content.getAsString("status"),
+					content.getAsDouble("total"),
+					content.getAsInteger("orders"),
+					content.getAsInteger("customer_id")
+			);
+			the_sale.setServerInvoiceId(content.getAsInteger("server_invoice_id"));
+			the_sale.setServerInvoiceNumber(content.getAsString("server_invoice_number"));
+        	list.add(the_sale);
         }
         return list;
 	}

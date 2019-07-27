@@ -199,6 +199,9 @@
     <string name="message_syncronize">This page is about to syncron your local data into the server data.
     Please choose a warehouse to get all the related product data.</string>
     <string name="message_change_warehouse">Be carefull!, change Warehouse will replace all your current product data.</string>
+    <string name="message_paid">Paid</string>
+    <string name="message_unpaid">Unpaid</string>
+    <string name="message_refunded">Refunded</string>
 
     <string name="title_print_invoice">Print Invoice</string>
     <string name="title_list_printer">Devices</string>
