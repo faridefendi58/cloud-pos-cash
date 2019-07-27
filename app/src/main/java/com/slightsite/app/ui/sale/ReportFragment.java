@@ -33,6 +33,7 @@ import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.customer.Customer;
+import com.slightsite.app.domain.inventory.LineItem;
 import com.slightsite.app.domain.payment.PaymentCatalog;
 import com.slightsite.app.domain.payment.PaymentService;
 import com.slightsite.app.domain.sale.Sale;
@@ -175,7 +176,7 @@ public class ReportFragment extends UpdatableFragment {
 				addDate(1);
 			}
 		});
-		
+
 		saleLedgerListView.setOnItemClickListener(new OnItemClickListener() {
 		      public void onItemClick(AdapterView<?> myAdapter, View myView, int position, long mylng) {
 		    	  String id = saleList.get(position).get("id").toString();
@@ -202,6 +203,9 @@ public class ReportFragment extends UpdatableFragment {
 				}
 				Double tot = sale.getTotal() - sale.getDiscount();
 				Double tot_payment = paymentCatalog.getTotalPaymentBySaleId(sale.getId());
+				Log.e(getTag(), "discount : "+ sale.getDiscount());
+				Log.e(getTag(), "tot : "+ tot +" and tot_payment : "+ tot_payment);
+				Log.e(getTag(), "status : "+ sale.getStatus());
 				if (tot_payment >= tot) {
 					salemap.put("status", getResources().getString(R.string.message_paid));
 					salemap.put("is_paid", "1");
@@ -223,6 +227,16 @@ public class ReportFragment extends UpdatableFragment {
 
 		AdapterListInvoice invAdapter = new AdapterListInvoice(getActivity().getBaseContext() , saleList);
 		lineitemListRecycle.setAdapter(invAdapter);
+
+		invAdapter.setOnItemClickListener(new AdapterListInvoice.OnItemClickListener() {
+			@Override
+			public void onItemClick(View view, Map<String, String> _item, int position) {
+				String id = _item.get("id");
+				Intent newActivity = new Intent(getActivity().getBaseContext(), SaleDetailActivity.class);
+				newActivity.putExtra("id", id);
+				startActivity(newActivity);
+			}
+		});
 	}
 
 	@Override

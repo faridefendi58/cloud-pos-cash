@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.slightsite.app.R;
@@ -24,7 +25,7 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
     private OnItemClickListener mOnItemClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(View view, LineItem obj, int position);
+        void onItemClick(View view, Map<String, String> _item, int position);
     }
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
@@ -40,14 +41,14 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
         public TextView invoice_number;
         public TextView status;
         public TextView customer_data;
-        public View line_separator;
+        public LinearLayout lyt_parent;
 
         public OriginalViewHolder(View v) {
             super(v);
             invoice_number = (TextView) v.findViewById(R.id.invoice_number);
             status = (TextView) v.findViewById(R.id.status);
             customer_data = (TextView) v.findViewById(R.id.customer_data);
-            line_separator = (View) v.findViewById(R.id.line_separator);
+            lyt_parent = (LinearLayout) v.findViewById(R.id.lyt_parent);
         }
     }
 
@@ -72,10 +73,14 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
             view.customer_data.setText(items.get(position).get("customer_data"));
 
-            int last_item_position = getItemCount() - 1;
-            if (position == last_item_position) {
-                view.line_separator.setVisibility(View.GONE);
-            }
+            view.lyt_parent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mOnItemClickListener != null) {
+                        mOnItemClickListener.onItemClick(view, items.get(position), position);
+                    }
+                }
+            });
         }
     }
 

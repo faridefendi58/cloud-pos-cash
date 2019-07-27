@@ -290,7 +290,8 @@
                             android:layout_height="wrap_content"
                             android:textAppearance="@style/TextAppearance.AppCompat.Small"
                             android:textColor="@color/grey_90"
-                            android:padding="@dimen/spacing_middle" />
+                            android:padding="@dimen/spacing_middle"
+                            android:longClickable="true"/>
 
                     </LinearLayout>
 
@@ -320,7 +321,8 @@
                             android:layout_height="wrap_content"
                             android:padding="@dimen/spacing_middle"
                             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                            android:textColor="@color/grey_90" />
+                            android:textColor="@color/grey_90"
+                            android:longClickable="true"/>
 
                     </LinearLayout>
 
@@ -350,7 +352,8 @@
                             android:layout_height="wrap_content"
                             android:padding="@dimen/spacing_middle"
                             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                            android:textColor="@color/grey_90" />
+                            android:textColor="@color/grey_90"
+                            android:longClickable="true"/>
 
                     </LinearLayout>
 

@@ -119,6 +119,7 @@ public class SaleDaoAndroid implements SaleDao {
 			);
 			the_sale.setServerInvoiceId(content.getAsInteger("server_invoice_id"));
 			the_sale.setServerInvoiceNumber(content.getAsString("server_invoice_number"));
+			the_sale.setDiscount(content.getAsInteger("discount"));
         	list.add(the_sale);
         }
         return list;

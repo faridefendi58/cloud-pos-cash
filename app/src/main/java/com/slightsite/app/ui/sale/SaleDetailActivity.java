@@ -15,6 +15,8 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -237,6 +239,30 @@ public class SaleDetailActivity extends Activity{
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
 		}
+
+		customerBox.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				copyToClipBoard(getResources().getString(R.string.label_customer_name), customerBox.getText().toString());
+				return false;
+			}
+		});
+
+		customer_address.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				copyToClipBoard(getResources().getString(R.string.label_customer_address), customer_address.getText().toString());
+				return false;
+			}
+		});
+
+		customer_phone.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				copyToClipBoard(getResources().getString(R.string.label_customer_phone), customer_phone.getText().toString());
+				return false;
+			}
+		});
 	}
 
 	/**
@@ -734,5 +760,14 @@ public class SaleDetailActivity extends Activity{
 						}
 					}
 				});
+	}
+
+	private void copyToClipBoard(String label, String text) {
+		ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+		ClipData clip = ClipData.newPlainText(label, text);
+		clipboard.setPrimaryClip(clip);
+
+		Toast.makeText(getApplicationContext(),
+				"Copying "+ label + " to clipboard.", Toast.LENGTH_LONG).show();
 	}
 }
