@@ -22,6 +22,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
@@ -117,6 +119,8 @@ public class PrinterActivity extends AppCompatActivity {
     private Customer customer;
     private JSONObject server_invoice_data;
 
+    private PrintPreviewFragment PreviewFr;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,20 +131,8 @@ public class PrinterActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_close);
-        toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.grey_60), PorterDuff.Mode.SRC_ATOP);
+        toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.colorWhite), PorterDuff.Mode.SRC_ATOP);
         setSupportActionBar(toolbar);
-
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
-        setupViewPager(viewPager);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
-        tabLayout.setupWithViewPager(viewPager);//setting tab over viewpager
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
-        Tools.setSystemBarColor(this, android.R.color.white);
-        Tools.setSystemBarLight(this);
 
         // geting the transaction data
         try {
@@ -168,16 +160,45 @@ public class PrinterActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+        setupViewPager(viewPager);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        tabLayout.setupWithViewPager(viewPager);//setting tab over viewpager
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        //Tools.setSystemBarColor(this, android.R.color.white);
+        //Tools.setSystemBarLight(this);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#019e47")));
+        getSupportActionBar().setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#e2e3e5")));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_share, menu);
+
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        } else {
-            Toast.makeText(getApplicationContext(), item.getTitle(), Toast.LENGTH_SHORT).show();
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+            case R.id.nav_share :
+                try {
+                    PreviewFr.shareInvoice();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     public void IntentPrint(String txtvalue) {
@@ -346,7 +367,7 @@ public class PrinterActivity extends AppCompatActivity {
         ListViewFragment ListViewFr = new ListViewFragment();
         ListViewFr.setArguments(bundle);
         // preview fragment
-        PrintPreviewFragment PreviewFr = new PrintPreviewFragment();
+        PreviewFr = new PrintPreviewFragment();
         PreviewFr.setArguments(bundle);
         // config fragment
         ConfigsFragment ConfigFr = new ConfigsFragment();
@@ -865,6 +886,10 @@ public class PrinterActivity extends AppCompatActivity {
                                 String formated_receipt = getFormatedReceiptHtml();
 
                                 print_webview.loadDataWithBaseURL(null, "<html><body>"+ formated_receipt +"</body></html>", "text/html", "utf-8", null);
+                                //print_webview.setVerticalScrollBarEnabled(false);
+                                print_webview.setVisibility(View.VISIBLE);
+
+                                PreviewFr.setInvoiceNumber(sale.getServerInvoiceNumber());
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

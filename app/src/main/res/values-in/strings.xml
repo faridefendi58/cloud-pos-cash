@@ -96,6 +96,7 @@
     <string name="title_update_sale">Ubah Data Penjualan</string>
     <string name="title_change_warehouse">Ubah Warehouse</string>
     <string name="title_change_language">Pilihan Bahasa</string>
+    <string name="title_share">Bagikan</string>
 
     <string name="dashboard_income">Pendapatan</string>
     <string name="dashboard_transaction">Transaksi</string>

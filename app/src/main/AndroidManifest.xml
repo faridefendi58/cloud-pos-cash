@@ -78,6 +78,9 @@
             android:label="@string/payment"
             android:theme="@style/AppCompatTheme">
         </activity>
+        <activity
+            android:name=".ui.printer.PrintPreviewActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

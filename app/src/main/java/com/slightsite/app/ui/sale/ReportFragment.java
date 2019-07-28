@@ -102,7 +102,7 @@ public class ReportFragment extends UpdatableFragment {
 			@Override
 			public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
 				// When user changed the Text
-				sAdap.getFilter().filter(cs);
+				//sAdap.getFilter().filter(cs);
 			}
 
 			@Override

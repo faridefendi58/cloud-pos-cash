@@ -95,6 +95,7 @@
     <string name="title_update_cart">Update Item</string>
     <string name="title_update_sale">Update Invoice</string>
     <string name="title_change_language">Change Language</string>
+    <string name="title_share">Share</string>
 
     <string name="dashboard_income">Income</string>
     <string name="dashboard_transaction">Transaction</string>

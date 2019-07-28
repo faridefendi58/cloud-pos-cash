@@ -1,5 +1,7 @@
 package com.slightsite.app.ui.sale;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,10 +23,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -71,6 +77,7 @@ import com.slightsite.app.techicalservices.URLBuilder;
 import com.slightsite.app.ui.LoginActivity;
 import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.inventory.ProductServerActivity;
+import com.slightsite.app.ui.printer.PrintPreviewActivity;
 import com.slightsite.app.ui.printer.PrinterActivity;
 
 import org.json.JSONArray;
@@ -417,7 +424,7 @@ public class SaleDetailActivity extends Activity{
 
 	public void printInvoice(View v) {
 		Intent newActivity = new Intent(SaleDetailActivity.this,
-				PrinterActivity.class);
+				PrintPreviewActivity.class);
 		newActivity.putExtra("saleId", saleId);
 		startActivity(newActivity);
 	}
