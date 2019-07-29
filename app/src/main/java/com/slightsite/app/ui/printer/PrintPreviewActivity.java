@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -56,6 +57,7 @@ import com.slightsite.app.domain.warehouse.Warehouses;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.ui.LoginActivity;
+import com.slightsite.app.ui.MainActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -99,6 +101,8 @@ public class PrintPreviewActivity extends Activity {
 
     private WebView print_webview;
     private LinearLayout print_preview_container;
+    private Button home_button;
+    private Button print_button;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -133,6 +137,7 @@ public class PrintPreviewActivity extends Activity {
         }
 
         initUI(savedInstanceState);
+        initTriggerButton();
     }
 
     /**
@@ -175,7 +180,6 @@ public class PrintPreviewActivity extends Activity {
 
         initiateActionBar();
 
-
         print_preview_container = (LinearLayout) findViewById(R.id.print_preview_container);
 
         print_webview = (WebView) findViewById(R.id.print_webview);
@@ -195,6 +199,27 @@ public class PrintPreviewActivity extends Activity {
         } catch (Exception e){
             e.printStackTrace();
         }
+
+        home_button = (Button) findViewById(R.id.home_button);
+        print_button = (Button) findViewById(R.id.print_button);
+    }
+
+    private void initTriggerButton() {
+        home_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PrintPreviewActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        print_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     public void buildDataFromServer() {

@@ -248,6 +248,7 @@
     <string name="label_created_by">Created By</string>
     <string name="label_processed_by">Processed By</string>
     <string name="label_resume">Resume</string>
+    <string name="label_printer_configuration">Printer Configs</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>

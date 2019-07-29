@@ -10,4 +10,9 @@
         app:showAsAction="ifRoom"
         android:showAsAction="always"/>
 
+    <item
+        android:id="@+id/action_print_setting"
+        android:title="@string/label_printer_configuration">
+    </item>
+
 </menu>

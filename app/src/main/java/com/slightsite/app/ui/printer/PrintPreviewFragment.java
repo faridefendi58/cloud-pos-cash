@@ -67,13 +67,6 @@ public class PrintPreviewFragment extends Fragment {
         this.view = view;
         loadPreview(view);
         onClickEvent(view);
-        /*new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        onClickEvent(view);
-                    }
-                },
-                3000);*/
     }
 
     private void loadPreview(View view) {
@@ -82,13 +75,6 @@ public class PrintPreviewFragment extends Fragment {
         print_webview.setVerticalScrollBarEnabled(false);
         print_webview.setHorizontalScrollBarEnabled(false);
         print_webview.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-
-        /*print_webview.getSettings().setLoadWithOverviewMode(true);
-        print_webview.getSettings().setUseWideViewPort(true);
-        print_webview.getSettings().setMinimumFontSize(60);
-        print_webview.getSettings().setSupportZoom(true);
-        print_webview.getSettings().setBuiltInZoomControls(true);
-        print_webview.getSettings().setDisplayZoomControls(true);*/
 
         try {
             ((PrinterActivity)getActivity()).buildDataFromServer(print_webview);

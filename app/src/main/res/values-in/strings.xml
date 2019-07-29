@@ -242,6 +242,7 @@
     <string name="label_created_by">Dibuat Oleh</string>
     <string name="label_processed_by">Diproses Oleh</string>
     <string name="label_resume">Ringkasan</string>
+    <string name="label_printer_configuration">Konfigurasi Printer</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Mandiri</string>

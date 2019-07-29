@@ -61,6 +61,7 @@ import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.techicalservices.URLBuilder;
 import com.slightsite.app.ui.LoginActivity;
 import com.slightsite.app.ui.MainActivity;
+import com.slightsite.app.ui.printer.PrintPreviewActivity;
 import com.slightsite.app.ui.printer.PrinterActivity;
 
 import org.json.JSONArray;
@@ -232,15 +233,22 @@ public class CheckoutActivity extends AppCompatActivity {
                         }
                     }
 
-                    int saleId = register.getCurrentSale().getId();
+                    final int saleId = register.getCurrentSale().getId();
                     register.endSale(DateTimeStrategy.getCurrentTime());
 
                     pushInvoice(saleId);
 
-                    Intent newActivity = new Intent(CheckoutActivity.this, PrinterActivity.class);
-                    newActivity.putExtra("saleId", saleId);
-                    finish();
-                    startActivity(newActivity);
+                    new android.os.Handler().postDelayed(
+                            new Runnable() {
+                                public void run() {
+                                    Intent newActivity = new Intent(CheckoutActivity.this, PrintPreviewActivity.class);
+                                    newActivity.putExtra("saleId", saleId);
+                                    finish();
+                                    startActivity(newActivity);
+                                }
+                            },
+                            3000);
+
                     return;
                 } else {
                     if (array_state[idx_state] == State.SHIPPING) {
