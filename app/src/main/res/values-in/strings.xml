@@ -195,6 +195,7 @@
     <string name="message_success_delete">Data Anda telah berhasil dihapus.</string>
     <string name="message_success_syncronize">Data Anda telah berhasil disinkronisasi dengan server.</string>
     <string name="message_success_payment">Pembayaran telah berhasil disimpan.</string>
+    <string name="message_success_transaction">Transaksi telah berhasil disimpan.</string>
     <string name="message_no_product">Data produk belum ada. Silakan sinkron data dengan server sebelum memulai transaksi.</string>
     <string name="message_syncronize">Halaman ini akan membantu Anda menyamakan data lokal di ponsel dengan data di server.
     Pilih salah satu Warehouse untuk mendapatkan data produk, harga, serta stoknya.</string>
@@ -202,6 +203,7 @@
     <string name="message_paid">Lunas</string>
     <string name="message_unpaid">Belum Lunas</string>
     <string name="message_refunded">Refund</string>
+    <string name="message_thankyou">Terimakasih!</string>
 
     <string name="title_print_invoice">Print Preview</string>
     <string name="title_list_printer">Printer</string>
@@ -243,6 +245,7 @@
     <string name="label_processed_by">Diproses Oleh</string>
     <string name="label_resume">Ringkasan</string>
     <string name="label_printer_configuration">Konfigurasi Printer</string>
+    <string name="label_to">Kepada</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Mandiri</string>

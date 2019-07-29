@@ -233,21 +233,37 @@ public class CheckoutActivity extends AppCompatActivity {
                         }
                     }
 
+                    String status = getResources().getString(R.string.message_paid);
+                    Boolean lunas = true;
+                    Sale current_sale = register.getCurrentSale();
+                    Checkout checkout = getCheckoutData();
+                    try {
+                        Double tot_tagihan = current_sale.getTotal() - current_sale.getDiscount();
+                        if (checkout.getTotalPaymentReceived() < tot_tagihan) {
+                            status = getResources().getString(R.string.message_unpaid);
+                            lunas = false;
+                        }
+                    } catch (Exception e){e.printStackTrace();}
+
                     final int saleId = register.getCurrentSale().getId();
                     register.endSale(DateTimeStrategy.getCurrentTime());
 
                     pushInvoice(saleId);
 
-                    new android.os.Handler().postDelayed(
-                            new Runnable() {
-                                public void run() {
-                                    Intent newActivity = new Intent(CheckoutActivity.this, PrintPreviewActivity.class);
-                                    newActivity.putExtra("saleId", saleId);
-                                    finish();
-                                    startActivity(newActivity);
-                                }
-                            },
-                            3000);
+                    if (lunas) {
+                        new android.os.Handler().postDelayed(
+                                new Runnable() {
+                                    public void run() {
+                                        Intent newActivity = new Intent(CheckoutActivity.this, PrintPreviewActivity.class);
+                                        newActivity.putExtra("saleId", saleId);
+                                        finish();
+                                        startActivity(newActivity);
+                                    }
+                                },
+                                3000);
+                    } else {
+                        showDialogPaymentSuccess(current_sale, checkout.getCustomer(), status);
+                    }
 
                     return;
                 } else {
@@ -750,5 +766,19 @@ public class CheckoutActivity extends AppCompatActivity {
                         hideDialog();
                     }
                 });
+    }
+
+    private void showDialogPaymentSuccess(Sale sale, Customer customer, String status) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        PaymentSuccessFragment newFragment = new PaymentSuccessFragment();
+        newFragment.setSale(sale);
+        newFragment.setCustomer(customer);
+        newFragment.setStatus(status);
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        transaction.add(R.id.parent_view, newFragment).addToBackStack(null).commit();
+        (findViewById(R.id.lyt_next_container)).setVisibility(View.GONE);
+        (findViewById(R.id.toolbar)).setVisibility(View.GONE);
     }
 }

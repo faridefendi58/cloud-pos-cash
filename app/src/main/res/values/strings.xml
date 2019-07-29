@@ -196,6 +196,7 @@
     <string name="message_success_delete">Your data has been successfully deleted.</string>
     <string name="message_success_syncronize">Your data has been successfully syncronized.</string>
     <string name="message_success_payment">Your payment has been successfully saved.</string>
+    <string name="message_success_transaction">Your transaction was successful.</string>
     <string name="message_no_product">No product found. Please syncron your data to the server before start making transaction.</string>
     <string name="message_syncronize">This page is about to syncron your local data into the server data.
     Please choose a warehouse to get all the related product data.</string>
@@ -203,6 +204,7 @@
     <string name="message_paid">Paid</string>
     <string name="message_unpaid">Unpaid</string>
     <string name="message_refunded">Refunded</string>
+    <string name="message_thankyou">Thank You!</string>
 
     <string name="title_print_invoice">Print Invoice</string>
     <string name="title_list_printer">Devices</string>
@@ -249,6 +251,7 @@
     <string name="label_processed_by">Processed By</string>
     <string name="label_resume">Resume</string>
     <string name="label_printer_configuration">Printer Configs</string>
+    <string name="label_to">To</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>

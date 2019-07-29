@@ -164,7 +164,7 @@ public class ProductServerActivity extends Activity {
             }
         }
         Log.e(getClass().getSimpleName(), "whs apakah ada : "+ whs.size());
-        if (whs != null) {
+        if (whs != null && whs.size() > 0) {
             Params whParam = paramCatalog.getParamByName("warehouse_id");
             int no = 0;
             int selected_wh = 0;
