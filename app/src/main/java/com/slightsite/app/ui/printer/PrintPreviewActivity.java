@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +19,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -65,12 +69,17 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import static com.slightsite.app.ui.LoginActivity.TAG_ID;
 
@@ -103,6 +112,22 @@ public class PrintPreviewActivity extends Activity {
     private LinearLayout print_preview_container;
     private Button home_button;
     private Button print_button;
+
+    BluetoothAdapter bluetoothAdapter;
+    BluetoothSocket socket;
+    BluetoothDevice bluetoothDevice;
+    OutputStream outputStream;
+    InputStream inputStream;
+    Thread workerThread;
+    byte[] readBuffer;
+    int readBufferPosition;
+    volatile boolean stopWorker;
+    String value = "";
+    String bluetoothDeviceName = "58Printer";
+    ArrayList<String> bluetoothDeviceList;
+    Map<String, String> printerConfigs = new HashMap<String, String>();
+
+    private String formated_receipt;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -138,6 +163,7 @@ public class PrintPreviewActivity extends Activity {
 
         initUI(savedInstanceState);
         initTriggerButton();
+        InitDeviceList();
     }
 
     /**
@@ -169,6 +195,9 @@ public class PrintPreviewActivity extends Activity {
                 return true;
             case R.id.nav_share :
                 shareInvoice();
+                return true;
+            case R.id.action_print_setting :
+                printerSetting();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -217,7 +246,9 @@ public class PrintPreviewActivity extends Activity {
         print_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                //IntentPrint(print_webview);
+                Toast.makeText(getApplicationContext(),
+                        "Will be available soon", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -261,7 +292,7 @@ public class PrintPreviewActivity extends Activity {
                                     sale.setRefundedBy(server_invoice_data.getInt("refunded_by"));
                                     sale.setRefundedByName(server_invoice_data.getString("refunded_by_name"));
 
-                                    String formated_receipt = getFormatedReceiptHtml();
+                                    formated_receipt = getFormatedReceiptHtml();
 
                                     print_webview.loadDataWithBaseURL(null, "<html><body>" + formated_receipt + "</body></html>", "text/html", "utf-8", null);
                                 }
@@ -412,6 +443,12 @@ public class PrintPreviewActivity extends Activity {
             res += "<tr><td>"+ getResources().getString(R.string.label_customer_phone)+ "</td><td> : "+ customer.getPhone() +"</td></tr>";
         }
 
+        if (sale.getPaidBy() > 0) {
+            res += "<tr><td>" + getResources().getString(R.string.status) + "</td><td> : <b>" + getResources().getString(R.string.message_paid) + "</b></td></tr>";
+        } else {
+            res += "<tr><td>" + getResources().getString(R.string.status) + "</td><td> : <b style=\"color:red;\">" + getResources().getString(R.string.message_unpaid) + "</b></td></tr>";
+        }
+
         List<LineItem> list = sale.getAllLineItem();
         lineitemList = new ArrayList<Map<String, String>>();
         for(LineItem line : list) {
@@ -479,12 +516,12 @@ public class PrintPreviewActivity extends Activity {
                     "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(change_due) +"</td>";
         } else {
             int debt = -1 * change_due;
-            res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_dept) +" :</td>" +
-                    "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(debt) +"</td>";
+            res += "<tr><td colspan=\"2\" style=\"text-align:right;\"><b>"+ getResources().getString(R.string.label_dept) +" :</b></td>" +
+                    "<td style=\"text-align:right;\"><b>"+ CurrencyController.getInstance().moneyFormat(debt) +"</b></td>";
         }
         res += "</table>";
 
-        res += "<table style=\"width:100%;margin-top:40px;margin-bottom:50px;\"><tr><td><center>Terimakasih. Selamat belanja kembali.</center></td></tr></table>";
+        res += "<table style=\"width:100%;margin-top:40px;margin-bottom:50px;\"><tr><td><center>Terimakasih.<br />Selamat belanja kembali.</center></td></tr></table>";
 
         return res;
     }
@@ -537,5 +574,172 @@ public class PrintPreviewActivity extends Activity {
         shareIntent.setType("image/*");
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivity(Intent.createChooser(shareIntent, "share via"));
+    }
+
+    private void printerSetting() {
+        /*Intent newActivity = new Intent(PrintPreviewActivity.this,
+                PrinterActivity.class);
+        newActivity.putExtra("saleId", saleId);
+        finish();
+        startActivity(newActivity);*/
+        Toast.makeText(this, "Will be available soon.", Toast.LENGTH_LONG).show();
+    }
+
+    public void InitDeviceList() {
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        try {
+            if (!bluetoothAdapter.isEnabled()) {
+                Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBluetooth, 0);
+            }
+
+            Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+
+            if (pairedDevices.size() > 0) {
+                bluetoothDeviceList = new ArrayList<>();
+                for (BluetoothDevice device : pairedDevices) {
+                    bluetoothDeviceList.add(device.getName());
+                }
+            } else {
+                value += "No Devices found";
+                bluetoothDeviceList = new ArrayList<>();
+                Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+                return;
+            }
+        } catch (Exception ex) {
+            value += ex.toString() + "\n" + " InitPrinter \n";
+            Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    void beginListenForData() {
+        try {
+            final Handler handler = new Handler();
+
+            // this is the ASCII code for a newline character
+            final byte delimiter = 10;
+
+            stopWorker = false;
+            readBufferPosition = 0;
+            readBuffer = new byte[1024];
+
+            workerThread = new Thread(new Runnable() {
+                public void run() {
+
+                    while (!Thread.currentThread().isInterrupted() && !stopWorker) {
+
+                        try {
+
+                            int bytesAvailable = inputStream.available();
+
+                            if (bytesAvailable > 0) {
+
+                                byte[] packetBytes = new byte[bytesAvailable];
+                                inputStream.read(packetBytes);
+
+                                for (int i = 0; i < bytesAvailable; i++) {
+
+                                    byte b = packetBytes[i];
+                                    if (b == delimiter) {
+
+                                        byte[] encodedBytes = new byte[readBufferPosition];
+                                        System.arraycopy(
+                                                readBuffer, 0,
+                                                encodedBytes, 0,
+                                                encodedBytes.length
+                                        );
+
+                                        // specify US-ASCII encoding
+                                        final String data = new String(encodedBytes, "US-ASCII");
+                                        readBufferPosition = 0;
+
+                                        // tell the user data were sent to bluetooth printer device
+                                        handler.post(new Runnable() {
+                                            public void run() {
+                                                Log.d("e", data);
+                                            }
+                                        });
+
+                                    } else {
+                                        readBuffer[readBufferPosition++] = b;
+                                    }
+                                }
+                            }
+
+                        } catch (Exception ex) {
+                            stopWorker = true;
+                        }
+
+                    }
+                }
+            });
+
+            workerThread.start();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void IntentPrint(WebView view) {
+        String txtvalue = "";
+        byte[] buffer = txtvalue.getBytes();
+        byte[] PrintHeader = {(byte) 0xAA, 0x55, 2, 0};
+        PrintHeader[3] = (byte) buffer.length;
+        InitPrinter();
+        if (PrintHeader.length > 128) {
+            value += "\nValue is more than 128 size\n";
+            Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+        } else {
+            try {
+                outputStream.write(txtvalue.getBytes());
+                outputStream.close();
+                socket.close();
+            } catch (Exception ex) {
+                value += ex.toString() + "\n" + "Excep IntentPrint \n";
+                Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    public void InitPrinter() {
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        try {
+            if (!bluetoothAdapter.isEnabled()) {
+                Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBluetooth, 0);
+            }
+
+            Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+
+            if (pairedDevices.size() > 0) {
+                bluetoothDeviceList = new ArrayList<>();
+                for (BluetoothDevice device : pairedDevices) {
+                    bluetoothDeviceList.add(device.getName());
+                    if (device.getName().equals(bluetoothDeviceName)) //Note, you will need to change this to match the name of your device
+                    {
+                        bluetoothDevice = device;
+                        break;
+                    }
+                }
+
+                UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard SerialPortService ID
+                Method m = bluetoothDevice.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
+                socket = (BluetoothSocket) m.invoke(bluetoothDevice, 1);
+                bluetoothAdapter.cancelDiscovery();
+                socket.connect();
+                outputStream = socket.getOutputStream();
+                inputStream = socket.getInputStream();
+                beginListenForData();
+            } else {
+                value += "No Devices found";
+                bluetoothDeviceList = new ArrayList<>();
+                Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+                return;
+            }
+        } catch (Exception ex) {
+            value += ex.toString() + "\n" + " InitPrinter \n";
+            Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+        }
     }
 }

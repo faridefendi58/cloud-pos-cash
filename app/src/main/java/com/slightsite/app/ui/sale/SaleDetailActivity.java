@@ -123,6 +123,7 @@ public class SaleDetailActivity extends Activity{
 	private TextView shipping_recipient_name;
 	private TextView shipping_recipient_phone;
 	private TextView created_by;
+	private LinearLayout complete_button_container;
 
 	private PaymentCatalog paymentCatalog;
 	private List<Payment> paymentList;
@@ -221,6 +222,7 @@ public class SaleDetailActivity extends Activity{
 		payment_debt = (TextView) findViewById(R.id.payment_debt);
 		spacer_debt = (View) findViewById(R.id.spacer_debt);
 		created_by = (TextView) findViewById(R.id.created_by);
+		complete_button_container = (LinearLayout) findViewById(R.id.complete_button_container);
 
 		lineitemListRecycle = (RecyclerView) findViewById(R.id.lineitemListRecycle);
 		lineitemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -766,6 +768,10 @@ public class SaleDetailActivity extends Activity{
 										shipping_recipient_name.setText(shipping.getName());
 										shipping_recipient_phone.setText(shipping.getPhone());
 									}
+
+									if (server_invoice_data.getInt("status") == 0) {
+										complete_button_container.setVisibility(View.VISIBLE);
+									}
 								}
 							}
 						} catch (JSONException e) {
@@ -782,5 +788,25 @@ public class SaleDetailActivity extends Activity{
 
 		Toast.makeText(getApplicationContext(),
 				"Copying "+ label + " to clipboard.", Toast.LENGTH_LONG).show();
+	}
+
+	public void markAsComplete(View v) {
+		AlertDialog.Builder quitDialog = new AlertDialog.Builder(
+				SaleDetailActivity.this);
+		quitDialog.setTitle(getResources().getString(R.string.dialog_mark_as_complete));
+		quitDialog.setPositiveButton(getResources().getString(R.string.action_submit), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+
+			}
+		});
+
+		quitDialog.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+
+			}
+		});
+		quitDialog.show();
 	}
 }

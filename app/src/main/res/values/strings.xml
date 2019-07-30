@@ -73,6 +73,7 @@
     <string name="dialog_remove_invoice">Are you sure you want to Remove this invoice?</string>
     <string name="dialog_change_warehouse">Are you sure you want to CHANGE the Warehouse/Branch configuration?</string>
     <string name="dialog_no_payment">Are you sure you want to make a transaction without any payment?</string>
+    <string name="dialog_mark_as_complete">Are you sure you want to Mark this invoice as Complete?</string>
     <string name="hint_empty_sale">Sale is empty.</string>
     <string name="quit">Quit</string>
     <string name="no">No</string>
@@ -266,6 +267,7 @@
     <string name="button_login">Log In</string>
     <string name="button_register">Register</string>
     <string name="button_new_transaction">New Transaction</string>
+    <string name="button_mark_as_complete">Mark As Complete</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
 
