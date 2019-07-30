@@ -287,8 +287,10 @@ public class SaleDetailActivity extends Activity{
 
 		// building payment information
 		List<Map<String, String>> pyitemList = new ArrayList<Map<String, String>>();
-		for (Payment payment : paymentList) {
-			pyitemList.add(payment.toMap());
+		if (paymentList != null) {
+			for (Payment payment : paymentList) {
+				pyitemList.add(payment.toMap());
+			}
 		}
 
 		SimpleAdapter pAdap = new SimpleAdapter(SaleDetailActivity.this, pyitemList,
@@ -341,7 +343,11 @@ public class SaleDetailActivity extends Activity{
 			Double tot_order = sale.getTotal() - sale.getDiscount();
 			payment_grand_total.setText(CurrencyController.getInstance().moneyFormat(tot_order) + "");
 
-			Double getTotalPaymentBySaleId = paymentCatalog.getTotalPaymentBySaleId(saleId);
+			List<Payment> the_payments = paymentCatalog.getPaymentBySaleId(sale.getId());
+			Double getTotalPaymentBySaleId = 0.0;
+			if (the_payments != null) {
+				getTotalPaymentBySaleId = paymentCatalog.getTotalPaymentBySaleId(saleId);
+			}
 			payment_total_received.setText(CurrencyController.getInstance().moneyFormat(getTotalPaymentBySaleId) + "");
 
 			if (getTotalPaymentBySaleId < tot_order) {

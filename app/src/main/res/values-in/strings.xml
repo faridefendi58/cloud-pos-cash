@@ -72,6 +72,7 @@
     <string name="dialog_clear_sale">Anda yakin ingin MEMBATALKAN transaksi ini?</string>
     <string name="dialog_remove_invoice">Anda yakin ingin MENGHAPUS tagihan ini?</string>
     <string name="dialog_change_warehouse">Anda yakin ingin merubah konfigurasi Warehouse/Outlet yang ada saat ini?</string>
+    <string name="dialog_no_payment">Anda yakin ingin melakukan transaksi penjualan tanpa ada pembayaran?</string>
     <string name="hint_empty_sale">Data penjualan kosong.</string>
     <string name="quit">Keluar</string>
     <string name="no">Tidak</string>

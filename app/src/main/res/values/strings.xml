@@ -72,6 +72,7 @@
     <string name="dialog_clear_sale">Are you sure you want to CLEAR this sale?</string>
     <string name="dialog_remove_invoice">Are you sure you want to Remove this invoice?</string>
     <string name="dialog_change_warehouse">Are you sure you want to CHANGE the Warehouse/Branch configuration?</string>
+    <string name="dialog_no_payment">Are you sure you want to make a transaction without any payment?</string>
     <string name="hint_empty_sale">Sale is empty.</string>
     <string name="quit">Quit</string>
     <string name="no">No</string>

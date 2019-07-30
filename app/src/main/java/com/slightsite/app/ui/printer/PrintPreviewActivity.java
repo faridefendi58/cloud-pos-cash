@@ -251,18 +251,20 @@ public class PrintPreviewActivity extends Activity {
                                     JSONObject obj_shipping = arr_shipping.getJSONObject(0);
                                 }
 
-                                // setup the sale
-                                sale.setServerInvoiceNumber(server_invoice_data.getString("invoice_number"));
-                                sale.setCreatedBy(server_invoice_data.getInt("created_by"));
-                                sale.setCreatedByName(server_invoice_data.getString("created_by_name"));
-                                sale.setPaidBy(server_invoice_data.getInt("paid_by"));
-                                sale.setPaidByName(server_invoice_data.getString("paid_by_name"));
-                                sale.setRefundedBy(server_invoice_data.getInt("refunded_by"));
-                                sale.setRefundedByName(server_invoice_data.getString("refunded_by_name"));
+                                if (server_invoice_data.has("created_by")) {
+                                    // setup the sale
+                                    sale.setServerInvoiceNumber(server_invoice_data.getString("invoice_number"));
+                                    sale.setCreatedBy(server_invoice_data.getInt("created_by"));
+                                    sale.setCreatedByName(server_invoice_data.getString("created_by_name"));
+                                    sale.setPaidBy(server_invoice_data.getInt("paid_by"));
+                                    sale.setPaidByName(server_invoice_data.getString("paid_by_name"));
+                                    sale.setRefundedBy(server_invoice_data.getInt("refunded_by"));
+                                    sale.setRefundedByName(server_invoice_data.getString("refunded_by_name"));
 
-                                String formated_receipt = getFormatedReceiptHtml();
+                                    String formated_receipt = getFormatedReceiptHtml();
 
-                                print_webview.loadDataWithBaseURL(null, "<html><body>"+ formated_receipt +"</body></html>", "text/html", "utf-8", null);
+                                    print_webview.loadDataWithBaseURL(null, "<html><body>" + formated_receipt + "</body></html>", "text/html", "utf-8", null);
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

@@ -206,6 +206,14 @@ public class ConfirmationFragment extends Fragment {
                 } else {
                     change_due_label.setText(getResources().getString(R.string.label_change_due));
                 }
+            } else {
+                change_due_label.setText(getResources().getString(R.string.label_dept));
+                change_due_label.setTypeface(Typeface.DEFAULT_BOLD);
+                change_due_label.setTextColor(getResources().getColor(R.color.red_300));
+                Double dept = register.getTotal() - c_data.getDiscount();
+                changeDue.setText(CurrencyController.getInstance().moneyFormat(dept));
+                changeDue.setTypeface(Typeface.DEFAULT_BOLD);
+                changeDue.setTextColor(getResources().getColor(R.color.red_300));
             }
 
             if (!c_data.getShipping().equals(null)) {

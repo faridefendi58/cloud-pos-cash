@@ -563,7 +563,7 @@
                             android:id="@+id/totalPayment"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="$143.50"
+                            android:text="0"
                             android:textAppearance="@style/TextAppearance.AppCompat.Small"
                             android:textColor="@color/grey_90"
                             app:fontFamily="sans-serif-black" />
@@ -595,7 +595,7 @@
                             android:id="@+id/changeDue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="$143.50"
+                            android:text="0"
                             android:textAppearance="@style/TextAppearance.AppCompat.Small"
                             android:textColor="@color/grey_90"
                             app:fontFamily="sans-serif-black" />

@@ -1,8 +1,10 @@
 package com.slightsite.app.ui.sale;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -14,6 +16,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -283,9 +286,30 @@ public class CheckoutActivity extends AppCompatActivity {
                     } else if (array_state[idx_state] == State.PAYMENT) {
                         //Log.e(TAG, "shipping data on payment : "+ checkout_data.getShipping().toMap().toString());
                         if (checkout_data.getTotalPaymentReceived() <= 0) {
-                            Toast.makeText(getBaseContext(),
+                            checkout_data.setCashReceive("0");
+
+                            AlertDialog.Builder dialog = new AlertDialog.Builder(CheckoutActivity.this);
+                            dialog.setTitle(Html.fromHtml("<small>"+getResources().getString(R.string.dialog_no_payment)+"</small>"));
+                            dialog.setPositiveButton(getResources().getString(R.string.label_proceed), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    idx_state = idx_state + 1;
+                                    displayFragment(State.CONFIRMATION);
+                                }
+                            });
+
+                            dialog.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    displayFragment(State.PAYMENT);
+                                }
+                            });
+
+                            dialog.show();
+                            /*Toast.makeText(getBaseContext(),
                                     getResources().getString(R.string.error_empty_payment_data), Toast.LENGTH_SHORT)
-                                    .show();
+                                    .show();*/
 
                             vibe.vibrate(200);
                             return;
@@ -642,8 +666,10 @@ public class CheckoutActivity extends AppCompatActivity {
 
         // building payment information
         List<Map<String, String>> pyitemList = new ArrayList<Map<String, String>>();
-        for (Payment payment : paymentList) {
-            pyitemList.add(payment.toMap());
+        if (paymentList.size() > 0) {
+            for (Payment payment : paymentList) {
+                pyitemList.add(payment.toMap());
+            }
         }
 
         Map<String, Object> mObj = new HashMap<String, Object>();
@@ -678,7 +704,7 @@ public class CheckoutActivity extends AppCompatActivity {
             mObj.put("customer", arrCust);
 
             Double total_tendered = 0.0;
-            if (paymentList.size() > 0) {
+            if (paymentList != null && paymentList.size() > 0) {
                 for (Payment py : paymentList) {
                     Map<String, String> arrPayment2 = new HashMap<String, String>();
                     arrPayment2.put("type", py.getPaymentChannel());
@@ -688,8 +714,8 @@ public class CheckoutActivity extends AppCompatActivity {
                     total_tendered = total_tendered + py.getAmount();
                 }
             } else {
-                arrPayment.put("type", "cash");
-                arrPayment.put("amount_tendered", ""+ sale.getTotal());
+                arrPayment.put("type", "cash_receive");
+                arrPayment.put("amount_tendered", "0");
                 //arrPayment.put("change_due", "0");
                 arrPaymentList.add(arrPayment);
             }

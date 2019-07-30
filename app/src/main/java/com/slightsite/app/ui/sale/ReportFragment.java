@@ -34,6 +34,7 @@ import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.inventory.LineItem;
+import com.slightsite.app.domain.payment.Payment;
 import com.slightsite.app.domain.payment.PaymentCatalog;
 import com.slightsite.app.domain.payment.PaymentService;
 import com.slightsite.app.domain.sale.Sale;
@@ -202,7 +203,11 @@ public class ReportFragment extends UpdatableFragment {
 					salemap.put("customer_data", cust.getName() + " - " + cust.getPhone() + " - " + cust.getAddress());
 				}
 				Double tot = sale.getTotal() - sale.getDiscount();
-				Double tot_payment = paymentCatalog.getTotalPaymentBySaleId(sale.getId());
+				List<Payment> the_payments = paymentCatalog.getPaymentBySaleId(sale.getId());
+				Double tot_payment = 0.0;
+				if (the_payments != null) {
+					tot_payment = paymentCatalog.getTotalPaymentBySaleId(sale.getId());
+				}
 				Log.e(getTag(), "discount : "+ sale.getDiscount());
 				Log.e(getTag(), "tot : "+ tot +" and tot_payment : "+ tot_payment);
 				Log.e(getTag(), "status : "+ sale.getStatus());

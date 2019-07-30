@@ -102,6 +102,9 @@ public class Checkout implements Serializable {
         if (Integer.parseInt(cash_receive) > 0) {
             PaymentItem cash = new PaymentItem("cash_receive", Double.parseDouble(cash_receive));
             payment_items.add(cash);
+        } else {
+            PaymentItem cash = new PaymentItem("cash_receive", 0.0);
+            payment_items.add(cash);
         }
         for (String key : transfer_bank.keySet()) {
             PaymentItem pi = new PaymentItem(key, Double.parseDouble(transfer_bank.get(key)));

@@ -68,9 +68,13 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             view.invoice_number.setText(items.get(position).get("server_invoice_number"));
             view.status.setText(items.get(position).get("status"));
-            if (Integer.parseInt(items.get(position).get("is_paid")) <= 0) {
-                view.status.setTextColor(view.itemView.getContext().getResources().getColor(R.color.red_800));
-            }
+            try {
+                if (items.get(position) != null && items.get(position).get("is_paid") != null) {
+                    if (Integer.parseInt(items.get(position).get("is_paid")) <= 0) {
+                        view.status.setTextColor(view.itemView.getContext().getResources().getColor(R.color.red_800));
+                    }
+                }
+            } catch (Exception e){e.printStackTrace();}
             view.customer_data.setText(items.get(position).get("customer_data"));
 
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
