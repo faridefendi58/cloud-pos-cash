@@ -95,7 +95,8 @@
                     android:background="@drawable/edit_text_round_bg_outline"
                     android:hint="@string/prompt_email"
                     android:minHeight="@dimen/spacing_xmlarge"
-                    android:text="" />
+                    android:text=""
+                    android:inputType="textEmailAddress"/>
 
                 <EditText
                     style="@style/EditText.Flat.Grey"
@@ -129,7 +130,7 @@
                     android:layout_marginTop="@dimen/spacing_large"
                     android:background="@drawable/edit_text_round_bg_outline"
                     android:hint="@string/address"
-                    android:minHeight="@dimen/spacing_xmlarge" />
+                    android:minHeight="@dimen/spacing_xxxlarge" />
 
             </LinearLayout>
 

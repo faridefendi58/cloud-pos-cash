@@ -266,8 +266,9 @@ public class ShippingFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 try {
-                    customer_name = name.getText().toString();
+                    customer_name = customer_name_autocomplete.getText().toString();
                     customer_email = email.getText().toString();
+                    customer_phone = customer_phone_autocomplete.getText().toString();
                     customer_address = address.getText().toString();
                     int customer_id = c_data.getCustomer().getId();
                     if (selected_cust_id > 0) {
@@ -275,7 +276,7 @@ public class ShippingFragment extends Fragment {
                     }
                     //Log.e(getClass().getSimpleName(), "Sebelum setup cust "+ cust.toMap().toString());
                     if (setType == "phone") {
-                        if (!cust.getPhone().equals(s.toString())) {
+                        if (s.toString().length() > 2) {
                             cust.setPhone(s.toString());
                             cust.setName(customer_name);
                             if (customer_email.equals(null)) {
@@ -290,8 +291,12 @@ public class ShippingFragment extends Fragment {
                         }
                     }
                     if (setType == "address") {
-                        if (!cust.getAddress().equals(s.toString())) {
+                        if (s.toString().length() > 2) {
+                            cust.setName(customer_name);
+                            cust.setEmail(customer_email);
+                            cust.setPhone(customer_phone);
                             cust.setAddress(s.toString());
+                            Log.e(getClass().getSimpleName(), "Sedang setup address "+ cust.toMap().toString());
                             ((CheckoutActivity) getActivity()).setCustomer(cust);
                         }
                     }
@@ -323,7 +328,7 @@ public class ShippingFragment extends Fragment {
     private void initAction() {
         c_data = ((CheckoutActivity) getActivity()).getCheckoutData();
         cust = c_data.getCustomer();
-        setTextChangeListener(phone, "phone");
+        //setTextChangeListener(phone, "phone");
         setTextChangeListener(address, "address");
 
         if (ship == null) {
@@ -396,11 +401,26 @@ public class ShippingFragment extends Fragment {
     private void showShippingMethodDialog(final View v) {
         if (cust.getName().length() == 0){
             Log.e(getTag(), "customer masih null");
+            Boolean has_new_cust_data = false;
+            // check once again wheter user fill the new customer data
+            if (customer_name_autocomplete.getText().length() > 0
+                    && customer_phone_autocomplete.getText().length() >0 && address.getText().length() > 0) {
+                cust.setName(customer_name_autocomplete.getText().toString());
+                cust.setPhone(customer_phone_autocomplete.getText().toString());
+                cust.setAddress(address.getText().toString());
+                cust.setEmail(email.getText().toString());
+
+                ((CheckoutActivity) getActivity()).setCustomer(cust);
+                has_new_cust_data = true;
+            }
+
             customer_name_autocomplete.setFocusable(true);
-            Toast.makeText(getActivity().getBaseContext(),
-                    getResources().getString(R.string.error_empty_customer_data), Toast.LENGTH_SHORT)
-                    .show();
-            return;
+            if (!has_new_cust_data) {
+                Toast.makeText(getActivity().getBaseContext(),
+                        getResources().getString(R.string.error_empty_customer_data), Toast.LENGTH_SHORT)
+                        .show();
+                return;
+            }
         }
 
         current_warehouse_name = ((CheckoutActivity)getActivity()).getCurrentWarehouseName();
