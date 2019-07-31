@@ -182,8 +182,6 @@ public class InventoryFragment extends UpdatableFragment {
 							Toast.LENGTH_SHORT);
 					toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 8);
 					toast.show();*/
-
-					triggerAddSubstractButton(myView, id, position);
 				}
 			}     
 		});
@@ -230,17 +228,6 @@ public class InventoryFragment extends UpdatableFragment {
 		} else {
 			no_product_container.setVisibility(View.GONE);
 		}
-
-		/*ButtonAdapter sAdap = new ButtonAdapter(getActivity().getBaseContext(), inventoryList,
-				R.layout.listview_inventory, new String[]{"name", "availability"}, new int[] {R.id.name, R.id.stock_counter}, R.id.optionView, "id");
-		inventoryListView.setAdapter(sAdap);*/
-
-		/*Log.e(getTag(), "Show the list");
-		Log.e(getTag(), "inventoryListView.getChildCount() : "+ inventoryListView.getCount());
-		for (int i = 0; i < inventoryListView.getCount(); i++) {
-			TextView quantity = (TextView) inventoryListView.getChildAt(i);
-			Log.e(getTag(), "Loop qty : "+ quantity.toString());
-		}*/
 
 		// clearing the stack on update
 		this.stacks = new HashMap<Integer, Integer>();
@@ -321,26 +308,6 @@ public class InventoryFragment extends UpdatableFragment {
 		update();
 	}
 
-	public static void updateGridViewHeight(GridView myGridView, Integer add_height) {
-		ListAdapter myListAdapter = myGridView.getAdapter();
-		if (myListAdapter == null) {
-			return;
-		}
-		// get listview height
-		int totalHeight = 0;
-		int adapterCount = myListAdapter.getCount();
-		for (int size = 0; size < adapterCount; size++) {
-			View listItem = myListAdapter.getView(size, null, myGridView);
-			listItem.measure(0, 0);
-			totalHeight += listItem.getMeasuredHeight();
-		}
-		// Change Height of ListView
-		ViewGroup.LayoutParams params = myGridView.getLayoutParams();
-		params.height = (totalHeight
-				+ (myGridView.getVerticalSpacing() * (adapterCount))) + add_height;
-		myGridView.setLayoutParams(params);
-	}
-
 	public void updateCart() {
 		Double tot_cart = register.getTotal();
 		if (tot_cart > 0) {
@@ -354,7 +321,7 @@ public class InventoryFragment extends UpdatableFragment {
 		}
 	}
 
-	public void triggerAddSubstractButton(final View myView, final Integer id, final Integer position) {
+	/*public void triggerAddSubstractButton(final View myView, final Integer id, final Integer position) {
 		myView.findViewById(R.id.add_qty).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -427,11 +394,63 @@ public class InventoryFragment extends UpdatableFragment {
 				saleFragment.update();
 			}
 		});
-	}
+	}*/
 
 	public void addToCart(Product p) {
 		register.addItem(p, 1);
+		LineItem lineItem = register.getCurrentSale().getLineItemByProductId(p.getId());
+		if (!lineItem.getProduct().equals(null)) {
+			Integer tot_qty_in_cart = register.getCurrentSale().getOrders();
+			Double grosir_price = lineItem.getProduct().getUnitPriceByQuantity(p.getId(), tot_qty_in_cart);
+			if (grosir_price > 0) {
+				register.updateItem(
+						register.getCurrentSale().getId(),
+						lineItem,
+						1,
+						grosir_price
+				);
+			}
+		}
 		stacks.put(p.getId(), 1);
+		saleFragment.update();
+		viewPager.setCurrentItem(0);
+		updateCart();
+	}
+
+	public void addSubstractTheCart(Product p, int quantity) {
+		if (quantity == 0) {
+			// substract the cart
+			try {
+				LineItem lineItem = register.getCurrentSale().getLineItemByProductId(p.getId());
+				if (lineItem != null && lineItem.getId() >= 0) {
+					register.removeItem(lineItem);
+					stacks.remove(p.getId());
+				}
+			} catch (Exception e) { e.printStackTrace();}
+		} else {
+			LineItem lineItem = register.getCurrentSale().getLineItemByProductId(p.getId());
+			if (!lineItem.getProduct().equals(null)) {
+				Integer tot_qty_in_cart = register.getCurrentSale().getOrders();
+				Double grosir_price = lineItem.getProduct().getUnitPriceByQuantity(p.getId(), tot_qty_in_cart);
+				if (grosir_price > 0) {
+					register.updateItem(
+							register.getCurrentSale().getId(),
+							lineItem,
+							quantity,
+							grosir_price
+					);
+				} else {
+					register.updateItem(
+							register.getCurrentSale().getId(),
+							lineItem,
+							quantity,
+							p.getUnitPrice()
+					);
+				}
+				stacks.put(p.getId(), quantity);
+			}
+		}
+
 		saleFragment.update();
 		viewPager.setCurrentItem(0);
 		updateCart();
@@ -466,33 +485,11 @@ public class InventoryFragment extends UpdatableFragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.nav_branch :
-				//showConfirmChangeBranchDialog();
 				// no confirm dialog
 				changeWHPopup();
 			default:
 				return super.onOptionsItemSelected(item);
 		}
-	}
-
-	private void showConfirmChangeBranchDialog() {
-		AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-		dialog.setTitle(Html.fromHtml("<small>"+res.getString(R.string.dialog_change_warehouse)+"</small>"));
-		dialog.setPositiveButton(res.getString(R.string.label_proceed), new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				changeWHPopup();
-			}
-		});
-
-		dialog.setNegativeButton(res.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-
-			}
-		});
-
-		dialog.show();
 	}
 
 	public void changeWHPopup() {

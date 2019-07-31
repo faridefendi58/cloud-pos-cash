@@ -28,6 +28,8 @@ import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.component.UpdatableFragment;
 import com.slightsite.app.ui.inventory.InventoryFragment;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,6 +86,8 @@ public class AdapterListProduct extends BaseAdapter{
         LinearLayout add_qty_container;
         View rowView;
         Button addCartButton;
+        TextView substract_qty;
+        TextView add_qty;
     }
 
     @Override
@@ -101,6 +105,8 @@ public class AdapterListProduct extends BaseAdapter{
         holder.add_qty_container = (LinearLayout) rowView.findViewById(R.id.add_qty_container);
         holder.rowView = rowView;
         holder.addCartButton = (Button) rowView.findViewById(R.id.addCartButton);
+        holder.substract_qty = (TextView) rowView.findViewById(R.id.substract_qty);
+        holder.add_qty = (TextView) rowView.findViewById(R.id.add_qty);
 
         final Product p = items.get(position);
         Map<String, String> pmap = p.toMap();
@@ -109,7 +115,6 @@ public class AdapterListProduct extends BaseAdapter{
         if (p.getImage() != null) {
             if (activity.getImageStack(p.getId()) instanceof Bitmap) {
                 holder.product_image.setImageBitmap(activity.getImageStack(p.getId()));
-                Log.e(getClass().getSimpleName(), "Ini dari image stacks main activity");
             } else {
                 if (p.getImageBitmap() == null) {
                     DownloadImageTask downloadImageTask = new DownloadImageTask(holder.product_image);
@@ -152,17 +157,12 @@ public class AdapterListProduct extends BaseAdapter{
 
                     try {
                         fragment.addToCart(p);
-                    } catch (Exception e) {
-                        Log.e(getClass().getSimpleName(), e.getMessage());
-                    }
+                    } catch (Exception e) {e.printStackTrace();}
                 } else {
-                    //holder.add_qty_container.setVisibility(View.VISIBLE);
-                    //holder.addCartButton.setVisibility(View.VISIBLE);
                     holder.optionView.setVisibility(View.GONE);
                     int tot_qty = stacks.get(p.getId());
                     holder.quantity.setText(""+ tot_qty);
                 }
-                fragment.triggerAddSubstractButton(holder.rowView, p.getId(), position);
             }
         });
 
@@ -199,16 +199,51 @@ public class AdapterListProduct extends BaseAdapter{
 
                     try {
                         fragment.addToCart(p);
-                    } catch (Exception e) {
-                        Log.e(getClass().getSimpleName(), e.getMessage());
-                    }
+                    } catch (Exception e) {e.printStackTrace();}
                 } else {
                     holder.addCartButton.setVisibility(View.VISIBLE);
                     holder.optionView.setVisibility(View.GONE);
                     int tot_qty = stacks.get(p.getId()) + 1;
                     holder.quantity.setText(""+ tot_qty);
                 }
-                fragment.triggerAddSubstractButton(holder.rowView, p.getId(), position);
+            }
+        });
+
+        holder.add_qty.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int the_qty = Integer.parseInt(holder.quantity.getText().toString()) + 1;
+                holder.quantity.setText(""+ the_qty);
+                try {
+                    if (the_qty == 1) {
+                        fragment.addToCart(p);
+                    } else {
+                        fragment.addSubstractTheCart(p, the_qty);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        holder.substract_qty.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int current_qty = Integer.parseInt(holder.quantity.getText().toString());
+                int the_qty = 0;
+                if (current_qty > 1) {
+                    the_qty = current_qty - 1;
+                }
+                holder.quantity.setText(""+ the_qty);
+                if (the_qty == 0) {
+                    holder.addCartButton.setVisibility(View.VISIBLE);
+                    //holder.add_qty_container.setVisibility(View.GONE);
+                }
+                try {
+                    fragment.addSubstractTheCart(p, the_qty);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 

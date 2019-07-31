@@ -31,6 +31,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -39,6 +40,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -132,6 +135,7 @@ public class SaleDetailActivity extends Activity{
 	private Shipping shipping;
 	private String[] ship_methods;
 	private WarehouseCatalog warehouseCatalog;
+	private BottomSheetDialog bottomSheetDialog;
 
 	ProgressDialog pDialog;
 	int success;
@@ -791,7 +795,7 @@ public class SaleDetailActivity extends Activity{
 	}
 
 	public void markAsComplete(View v) {
-		AlertDialog.Builder quitDialog = new AlertDialog.Builder(
+		/*AlertDialog.Builder quitDialog = new AlertDialog.Builder(
 				SaleDetailActivity.this);
 		quitDialog.setTitle(getResources().getString(R.string.dialog_mark_as_complete));
 		quitDialog.setPositiveButton(getResources().getString(R.string.action_submit), new DialogInterface.OnClickListener() {
@@ -807,6 +811,17 @@ public class SaleDetailActivity extends Activity{
 
 			}
 		});
-		quitDialog.show();
+		quitDialog.show();*/
+		bottomSheetDialog = new BottomSheetDialog(SaleDetailActivity.this);
+		View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_mark_complete, null);
+		bottomSheetDialog.setContentView(sheetView);
+
+		bottomSheetDialog.show();
+
+		triggerBottomDialogButton(sheetView);
+	}
+
+	private void triggerBottomDialogButton(View view) {
+
 	}
 }

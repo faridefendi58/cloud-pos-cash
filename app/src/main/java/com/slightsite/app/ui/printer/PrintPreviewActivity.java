@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -563,6 +564,9 @@ public class PrintPreviewActivity extends Activity {
     }
 
     public void shareInvoice() {
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
         Bitmap bm = screenShot(print_webview);
         File file = saveBitmap(bm, sale.getServerInvoiceNumber() +".png");
 

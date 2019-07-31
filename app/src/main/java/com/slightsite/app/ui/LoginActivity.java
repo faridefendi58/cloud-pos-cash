@@ -946,7 +946,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
                         // get the roles form server if any
                         try {
-                            if (jObj.get("roles") != null && jObj.get("roles") != "false" && jObj.getBoolean("roles") != false) {
+                            if (jObj.get("roles") != null && jObj.get("roles") != "false") {
                                 JSONObject roles = jObj.getJSONObject("roles");
                                 if (roles.length() > 0) {
                                     Log.e(getClass().getSimpleName(), "roles : " + roles.toString());
@@ -963,6 +963,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                                         }
                                     }
                                 }
+                            } else {
+                                Boolean save = adminInWarehouseCatalog.addAdminInWarehouse(Integer.parseInt(id), 8, 1);
                             }
                         } catch (Exception e){
                             e.printStackTrace();

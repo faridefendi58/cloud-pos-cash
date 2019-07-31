@@ -51,7 +51,6 @@ public class LineItem {
 		this.quantity = quantity;
 		this.unitPriceAtSale = unitPriceAtSale;
 
-		Log.e("LineItem", "quantity_total : "+ quantity_total);
 		try {
 			if (quantity_total >= 5 && multi_level_price) {
 				unitGrosirPrice = product.getUnitPriceByQuantity(product.getId(), quantity_total);

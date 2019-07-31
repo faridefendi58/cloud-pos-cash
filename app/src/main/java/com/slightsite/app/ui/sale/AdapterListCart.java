@@ -88,25 +88,26 @@ public class AdapterListCart extends RecyclerView.Adapter<RecyclerView.ViewHolde
             OriginalViewHolder vwh = (OriginalViewHolder) holder;
 
             final LineItem p = items.get(position);
+
             view.title.setText(p.getProduct().getName());
             int qty = 1;
             double prc = 0.0;
             double sub_total = 0.0;
+            Double grosir_price = 0.0;
             try {
                 qty = p.getQuantity();
                 prc = p.getPriceAtSale();
-            } catch (Exception e) {
-                Log.e("Adapter List Cart", e.getMessage());
-            }
+            } catch (Exception e) {e.printStackTrace();}
+
             view.quantity.setText(""+qty);
-            sub_total = prc * qty;
-            view.price.setText("@ "+ CurrencyController.getInstance().moneyFormat(prc));
-            //view.price_subtotal.setText(CurrencyController.getInstance().moneyFormat(sub_total));
+
+            //sub_total = prc * qty;
+            view.price.setText("@ " + CurrencyController.getInstance().moneyFormat(prc));
+
             if (p.getProduct().getImage() != null) {
                 Bitmap drawable = ((MainActivity)ctx).getImageStack(p.getId());
                 if (drawable != null) {
                     view.image.setImageBitmap(drawable);
-                    Log.e(getClass().getSimpleName(), "Ini dari image stacks main activity");
                 } else {
                     /*new DownloadImageTask(view.image)
                             .execute(Server.BASE_API_URL +""+ p.getProduct().getImage());*/
