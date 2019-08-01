@@ -2,10 +2,13 @@ package com.slightsite.app.ui.inventory;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -25,6 +28,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -248,6 +252,7 @@ public class InventoryFragment extends UpdatableFragment {
 		this.stacks = new HashMap<Integer, Integer>();
 
 		AdapterListProduct pAdap = new AdapterListProduct(main, list, R.layout.listview_inventory, InventoryFragment.this);
+		pAdap.notifyDataSetChanged();
 		inventoryListView.setAdapter(pAdap);
 	}
 
@@ -327,15 +332,30 @@ public class InventoryFragment extends UpdatableFragment {
 		Double tot_cart = register.getTotal();
 		if (tot_cart > 0) {
 			Integer tot_item_cart = register.getCurrentSale().getAllLineItem().size();
-			cart_total.setText("Sub Total " + CurrencyController.getInstance().moneyFormat(tot_cart) + " of " + tot_item_cart+ " Items");
+			String cart_total_txt = getResources().getString(R.string.label_sub_total)+" " +
+					"" + CurrencyController.getInstance().moneyFormat(tot_cart) +" " +
+					getResources().getString(R.string.label_of) +" "+ tot_item_cart + " " +
+					getResources().getString(R.string.label_items);
+			cart_total.setText(cart_total_txt);
 
-			bottom_cart_container.setVisibility(View.VISIBLE);
 			bottom_cart_container.getLayoutParams().height = LinearLayout.LayoutParams.WRAP_CONTENT;
 			bottom_cart_container.requestLayout();
+
+			bottom_cart_container.setVisibility(View.VISIBLE);
+
+			TranslateAnimation animate = new TranslateAnimation(
+					0,                 // fromXDelta
+					0,                 // toXDelta
+					bottom_cart_container.getHeight() + 100,  // fromYDelta
+					0);                // toYDelta
+			animate.setDuration(500);
+			animate.setFillAfter(true);
+			bottom_cart_container.startAnimation(animate);
 		} else {
-			bottom_cart_container.setVisibility(View.INVISIBLE);
 			bottom_cart_container.getLayoutParams().height = 0;
 			bottom_cart_container.requestLayout();
+			bottom_cart_container.setVisibility(View.INVISIBLE);
+
 			cart_total.setText("Empty cart");
 		}
 	}
@@ -495,6 +515,8 @@ public class InventoryFragment extends UpdatableFragment {
 
 	public void showOutletOptionsDialog(final View v) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+		int selected_wh = -1;
+		String current_warehouse_name = ((MainActivity)getActivity()).getCurrentWarehouseName();
 		try {
 			if (allowed_warehouses.size() > 0) {
 				ArrayList<String> stringArrayList = new ArrayList<String>();
@@ -514,11 +536,15 @@ public class InventoryFragment extends UpdatableFragment {
 				}
 			}
 
-			builder.setSingleChoiceItems(warehouses, -1, new DialogInterface.OnClickListener() {
+			if (warehouses.length > 0) {
+				selected_wh = Arrays.asList(warehouses).indexOf(current_warehouse_name);
+			}
+
+			builder.setSingleChoiceItems(warehouses, selected_wh, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialogInterface, int i) {
-					String current_wh = ((MainActivity)getActivity()).getWarehouseName();
-					if (warehouses[i] == current_wh) {
+					String current_wh = ((MainActivity)getActivity()).getCurrentWarehouseName();
+					if (warehouses[i].equals(current_wh)) {
 						Toast.makeText(getContext(), "Please choose another branch!",
 								Toast.LENGTH_LONG).show();
 					} else {
@@ -541,7 +567,7 @@ public class InventoryFragment extends UpdatableFragment {
 						String wh_choosen = warehouses[i];
 						String wh_choosen_id = warehouse_ids.get(wh_choosen);
 						try {
-							//((MainActivity)getActivity()).changeOutletExecution(wh_choosen_id, wh_choosen);
+							((MainActivity)getActivity()).changeOutletExecution(wh_choosen_id, wh_choosen);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

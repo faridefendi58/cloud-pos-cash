@@ -217,6 +217,7 @@ public class ShippingFragment extends Fragment {
 
         customer_name_autocomplete = (AutoCompleteTextView) root.findViewById(R.id.customer_name_autocomplete);
         AutoCompleteAdapter adapter = new AutoCompleteAdapter(getContext(), R.layout.spinner_item);
+        adapter.notifyDataSetChanged();
         customer_name_autocomplete.setAdapter(adapter);
         adapter.setShippingFragment(this);
 

@@ -257,6 +257,8 @@
     <string name="label_resume">Resume</string>
     <string name="label_printer_configuration">Printer Configs</string>
     <string name="label_to">To</string>
+    <string name="label_of">Of</string>
+    <string name="label_items">Items</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>

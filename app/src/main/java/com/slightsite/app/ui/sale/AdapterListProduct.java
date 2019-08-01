@@ -113,15 +113,19 @@ public class AdapterListProduct extends BaseAdapter{
         holder.name.setText(p.getName());
         holder.stock_counter.setText(pmap.get("availability"));
         if (p.getImage() != null) {
+            Log.e(getClass().getSimpleName(), "Image dah ada saat render list product");
             if (activity.getImageStack(p.getId()) instanceof Bitmap) {
+                Log.e(getClass().getSimpleName(), "sudah ada di stack juga");
                 holder.product_image.setImageBitmap(activity.getImageStack(p.getId()));
             } else {
                 if (p.getImageBitmap() == null) {
+                    Log.e(getClass().getSimpleName(), "p.getImageBitmap() masih kosong, harus download");
                     DownloadImageTask downloadImageTask = new DownloadImageTask(holder.product_image);
                     downloadImageTask.setActivity(activity);
                     downloadImageTask.setProductId(p.getId());
                     downloadImageTask.execute(Server.BASE_API_URL + "" + p.getImage());
                 } else {
+                    Log.e(getClass().getSimpleName(), "p.getImageBitmap() dah tersimpan di table");
                     holder.product_image.setImageBitmap(p.getImageBitmap());
                 }
             }
