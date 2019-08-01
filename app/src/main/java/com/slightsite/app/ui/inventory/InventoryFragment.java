@@ -49,6 +49,8 @@ import com.slightsite.app.domain.inventory.Product;
 import com.slightsite.app.domain.inventory.ProductCatalog;
 import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.domain.sale.Sale;
+import com.slightsite.app.domain.warehouse.WarehouseCatalog;
+import com.slightsite.app.domain.warehouse.WarehouseService;
 import com.slightsite.app.domain.warehouse.Warehouses;
 import com.slightsite.app.techicalservices.DatabaseExecutor;
 import com.slightsite.app.techicalservices.Demo;
@@ -80,6 +82,7 @@ public class InventoryFragment extends UpdatableFragment {
 	private LinearLayout bottom_cart_container;
 	private MaterialRippleLayout lyt_next;
 	private LinearLayout no_product_container;
+	private EditText wh_options;
 
 	private ViewPager viewPager;
 	private Register register;
@@ -91,6 +94,8 @@ public class InventoryFragment extends UpdatableFragment {
 	private Map<Integer, Integer> stacks = new HashMap<Integer, Integer>();
 
 	private View fragment_view;
+	private List<Warehouses> warehousesList;
+	private Map<Integer, String> allowed_warehouses = new HashMap<Integer, String>();
 
 	/**
 	 * Construct a new InventoryFragment.
@@ -108,6 +113,8 @@ public class InventoryFragment extends UpdatableFragment {
 		try {
 			productCatalog = Inventory.getInstance().getProductCatalog();
 			register = Register.getInstance();
+			warehousesList = ((MainActivity)getActivity()).getWarehouseList();
+			allowed_warehouses = ((MainActivity)getActivity()).getAllowedWarehouseList();
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
 		}
@@ -127,6 +134,7 @@ public class InventoryFragment extends UpdatableFragment {
 		bottom_cart_container = (LinearLayout) view.findViewById(R.id.bottom_cart_container);
 		lyt_next = (MaterialRippleLayout) view.findViewById(R.id.lyt_next);
 		no_product_container = (LinearLayout) view.findViewById(R.id.no_product_container);
+		wh_options = (EditText) view.findViewById(R.id.wh_options);
 
 		main = (MainActivity) getActivity();
 		viewPager = main.getViewPager();
@@ -209,6 +217,14 @@ public class InventoryFragment extends UpdatableFragment {
 				viewPager.setCurrentItem(1);
 			}
 		});
+
+		wh_options.setText(((MainActivity)getActivity()).getWarehouseName());
+		wh_options.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showOutletOptionsDialog(v);
+			}
+		});
 	}
 
 	/**
@@ -220,7 +236,6 @@ public class InventoryFragment extends UpdatableFragment {
 		inventoryList = new ArrayList<Map<String, String>>();
 		for(Product product : list) {
 			inventoryList.add(product.toMap());
-			Log.e(getTag(), "product.toMap() : "+ product.toMap().toString());
 		}
 
 		if (inventoryList.size() == 0) {
@@ -315,86 +330,15 @@ public class InventoryFragment extends UpdatableFragment {
 			cart_total.setText("Sub Total " + CurrencyController.getInstance().moneyFormat(tot_cart) + " of " + tot_item_cart+ " Items");
 
 			bottom_cart_container.setVisibility(View.VISIBLE);
+			bottom_cart_container.getLayoutParams().height = LinearLayout.LayoutParams.WRAP_CONTENT;
+			bottom_cart_container.requestLayout();
 		} else {
 			bottom_cart_container.setVisibility(View.INVISIBLE);
+			bottom_cart_container.getLayoutParams().height = 0;
+			bottom_cart_container.requestLayout();
 			cart_total.setText("Empty cart");
 		}
 	}
-
-	/*public void triggerAddSubstractButton(final View myView, final Integer id, final Integer position) {
-		myView.findViewById(R.id.add_qty).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				TextView quantity = myView.findViewById(R.id.quantity);
-				int the_qty = Integer.parseInt(quantity.getText().toString()) + 1;
-				quantity.setText(""+ the_qty);
-				register.addItem(productCatalog.getProductById(id), 1);
-				updateCart();
-				saleFragment.update();
-				stacks.put(id, the_qty);
-				Log.e(getTag(), "On adding qty "+ position);
-			}
-		});
-
-		myView.findViewById(R.id.substract_qty).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Log.e(getTag(), "On substract qty");
-				TextView quantity = myView.findViewById(R.id.quantity);
-				int current_qty = Integer.parseInt(quantity.getText().toString());
-				int the_qty = current_qty;
-				if (current_qty > 0) {
-					the_qty = current_qty - 1;
-				}
-				int id = Integer.parseInt(inventoryList.get(position).get("id").toString());
-
-				if (the_qty == 0) {
-					myView.findViewById(R.id.add_qty_container).setVisibility(View.GONE);
-					//myView.findViewById(R.id.optionView).setVisibility(View.VISIBLE);
-					myView.findViewById(R.id.addCartButton).setVisibility(View.VISIBLE);
-					// substract the cart
-					try {
-						//LineItem lineItem = register.getCurrentSale().getLineItemAt(position);
-						LineItem lineItem = register.getCurrentSale().getLineItemByProductId(id);
-						if (lineItem != null && lineItem.getId() >= 0) {
-							Log.e(getTag(), "LI : "+ lineItem.getProduct().getName());
-							register.removeItem(lineItem);
-							stacks.remove(id);
-						} else {
-							Log.e(getTag(), "position : "+ position);
-						}
-						updateCart();
-					} catch (Exception e) {
-						Log.e(getTag(), e.getMessage());
-					}
-				} else {
-					LineItem lineItem = register.getCurrentSale().getLineItemByProductId(id);
-					if (!lineItem.getProduct().equals(null)) {
-						Double grosir_price = lineItem.getProduct().getUnitPriceByQuantity(lineItem.getProduct().getId(), the_qty);
-						if (grosir_price > 0) {
-							register.updateItem(
-									register.getCurrentSale().getId(),
-									lineItem,
-									the_qty,
-									grosir_price
-							);
-						} else {
-							register.updateItem(
-									register.getCurrentSale().getId(),
-									lineItem,
-									the_qty,
-									lineItem.getProduct().getUnitPrice()
-							);
-						}
-						stacks.put(id, the_qty);
-					}
-					updateCart();
-				}
-				quantity.setText(""+ the_qty);
-				saleFragment.update();
-			}
-		});
-	}*/
 
 	public void addToCart(Product p) {
 		register.addItem(p, 1);
@@ -474,26 +418,139 @@ public class InventoryFragment extends UpdatableFragment {
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		List<Warehouses> whs = ((MainActivity)getActivity()).getWarehouseList();
-		if (whs.size() > 0) {
-			inflater.inflate(R.menu.menu_branch, menu);
-			super.onCreateOptionsMenu(menu, inflater);
-		}
+		inflater.inflate(R.menu.menu_delete, menu);
+		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.nav_branch :
-				// no confirm dialog
-				changeWHPopup();
+			case R.id.nav_delete :
+				showConfirmClearDialog();
 			default:
 				return super.onOptionsItemSelected(item);
 		}
 	}
 
+	/**
+	 * Show confirm or clear dialog.
+	 */
+	private void showConfirmClearDialog() {
+		LayoutInflater inflater2 = this.getLayoutInflater();
+
+		View titleView = inflater2.inflate(R.layout.dialog_custom_title, null);
+		((TextView) titleView.findViewById(R.id.dialog_title)).setText(res.getString(R.string.title_clear_sale));
+		if (register.hasSale() && register.getCurrentSale().size() > 0) {
+			((TextView) titleView.findViewById(R.id.dialog_content)).setText(res.getString(R.string.dialog_clear_sale));
+		} else {
+			((TextView) titleView.findViewById(R.id.dialog_content)).setText(res.getString(R.string.message_clear_empty_sale));
+		}
+
+		AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+		dialog.setCustomTitle(titleView);
+		if (register.hasSale() && register.getCurrentSale().size() > 0) {
+			dialog.setPositiveButton(res.getString(R.string.clear), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					if (!register.getCurrentSale().getStatus().equals("ENDED")) {
+						register.cancleSale();
+					} else {
+						register.setCurrentSale(0);
+					}
+					update();
+					try {
+						((MainActivity) getActivity()).updateSaleFragment();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+
+			dialog.setNegativeButton(res.getString(R.string.no), new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+
+				}
+			});
+		} else {
+			dialog.setNegativeButton(res.getString(R.string.button_close), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+
+				}
+			});
+		}
+
+		dialog.show();
+	}
+
 	public void changeWHPopup() {
 		ChangeWarehouseDialogFragment newFragment = new ChangeWarehouseDialogFragment(InventoryFragment.this);
 		newFragment.show(getFragmentManager(), "");
+	}
+
+	private String[] warehouses = new String[]{};
+	private HashMap<String, String> warehouse_ids = new HashMap<String, String>();
+
+	public void showOutletOptionsDialog(final View v) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+		try {
+			if (allowed_warehouses.size() > 0) {
+				ArrayList<String> stringArrayList = new ArrayList<String>();
+				for (Map.Entry<Integer, String> entry : allowed_warehouses.entrySet()) {
+					stringArrayList.add(entry.getValue());
+					warehouse_ids.put(entry.getValue(), entry.getKey() + "");
+				}
+				warehouses = stringArrayList.toArray(new String[stringArrayList.size()]);
+			} else {
+				if (warehousesList.size() > 0) {
+					ArrayList<String> stringArrayList = new ArrayList<String>();
+					for (Warehouses wh : warehousesList) {
+						stringArrayList.add(wh.getTitle());
+						warehouse_ids.put(wh.getTitle(), wh.getId() + "");
+					}
+					warehouses = stringArrayList.toArray(new String[stringArrayList.size()]);
+				}
+			}
+
+			builder.setSingleChoiceItems(warehouses, -1, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialogInterface, int i) {
+					String current_wh = ((MainActivity)getActivity()).getWarehouseName();
+					if (warehouses[i] == current_wh) {
+						Toast.makeText(getContext(), "Please choose another branch!",
+								Toast.LENGTH_LONG).show();
+					} else {
+						((EditText) v).setText(warehouses[i]);
+						if (register.hasSale()) {
+							try {
+								if (!register.getCurrentSale().getStatus().equals("ENDED")) {
+									register.cancleSale();
+								} else {
+									register.setCurrentSale(0);
+								}
+								update();
+								((MainActivity) getActivity()).updateSaleFragment();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+
+						// starting to do updating the data
+						String wh_choosen = warehouses[i];
+						String wh_choosen_id = warehouse_ids.get(wh_choosen);
+						try {
+							//((MainActivity)getActivity()).changeOutletExecution(wh_choosen_id, wh_choosen);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+
+					dialogInterface.dismiss();
+				}
+			});
+			builder.show();
+		} catch (Exception e){e.printStackTrace();}
 	}
 }

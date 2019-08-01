@@ -99,6 +99,7 @@
     <string name="title_change_language">Change Language</string>
     <string name="title_share">Share</string>
     <string name="title_mark_complete">Finish This Order</string>
+    <string name="title_clear_sale">Clear Current Sale</string>
 
     <string name="dashboard_income">Income</string>
     <string name="dashboard_transaction">Transaction</string>
@@ -208,6 +209,7 @@
     <string name="message_unpaid">Unpaid</string>
     <string name="message_refunded">Refunded</string>
     <string name="message_thankyou">Thank You!</string>
+    <string name="message_clear_empty_sale">Sorry, There is no sale to be cleared!</string>
 
     <string name="title_print_invoice">Print Invoice</string>
     <string name="title_list_printer">Devices</string>
@@ -269,6 +271,7 @@
     <string name="button_register">Register</string>
     <string name="button_new_transaction">New Transaction</string>
     <string name="button_mark_as_complete">Mark As Complete</string>
+    <string name="button_close">Close</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
 

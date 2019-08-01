@@ -8,6 +8,7 @@ public class AdminInWarehouse {
     private int admin_id;
     private int warehouse_id;
     private int status;
+    private String warehouse_name;
 
     /**
      * Static address for UNDEFINED ID.
@@ -46,6 +47,14 @@ public class AdminInWarehouse {
         return warehouse_id;
     }
 
+    public void setWarehouseName(String warehouse_name) {
+        this.warehouse_name = warehouse_name;
+    }
+
+    public String getWarehouseName() {
+        return warehouse_name;
+    }
+
     public int getAdminId() {
         return admin_id;
     }
@@ -58,6 +67,7 @@ public class AdminInWarehouse {
         Map<String, String> map = new HashMap<String, String>();
         map.put("id", id + "");
         map.put("warehouse_id", warehouse_id + "");
+        map.put("warehouse_name", warehouse_name + "");
         map.put("admin_id", admin_id + "");
         map.put("status", status + "");
 

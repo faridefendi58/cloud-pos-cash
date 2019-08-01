@@ -44,11 +44,12 @@ public class AdminInWarehouseDaoAndroid implements AdminInWarehouseDao {
         List<AdminInWarehouse> list = new ArrayList<AdminInWarehouse>();
         for (Object object: objectList) {
             ContentValues content = (ContentValues) object;
-            list.add(new AdminInWarehouse(
+            AdminInWarehouse adminInWarehouse = new AdminInWarehouse(
                     content.getAsInteger("admin_id"),
                     content.getAsInteger("warehouse_id"),
-                    content.getAsInteger("status"))
-            );
+                    content.getAsInteger("status"));
+            adminInWarehouse.setWarehouseName(content.getAsString("title"));
+            list.add(adminInWarehouse);
         }
         return list;
     }
@@ -59,7 +60,8 @@ public class AdminInWarehouseDaoAndroid implements AdminInWarehouseDao {
     }
 
     private List<AdminInWarehouse> getAllAdminInWarehouse(String condition) {
-        String queryString = "SELECT * FROM " + DatabaseContents.TABLE_ADMIN_IN_WAREHOUSE.toString() + condition + " ORDER BY admin_id";
+        String queryString = "SELECT t.*, wh.title FROM " + DatabaseContents.TABLE_ADMIN_IN_WAREHOUSE.toString() +
+                " t LEFT JOIN "+ DatabaseContents.TABLE_WAREHOUSES.toString() +" wh ON t.warehouse_id = wh.warehouse_id " + condition + " ORDER BY admin_id";
         List<AdminInWarehouse> list = toAdminInWarehouseList(database.select(queryString));
         return list;
     }

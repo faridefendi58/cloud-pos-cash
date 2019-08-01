@@ -148,10 +148,6 @@ public class SaleFragment extends UpdatableFragment {
 			saleList.add(line.toMap());
 		}
 
-		/*SimpleAdapter sAdap;
-		sAdap = new SimpleAdapter(getActivity().getBaseContext(), saleList,
-				R.layout.listview_cart, new String[]{"name","quantity","price"}, new int[] {R.id.name,R.id.quantity,R.id.price});
-		saleListView.setAdapter(sAdap);*/
 		//set data and list adapter
 		mAdapter = new AdapterListCart(getContext(), list, register, totalPrice);
 		saleListView.setAdapter(mAdapter);
@@ -246,30 +242,49 @@ public class SaleFragment extends UpdatableFragment {
 	 * Show confirm or clear dialog.
 	 */
 	private void showConfirmClearDialog() {
-		AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-		dialog.setTitle(res.getString(R.string.dialog_clear_sale));
-		dialog.setPositiveButton(res.getString(R.string.no), new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
+        LayoutInflater inflater2 = this.getLayoutInflater();
 
-			}
-		});
+        View titleView = inflater2.inflate(R.layout.dialog_custom_title, null);
+        ((TextView) titleView.findViewById(R.id.dialog_title)).setText(res.getString(R.string.title_clear_sale));
+        if (register.hasSale() && register.getCurrentSale().size() > 0) {
+			((TextView) titleView.findViewById(R.id.dialog_content)).setText(res.getString(R.string.dialog_clear_sale));
+		} else {
+			((TextView) titleView.findViewById(R.id.dialog_content)).setText(res.getString(R.string.message_clear_empty_sale));
+		}
 
-		dialog.setNegativeButton(res.getString(R.string.clear), new OnClickListener() {
-
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				if (!register.getCurrentSale().getStatus().equals("ENDED")) {
-					register.cancleSale();
-				} else {
-					register.setCurrentSale(0);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+        dialog.setCustomTitle(titleView);
+		if (register.hasSale() && register.getCurrentSale().size() > 0) {
+			dialog.setPositiveButton(res.getString(R.string.clear), new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					if (!register.getCurrentSale().getStatus().equals("ENDED")) {
+						register.cancleSale();
+					} else {
+						register.setCurrentSale(0);
+					}
+					update();
+					try {
+						((MainActivity) getActivity()).updateInventoryFragment();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
-				update();
-				try {
-					((MainActivity)getActivity()).updateInventoryFragment();
-				} catch (Exception e) {e.printStackTrace();}
-			}
-		});
+			});
+
+			dialog.setNegativeButton(res.getString(R.string.no), new OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+				}
+			});
+		} else {
+			dialog.setNegativeButton(res.getString(R.string.button_close), new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+				}
+			});
+		}
 
 		dialog.show();
 	}
