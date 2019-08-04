@@ -113,6 +113,8 @@ public class PrintPreviewActivity extends Activity {
     private LinearLayout print_preview_container;
     private Button home_button;
     private Button print_button;
+    private LinearLayout print_button_container;
+    private Button finish_and_print_button;
 
     BluetoothAdapter bluetoothAdapter;
     BluetoothSocket socket;
@@ -129,6 +131,7 @@ public class PrintPreviewActivity extends Activity {
     Map<String, String> printerConfigs = new HashMap<String, String>();
 
     private String formated_receipt;
+    private int shipping_method = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -158,6 +161,8 @@ public class PrintPreviewActivity extends Activity {
                 warehouse_id = Integer.parseInt(whParam.getValue());
                 warehouse = warehouseCatalog.getWarehouseByWarehouseId(warehouse_id);
             }
+
+            shipping_method = getIntent().getIntExtra("shipping_method", 0);
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -232,6 +237,14 @@ public class PrintPreviewActivity extends Activity {
 
         home_button = (Button) findViewById(R.id.home_button);
         print_button = (Button) findViewById(R.id.print_button);
+
+        print_button_container = (LinearLayout) findViewById(R.id.print_button_container);
+        finish_and_print_button = (Button) findViewById(R.id.finish_and_print_button);
+
+        if (shipping_method == 0) {
+            print_button_container.setVisibility(View.GONE);
+            finish_and_print_button.setVisibility(View.VISIBLE);
+        }
     }
 
     private void initTriggerButton() {
@@ -439,15 +452,15 @@ public class PrintPreviewActivity extends Activity {
         }
 
         if (customer != null) {
-            res += "<tr><td>"+ getResources().getString(R.string.label_customer_name)+ "</td><td> : "+ customer.getName() +"</td></tr>";
+            res += "<tr><td>"+ getResources().getString(R.string.customer)+ "</td><td> : "+ customer.getName() +"</td></tr>";
             res += "<tr><td>"+ getResources().getString(R.string.label_customer_address)+ "</td><td> : "+ customer.getAddress() +"</td></tr>";
             res += "<tr><td>"+ getResources().getString(R.string.label_customer_phone)+ "</td><td> : "+ customer.getPhone() +"</td></tr>";
         }
 
         if (sale.getPaidBy() > 0) {
-            res += "<tr><td>" + getResources().getString(R.string.status) + "</td><td> : <b>" + getResources().getString(R.string.message_paid) + "</b></td></tr>";
+            res += "<tr><td>" + getResources().getString(R.string.status) + "</td><td> : <b style=\"font-size:16px;\">" + getResources().getString(R.string.message_paid) + "</b></td></tr>";
         } else {
-            res += "<tr><td>" + getResources().getString(R.string.status) + "</td><td> : <b style=\"color:red;\">" + getResources().getString(R.string.message_unpaid) + "</b></td></tr>";
+            res += "<tr><td>" + getResources().getString(R.string.status) + "</td><td> : <b style=\"color:red;font-size:16px;\">" + getResources().getString(R.string.message_unpaid) + "</b></td></tr>";
         }
 
         List<LineItem> list = sale.getAllLineItem();

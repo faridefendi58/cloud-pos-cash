@@ -253,27 +253,45 @@ public class SaleDetailActivity extends Activity{
 			e.printStackTrace();
 		}
 
-		customerBox.setOnLongClickListener(new View.OnLongClickListener() {
+		customerBox.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public boolean onLongClick(View v) {
+			public void onClick(View v) {
 				copyToClipBoard(getResources().getString(R.string.label_customer_name), customerBox.getText().toString());
-				return false;
 			}
 		});
 
-		customer_address.setOnLongClickListener(new View.OnLongClickListener() {
+		customer_address.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public boolean onLongClick(View v) {
+			public void onClick(View v) {
 				copyToClipBoard(getResources().getString(R.string.label_customer_address), customer_address.getText().toString());
-				return false;
 			}
 		});
 
-		customer_phone.setOnLongClickListener(new View.OnLongClickListener() {
+		customer_phone.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public boolean onLongClick(View v) {
+			public void onClick(View v) {
 				copyToClipBoard(getResources().getString(R.string.label_customer_phone), customer_phone.getText().toString());
-				return false;
+			}
+		});
+
+		shipping_recipient_name.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				copyToClipBoard(getResources().getString(R.string.label_shipping_name), shipping_recipient_name.getText().toString());
+			}
+		});
+
+		shipping_recipient_phone.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				copyToClipBoard(getResources().getString(R.string.label_shipping_phone), shipping_recipient_phone.getText().toString());
+			}
+		});
+
+		shipping_warehouse.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				copyToClipBoard(getResources().getString(R.string.address), shipping_warehouse.getText().toString());
 			}
 		});
 	}
@@ -438,6 +456,7 @@ public class SaleDetailActivity extends Activity{
 		Intent newActivity = new Intent(SaleDetailActivity.this,
 				PrintPreviewActivity.class);
 		newActivity.putExtra("saleId", saleId);
+		newActivity.putExtra("shipping_method", shipping.getMethod());
 		startActivity(newActivity);
 	}
 

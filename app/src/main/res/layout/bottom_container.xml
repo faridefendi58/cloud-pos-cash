@@ -5,26 +5,46 @@
     android:gravity="center"
     android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/home_button"
+    <LinearLayout
+        android:id="@+id/print_button_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_marginRight="@dimen/spacing_small"
-        android:text="@string/button_new_transaction"
-        android:textColor="@color/greenUcok"
-        android:background="@drawable/btn_bordered"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/home_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginRight="@dimen/spacing_small"
+            android:text="@string/button_new_transaction"
+            android:textColor="@color/greenUcok"
+            android:background="@drawable/btn_bordered"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
+        <Button
+            android:id="@+id/print_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/spacing_small"
+            android:layout_weight="1"
+            android:text="@string/print_invoice"
+            android:textColor="@color/yellowDarkUcok"
+            android:background="@drawable/btn_bordered_warning"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
+    </LinearLayout>
 
     <Button
-        android:id="@+id/print_button"
+        android:id="@+id/finish_and_print_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/spacing_small"
         android:layout_weight="1"
-        android:text="@string/print_invoice"
-        android:textColor="@color/yellowDarkUcok"
-        android:background="@drawable/btn_bordered_warning"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+        android:text="@string/button_finish_and_print"
+        android:textColor="@color/greenUcok"
+        android:background="@drawable/btn_bordered"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:visibility="gone"/>
 
 </LinearLayout>

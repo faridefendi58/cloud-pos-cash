@@ -18,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -253,7 +254,8 @@ public class CheckoutActivity extends AppCompatActivity {
 
                     pushInvoice(saleId);
 
-                    if (lunas) {
+                    /** gunakan info sukses yg beda antara lunas dan tidak lunas **/
+                    /*if (lunas) {
                         new android.os.Handler().postDelayed(
                                 new Runnable() {
                                     public void run() {
@@ -266,7 +268,23 @@ public class CheckoutActivity extends AppCompatActivity {
                                 3000);
                     } else {
                         showDialogPaymentSuccess(current_sale, checkout.getCustomer(), status);
-                    }
+                    }*/
+
+                    /** langsung ke print preview **/
+                    final int has_dept = (lunas)? 0 : 1;
+                    final int shipping_method = checkout.getShipping().getMethod();
+                    new android.os.Handler().postDelayed(
+                            new Runnable() {
+                                public void run() {
+                                    Intent newActivity = new Intent(CheckoutActivity.this, PrintPreviewActivity.class);
+                                    newActivity.putExtra("saleId", saleId);
+                                    newActivity.putExtra("hutang", has_dept);
+                                    newActivity.putExtra("shipping_method", shipping_method);
+                                    finish();
+                                    startActivity(newActivity);
+                                }
+                            },
+                            3000);
 
                     return;
                 } else {
@@ -288,8 +306,15 @@ public class CheckoutActivity extends AppCompatActivity {
                         if (checkout_data.getTotalPaymentReceived() <= 0) {
                             checkout_data.setCashReceive("0");
 
+                            LayoutInflater inflater2 = getLayoutInflater();
+
+                            View titleView = inflater2.inflate(R.layout.dialog_custom_title, null);
+                            ((TextView) titleView.findViewById(R.id.dialog_title)).setText(getResources().getString(R.string.payment));
+                            ((TextView) titleView.findViewById(R.id.dialog_content)).setText(getResources().getString(R.string.dialog_no_payment));
+
                             AlertDialog.Builder dialog = new AlertDialog.Builder(CheckoutActivity.this);
-                            dialog.setTitle(Html.fromHtml("<small>"+getResources().getString(R.string.dialog_no_payment)+"</small>"));
+                            dialog.setCustomTitle(titleView);
+                            //dialog.setTitle(Html.fromHtml("<small>"+getResources().getString(R.string.dialog_no_payment)+"</small>"));
                             dialog.setPositiveButton(getResources().getString(R.string.label_proceed), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {

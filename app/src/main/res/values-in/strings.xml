@@ -241,7 +241,7 @@
     <string name="label_shipping_location">Lokasi Pengambilan</string>
     <string name="label_shipping_address">Alamat Pengiriman</string>
     <string name="label_shipping_name">Nama Penerima</string>
-    <string name="label_shipping_phone">No Telepon Penerima</string>
+    <string name="label_shipping_phone">No Telp Penerima</string>
     <string name="label_shipping_use_customer_data">Sama dengan data pelanggan</string>
     <string name="label_payment">Pembayaran</string>
     <string name="label_payment_total_receieved">Total Dibayarkan</string>
@@ -268,6 +268,7 @@
     <string name="button_new_transaction">Transaksi Baru</string>
     <string name="button_mark_as_complete">Tandai Sudah Selesai</string>
     <string name="button_close">Tutup</string>
+    <string name="button_finish_and_print">Selesaikan Order and Cetak Tagihan</string>
 
     <string name="confirm_edit">Anda yakin ingin mengubah data ini?</string>
 
