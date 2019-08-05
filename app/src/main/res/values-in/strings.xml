@@ -259,6 +259,7 @@
     <string name="payment_bca">Transfer BCA</string>
     <string name="payment_bri">Transfer BRI</string>
     <string name="payment_edc">Mesin EDC</string>
+    <string name="payment_wallet_tokopedia">Wallet Tokopedia</string>
 
     <string name="button_add_to_cart">Tambahkan</string>
     <string name="button_syncron">Sinkronkan</string>

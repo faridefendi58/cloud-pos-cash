@@ -36,6 +36,7 @@ import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.params.Params;
 import com.slightsite.app.domain.sale.Checkout;
+import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.domain.sale.Shipping;
 import com.slightsite.app.techicalservices.AutoCompleteAdapter;
 import com.slightsite.app.techicalservices.NoDaoSetException;
@@ -59,6 +60,7 @@ public class ShippingFragment extends Fragment {
     private ParamCatalog paramCatalog;
     private List<Customer> customers;
     private Customer cust;
+    private Register register;
 
     private EditText name;
     private EditText phone;
@@ -106,6 +108,7 @@ public class ShippingFragment extends Fragment {
             customerCatalog = CustomerService.getInstance().getCustomerCatalog();
             ship_methods = ((CheckoutActivity)getActivity()).getShippingMethods();
             paramCatalog = ParamService.getInstance().getParamCatalog();
+            register = Register.getInstance();
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -401,7 +404,7 @@ public class ShippingFragment extends Fragment {
 
     private void showShippingMethodDialog(final View v) {
         if (cust.getName().length() == 0){
-            Log.e(getTag(), "customer masih null");
+            //Log.e(getTag(), "customer masih null");
             Boolean has_new_cust_data = false;
             // check once again wheter user fill the new customer data
             if (customer_name_autocomplete.getText().length() > 0
@@ -428,20 +431,34 @@ public class ShippingFragment extends Fragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-        builder.setSingleChoiceItems(ship_methods, -1, new DialogInterface.OnClickListener() {
+        int selected_method = 0;
+        if (c_data.getShipping() != null) {
+            selected_method = c_data.getShipping().getMethod();
+        }
+        builder.setSingleChoiceItems(ship_methods, selected_method, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 ship.setMethod(i);
                 if (cust != null && cust.getName() != null) {
                     c_data.setCustomer(cust);
                 }
-                //Log.e(getTag(), "c_data pas buka dialog shipping : "+ c_data.getCustomer().toMap().toString());
+
+                c_data.setWalletTokopedia("0");
                 ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
                 setupShippingForm(i);
                 ((EditText) v).setText(ship_methods[i]);
                 if (i == 1 || i == 2) {
                     need_time_picker = true;
                 }
+                if (i == 3) { //Tokopedia
+                    Double tot_inv = register.getTotal();
+                    c_data.setWalletTokopedia(tot_inv+"");
+                    ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
+                } else {
+                    c_data.setWalletTokopedia("0");
+                    ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
+                }
+
                 dialogInterface.dismiss();
             }
         });

@@ -42,11 +42,13 @@ public class AdapterListPayment extends RecyclerView.Adapter<RecyclerView.ViewHo
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
         public TextView price;
+        public View lyt_parent;
 
         public OriginalViewHolder(View v) {
             super(v);
             title = (TextView) v.findViewById(R.id.title);
             price = (TextView) v.findViewById(R.id.price);
+            lyt_parent = (View) v.findViewById(R.id.lyt_parent);
         }
     }
 
@@ -68,6 +70,9 @@ public class AdapterListPayment extends RecyclerView.Adapter<RecyclerView.ViewHo
             final PaymentItem p = items.get(position);
             view.title.setText(payment_types.get(p.getTitle()));
             view.price.setText(CurrencyController.getInstance().moneyFormat(p.getNominal())+ "");
+            if (p.getNominal() <= 0) {
+                view.lyt_parent.setVisibility(View.GONE);
+            }
         }
     }
 

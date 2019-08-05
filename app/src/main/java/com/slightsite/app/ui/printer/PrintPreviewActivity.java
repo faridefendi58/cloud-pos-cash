@@ -516,7 +516,10 @@ public class PrintPreviewActivity extends Activity {
                     Log.e(getClass().getSimpleName(), e.getMessage());
                 }
 
-                res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(getPaymentChannel(py.getPaymentChannel())) +" :</td>" +
+                /*res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(getPaymentChannel(py.getPaymentChannel())) +" :</td>" +
+                        "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(amnt) +"</td>";*/
+
+                res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ py.toMap().get("formated_payment_channel") +" :</td>" +
                         "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(amnt) +"</td>";
             }
             change_due = payment_total - grand_total;
@@ -525,13 +528,15 @@ public class PrintPreviewActivity extends Activity {
                     "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(cash) +"</td>";
         }
 
-        if (change_due >= 0) {
+        if (change_due > 0) {
             res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_change_due) +" :</td>" +
                     "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(change_due) +"</td>";
         } else {
             int debt = -1 * change_due;
-            res += "<tr><td colspan=\"2\" style=\"text-align:right;\"><b>"+ getResources().getString(R.string.label_dept) +" :</b></td>" +
-                    "<td style=\"text-align:right;\"><b>"+ CurrencyController.getInstance().moneyFormat(debt) +"</b></td>";
+            if (debt < 0) {
+                res += "<tr><td colspan=\"2\" style=\"text-align:right;\"><b>" + getResources().getString(R.string.label_dept) + " :</b></td>" +
+                        "<td style=\"text-align:right;\"><b>" + CurrencyController.getInstance().moneyFormat(debt) + "</b></td>";
+            }
         }
         res += "</table>";
 
@@ -548,6 +553,7 @@ public class PrintPreviewActivity extends Activity {
         result.put("nominal_bca", R.string.payment_bca);
         result.put("nominal_bri", R.string.payment_bri);
         result.put("nominal_edc", R.string.payment_edc);
+        result.put("nominal_wallet_tokopedia", R.string.payment_wallet_tokopedia);
 
         return result.get(channel);
     }

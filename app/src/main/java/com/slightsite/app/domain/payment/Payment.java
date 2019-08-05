@@ -87,6 +87,7 @@ public class Payment {
         types.put("nominal_bca", "Bank BCA");
         types.put("nominal_bri", "Bank BRI");
         types.put("nominal_edc", "EDC Payment");
+        types.put("wallet_tokopedia", "Wallet Tokopedia");
 
         return types;
     }

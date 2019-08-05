@@ -265,6 +265,7 @@
     <string name="payment_bca">BCA Transfer</string>
     <string name="payment_bri">BRI Transfer</string>
     <string name="payment_edc">EDC Payment</string>
+    <string name="payment_wallet_tokopedia">Wallet Tokopedia</string>
 
     <string name="button_add_to_cart">Add To Cart</string>
     <string name="button_syncron">Syncronize Now</string>

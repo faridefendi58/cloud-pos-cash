@@ -61,6 +61,7 @@ public class ConfirmationFragment extends Fragment {
     private TextView totalPayment;
     private TextView changeDue;
     private TextView change_due_label;
+    private LinearLayout change_due_container;
     private Payment payment;
 
     /** shipping detail */
@@ -90,7 +91,6 @@ public class ConfirmationFragment extends Fragment {
 
         initView();
         initAction();
-        initDefaultValue();
 
         try {
             register.setPaymentItems(c_data.getPaymentItems());
@@ -107,6 +107,8 @@ public class ConfirmationFragment extends Fragment {
             Sale test = register.getCurrentSale();
             //Log.e(getTag(), "Shipping data on onCreateView conf fragment: "+ register.getShipping().toMap().toString());
         } catch (Exception e){ }
+
+        initDefaultValue();
         return root;
     }
 
@@ -135,6 +137,7 @@ public class ConfirmationFragment extends Fragment {
         totalPayment  = (TextView) root.findViewById(R.id.totalPayment);
         changeDue  = (TextView) root.findViewById(R.id.changeDue);
         change_due_label  = (TextView) root.findViewById(R.id.change_due_label);
+        change_due_container  = (LinearLayout) root.findViewById(R.id.change_due_container);
 
         shipping_method = (TextView) root.findViewById(R.id.shipping_method);
         shipping_date = (TextView) root.findViewById(R.id.shipping_date);
@@ -205,6 +208,9 @@ public class ConfirmationFragment extends Fragment {
                     changeDue.setTextColor(getResources().getColor(R.color.red_300));
                 } else {
                     change_due_label.setText(getResources().getString(R.string.label_change_due));
+                    if (change_due == 0) {
+                        change_due_container.setVisibility(View.GONE);
+                    }
                 }
             } else {
                 change_due_label.setText(getResources().getString(R.string.label_dept));
@@ -216,9 +222,10 @@ public class ConfirmationFragment extends Fragment {
                 changeDue.setTextColor(getResources().getColor(R.color.red_300));
             }
 
+            Log.e(getTag(), "c_data.getShipping() : "+ c_data.getShipping().toMap().toString());
             if (!c_data.getShipping().equals(null)) {
                 shipping = c_data.getShipping();
-                //Log.e(getTag(), "Shipping data on confirmation :"+ shipping.toMap().toString());
+                Log.e(getTag(), "Shipping data on confirmation :"+ shipping.toMap().toString());
                 shipping_method.setText(ship_methods[shipping.getMethod()]);
                 if (shipping.getDate().equals(null) || shipping.getDate().length() == 0) {
                     DateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm");
@@ -246,7 +253,7 @@ public class ConfirmationFragment extends Fragment {
                     shipping_recipient_phone.setText(shipping.getPhone());
                 }
             }
-        } catch (Exception e) { }
+        } catch (Exception e) {e.printStackTrace();}
     }
 
     private void showPaymentList(List<PaymentItem> list) {

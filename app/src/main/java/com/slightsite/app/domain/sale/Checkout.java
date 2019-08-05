@@ -23,6 +23,7 @@ public class Checkout implements Serializable {
     private List<PaymentItem> payment_items;
     private Shipping shipping;
     private int discount;
+    private String wallet_tokopedia = "0";
 
     public Checkout() {}
 
@@ -103,16 +104,27 @@ public class Checkout implements Serializable {
             PaymentItem cash = new PaymentItem("cash_receive", Double.parseDouble(cash_receive));
             payment_items.add(cash);
         } else {
-            PaymentItem cash = new PaymentItem("cash_receive", 0.0);
-            payment_items.add(cash);
+            // ini hanya default value
+            if (Integer.parseInt(wallet_tokopedia) == 0) {
+                PaymentItem cash = new PaymentItem("cash_receive", 0.0);
+                payment_items.add(cash);
+            }
         }
-        for (String key : transfer_bank.keySet()) {
-            PaymentItem pi = new PaymentItem(key, Double.parseDouble(transfer_bank.get(key)));
-            payment_items.add(pi);
+        if (transfer_bank != null) {
+            for (String key : transfer_bank.keySet()) {
+                PaymentItem pi = new PaymentItem(key, Double.parseDouble(transfer_bank.get(key)));
+                payment_items.add(pi);
+            }
         }
-        for (String key : edc.keySet()) {
-            PaymentItem pi = new PaymentItem(key, Double.parseDouble(edc.get(key)));
-            payment_items.add(pi);
+        if (edc != null) {
+            for (String key : edc.keySet()) {
+                PaymentItem pi = new PaymentItem(key, Double.parseDouble(edc.get(key)));
+                payment_items.add(pi);
+            }
+        }
+        if (Integer.parseInt(wallet_tokopedia) > 0) {
+            PaymentItem _wallet = new PaymentItem("wallet_tokopedia", Double.parseDouble(wallet_tokopedia));
+            payment_items.add(_wallet);
         }
         return payment_items;
     }
@@ -124,6 +136,7 @@ public class Checkout implements Serializable {
         types.put("nominal_bca", "Transfer Bank BCA");
         types.put("nominal_bri", "Transfer Bank BRI");
         types.put("nominal_edc", "EDC Payment");
+        types.put("wallet_tokopedia", "Wallet Tokopedia");
 
         return types;
     }
@@ -134,12 +147,20 @@ public class Checkout implements Serializable {
             payment_received = payment_received + Double.parseDouble(cash_receive);
         }
 
-        for (String key : transfer_bank.keySet()) {
-            payment_received = payment_received + Double.parseDouble(transfer_bank.get(key));
+        if (transfer_bank != null) {
+            for (String key : transfer_bank.keySet()) {
+                payment_received = payment_received + Double.parseDouble(transfer_bank.get(key));
+            }
         }
 
-        for (String key : edc.keySet()) {
-            payment_received = payment_received + Double.parseDouble(edc.get(key));
+        if (edc != null) {
+            for (String key : edc.keySet()) {
+                payment_received = payment_received + Double.parseDouble(edc.get(key));
+            }
+        }
+
+        if (wallet_tokopedia != null && wallet_tokopedia != "0") {
+            payment_received = Double.parseDouble(wallet_tokopedia);
         }
 
         return payment_received;
@@ -169,5 +190,19 @@ public class Checkout implements Serializable {
 
     public int getDiscount() {
         return discount;
+    }
+
+    public void setWalletTokopedia(String nominal) {
+        if (nominal.contains(".")) {
+            nominal = nominal.split("\\.")[0];
+        }
+        this.wallet_tokopedia = nominal;
+        if (!cash_receive.equals("0")) {
+            cash_receive = "0";
+        }
+    }
+
+    public String getWalletTokopedia() {
+        return wallet_tokopedia;
     }
 }
