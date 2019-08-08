@@ -226,7 +226,12 @@ public class InventoryFragment extends UpdatableFragment {
 		wh_options.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				showOutletOptionsDialog(v);
+				if ((allowed_warehouses != null) && allowed_warehouses.size() > 0) {
+					showOutletOptionsDialog(v);
+				} else {
+					Toast.makeText(getActivity().getBaseContext(), res.getString(R.string.message_no_product),
+							Toast.LENGTH_SHORT).show();
+				}
 			}
 		});
 	}
@@ -517,6 +522,8 @@ public class InventoryFragment extends UpdatableFragment {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 		int selected_wh = -1;
 		String current_warehouse_name = ((MainActivity)getActivity()).getCurrentWarehouseName();
+		Log.e(getTag(), "showOutletOptionsDialog current_warehouse_name : "+ current_warehouse_name);
+		Log.e(getTag(), "showOutletOptionsDialog allowed_warehouses : "+ allowed_warehouses.toString());
 		try {
 			if (allowed_warehouses.size() > 0) {
 				ArrayList<String> stringArrayList = new ArrayList<String>();

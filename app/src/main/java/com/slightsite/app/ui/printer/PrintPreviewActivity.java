@@ -265,6 +265,13 @@ public class PrintPreviewActivity extends Activity {
                         "Will be available soon", Toast.LENGTH_LONG).show();
             }
         });
+
+        finish_and_print_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finishAndPrint();
+            }
+        });
     }
 
     public void buildDataFromServer() {
@@ -458,9 +465,9 @@ public class PrintPreviewActivity extends Activity {
         }
 
         if (sale.getPaidBy() > 0) {
-            res += "<tr><td>" + getResources().getString(R.string.status) + "</td><td> : <b style=\"font-size:16px;\">" + getResources().getString(R.string.message_paid) + "</b></td></tr>";
+            res += "<tr><td>" + getResources().getString(R.string.status) + "</td><td> : <b>" + getResources().getString(R.string.message_paid) + "</b></td></tr>";
         } else {
-            res += "<tr><td>" + getResources().getString(R.string.status) + "</td><td> : <b style=\"color:red;font-size:16px;\">" + getResources().getString(R.string.message_unpaid) + "</b></td></tr>";
+            res += "<tr><td>" + getResources().getString(R.string.status) + "</td><td> : <b style=\"color:red;font-size:24px;\">" + getResources().getString(R.string.message_unpaid) + "</b></td></tr>";
         }
 
         List<LineItem> list = sale.getAllLineItem();
@@ -516,11 +523,11 @@ public class PrintPreviewActivity extends Activity {
                     Log.e(getClass().getSimpleName(), e.getMessage());
                 }
 
-                /*res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(getPaymentChannel(py.getPaymentChannel())) +" :</td>" +
-                        "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(amnt) +"</td>";*/
-
-                res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ py.toMap().get("formated_payment_channel") +" :</td>" +
+                res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(getPaymentChannel(py.getPaymentChannel())) +" :</td>" +
                         "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(amnt) +"</td>";
+
+                /*res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ py.toMap().get("formated_payment_channel") +" :</td>" +
+                        "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(amnt) +"</td>";*/
             }
             change_due = payment_total - grand_total;
         } else {
@@ -554,6 +561,7 @@ public class PrintPreviewActivity extends Activity {
         result.put("nominal_bri", R.string.payment_bri);
         result.put("nominal_edc", R.string.payment_edc);
         result.put("nominal_wallet_tokopedia", R.string.payment_wallet_tokopedia);
+        result.put("wallet_tokopedia", R.string.payment_wallet_tokopedia);
 
         return result.get(channel);
     }
@@ -764,5 +772,15 @@ public class PrintPreviewActivity extends Activity {
             value += ex.toString() + "\n" + " InitPrinter \n";
             Toast.makeText(this, value, Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void finishAndPrint() {
+        try {
+            saleLedger.setFinished(sale);
+        } catch (Exception e){e.printStackTrace();}
+
+        Intent intent = new Intent(PrintPreviewActivity.this, MainActivity.class);
+        finish();
+        startActivity(intent);
     }
 }

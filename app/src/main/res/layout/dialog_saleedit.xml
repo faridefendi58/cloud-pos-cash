@@ -65,7 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
-            android:background="@drawable/btn_yellow"
+            android:background="@color/red_600"
             android:textColor="@color/colorWhite"
             android:layout_marginRight="@dimen/spacing_small"
             android:text="@string/remove" />
@@ -75,7 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
-            android:background="@drawable/btn_blue"
+            android:background="@color/greenUcok"
             android:textColor="@color/colorWhite"
             android:layout_marginLeft="@dimen/spacing_small"
             android:text="@string/update" />

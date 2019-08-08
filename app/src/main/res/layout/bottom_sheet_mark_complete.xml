@@ -35,36 +35,259 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="1"
-        android:layout_marginBottom="@dimen/spacing_middle">
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:text="Dibayarkan"/>
+            android:orientation="horizontal"
+            android:weightSum="1"
+            android:padding="@dimen/spacing_middle">
 
-        <EditText
-            android:layout_width="0dp"
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="@string/label_dept"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:textColor="@color/grey_40"
+                android:textStyle="bold"
+                android:textAllCaps="true"
+                app:fontFamily="sans-serif-medium" />
+
+            <TextView
+                style="@style/EditText.Flat.Grey"
+                android:id="@+id/debt_must_pay"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:layout_marginTop="@dimen/spacing_middle"
+                android:hint="0"
+                android:textStyle="bold"
+                android:layout_gravity="right"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey_10" />
+
+        <!-- start of payment form -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:background="@drawable/edit_text_round_bg_outline"/>
+            android:orientation="horizontal"
+            android:weightSum="1"
+            android:padding="@dimen/spacing_middle">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="@string/payment_cash"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:textColor="@color/grey_40"
+                android:textStyle="bold"
+                android:textAllCaps="true"
+                app:fontFamily="sans-serif-medium" />
+
+            <EditText
+                style="@style/EditText.Flat.Grey"
+                android:id="@+id/cash_receive"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:background="@drawable/edit_text_round_bg_outline"
+                android:drawableEnd="@drawable/ic_expand_arrow"
+                android:drawableRight="@drawable/ic_money_black_24dp"
+                android:hint="0"
+                android:minHeight="@dimen/spacing_xmlarge"
+                android:inputType="number"
+                android:singleLine="true"
+                android:imeOptions="actionDone"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey_10" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/spacing_middle">
+
+            <TextView
+                android:id="@+id/transfer_bank_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="@dimen/spacing_large"
+                android:text="@string/transfer"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:textColor="@color/grey_40"
+                android:textStyle="bold"
+                android:textAllCaps="true"
+                app:fontFamily="sans-serif-medium"
+                android:drawableRight="@drawable/ic_add_black"
+                android:clickable="true"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey_10" />
+
+        <LinearLayout
+            android:id="@+id/transfer_bank_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingVertical="@dimen/spacing_large"
+            android:visibility="gone">
+
+            <!-- start of bca -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="@string/payment_bca"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                    android:textColor="@color/grey_40"
+                    android:textStyle="bold"
+                    android:textAllCaps="true"
+                    android:paddingLeft="@dimen/spacing_middle"
+                    android:layout_gravity="right"
+                    app:fontFamily="sans-serif-medium" />
+
+                <EditText
+                    style="@style/EditText.Flat.Grey"
+                    android:id="@+id/nominal_bca"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/edit_text_round_bg_outline"
+                    android:hint="0"
+                    android:minHeight="@dimen/spacing_xmlarge"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:imeOptions="actionDone"/>
+
+            </LinearLayout>
+            <!-- end of bca -->
+
+            <!-- start of mandiri -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/spacing_middle"
+                android:weightSum="1">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="@string/payment_mandiri"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                    android:textColor="@color/grey_40"
+                    android:textStyle="bold"
+                    android:textAllCaps="true"
+                    android:layout_gravity="right"
+                    android:paddingLeft="@dimen/spacing_middle"
+                    app:fontFamily="sans-serif-medium" />
+
+                <EditText
+                    style="@style/EditText.Flat.Grey"
+                    android:id="@+id/nominal_mandiri"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/edit_text_round_bg_outline"
+                    android:hint="0"
+                    android:minHeight="@dimen/spacing_xmlarge"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:imeOptions="actionDone"/>
+
+            </LinearLayout>
+            <!-- end of mandiri -->
+
+            <!-- start of bca -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/spacing_middle"
+                android:weightSum="1">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="@string/payment_bri"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                    android:textColor="@color/grey_40"
+                    android:textStyle="bold"
+                    android:textAllCaps="true"
+                    android:paddingLeft="@dimen/spacing_middle"
+                    android:layout_gravity="right"
+                    app:fontFamily="sans-serif-medium" />
+
+                <EditText
+                    style="@style/EditText.Flat.Grey"
+                    android:id="@+id/nominal_bri"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/edit_text_round_bg_outline"
+                    android:hint="0"
+                    android:minHeight="@dimen/spacing_xmlarge"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:imeOptions="actionDone"/>
+
+            </LinearLayout>
+            <!-- end of bca -->
+
+        </LinearLayout>
 
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey_10" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="1">
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/spacing_middle">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"></View>
 
         <Button
+            android:id="@+id/finish_submit_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:text="@string/action_submit"
-            android:background="@drawable/btn_bordered" />
+            android:textColor="@color/colorWhite"
+            android:background="@color/greenUcok" />
 
     </LinearLayout>
 

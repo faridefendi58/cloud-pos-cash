@@ -252,7 +252,7 @@
     <string name="label_printer_configuration">Konfigurasi Printer</string>
     <string name="label_to">Kepada</string>
     <string name="label_of">Dari</string>
-    <string name="label_items">Brg</string>
+    <string name="label_items">Item</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Mandiri</string>
@@ -267,7 +267,7 @@
     <string name="button_login">Masuk</string>
     <string name="button_register">Daftar</string>
     <string name="button_new_transaction">Transaksi Baru</string>
-    <string name="button_mark_as_complete">Tandai Sudah Selesai</string>
+    <string name="button_mark_as_complete">Proses Order Ini</string>
     <string name="button_close">Tutup</string>
     <string name="button_finish_and_print">Selesaikan Order and Cetak Tagihan</string>
 

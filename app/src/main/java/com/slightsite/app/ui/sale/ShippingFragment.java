@@ -495,7 +495,7 @@ public class ShippingFragment extends Fragment {
                             ship.setPickupDate(Tools.getFormattedDateTimeShort(date2));
                             ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
                         }
-                    }, cur_calender.get(Calendar.HOUR_OF_DAY), cur_calender.get(Calendar.MINUTE), false).show();
+                    }, cur_calender.get(Calendar.HOUR_OF_DAY)+1, 0, false).show();
                 }
             }
 
@@ -542,7 +542,8 @@ public class ShippingFragment extends Fragment {
             shipping_date.setVisibility(View.VISIBLE);
             shipping_address.setVisibility(View.GONE);
             shipping_name_container.setVisibility(View.GONE);
-            shipping_warehouse.setVisibility(View.VISIBLE);
+            // hide aja pilihan warehouse krn blm ada kasus pengambilan di luar wh pembuat nota
+            shipping_warehouse.setVisibility(View.GONE);
             if (current_warehouse_name != null) {
                 shipping_warehouse.setText(current_warehouse_name);
             }

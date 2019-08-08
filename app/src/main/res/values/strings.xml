@@ -273,7 +273,7 @@
     <string name="button_login">Log In</string>
     <string name="button_register">Register</string>
     <string name="button_new_transaction">New Transaction</string>
-    <string name="button_mark_as_complete">Mark As Complete</string>
+    <string name="button_mark_as_complete">Proceed Order</string>
     <string name="button_close">Close</string>
     <string name="button_finish_and_print">Finish Order and Print Invoice</string>
 

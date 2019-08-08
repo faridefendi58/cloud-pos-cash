@@ -40,6 +40,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -65,6 +67,7 @@ import com.slightsite.app.domain.params.Params;
 import com.slightsite.app.domain.payment.Payment;
 import com.slightsite.app.domain.payment.PaymentCatalog;
 import com.slightsite.app.domain.payment.PaymentService;
+import com.slightsite.app.domain.sale.PaymentItem;
 import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.domain.sale.SaleLedger;
@@ -136,6 +139,7 @@ public class SaleDetailActivity extends Activity{
 	private String[] ship_methods;
 	private WarehouseCatalog warehouseCatalog;
 	private BottomSheetDialog bottomSheetDialog;
+	private Double tot_debt = 0.0;
 
 	ProgressDialog pDialog;
 	int success;
@@ -172,7 +176,7 @@ public class SaleDetailActivity extends Activity{
 		sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
 
 		String dt = DateTimeStrategy.getCurrentTime();
-		
+
 		initUI(savedInstanceState);
 	}
 
@@ -376,6 +380,7 @@ public class SaleDetailActivity extends Activity{
 
 			if (getTotalPaymentBySaleId < tot_order) {
 				Double debt = tot_order - getTotalPaymentBySaleId;
+				tot_debt = debt;
 				payment_debt.setText(CurrencyController.getInstance().moneyFormat(debt) + "");
 				payment_debt_container.setVisibility(View.VISIBLE);
 				spacer_debt.setVisibility(View.VISIBLE);
@@ -813,34 +818,110 @@ public class SaleDetailActivity extends Activity{
 				"Copying "+ label + " to clipboard.", Toast.LENGTH_LONG).show();
 	}
 
+	private TextView transfer_bank_header;
+	private LinearLayout transfer_bank_container;
+	private Button finish_submit_button;
+	private EditText cash_receive;
+	private EditText nominal_bca;
+	private EditText nominal_mandiri;
+	private EditText nominal_bri;
+	private List<PaymentItem> payment_items;
+
 	public void markAsComplete(View v) {
-		/*AlertDialog.Builder quitDialog = new AlertDialog.Builder(
-				SaleDetailActivity.this);
-		quitDialog.setTitle(getResources().getString(R.string.dialog_mark_as_complete));
-		quitDialog.setPositiveButton(getResources().getString(R.string.action_submit), new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-
-			}
-		});
-
-		quitDialog.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-
-			}
-		});
-		quitDialog.show();*/
 		bottomSheetDialog = new BottomSheetDialog(SaleDetailActivity.this);
 		View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_mark_complete, null);
 		bottomSheetDialog.setContentView(sheetView);
+		((TextView) sheetView.findViewById(R.id.debt_must_pay)).setText(payment_debt.getText());
+		transfer_bank_header = (TextView) sheetView.findViewById(R.id.transfer_bank_header);
+		transfer_bank_container = (LinearLayout) sheetView.findViewById(R.id.transfer_bank_container);
+		finish_submit_button = (Button) sheetView.findViewById(R.id.finish_submit_button);
+		cash_receive = (EditText) sheetView.findViewById(R.id.cash_receive);
+		nominal_bca = (EditText) sheetView.findViewById(R.id.nominal_bca);
+		nominal_mandiri = (EditText) sheetView.findViewById(R.id.nominal_mandiri);
+		nominal_bri = (EditText) sheetView.findViewById(R.id.nominal_bri);
 
 		bottomSheetDialog.show();
 
+		payment_items =  new ArrayList<PaymentItem>();
 		triggerBottomDialogButton(sheetView);
 	}
 
 	private void triggerBottomDialogButton(View view) {
+		transfer_bank_header.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (transfer_bank_container.getVisibility() == View.GONE) {
+					transfer_bank_container.setVisibility(View.VISIBLE);
+					transfer_bank_header.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_remove_black, 0);
+				} else {
+					transfer_bank_container.setVisibility(View.GONE);
+					transfer_bank_header.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_add_black, 0);
+				}
+			}
+		});
 
+		finish_submit_button.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// get all total data
+				String cash = cash_receive.getText().toString();
+				String bca = nominal_bca.getText().toString();
+				String mandiri = nominal_mandiri.getText().toString();
+				String bri = nominal_bri.getText().toString();
+				Double tot_payment = 0.0;
+				if (cash.length() > 0) {
+					cash = cash.replaceAll("\\.", "");
+					PaymentItem pi_cash = new PaymentItem("cash_receive", Double.parseDouble(cash));
+					payment_items.add(pi_cash);
+					tot_payment = tot_payment + Double.parseDouble(cash);
+				}
+
+				if (bca.length() > 0) {
+					if (bca.contains(".")) {
+						bca = bca.replaceAll("\\.", "");
+					}
+					PaymentItem pi_bca = new PaymentItem("nominal_bca", Double.parseDouble(bca));
+					payment_items.add(pi_bca);
+					tot_payment = tot_payment + Double.parseDouble(bca);
+				}
+
+				if (mandiri.length() > 0) {
+					if (mandiri.contains(".")) {
+						mandiri = mandiri.replaceAll("\\.", "");
+					}
+					PaymentItem pi_mandiri = new PaymentItem("nominal_mandiri", Double.parseDouble(bca));
+					payment_items.add(pi_mandiri);
+					tot_payment = tot_payment + Double.parseDouble(mandiri);
+				}
+
+				if (bri.length() > 0) {
+					if (bri.contains(".")) {
+						bri = bri.replaceAll("\\.", "");
+					}
+					PaymentItem pi_bri = new PaymentItem("pi_bri", Double.parseDouble(bca));
+					payment_items.add(pi_bri);
+					tot_payment = tot_payment + Double.parseDouble(bri);
+				}
+
+				if (tot_payment < tot_debt) {
+					Toast.makeText(getApplicationContext(),
+							"Pembayaran masih kurang " + (tot_debt - tot_payment),
+							Toast.LENGTH_SHORT).show();
+				} else {
+					// ready to submit
+					try {
+						for (PaymentItem pi : payment_items) {
+							Payment pym = new Payment(saleId, pi.getTitle(), pi.getNominal());
+							//paymentDao.addPayment(pym);
+						}
+					} catch (Exception e){
+						e.printStackTrace();
+					}
+					Toast.makeText(getApplicationContext(),
+							"Total submited payment : " + tot_payment,
+							Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
 	}
 }

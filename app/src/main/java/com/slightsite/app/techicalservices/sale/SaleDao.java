@@ -111,4 +111,6 @@ public interface SaleDao {
 	void setDiscount(Sale sale);
 
 	int getDiscount(int sale_id);
+
+	void setFinished(Sale sale);
 }

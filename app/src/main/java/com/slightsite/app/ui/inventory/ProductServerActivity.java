@@ -340,7 +340,7 @@ public class ProductServerActivity extends Activity {
         items.add("-");
 
         String url = Server.URL + "product/list?api-key=" + Server.API_KEY;
-        _string_request(Request.Method.GET, url, params, false,
+        _string_request(Request.Method.GET, url, params, true,
                 new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
@@ -475,6 +475,7 @@ public class ProductServerActivity extends Activity {
                                     }
 
                                     syncronized = true;
+                                    hideDialog();
                                     updateSytemConfig();
                                 }
                             } else {
@@ -499,8 +500,8 @@ public class ProductServerActivity extends Activity {
             }
         } catch (Exception e) { e.printStackTrace(); }
 
-        Toast.makeText(getBaseContext(), getResources().getString(R.string.message_success_syncronize),
-                Toast.LENGTH_SHORT).show();
+        /*Toast.makeText(getBaseContext(), getResources().getString(R.string.message_success_syncronize),
+                Toast.LENGTH_SHORT).show();*/
 
         // insert wh id to wh access list
         String wh_id = warehouse_ids.get(warehouse_name);
@@ -519,6 +520,11 @@ public class ProductServerActivity extends Activity {
                 e.printStackTrace();
             }
         }
+
+        // auto back to main
+        Intent intent = new Intent(ProductServerActivity.this, MainActivity.class);
+        finish();
+        startActivity(intent);
     }
 
     private void insert_new_stock() {

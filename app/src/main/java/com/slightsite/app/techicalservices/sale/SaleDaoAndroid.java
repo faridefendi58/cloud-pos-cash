@@ -414,4 +414,12 @@ public class SaleDaoAndroid implements SaleDao {
 
 		return discount;
 	}
+
+	@Override
+	public void setFinished(Sale sale) {
+		ContentValues content = new ContentValues();
+		content.put("_id", sale.getId());
+		content.put("status", "FINISHED");
+		database.update(DatabaseContents.TABLE_SALE.toString(), content);
+	}
 }

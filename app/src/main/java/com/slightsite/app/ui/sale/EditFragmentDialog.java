@@ -111,12 +111,12 @@ public class EditFragmentDialog extends DialogFragment {
 				
 				end();
 				//show success message
-				Toast toast = Toast.makeText(
+				/*Toast toast = Toast.makeText(
 						getActivity().getApplicationContext(),
 						getResources().getString(R.string.message_success_update),
 						Toast.LENGTH_SHORT);
 				toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 8, 8);
-				toast.show();
+				toast.show();*/
 			}
 			
 		});

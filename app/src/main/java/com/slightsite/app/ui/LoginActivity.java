@@ -1,5 +1,6 @@
 package com.slightsite.app.ui;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -26,6 +27,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -79,6 +81,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static android.Manifest.permission.READ_CONTACTS;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 /**
  * A login screen that offers login via email/password.
@@ -89,6 +92,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
+    private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 1;
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -289,11 +293,13 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        /*if (requestCode == REQUEST_READ_CONTACTS) {
+        Log.e(getClass().getSimpleName(), "requestCode : "+ requestCode);
+        if (requestCode == REQUEST_WRITE_EXTERNAL_STORAGE) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                populateAutoComplete();
+                finish();
+                startActivity(getIntent());
             }
-        }*/
+        }
     }
 
 
@@ -690,13 +696,16 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         email = sharedpreferences.getString(TAG_EMAIL, null);
         name = sharedpreferences.getString(TAG_NAME, null);
 
+        Boolean is_storage_granted = isStoragePermissionGranted();
         if (session) {
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            intent.putExtra(TAG_ID, id);
-            intent.putExtra(TAG_EMAIL, email);
-            intent.putExtra(TAG_NAME, name);
-            finish();
-            startActivity(intent);
+            if (is_storage_granted) {
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.putExtra(TAG_ID, id);
+                intent.putExtra(TAG_EMAIL, email);
+                intent.putExtra(TAG_NAME, name);
+                finish();
+                startActivity(intent);
+            }
         }
     }
 
@@ -1226,6 +1235,24 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         Intent intent = getIntent();
         finish();
         startActivity(intent);
+    }
+
+    private boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.e(TAG,"Permission is granted");
+                return true;
+            } else {
+                Log.e(TAG,"Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            Log.e(TAG,"Permission is granted");
+            return true;
+        }
     }
 }
 

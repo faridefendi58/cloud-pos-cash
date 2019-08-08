@@ -105,4 +105,8 @@ public class SaleLedger {
 	public static void setServerInvoiceId(Sale sale, int server_invoice_id, String server_invoice_number) {
 		saleDao.setPushedSale(sale, server_invoice_id, server_invoice_number);
 	}
+
+	public static void setFinished(Sale sale) {
+		saleDao.setFinished(sale);
+	}
 }
