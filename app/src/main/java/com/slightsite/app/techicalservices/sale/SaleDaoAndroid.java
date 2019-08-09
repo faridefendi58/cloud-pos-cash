@@ -419,6 +419,7 @@ public class SaleDaoAndroid implements SaleDao {
 	public void setFinished(Sale sale) {
 		ContentValues content = new ContentValues();
 		content.put("_id", sale.getId());
+		content.put("server_invoice_number", sale.getServerInvoiceNumber());
 		content.put("status", "FINISHED");
 		database.update(DatabaseContents.TABLE_SALE.toString(), content);
 	}

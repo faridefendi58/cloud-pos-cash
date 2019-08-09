@@ -30,8 +30,6 @@ public class PaymentDaoAndroid implements PaymentDao {
         content.put("amount", payment.getAmount());
 
         int id = database.insert(DatabaseContents.TABLE_SALE_PAYMENT.toString(), content);
-        Log.e(getClass().getSimpleName(), "saved id : "+ id);
-        Log.e(getClass().getSimpleName(), "content : "+ content.toString());
 
         return id;
     }

@@ -910,18 +910,71 @@ public class SaleDetailActivity extends Activity{
 				} else {
 					// ready to submit
 					try {
+						Map<String, Object> mObj = new HashMap<String, Object>();
+						mObj.put("invoice_id", sale.getServerInvoiceId());
+						ArrayList arrPaymentList = new ArrayList();
 						for (PaymentItem pi : payment_items) {
-							Payment pym = new Payment(saleId, pi.getTitle(), pi.getNominal());
-							//paymentDao.addPayment(pym);
+							Map<String, String> arrPayment2 = new HashMap<String, String>();
+							arrPayment2.put("type", pi.getTitle());
+							arrPayment2.put("amount_tendered", ""+ pi.getNominal());
+
+							arrPaymentList.add(arrPayment2);
+
+							paymentCatalog.addPayment(saleId, pi.getTitle(), pi.getNominal());
 						}
+
+						mObj.put("payment", arrPaymentList);
+						_complete_inv(mObj);
 					} catch (Exception e){
 						e.printStackTrace();
 					}
-					Toast.makeText(getApplicationContext(),
+					/*Toast.makeText(getApplicationContext(),
 							"Total submited payment : " + tot_payment,
-							Toast.LENGTH_SHORT).show();
+							Toast.LENGTH_SHORT).show();*/
 				}
 			}
 		});
+	}
+
+	private void _complete_inv(Map mObj) {
+		String _url = Server.URL + "transaction/complete?api-key=" + Server.API_KEY;
+		String qry = URLBuilder.httpBuildQuery(mObj, "UTF-8");
+		_url += "&"+ qry;
+
+		Map<String, String> params = new HashMap<String, String>();
+		String admin_id = sharedpreferences.getString(TAG_ID, null);
+		Params adminParam = paramCatalog.getParamByName("admin_id");
+		if (adminParam != null) {
+			admin_id = adminParam.getValue();
+		}
+
+		params.put("admin_id", admin_id);
+
+		_string_request(
+				Request.Method.POST,
+				_url,
+				params,
+				true,
+				new VolleyCallback(){
+					@Override
+					public void onSuccess(String result) {
+						try {
+							JSONObject jObj = new JSONObject(result);
+							success = jObj.getInt(TAG_SUCCESS);
+							// Check for error node in json
+							if (success == 1) {
+								String server_invoice_number = jObj.getString("invoice_number");
+								sale.setServerInvoiceNumber(server_invoice_number);
+								saleLedger.setFinished(sale);
+								finish();
+								startActivity(getIntent());
+							}
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+
+						hideDialog();
+					}
+				});
 	}
 }
