@@ -61,6 +61,7 @@ import com.slightsite.app.domain.warehouse.WarehouseService;
 import com.slightsite.app.domain.warehouse.Warehouses;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
+import com.slightsite.app.techicalservices.URLBuilder;
 import com.slightsite.app.ui.LoginActivity;
 import com.slightsite.app.ui.MainActivity;
 
@@ -252,8 +253,8 @@ public class PrintPreviewActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(PrintPreviewActivity.this, MainActivity.class);
-                startActivity(intent);
                 finish();
+                startActivity(intent);
             }
         });
 
@@ -776,11 +777,56 @@ public class PrintPreviewActivity extends Activity {
 
     private void finishAndPrint() {
         try {
-            saleLedger.setFinished(sale);
+            Map<String, Object> mObj = new HashMap<String, Object>();
+            mObj.put("invoice_id", sale.getServerInvoiceId());
+            _complete_inv(mObj);
         } catch (Exception e){e.printStackTrace();}
 
         Intent intent = new Intent(PrintPreviewActivity.this, MainActivity.class);
         finish();
         startActivity(intent);
+    }
+
+    private void _complete_inv(Map mObj) {
+        String _url = Server.URL + "transaction/complete?api-key=" + Server.API_KEY;
+        String qry = URLBuilder.httpBuildQuery(mObj, "UTF-8");
+        _url += "&"+ qry;
+
+        Map<String, String> params = new HashMap<String, String>();
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        Params adminParam = paramCatalog.getParamByName("admin_id");
+        if (adminParam != null) {
+            admin_id = adminParam.getValue();
+        }
+
+        params.put("admin_id", admin_id);
+
+        _string_request(
+                Request.Method.POST,
+                _url,
+                params,
+                true,
+                new VolleyCallback(){
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                String server_invoice_number = jObj.getString("invoice_number");
+                                sale.setServerInvoiceNumber(server_invoice_number);
+
+                                saleLedger.setFinished(sale);
+                                // and then trigger print the invoice
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        hideDialog();
+                    }
+                });
     }
 }

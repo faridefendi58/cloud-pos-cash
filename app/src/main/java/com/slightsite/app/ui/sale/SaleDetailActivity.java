@@ -966,8 +966,12 @@ public class SaleDetailActivity extends Activity{
 								String server_invoice_number = jObj.getString("invoice_number");
 								sale.setServerInvoiceNumber(server_invoice_number);
 								saleLedger.setFinished(sale);
+
+								//finish();
+								//startActivity(getIntent());
+								Intent newActivity = new Intent(getApplicationContext(), MainActivity.class);
 								finish();
-								startActivity(getIntent());
+								startActivity(newActivity);
 							}
 						} catch (JSONException e) {
 							e.printStackTrace();

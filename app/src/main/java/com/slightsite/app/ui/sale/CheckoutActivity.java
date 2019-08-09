@@ -284,7 +284,7 @@ public class CheckoutActivity extends AppCompatActivity {
                                     startActivity(newActivity);
                                 }
                             },
-                            3000);
+                            1500);
 
                     return;
                 } else {
@@ -816,8 +816,8 @@ public class CheckoutActivity extends AppCompatActivity {
                             if (success == 1) {
                                 saleLedger.setServerInvoiceId(sale, server_invoice_id, server_invoice_number);
                             }
-                            Toast.makeText(getApplicationContext(),
-                                    jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                            /*Toast.makeText(getApplicationContext(),
+                                    jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();*/
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
