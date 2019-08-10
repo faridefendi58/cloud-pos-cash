@@ -89,6 +89,12 @@ public class GridListAdapter extends BaseAdapter {
     //On selecting any view set the current position to selectedPositon and notify adapter
     private void itemCheckChanged(View v) {
         selectedPosition = (Integer) v.getTag();
+        try {
+            ((PrintPreviewActivity) context).setBluetoothDevice(arrayList.get(selectedPosition));
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
         notifyDataSetChanged();
     }
 
@@ -113,5 +119,9 @@ public class GridListAdapter extends BaseAdapter {
             selectedPosition = -1;//after removing selectedPosition set it back to -1
             notifyDataSetChanged();
         }
+    }
+
+    public void setSelectedPosition(int position) {
+        this.selectedPosition = position;
     }
 }

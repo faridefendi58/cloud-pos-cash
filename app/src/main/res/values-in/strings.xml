@@ -101,6 +101,7 @@
     <string name="title_share">Bagikan</string>
     <string name="title_mark_complete">Selesaikan Order Ini</string>
     <string name="title_clear_sale">Batalkan Transaksi</string>
+    <string name="title_bluetooth_devices">Pilih Printer Bluetooth</string>
 
     <string name="dashboard_income">Pendapatan</string>
     <string name="dashboard_transaction">Transaksi</string>

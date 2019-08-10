@@ -12,16 +12,29 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.StrictMode;
+import android.print.PrintAttributes;
+import android.print.PrintDocumentAdapter;
+import android.print.PrintJob;
+import android.print.PrintManager;
+import android.support.design.widget.BottomSheetDialog;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.print.PrintHelper;
+import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,6 +43,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -69,13 +83,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -164,6 +183,11 @@ public class PrintPreviewActivity extends Activity {
             }
 
             shipping_method = getIntent().getIntExtra("shipping_method", 0);
+
+            Params bParam = paramCatalog.getParamByName("bluetooth_device_name");
+            if (bParam != null) {
+                bluetoothDeviceName = bParam.getValue();
+            }
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -262,8 +286,7 @@ public class PrintPreviewActivity extends Activity {
             @Override
             public void onClick(View v) {
                 //IntentPrint(print_webview);
-                Toast.makeText(getApplicationContext(),
-                        "Will be available soon", Toast.LENGTH_LONG).show();
+                just_print(print_webview);
             }
         });
 
@@ -400,7 +423,7 @@ public class PrintPreviewActivity extends Activity {
         if (warehouse != null) {
             Params store_name = paramCatalog.getParamByName("store_name");
             if (store_name instanceof Params) {
-                res += "<table width=\"100%\" style=\"margin-top:40px;\"><tr><td><center><b>"+ store_name.getValue() +" "+warehouse.getTitle() +"</b></center></td></tr>";
+                res += "<table width=\"100%\" style=\"margin-top:30px;\"><tr><td><center><b>"+ store_name.getValue() +" "+warehouse.getTitle() +"</b></center></td></tr>";
             } else {
                 res += String.format("%s%n", warehouse.getTitle());
             }
@@ -548,7 +571,7 @@ public class PrintPreviewActivity extends Activity {
         }
         res += "</table>";
 
-        res += "<table style=\"width:100%;margin-top:40px;margin-bottom:50px;\"><tr><td><center>Terimakasih.<br />Selamat belanja kembali.</center></td></tr></table>";
+        res += "<table style=\"width:100%;margin-top:40px;margin-bottom:30px;\"><tr><td><center>Terimakasih.<br />Selamat belanja kembali.</center></td></tr></table>";
 
         return res;
     }
@@ -608,13 +631,25 @@ public class PrintPreviewActivity extends Activity {
         startActivity(Intent.createChooser(shareIntent, "share via"));
     }
 
+    private BottomSheetDialog bottomSheetDialog;
+    private ListView print_list_view;
+
     private void printerSetting() {
-        /*Intent newActivity = new Intent(PrintPreviewActivity.this,
-                PrinterActivity.class);
-        newActivity.putExtra("saleId", saleId);
-        finish();
-        startActivity(newActivity);*/
-        Toast.makeText(this, "Will be available soon.", Toast.LENGTH_LONG).show();
+        InitDeviceList();
+
+        bottomSheetDialog = new BottomSheetDialog(PrintPreviewActivity.this);
+        View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_bluetooth_devices, null);
+        bottomSheetDialog.setContentView(sheetView);
+
+        print_list_view = (ListView) sheetView.findViewById(R.id.print_list_view);
+        GridListAdapter badapter = new GridListAdapter(PrintPreviewActivity.this, bluetoothDeviceList, true);
+        int selected = bluetoothDeviceList.indexOf(bluetoothDeviceName);
+        if (selected >= 0) {
+            badapter.setSelectedPosition(selected);
+        }
+        print_list_view.setAdapter(badapter);
+
+        bottomSheetDialog.show();
     }
 
     public void InitDeviceList() {
@@ -714,19 +749,26 @@ public class PrintPreviewActivity extends Activity {
     }
 
     public void IntentPrint(WebView view) {
-        String txtvalue = "";
+        //FileInputStream fin = new FileInputStream(pdffile);
+        String txtvalue = "I/Choreographer: Skipped 1818 frames!  The application may be doing too much work on its main thread.\n" +
+                "D/OpenGLRenderer: CanvasContext() 0x7f4b82b340 initialize 0x7f8b684c10\n" +
+                "I/Choreographer: Skipped 1 frames!  The application may be doing too much work on its main thread.\n" +
+                "D/mali_winsys: new_window_surface returns 0x3000";
+
         byte[] buffer = txtvalue.getBytes();
         byte[] PrintHeader = {(byte) 0xAA, 0x55, 2, 0};
         PrintHeader[3] = (byte) buffer.length;
-        InitPrinter();
+        if (socket == null) {
+            initPrinter();
+        }
         if (PrintHeader.length > 128) {
             value += "\nValue is more than 128 size\n";
             Toast.makeText(this, value, Toast.LENGTH_LONG).show();
         } else {
             try {
                 outputStream.write(txtvalue.getBytes());
-                outputStream.close();
-                socket.close();
+                //outputStream.close();
+                //socket.close();
             } catch (Exception ex) {
                 value += ex.toString() + "\n" + "Excep IntentPrint \n";
                 Toast.makeText(this, value, Toast.LENGTH_LONG).show();
@@ -734,7 +776,7 @@ public class PrintPreviewActivity extends Activity {
         }
     }
 
-    public void InitPrinter() {
+    private void initPrinter() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         try {
             if (!bluetoothAdapter.isEnabled()) {
@@ -755,14 +797,13 @@ public class PrintPreviewActivity extends Activity {
                     }
                 }
 
-                UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard SerialPortService ID
-                Method m = bluetoothDevice.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
-                socket = (BluetoothSocket) m.invoke(bluetoothDevice, 1);
+                UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+                socket = bluetoothDevice
+                        .createRfcommSocketToServiceRecord(uuid);
                 bluetoothAdapter.cancelDiscovery();
                 socket.connect();
                 outputStream = socket.getOutputStream();
                 inputStream = socket.getInputStream();
-                beginListenForData();
             } else {
                 value += "No Devices found";
                 bluetoothDeviceList = new ArrayList<>();
@@ -772,6 +813,17 @@ public class PrintPreviewActivity extends Activity {
         } catch (Exception ex) {
             value += ex.toString() + "\n" + " InitPrinter \n";
             Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void setBluetoothDevice(String device_name) {
+        this.bluetoothDeviceName = device_name;
+        Params bParam = paramCatalog.getParamByName("bluetooth_device_name");
+        if (bParam == null) {
+            paramCatalog.addParam("bluetooth_device_name", device_name, "text", "Bluetooth device for printing");
+        } else {
+            bParam.setValue(device_name);
+            paramCatalog.editParam(bParam);
         }
     }
 
@@ -828,5 +880,83 @@ public class PrintPreviewActivity extends Activity {
                         hideDialog();
                     }
                 });
+    }
+
+    private void printHtml(String fileName, WebView webView) {
+        if (PrintHelper.systemSupportsPrint()) {
+            PrintDocumentAdapter adapter = webView.createPrintDocumentAdapter();
+            PrintManager printManager = (PrintManager) getSystemService(Context.PRINT_SERVICE);
+            printManager.print(fileName, adapter, null);
+        } else {
+            Toast.makeText(this, "この端末では印刷をサポートしていません", Toast.LENGTH_SHORT)
+                    .show();
+        }
+    }
+
+    private void just_print(WebView webView) {
+        try {
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+
+            Bitmap bm = screenShot(print_webview);
+            //File file = saveBitmap(bm, sale.getServerInvoiceNumber() +".png");
+
+            initPrinter();
+
+            byte[] printformat = {0x1B, 0x21, 0x10};
+            outputStream.write(printformat);
+
+            try {
+                Bitmap bitmap = bm;
+                Log.e(getClass().getSimpleName(), "old bitmap.getHeight() : "+ bitmap.getHeight());
+                Log.e(getClass().getSimpleName(), "old bitmap.getWidth() : "+ bitmap.getWidth());
+                int perc = bitmap.getWidth()/400; //400 lebar kertas
+                int new_height = bitmap.getHeight()/perc;
+                bitmap = getResizedBitmap(bitmap, 400, new_height);
+                //bitmap.setHeight(bitmap.getHeight());
+                //bitmap.setHeight(200);
+                //bitmap.setWidth(100);
+                Log.e(getClass().getSimpleName(), "bitmap.getHeight() : "+ bitmap.getHeight());
+                Log.e(getClass().getSimpleName(), "bitmap.getWidth() : "+ bitmap.getWidth());
+
+                //ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                PrintPic printPic = PrintPic.getInstance();
+                //printPic.initCanvas(55);
+                printPic.init(bitmap);
+                byte[] bitmapdata = printPic.printDraw();
+
+                outputStream.write(bitmapdata);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String encodeTobase64(Bitmap image) {
+        Bitmap immagex = image;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        immagex.compress(Bitmap.CompressFormat.PNG, 90, baos);
+        byte[] b = baos.toByteArray();
+        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+        return imageEncoded;
+    }
+
+    private Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // CREATE A MATRIX FOR THE MANIPULATION
+        Matrix matrix = new Matrix();
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight);
+
+        // "RECREATE" THE NEW BITMAP
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false);
+        bm.recycle();
+        return resizedBitmap;
     }
 }
