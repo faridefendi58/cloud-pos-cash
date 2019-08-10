@@ -285,8 +285,7 @@ public class PrintPreviewActivity extends Activity {
         print_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //IntentPrint(print_webview);
-                just_print(print_webview);
+                just_print();
             }
         });
 
@@ -419,7 +418,7 @@ public class PrintPreviewActivity extends Activity {
     }
 
     public String getFormatedReceiptHtml() {
-        String res = "<style>p, table td{font-size:14px !important;}</style>";
+        String res = "<style>p, table td{font-size:18px !important;}</style>";
         if (warehouse != null) {
             Params store_name = paramCatalog.getParamByName("store_name");
             if (store_name instanceof Params) {
@@ -491,7 +490,7 @@ public class PrintPreviewActivity extends Activity {
         if (sale.getPaidBy() > 0) {
             res += "<tr><td>" + getResources().getString(R.string.status) + "</td><td> : <b>" + getResources().getString(R.string.message_paid) + "</b></td></tr>";
         } else {
-            res += "<tr><td>" + getResources().getString(R.string.status) + "</td><td> : <b style=\"color:red;font-size:24px;\">" + getResources().getString(R.string.message_unpaid) + "</b></td></tr>";
+            res += "<tr><td>" + getResources().getString(R.string.status) + "</td><td> : <b style=\"color:red;font-size:26px;\">" + getResources().getString(R.string.message_unpaid) + "</b></td></tr>";
         }
 
         List<LineItem> list = sale.getAllLineItem();
@@ -748,34 +747,6 @@ public class PrintPreviewActivity extends Activity {
         }
     }
 
-    public void IntentPrint(WebView view) {
-        //FileInputStream fin = new FileInputStream(pdffile);
-        String txtvalue = "I/Choreographer: Skipped 1818 frames!  The application may be doing too much work on its main thread.\n" +
-                "D/OpenGLRenderer: CanvasContext() 0x7f4b82b340 initialize 0x7f8b684c10\n" +
-                "I/Choreographer: Skipped 1 frames!  The application may be doing too much work on its main thread.\n" +
-                "D/mali_winsys: new_window_surface returns 0x3000";
-
-        byte[] buffer = txtvalue.getBytes();
-        byte[] PrintHeader = {(byte) 0xAA, 0x55, 2, 0};
-        PrintHeader[3] = (byte) buffer.length;
-        if (socket == null) {
-            initPrinter();
-        }
-        if (PrintHeader.length > 128) {
-            value += "\nValue is more than 128 size\n";
-            Toast.makeText(this, value, Toast.LENGTH_LONG).show();
-        } else {
-            try {
-                outputStream.write(txtvalue.getBytes());
-                //outputStream.close();
-                //socket.close();
-            } catch (Exception ex) {
-                value += ex.toString() + "\n" + "Excep IntentPrint \n";
-                Toast.makeText(this, value, Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
     private void initPrinter() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         try {
@@ -871,7 +842,7 @@ public class PrintPreviewActivity extends Activity {
 
                                 saleLedger.setFinished(sale);
                                 // and then trigger print the invoice
-
+                                just_print();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -893,7 +864,7 @@ public class PrintPreviewActivity extends Activity {
         }
     }
 
-    private void just_print(WebView webView) {
+    private void just_print() {
         try {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
@@ -910,18 +881,16 @@ public class PrintPreviewActivity extends Activity {
                 Bitmap bitmap = bm;
                 Log.e(getClass().getSimpleName(), "old bitmap.getHeight() : "+ bitmap.getHeight());
                 Log.e(getClass().getSimpleName(), "old bitmap.getWidth() : "+ bitmap.getWidth());
-                int perc = bitmap.getWidth()/400; //400 lebar kertas
-                int new_height = bitmap.getHeight()/perc;
-                bitmap = getResizedBitmap(bitmap, 400, new_height);
-                //bitmap.setHeight(bitmap.getHeight());
-                //bitmap.setHeight(200);
-                //bitmap.setWidth(100);
+                float aspectRatio = bitmap.getWidth() /
+                        (float) bitmap.getHeight();
+                int width = 400; //400 lebar kertas
+                int height = Math.round(width / aspectRatio);
+
+                bitmap = getResizedBitmap(bitmap, width, height);
                 Log.e(getClass().getSimpleName(), "bitmap.getHeight() : "+ bitmap.getHeight());
                 Log.e(getClass().getSimpleName(), "bitmap.getWidth() : "+ bitmap.getWidth());
 
-                //ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 PrintPic printPic = PrintPic.getInstance();
-                //printPic.initCanvas(55);
                 printPic.init(bitmap);
                 byte[] bitmapdata = printPic.printDraw();
 
