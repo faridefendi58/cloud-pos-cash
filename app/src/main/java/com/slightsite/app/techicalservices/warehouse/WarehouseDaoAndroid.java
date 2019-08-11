@@ -1,7 +1,9 @@
 package com.slightsite.app.techicalservices.warehouse;
 
 import android.content.ContentValues;
+import android.util.Log;
 
+import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.warehouse.Warehouses;
 import com.slightsite.app.techicalservices.Database;
 import com.slightsite.app.techicalservices.DatabaseContents;
@@ -43,14 +45,16 @@ public class WarehouseDaoAndroid implements WarehouseDao {
         List<Warehouses> list = new ArrayList<Warehouses>();
         for (Object object: objectList) {
             ContentValues content = (ContentValues) object;
-            list.add(new Warehouses(
+            Warehouses wh = new Warehouses(
                     content.getAsInteger("_id"),
                     content.getAsInteger("warehouse_id"),
                     content.getAsString("title"),
                     content.getAsString("address"),
                     content.getAsString("phone"),
-                    content.getAsInteger("status"))
-            );
+                    content.getAsInteger("status"));
+            wh.setServerProductData(content.getAsString("server_product_data"));
+            wh.setDateProductRequest(content.getAsString("date_product_request"));
+            list.add(wh);
         }
         return list;
     }
@@ -111,6 +115,10 @@ public class WarehouseDaoAndroid implements WarehouseDao {
         content.put("address", warehouse.getAddress());
         content.put("phone", warehouse.getPhone());
         content.put("status", warehouse.getStatus());
+        if (warehouse.getServerProductData() != null) {
+            content.put("server_product_data", warehouse.getServerProductData());
+            content.put("date_product_request", DateTimeStrategy.getCurrentTime());
+        }
 
         return database.update(DatabaseContents.TABLE_WAREHOUSES.toString(), content);
     }

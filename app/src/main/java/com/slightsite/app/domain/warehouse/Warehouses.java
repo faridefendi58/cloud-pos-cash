@@ -10,6 +10,8 @@ public class Warehouses {
     private String address;
     private String phone;
     private int status;
+    private String server_product_data;
+    private String date_product_request;
 
     /**
      * Static address for UNDEFINED ID.
@@ -75,6 +77,22 @@ public class Warehouses {
         return status;
     }
 
+    public void setServerProductData(String _data) {
+        this.server_product_data = _data;
+    }
+
+    public String getServerProductData() {
+        return server_product_data;
+    }
+
+    public void setDateProductRequest(String _date) {
+        this.date_product_request = _date;
+    }
+
+    public String getDateProductRequest() {
+        return date_product_request;
+    }
+
     /**
      * Returns the status of this Warehouse in Map format.
      * @return the status of this Warehouse in Map format.
@@ -87,6 +105,8 @@ public class Warehouses {
         map.put("address", address);
         map.put("phone", phone);
         map.put("status", status + "");
+        map.put("server_product_data", server_product_data);
+        map.put("date_product_request", date_product_request);
 
         return map;
 

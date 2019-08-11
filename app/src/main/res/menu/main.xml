@@ -45,7 +45,8 @@
             </item>
 
             <item android:id="@+id/params"
-                android:title="@string/action_shop" >
+                android:title="@string/action_shop"
+                android:visible="false">
             </item>
 
             <item android:id="@+id/printer_and_receipt"
@@ -59,7 +60,8 @@
     </item>
     <item
         android:id="@+id/help"
-        android:title="@string/action_help">
+        android:title="@string/action_help"
+        android:visible="false">
     </item>
     <item
         android:id="@+id/logout"

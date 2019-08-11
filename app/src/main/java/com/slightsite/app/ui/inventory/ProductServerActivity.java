@@ -357,6 +357,14 @@ public class ProductServerActivity extends Activity {
                                         try {
                                             // suspending all the product data
                                             productCatalog.suspendAllProduct();
+                                            if (warehouse_id != null) {
+                                                Warehouses whs = warehouseCatalog.getWarehouseByWarehouseId(Integer.parseInt(warehouse_id));
+                                                if (whs != null) {
+                                                    whs.setServerProductData(result);
+                                                    warehouseCatalog.editWarehouse(whs);
+                                                    Log.e(getClass().getSimpleName(), "update product wh data");
+                                                }
+                                            }
                                         } catch (Exception e){e.printStackTrace();}
                                     }
 

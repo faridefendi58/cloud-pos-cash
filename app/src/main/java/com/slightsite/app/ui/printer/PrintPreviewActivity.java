@@ -277,6 +277,7 @@ public class PrintPreviewActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(PrintPreviewActivity.this, MainActivity.class);
+                intent.putExtra("refreshStock", true);
                 finish();
                 startActivity(intent);
             }
@@ -338,7 +339,17 @@ public class PrintPreviewActivity extends Activity {
 
                                     formated_receipt = getFormatedReceiptHtml();
 
-                                    print_webview.loadDataWithBaseURL(null, "<html><body>" + formated_receipt + "</body></html>", "text/html", "utf-8", null);
+                                    String style = "<style>";
+                                    style += ".ft-14{font-size:10px !important;}";
+                                    style += ".ft-16{font-size:16px !important;}";
+                                    style += ".ft-17{font-size:17px !important;}";
+                                    style += ".ft-18{font-size:18px !important;}";
+                                    style += ".ft-20{font-size:20px !important;}";
+                                    style += ".ft-22{font-size:22px !important;}";
+                                    style += ".ft-24{font-size:24px !important;}";
+                                    style += ".ft-26{font-size:26px !important;}";
+                                    style += "</style>";
+                                    print_webview.loadDataWithBaseURL(null, "<html>"+ style +"<body>" + formated_receipt + "</body></html>", "text/html", "utf-8", null);
                                 }
                             }
                         } catch (JSONException e) {
@@ -418,19 +429,19 @@ public class PrintPreviewActivity extends Activity {
     }
 
     public String getFormatedReceiptHtml() {
-        String res = "<style>p, table td{font-size:18px !important;}</style>";
+        String res = "";
         if (warehouse != null) {
             Params store_name = paramCatalog.getParamByName("store_name");
             if (store_name instanceof Params) {
-                res += "<table width=\"100%\" style=\"margin-top:30px;\"><tr><td><center><b>"+ store_name.getValue() +" "+warehouse.getTitle() +"</b></center></td></tr>";
+                res += "<table width=\"100%\" style=\"margin-top:20px;\"><tr class=\"ft-18\"><td colspan=\"4\"><center><b>"+ store_name.getValue() +" "+warehouse.getTitle() +"</b></center></td></tr>";
             } else {
                 res += String.format("%s%n", warehouse.getTitle());
             }
-            res += "<tr><td><center>"+ warehouse.getAddress() +"</center></td></tr>";
-            res += "<tr><td><center>"+ warehouse.getPhone() +"</center></td></tr></table>";
+            res += "<tr class=\"ft-16\"><td colspan=\"4\" style=\"padding-top:10px;\"><center>"+ warehouse.getAddress() +"</center></td></tr>";
+            res += "<tr class=\"ft-16\"><td colspan=\"4\"><center>"+ warehouse.getPhone() +"</center></td></tr>";
         }
 
-        res += "<hr/>";
+        res += "<tr><td colspan=\"4\"><hr/></td></tr>";
 
         String current_time =  DateTimeStrategy.getCurrentTime();
 
@@ -442,8 +453,8 @@ public class PrintPreviewActivity extends Activity {
         } catch (Exception e) { e.printStackTrace(); }
 
         String[] separated = current_time.split(" ");
-        res += "<table>";
-        res += "<tr><td>"+ getResources().getString(R.string.label_date)+ "</td><td> : "+ separated[0] +"</td>";
+        res += "<tr class=\"ft-18\"><td>"+ getResources().getString(R.string.label_date)+ "</td>" +
+                "<td colspan=\"3\" class=\"ft-17\"> : "+ separated[0] +"</td>";
         String date_transaction = sale.getEndTime();
         try {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MMM-dd  hh:mm a");
@@ -466,31 +477,31 @@ public class PrintPreviewActivity extends Activity {
             }
         }
 
-        res += "<tr><td>"+ getResources().getString(R.string.label_no_nota)+ "</td><td> : "+ no_nota +"</td></tr>";
-        res += "<tr><td>"+ getResources().getString(R.string.label_hour)+ "</td><td> : "+ separated[1] +"</td></tr>";
+        res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.label_no_nota)+ "</td><td colspan=\"3\"> : "+ no_nota +"</td></tr>";
+        res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.label_hour)+ "</td><td colspan=\"3\"> : "+ separated[1] +"</td></tr>";
 
         if (sale.getCreatedBy() > 0) {
-            res += "<tr><td>" + getResources().getString(R.string.label_created_by) + "</td><td> : " + sale.getCreatedByName() + "</td></tr>";
+            res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_created_by) + "</td><td colspan=\"3\"> : " + sale.getCreatedByName() + "</td></tr>";
             if (sale.getPaidBy() > 0) {
-                res += "<tr><td>" + getResources().getString(R.string.label_processed_by) + "</td><td> : " + sale.getPaidByName() + "</td></tr>";
+                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + sale.getPaidByName() + "</td></tr>";
             }
         } else {
             if (adminData != null) {
-                res += "<tr><td>" + getResources().getString(R.string.label_created_by) + "</td><td> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
-                res += "<tr><td>" + getResources().getString(R.string.label_processed_by) + "</td><td> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
+                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_created_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
+                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
             }
         }
 
         if (customer != null) {
-            res += "<tr><td>"+ getResources().getString(R.string.customer)+ "</td><td> : "+ customer.getName() +"</td></tr>";
-            res += "<tr><td>"+ getResources().getString(R.string.label_customer_address)+ "</td><td> : "+ customer.getAddress() +"</td></tr>";
-            res += "<tr><td>"+ getResources().getString(R.string.label_customer_phone)+ "</td><td> : "+ customer.getPhone() +"</td></tr>";
+            res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.customer)+ "</td><td colspan=\"3\"> : "+ customer.getName() +"</td></tr>";
+            res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.label_customer_address)+ "</td><td colspan=\"3\"> : "+ customer.getAddress() +"</td></tr>";
+            res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.label_customer_phone)+ "</td><td colspan=\"3\"> : "+ customer.getPhone() +"</td></tr>";
         }
 
         if (sale.getPaidBy() > 0) {
-            res += "<tr><td>" + getResources().getString(R.string.status) + "</td><td> : <b>" + getResources().getString(R.string.message_paid) + "</b></td></tr>";
+            res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b>" + getResources().getString(R.string.message_paid) + "</b></td></tr>";
         } else {
-            res += "<tr><td>" + getResources().getString(R.string.status) + "</td><td> : <b style=\"color:red;font-size:26px;\">" + getResources().getString(R.string.message_unpaid) + "</b></td></tr>";
+            res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b style=\"color:red;\" class=\"ft-26\">" + getResources().getString(R.string.message_unpaid) + "</b></td></tr>";
         }
 
         List<LineItem> list = sale.getAllLineItem();
@@ -499,38 +510,35 @@ public class PrintPreviewActivity extends Activity {
             lineitemList.add(line.toMap());
         }
 
-        res += "</table>";
-        res += "<hr/>";
+        res += "<tr><td colspan=\"4\"><hr/></td></tr></table>";
         res += "<table width=\"100%\">";
 
         int sub_total = 0;
         int ppn = 0;
         for (int i = 0; i < lineitemList.size(); ++i) {
-            res += "<tr><td colspan=\"2\">"+ lineitemList.get(i).get("name") +"</td></tr>";
+            res += "<tr class=\"ft-17\"><td colspan=\"4\">"+ lineitemList.get(i).get("name") +"</td></tr>";
             int qty = Integer.parseInt(lineitemList.get(i).get("quantity"));
             int prc = Integer.parseInt(lineitemList.get(i).get("price").replace(".", ""));
             int tot = prc * qty;
-            res += "<tr><td style=\"padding-left:20px;\">"+ qty +" x "+ CurrencyController.getInstance().moneyFormat(prc) +"</td>";
+            res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"padding-left:10px;\">"+ qty +" x "+ CurrencyController.getInstance().moneyFormat(prc) +"</td>";
             res += "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(tot) +"</td></tr>";
 
             sub_total = sub_total + tot;
         }
-        res += "</table>";
-        res += "<hr/>";
+        res += "<tr><td colspan=\"4\"><hr/></td></tr>";
 
-        res += "<table width=\"100%\" style=\"margin-top:10px;\">";
-        res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_sub_total) +" :</td>" +
+        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_sub_total) +" :</td>" +
                 "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(sub_total) +"</td>";
         //res += "<tr><td colspan=\"2\" style=\"text-align:right;\">PPN :</td><td style=\"text-align:right;\">"+ ppn +"</td>";
         int discount = sale.getDiscount();
-        res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_discount) +" :</td>" +
+        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_discount) +" :</td>" +
                 "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(discount) +"</td>";
 
         int grand_total = sub_total + ppn - discount;
 
         int cash = grand_total;
         int change_due = grand_total - cash;
-        res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_grand_total) +" :</td>" +
+        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_grand_total) +" :</td>" +
                 "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(grand_total) +"</td>";
 
         if (paymentList != null && !paymentList.isEmpty()) {
@@ -546,7 +554,7 @@ public class PrintPreviewActivity extends Activity {
                     Log.e(getClass().getSimpleName(), e.getMessage());
                 }
 
-                res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(getPaymentChannel(py.getPaymentChannel())) +" :</td>" +
+                res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(getPaymentChannel(py.getPaymentChannel())) +" :</td>" +
                         "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(amnt) +"</td>";
 
                 /*res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ py.toMap().get("formated_payment_channel") +" :</td>" +
@@ -554,23 +562,23 @@ public class PrintPreviewActivity extends Activity {
             }
             change_due = payment_total - grand_total;
         } else {
-            res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(R.string.payment_cash) +" :</td>" +
+            res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.payment_cash) +" :</td>" +
                     "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(cash) +"</td>";
         }
 
         if (change_due > 0) {
-            res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_change_due) +" :</td>" +
+            res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_change_due) +" :</td>" +
                     "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(change_due) +"</td>";
         } else {
             int debt = -1 * change_due;
             if (debt < 0) {
-                res += "<tr><td colspan=\"2\" style=\"text-align:right;\"><b>" + getResources().getString(R.string.label_dept) + " :</b></td>" +
+                res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\"><b>" + getResources().getString(R.string.label_dept) + " :</b></td>" +
                         "<td style=\"text-align:right;\"><b>" + CurrencyController.getInstance().moneyFormat(debt) + "</b></td>";
             }
         }
-        res += "</table>";
+        res += "<tr><td colspan=\"4\"><hr/></td></tr>";
 
-        res += "<table style=\"width:100%;margin-top:40px;margin-bottom:30px;\"><tr><td><center>Terimakasih.<br />Selamat belanja kembali.</center></td></tr></table>";
+        res += "<tr class=\"ft-17\"><td colspan=\"4\"><center>Terimakasih.<br />Selamat belanja kembali.</center></td></tr></table>";
 
         return res;
     }
@@ -678,75 +686,6 @@ public class PrintPreviewActivity extends Activity {
         }
     }
 
-    void beginListenForData() {
-        try {
-            final Handler handler = new Handler();
-
-            // this is the ASCII code for a newline character
-            final byte delimiter = 10;
-
-            stopWorker = false;
-            readBufferPosition = 0;
-            readBuffer = new byte[1024];
-
-            workerThread = new Thread(new Runnable() {
-                public void run() {
-
-                    while (!Thread.currentThread().isInterrupted() && !stopWorker) {
-
-                        try {
-
-                            int bytesAvailable = inputStream.available();
-
-                            if (bytesAvailable > 0) {
-
-                                byte[] packetBytes = new byte[bytesAvailable];
-                                inputStream.read(packetBytes);
-
-                                for (int i = 0; i < bytesAvailable; i++) {
-
-                                    byte b = packetBytes[i];
-                                    if (b == delimiter) {
-
-                                        byte[] encodedBytes = new byte[readBufferPosition];
-                                        System.arraycopy(
-                                                readBuffer, 0,
-                                                encodedBytes, 0,
-                                                encodedBytes.length
-                                        );
-
-                                        // specify US-ASCII encoding
-                                        final String data = new String(encodedBytes, "US-ASCII");
-                                        readBufferPosition = 0;
-
-                                        // tell the user data were sent to bluetooth printer device
-                                        handler.post(new Runnable() {
-                                            public void run() {
-                                                Log.d("e", data);
-                                            }
-                                        });
-
-                                    } else {
-                                        readBuffer[readBufferPosition++] = b;
-                                    }
-                                }
-                            }
-
-                        } catch (Exception ex) {
-                            stopWorker = true;
-                        }
-
-                    }
-                }
-            });
-
-            workerThread.start();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private void initPrinter() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         try {
@@ -806,6 +745,7 @@ public class PrintPreviewActivity extends Activity {
         } catch (Exception e){e.printStackTrace();}
 
         Intent intent = new Intent(PrintPreviewActivity.this, MainActivity.class);
+        intent.putExtra("refreshStock", true);
         finish();
         startActivity(intent);
     }

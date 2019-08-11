@@ -1,6 +1,7 @@
 package com.slightsite.app.domain.inventory;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;

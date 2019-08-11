@@ -550,6 +550,7 @@ public class InventoryFragment extends UpdatableFragment {
 			builder.setSingleChoiceItems(warehouses, selected_wh, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialogInterface, int i) {
+					dialogInterface.dismiss();
 					String current_wh = ((MainActivity)getActivity()).getCurrentWarehouseName();
 					if (warehouses[i].equals(current_wh)) {
 						Toast.makeText(getContext(), "Please choose another branch!",
@@ -580,7 +581,7 @@ public class InventoryFragment extends UpdatableFragment {
 						}
 					}
 
-					dialogInterface.dismiss();
+
 				}
 			});
 			builder.show();

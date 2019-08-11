@@ -202,7 +202,9 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 				+ "address TEXT(256),"
 				+ "phone TEXT(32),"
 				+ "status INTEGER DEFAULT 1,"
-				+ "date_added DATETIME"
+				+ "server_product_data TEXT DEFAULT NULL,"
+				+ "date_added DATETIME,"
+				+ "date_product_request DATETIME"
 				+ ");");
 
 		database.execSQL("CREATE TABLE " + DatabaseContents.TABLE_ADMIN_IN_WAREHOUSE + "("

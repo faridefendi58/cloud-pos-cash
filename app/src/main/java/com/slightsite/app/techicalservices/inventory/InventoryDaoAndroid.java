@@ -166,7 +166,7 @@ public class InventoryDaoAndroid implements InventoryDao {
         	content.put("image_bitmap", product.getBitmapAsByteArray());
 		}
 
-        Log.e(getClass().getSimpleName(), "Before update : "+ content.toString());
+        //Log.e(getClass().getSimpleName(), "Before update : "+ content.toString());
 		return database.update(DatabaseContents.TABLE_PRODUCT_CATALOG.toString(), content);
 	}
 	
@@ -263,7 +263,6 @@ public class InventoryDaoAndroid implements InventoryDao {
 		}
 		ContentValues content = (ContentValues) objectList.get(0);
 		int quantity = content.getAsInteger("quantity");
-		Log.d("inventoryDaoAndroid", "stock sum of "+ id + " is " + quantity);
 		return quantity;
 	}
 
