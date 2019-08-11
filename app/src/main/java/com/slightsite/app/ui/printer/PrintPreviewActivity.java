@@ -255,7 +255,20 @@ public class PrintPreviewActivity extends Activity {
         print_webview.getSettings().setDisplayZoomControls(true);*/
 
         try {
-            buildDataFromServer();
+            print_webview.loadDataWithBaseURL(null, "<html><body>Loading ...</body></html>", "text/html", "utf-8", null);
+            Intent intent = getIntent();
+            if (intent.hasExtra("delayed")) {
+                new android.os.Handler().postDelayed(
+                        new Runnable() {
+                            public void run() {
+                                sale = saleLedger.getSaleById(saleId); // reinit the sale to get server data
+                                buildDataFromServer();
+                            }
+                        },
+                        2000);
+            } else {
+                buildDataFromServer();
+            }
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -298,6 +311,7 @@ public class PrintPreviewActivity extends Activity {
         });
     }
 
+    private int counter = 0;
     public void buildDataFromServer() {
         Map<String, String> params = new HashMap<String, String>();
 
@@ -327,7 +341,7 @@ public class PrintPreviewActivity extends Activity {
                                     JSONObject obj_shipping = arr_shipping.getJSONObject(0);
                                 }
 
-                                if (server_invoice_data.has("created_by")) {
+                                if (server_invoice_data.has("created_by") && !server_invoice_data.getString("created_by").toString().equals("null")) {
                                     // setup the sale
                                     sale.setServerInvoiceNumber(server_invoice_data.getString("invoice_number"));
                                     sale.setCreatedBy(server_invoice_data.getInt("created_by"));
@@ -350,6 +364,18 @@ public class PrintPreviewActivity extends Activity {
                                     style += ".ft-26{font-size:26px !important;}";
                                     style += "</style>";
                                     print_webview.loadDataWithBaseURL(null, "<html>"+ style +"<body>" + formated_receipt + "</body></html>", "text/html", "utf-8", null);
+                                } else {
+                                    counter = counter + 1;
+                                    if (counter <= 5) {
+                                        sale = saleLedger.getSaleById(saleId);
+                                        new android.os.Handler().postDelayed(
+                                                new Runnable() {
+                                                    public void run() {
+                                                        buildDataFromServer();
+                                                    }
+                                                },
+                                                2000);
+                                    }
                                 }
                             }
                         } catch (JSONException e) {
@@ -686,7 +712,7 @@ public class PrintPreviewActivity extends Activity {
         }
     }
 
-    private void initPrinter() {
+    private Boolean initPrinter() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         try {
             if (!bluetoothAdapter.isEnabled()) {
@@ -718,12 +744,15 @@ public class PrintPreviewActivity extends Activity {
                 value += "No Devices found";
                 bluetoothDeviceList = new ArrayList<>();
                 Toast.makeText(this, value, Toast.LENGTH_LONG).show();
-                return;
+                return false;
             }
         } catch (Exception ex) {
             value += ex.toString() + "\n" + " InitPrinter \n";
             Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+            return false;
         }
+
+        return true;
     }
 
     public void setBluetoothDevice(String device_name) {
@@ -812,31 +841,33 @@ public class PrintPreviewActivity extends Activity {
             Bitmap bm = screenShot(print_webview);
             //File file = saveBitmap(bm, sale.getServerInvoiceNumber() +".png");
 
-            initPrinter();
+            Boolean is_connect = initPrinter();
 
-            byte[] printformat = {0x1B, 0x21, 0x10};
-            outputStream.write(printformat);
+            if (is_connect) {
+                byte[] printformat = {0x1B, 0x21, 0x10};
+                outputStream.write(printformat);
 
-            try {
-                Bitmap bitmap = bm;
-                Log.e(getClass().getSimpleName(), "old bitmap.getHeight() : "+ bitmap.getHeight());
-                Log.e(getClass().getSimpleName(), "old bitmap.getWidth() : "+ bitmap.getWidth());
-                float aspectRatio = bitmap.getWidth() /
-                        (float) bitmap.getHeight();
-                int width = 400; //400 lebar kertas
-                int height = Math.round(width / aspectRatio);
+                try {
+                    Bitmap bitmap = bm;
+                    Log.e(getClass().getSimpleName(), "old bitmap.getHeight() : " + bitmap.getHeight());
+                    Log.e(getClass().getSimpleName(), "old bitmap.getWidth() : " + bitmap.getWidth());
+                    float aspectRatio = bitmap.getWidth() /
+                            (float) bitmap.getHeight();
+                    int width = 400; //400 lebar kertas
+                    int height = Math.round(width / aspectRatio);
 
-                bitmap = getResizedBitmap(bitmap, width, height);
-                Log.e(getClass().getSimpleName(), "bitmap.getHeight() : "+ bitmap.getHeight());
-                Log.e(getClass().getSimpleName(), "bitmap.getWidth() : "+ bitmap.getWidth());
+                    bitmap = getResizedBitmap(bitmap, width, height);
+                    Log.e(getClass().getSimpleName(), "bitmap.getHeight() : " + bitmap.getHeight());
+                    Log.e(getClass().getSimpleName(), "bitmap.getWidth() : " + bitmap.getWidth());
 
-                PrintPic printPic = PrintPic.getInstance();
-                printPic.init(bitmap);
-                byte[] bitmapdata = printPic.printDraw();
+                    PrintPic printPic = PrintPic.getInstance();
+                    printPic.init(bitmap);
+                    byte[] bitmapdata = printPic.printDraw();
 
-                outputStream.write(bitmapdata);
-            } catch (Exception e) {
-                e.printStackTrace();
+                    outputStream.write(bitmapdata);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

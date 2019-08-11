@@ -273,18 +273,14 @@ public class CheckoutActivity extends AppCompatActivity {
                     /** langsung ke print preview **/
                     final int has_dept = (lunas)? 0 : 1;
                     final int shipping_method = checkout.getShipping().getMethod();
-                    new android.os.Handler().postDelayed(
-                            new Runnable() {
-                                public void run() {
-                                    Intent newActivity = new Intent(CheckoutActivity.this, PrintPreviewActivity.class);
-                                    newActivity.putExtra("saleId", saleId);
-                                    newActivity.putExtra("hutang", has_dept);
-                                    newActivity.putExtra("shipping_method", shipping_method);
-                                    finish();
-                                    startActivity(newActivity);
-                                }
-                            },
-                            1500);
+                    // jump to print preview
+                    Intent newActivity = new Intent(CheckoutActivity.this, PrintPreviewActivity.class);
+                    newActivity.putExtra("saleId", saleId);
+                    newActivity.putExtra("hutang", has_dept);
+                    newActivity.putExtra("shipping_method", shipping_method);
+                    newActivity.putExtra("delayed", true);
+                    finish();
+                    startActivity(newActivity);
 
                     return;
                 } else {
