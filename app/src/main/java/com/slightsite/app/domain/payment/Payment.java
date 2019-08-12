@@ -4,10 +4,11 @@ import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.ui.sale.CheckoutActivity;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Payment {
+public class Payment implements Serializable {
     private int id;
     private int sale_id;
     private String payment_channel;

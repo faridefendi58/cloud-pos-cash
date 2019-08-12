@@ -60,7 +60,10 @@ import com.slightsite.app.domain.AppController;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.customer.Customer;
+import com.slightsite.app.domain.inventory.Inventory;
 import com.slightsite.app.domain.inventory.LineItem;
+import com.slightsite.app.domain.inventory.Product;
+import com.slightsite.app.domain.inventory.ProductCatalog;
 import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.params.Params;
@@ -133,6 +136,7 @@ public class SaleDetailActivity extends Activity{
 
 	private PaymentCatalog paymentCatalog;
 	private List<Payment> paymentList;
+	private List<LineItem> lineItems;
 	private ParamCatalog paramCatalog;
 	private ShippingCatalog shippingCatalog;
 	private Shipping shipping;
@@ -140,6 +144,7 @@ public class SaleDetailActivity extends Activity{
 	private WarehouseCatalog warehouseCatalog;
 	private BottomSheetDialog bottomSheetDialog;
 	private Double tot_debt = 0.0;
+	private ProductCatalog productCatalog;
 
 	ProgressDialog pDialog;
 	int success;
@@ -154,6 +159,13 @@ public class SaleDetailActivity extends Activity{
 
 	private SharedPreferences sharedpreferences;
 	private Register register;
+	private Boolean is_local_data = false;
+
+	private Sale sale_intent;
+	private Customer customer_intent;
+	private Shipping shipping_intent;
+	private String payment_intent;
+	private String line_items_intent;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -163,15 +175,68 @@ public class SaleDetailActivity extends Activity{
 			paramCatalog = ParamService.getInstance().getParamCatalog();
 			warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
 			register = Register.getInstance();
+			productCatalog = Inventory.getInstance().getProductCatalog();
 
 			getWarehouseList();
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
 		}
-		
-		saleId = Integer.parseInt(getIntent().getStringExtra("id"));
-		sale = saleLedger.getSaleById(saleId);
-		customer = saleLedger.getCustomerBySaleId(saleId);
+
+		if (getIntent().hasExtra("sale_intent")) { // has sale data from server
+			sale = (Sale) getIntent().getSerializableExtra("sale_intent");
+			sale_intent = sale;
+			saleId = sale.getId();
+			// check if any data in local db
+			try {
+				Sale local_sale = saleLedger.getSaleByServerInvoiceId(saleId);
+				if (local_sale != null) {
+					sale = local_sale;
+					saleId = sale.getId();
+					is_local_data = true;
+				}
+			} catch (Exception e){e.printStackTrace();}
+
+			if (getIntent().hasExtra("customer_intent")) {
+				customer = (Customer) getIntent().getSerializableExtra("customer_intent");
+				customer_intent = customer;
+			}
+		} else { // sale data from database
+			saleId = Integer.parseInt(getIntent().getStringExtra("id"));
+			sale = saleLedger.getSaleById(saleId);
+			customer = saleLedger.getCustomerBySaleId(saleId);
+		}
+
+		if (getIntent().hasExtra("line_items_intent")) { // has line item data from server
+			line_items_intent = getIntent().getStringExtra("line_items_intent");
+			JSONArray arrLineItems = null;
+			try {
+				arrLineItems = new JSONArray(getIntent().getStringExtra("line_items_intent"));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			if (arrLineItems != null) {
+				lineItems = new ArrayList<LineItem>();
+				for (int m = 0; m < arrLineItems.length(); m++) {
+					JSONObject line_object = null;
+					try {
+						line_object = arrLineItems.getJSONObject(m);
+						Product p = productCatalog.getProductByBarcode(line_object.getString("barcode"));
+						if (p != null) {
+							LineItem lineItem = new LineItem(
+									p,
+									line_object.getInt("qty"),
+									line_object.getInt("qty")
+							);
+							lineItem.setUnitPriceAtSale(line_object.getDouble("unit_price"));
+							lineItems.add(lineItem);
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+				sale.setAllLineItem(lineItems);
+			}
+		}
 
 		sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
 
@@ -248,9 +313,41 @@ public class SaleDetailActivity extends Activity{
 
 		try {
 			paymentCatalog = PaymentService.getInstance().getPaymentCatalog();
-			paymentList = paymentCatalog.getPaymentBySaleId(saleId);
+			if (getIntent().hasExtra("payment_intent")) {
+				payment_intent = getIntent().getStringExtra("payment_intent");
+				JSONArray arrPayment = null;
+				try {
+					arrPayment = new JSONArray(getIntent().getStringExtra("payment_intent"));
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				if (arrPayment != null) {
+					paymentList = new ArrayList<Payment>();
+					for (int m = 0; m < arrPayment.length(); m++) {
+						JSONObject pay_method = null;
+						try {
+							pay_method = arrPayment.getJSONObject(m);
+							Payment payment = new Payment(
+									-1,
+									sale.getId(),
+									pay_method.getString("type"),
+									pay_method.getDouble("amount_tendered")
+							);
+							paymentList.add(payment);
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			} else {
+				paymentList = paymentCatalog.getPaymentBySaleId(saleId);
+			}
 			shippingCatalog = ShippingService.getInstance().getShippingCatalog();
-			shipping = shippingCatalog.getShippingBySaleId(saleId);
+			if (getIntent().hasExtra("shipping_intent")) {
+				shipping = (Shipping) getIntent().getSerializableExtra("shipping_intent");
+			} else {
+				shipping = shippingCatalog.getShippingBySaleId(saleId);
+			}
 			ship_methods = AppController.getPaymentMethods();
 			getDetailFromServer();
 		} catch (NoDaoSetException e) {
@@ -326,7 +423,7 @@ public class SaleDetailActivity extends Activity{
 		paymentitemListView.setAdapter(pAdap);
 
 		// building shipping information
-		if (!shipping.equals(null)) {
+		if (shipping != null && !shipping.equals(null)) {
 			if (shipping.toMap().get("configs") != null) {
 				try {
 					JSONObject jsonObject = new JSONObject(shipping.toMap().get("configs"));
@@ -371,10 +468,21 @@ public class SaleDetailActivity extends Activity{
 			Double tot_order = sale.getTotal() - sale.getDiscount();
 			payment_grand_total.setText(CurrencyController.getInstance().moneyFormat(tot_order) + "");
 
-			List<Payment> the_payments = paymentCatalog.getPaymentBySaleId(sale.getId());
+			List<Payment> the_payments = null;
+			if (is_local_data) {
+				the_payments = paymentCatalog.getPaymentBySaleId(sale.getId());
+			} else {
+				the_payments = paymentList;
+			}
 			Double getTotalPaymentBySaleId = 0.0;
 			if (the_payments != null) {
-				getTotalPaymentBySaleId = paymentCatalog.getTotalPaymentBySaleId(saleId);
+				if (is_local_data) {
+					getTotalPaymentBySaleId = paymentCatalog.getTotalPaymentBySaleId(saleId);
+				} else {
+					for (Payment payment : the_payments) {
+						getTotalPaymentBySaleId = getTotalPaymentBySaleId + payment.getAmount();
+					}
+				}
 			}
 			payment_total_received.setText(CurrencyController.getInstance().moneyFormat(getTotalPaymentBySaleId) + "");
 
@@ -439,12 +547,20 @@ public class SaleDetailActivity extends Activity{
 			new android.os.Handler().postDelayed(
 				new Runnable() {
 					public void run() {
-						showList(sale.getAllLineItem());
+						if (lineItems != null) {
+							showList(lineItems);
+						} else {
+							showList(sale.getAllLineItem());
+						}
 					}
 				},
 				2000);
 		} else {
-			showList(sale.getAllLineItem());
+			if (lineItems != null) {
+				showList(lineItems);
+			} else {
+				showList(sale.getAllLineItem());
+			}
 		}
 
 		customer_address.setText(customer.getAddress());
@@ -462,6 +578,20 @@ public class SaleDetailActivity extends Activity{
 				PrintPreviewActivity.class);
 		newActivity.putExtra("saleId", saleId);
 		newActivity.putExtra("shipping_method", shipping.getMethod());
+		if (!is_local_data) {
+			Sale new_sale = new Sale(saleId, sale.getEndTime());
+			new_sale.setServerInvoiceNumber(sale.getServerInvoiceNumber());
+			new_sale.setServerInvoiceId(sale.getServerInvoiceId());
+			new_sale.setCustomerId(sale.getCustomerId());
+			new_sale.setStatus(sale.getStatus());
+			new_sale.setDiscount(sale.getDiscount());
+
+			newActivity.putExtra("sale_intent", new_sale);
+			newActivity.putExtra("customer_intent", customer_intent);
+			newActivity.putExtra("shipping_intent", shipping_intent);
+			newActivity.putExtra("payment_intent", payment_intent);
+			newActivity.putExtra("line_items_intent", line_items_intent);
+		}
 		startActivity(newActivity);
 	}
 
@@ -920,7 +1050,9 @@ public class SaleDetailActivity extends Activity{
 
 							arrPaymentList.add(arrPayment2);
 
-							paymentCatalog.addPayment(saleId, pi.getTitle(), pi.getNominal());
+							if (is_local_data) {
+								paymentCatalog.addPayment(saleId, pi.getTitle(), pi.getNominal());
+							}
 						}
 
 						mObj.put("payment", arrPaymentList);
@@ -965,10 +1097,12 @@ public class SaleDetailActivity extends Activity{
 							if (success == 1) {
 								String server_invoice_number = jObj.getString("invoice_number");
 								sale.setServerInvoiceNumber(server_invoice_number);
-								saleLedger.setFinished(sale);
+								if (is_local_data) {
+									saleLedger.setFinished(sale);
+								}
 
-								//finish();
-								//startActivity(getIntent());
+								bottomSheetDialog.dismiss();
+
 								Intent newActivity = new Intent(getApplicationContext(), MainActivity.class);
 								finish();
 								startActivity(newActivity);

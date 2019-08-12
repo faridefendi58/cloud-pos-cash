@@ -423,4 +423,27 @@ public class SaleDaoAndroid implements SaleDao {
 		content.put("status", "FINISHED");
 		database.update(DatabaseContents.TABLE_SALE.toString(), content);
 	}
+
+	@Override
+	public Sale getSaleByServerInvoiceId(int id) {
+		String queryString = "SELECT * FROM " + DatabaseContents.TABLE_SALE + " WHERE server_invoice_id = " + id;
+		List<Object> objectList = database.select(queryString);
+		List<Sale> list = new ArrayList<Sale>();
+		for (Object object: objectList) {
+			ContentValues content = (ContentValues) object;
+			Sale sale = new Sale(
+					content.getAsInteger("_id"),
+					content.getAsString("start_time"),
+					content.getAsString("end_time"),
+					content.getAsString("status"),
+					getLineItem(content.getAsInteger("_id")),
+					content.getAsInteger("customer_id"));
+			sale.setDiscount(content.getAsInteger("discount"));
+			sale.setServerInvoiceNumber(content.getAsString("server_invoice_number"));
+			sale.setServerInvoiceId(content.getAsInteger("server_invoice_id"));
+
+			list.add(sale);
+		}
+		return list.get(0);
+	}
 }

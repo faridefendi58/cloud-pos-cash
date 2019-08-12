@@ -2,10 +2,13 @@ package com.slightsite.app.ui.sale;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,20 +31,39 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.slightsite.app.R;
+import com.slightsite.app.domain.AppController;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.customer.Customer;
+import com.slightsite.app.domain.inventory.Inventory;
 import com.slightsite.app.domain.inventory.LineItem;
+import com.slightsite.app.domain.inventory.Product;
+import com.slightsite.app.domain.inventory.ProductCatalog;
+import com.slightsite.app.domain.params.ParamCatalog;
+import com.slightsite.app.domain.params.ParamService;
+import com.slightsite.app.domain.params.Params;
 import com.slightsite.app.domain.payment.Payment;
 import com.slightsite.app.domain.payment.PaymentCatalog;
 import com.slightsite.app.domain.payment.PaymentService;
 import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.domain.sale.SaleLedger;
+import com.slightsite.app.domain.sale.Shipping;
 import com.slightsite.app.techicalservices.NoDaoSetException;
+import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.component.UpdatableFragment;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * UI for showing sale's record.
@@ -64,7 +86,10 @@ public class ReportFragment extends UpdatableFragment {
 	private SimpleAdapter sAdap;
 
 	private PaymentCatalog paymentCatalog;
-	
+	private ParamCatalog paramCatalog;
+	private ProductCatalog productCatalog;
+	private int warehouse_id;
+
 	public static final int DAILY = 0;
 	public static final int WEEKLY = 1;
 	public static final int MONTHLY = 2;
@@ -76,10 +101,16 @@ public class ReportFragment extends UpdatableFragment {
 		try {
 			saleLedger = SaleLedger.getInstance();
 			paymentCatalog = PaymentService.getInstance().getPaymentCatalog();
+			paramCatalog = ParamService.getInstance().getParamCatalog();
+			Params pWarehouseId = paramCatalog.getParamByName("warehouse_id");
+			if (pWarehouseId instanceof Params) {
+				warehouse_id = Integer.parseInt(pWarehouseId.getValue());
+			}
+			productCatalog = Inventory.getInstance().getProductCatalog();
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
 		}
-		
+
 		View view = inflater.inflate(R.layout.layout_report, container, false);
 		
 		previousButton = (Button) view.findViewById(R.id.previousButton);
@@ -244,6 +275,44 @@ public class ReportFragment extends UpdatableFragment {
 		});
 	}
 
+	private void showList2(List<Sale> list) {
+		saleList = new ArrayList<Map<String, String>>();
+		for (Sale sale : list) {
+			Map<String, String> salemap = sale.toMap();
+			salemap.put("customer_data", "-");
+			try {
+				Customer cust = list_of_customers.get(sale.getCustomerId());
+				if (cust.getName().length() > 0) {
+					salemap.put("customer_data", cust.getName() + " - " + cust.getPhone() + " - " + cust.getAddress());
+				}
+				salemap.put("status", sale.getStatus());
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+
+			saleList.add(salemap);
+		}
+
+		AdapterListInvoice invAdapter = new AdapterListInvoice(getActivity().getBaseContext() , saleList);
+		lineitemListRecycle.setAdapter(invAdapter);
+
+		invAdapter.setOnItemClickListener(new AdapterListInvoice.OnItemClickListener() {
+			@Override
+			public void onItemClick(View view, Map<String, String> _item, int position) {
+				String id = _item.get("id");
+				Intent newActivity = new Intent(getActivity().getBaseContext(), SaleDetailActivity.class);
+				newActivity.putExtra("id", id);
+				Sale selected_sale = list_of_transactions.get(position);
+				newActivity.putExtra("sale_intent", selected_sale);
+				newActivity.putExtra("customer_intent", list_of_customers.get(selected_sale.getCustomerId()));
+				newActivity.putExtra("shipping_intent", list_of_shippings.get(selected_sale.getId()));
+				newActivity.putExtra("payment_intent", list_of_payments.toString());
+				newActivity.putExtra("line_items_intent", list_of_line_items.toString());
+				startActivity(newActivity);
+			}
+		});
+	}
+
 	@Override
 	public void update() {
 		int period = DAILY;
@@ -258,6 +327,7 @@ public class ReportFragment extends UpdatableFragment {
 		if(period == DAILY){
 			currentBox.setText(" [" + DateTimeStrategy.getSQLDateFormat(currentTime) +  "] ");
 			currentBox.setTextSize(16);
+			eTime.add(Calendar.DATE, 1);
 		} else if (period == WEEKLY){
 			while(cTime.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY){
 				cTime.add(Calendar.DATE, -1);
@@ -286,14 +356,17 @@ public class ReportFragment extends UpdatableFragment {
 			currentBox.setText(" [" + currentTime.get(Calendar.YEAR) +  "] ");
 		}
 		currentTime = cTime;
-		list = saleLedger.getAllSaleDuring(cTime, eTime);
-		double total = 0;
-		for (Sale sale : list)
-			total += sale.getTotal();
+		//list = saleLedger.getAllSaleDuring(cTime, eTime);
+		try {
+			Map<String, String> params = new HashMap<String, String>();
+			params.put("warehouse_id", warehouse_id+"");
+			params.put("status_order", "belum_lunas");
+			params.put("created_at_from", DateTimeStrategy.getSQLDateFormat(cTime));
+			params.put("created_at_to", DateTimeStrategy.getSQLDateFormat(eTime));
 
-		String total_formated = CurrencyController.getInstance().moneyFormat(total);
-		totalBox.setText(total_formated);
-		showList(list);
+			Log.e(getTag(), "params : "+ params.toString());
+			setTransactionList(params);
+		} catch (Exception e){e.printStackTrace();}
 	}
 	
 	@Override
@@ -322,4 +395,156 @@ public class ReportFragment extends UpdatableFragment {
 		update();
 	}
 
+	private List<Sale> list_of_transactions = new ArrayList<Sale>();
+	private Map<Integer, Customer> list_of_customers = new HashMap<Integer, Customer>();
+	private Map<Integer, Shipping> list_of_shippings = new HashMap<Integer, Shipping>();
+	private JSONArray list_of_payments;
+	private JSONArray list_of_line_items;
+
+	public void setTransactionList(final Map<String, String> params) {
+		String url = Server.URL + "transaction/list?api-key=" + Server.API_KEY;
+		_string_request(Request.Method.GET, url, params, false,
+				new VolleyCallback() {
+					@Override
+					public void onSuccess(String result) {
+						try {
+							Log.e(getClass().getSimpleName(), "result : "+ result);
+							if (result.contains("success")) {
+								JSONObject jObj = new JSONObject(result);
+								int success = jObj.getInt("success");
+								// Check for error node in json
+								if (success == 1) {
+									JSONArray data = jObj.getJSONArray("data");
+									for(int n = 0; n < data.length(); n++) {
+										JSONObject data_n = data.getJSONObject(n);
+										Sale sale = new Sale(data_n.getInt("id"), data_n.getString("created_at"));
+										sale.setServerInvoiceNumber(data_n.getString("invoice_number"));
+										sale.setServerInvoiceId(data_n.getInt("id"));
+										sale.setCustomerId(data_n.getInt("customer_id"));
+										sale.setStatus(data_n.getString("status_order"));
+
+										JSONObject config = data_n.getJSONObject("config");
+										sale.setDiscount(config.getInt("discount"));
+
+										list_of_transactions.add(sale);
+										Customer cust = new Customer(
+												sale.getCustomerId(),
+												data_n.getString("customer_name"),
+												data_n.getString("customer_email"),
+												data_n.getString("customer_phone"),
+												data_n.getString("customer_address"),
+												data_n.getInt("customer_status")
+										);
+										list_of_customers.put(sale.getCustomerId(), cust);
+
+										// build the shipping
+										JSONArray arrShip = config.getJSONArray("shipping");
+										if (arrShip.length() > 0) {
+											JSONObject ship_method = arrShip.getJSONObject(0);
+											if (ship_method != null) {
+												Shipping shipping = new Shipping(
+														ship_method.getInt("method"),
+														ship_method.getString("date_added"),
+														ship_method.getString("address"),
+														ship_method.getInt("warehouse_id")
+												);
+												if (ship_method.has("warehouse_name")) {
+													shipping.setWarehouseName(ship_method.getString("warehouse_name"));
+												}
+												if (ship_method.has("recipient_name")) {
+													shipping.setName(ship_method.getString("recipient_name"));
+												}
+												if (ship_method.has("recipient_phone")) {
+													shipping.setPhone(ship_method.getString("recipient_phone"));
+												}
+												if (ship_method.has("pickup_date")) {
+													shipping.setPickupDate(ship_method.getString("pickup_date"));
+												}
+												list_of_shippings.put(sale.getId(), shipping);
+											}
+										}
+
+										// build the payment
+										JSONArray arrPayment = config.getJSONArray("payment");
+										if (arrPayment.length() > 0) {
+											list_of_payments = arrPayment;
+										}
+
+										// build the line item data
+										JSONArray arrItemsBelanja = config.getJSONArray("items_belanja");
+										if (arrItemsBelanja.length() > 0) {
+											list_of_line_items = arrItemsBelanja;
+										}
+									}
+
+									double total = 0;
+									for (Sale sale : list_of_transactions)
+										total += sale.getTotal();
+
+									String total_formated = CurrencyController.getInstance().moneyFormat(total);
+									totalBox.setText(total_formated);
+									showList2(list_of_transactions);
+								}
+							} else {
+								Toast.makeText(getContext(), "Failed!, No product data in ",
+										Toast.LENGTH_LONG).show();
+							}
+
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+	}
+
+	private void _string_request(int method, String url, final Map params, final Boolean show_dialog, final VolleyCallback callback) {
+
+		if (method == Request.Method.GET) { //get method doesnt support getParams
+			Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
+			while(iterator.hasNext())
+			{
+				Map.Entry<String, String> pair = iterator.next();
+				String pair_value = pair.getValue();
+				if (pair_value.contains(" "))
+					pair_value = pair.getValue().replace(" ", "%20");
+				url += "&" + pair.getKey() + "=" + pair_value;
+			}
+		}
+
+		StringRequest strReq = new StringRequest(method, url, new Response.Listener < String > () {
+
+			@Override
+			public void onResponse(String Response) {
+				callback.onSuccess(Response);
+			}
+		}, new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				error.printStackTrace();
+				Log.e(getClass().getSimpleName(), "ada error : "+ error.getMessage());
+				Toast.makeText(getContext(),
+						error.getMessage(), Toast.LENGTH_LONG).show();
+			}
+		})
+		{
+			// set headers
+			@Override
+			protected Map<String, String> getParams() {
+				return params;
+			}
+		};
+
+		strReq.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 0,
+				DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+		try {
+			AppController.getInstance().addToRequestQueue(strReq, "json_obj_req");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public interface VolleyCallback {
+		void onSuccess(String result);
+	}
 }

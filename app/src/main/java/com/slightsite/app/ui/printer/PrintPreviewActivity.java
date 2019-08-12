@@ -60,7 +60,10 @@ import com.slightsite.app.domain.ProfileController;
 import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.customer.CustomerCatalog;
 import com.slightsite.app.domain.customer.CustomerService;
+import com.slightsite.app.domain.inventory.Inventory;
 import com.slightsite.app.domain.inventory.LineItem;
+import com.slightsite.app.domain.inventory.Product;
+import com.slightsite.app.domain.inventory.ProductCatalog;
 import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.params.Params;
@@ -122,6 +125,7 @@ public class PrintPreviewActivity extends Activity {
     private PaymentCatalog paymentCatalog;
     private WarehouseCatalog warehouseCatalog;
     private CustomerCatalog customerCatalog;
+    private ProductCatalog productCatalog;
     private List<Payment> paymentList;
     private List<Map<String, String>> lineitemList;
     private int warehouse_id;
@@ -141,17 +145,13 @@ public class PrintPreviewActivity extends Activity {
     BluetoothDevice bluetoothDevice;
     OutputStream outputStream;
     InputStream inputStream;
-    Thread workerThread;
-    byte[] readBuffer;
-    int readBufferPosition;
-    volatile boolean stopWorker;
     String value = "";
     String bluetoothDeviceName = "58Printer";
     ArrayList<String> bluetoothDeviceList;
-    Map<String, String> printerConfigs = new HashMap<String, String>();
 
     private String formated_receipt;
     private int shipping_method = 0;
+    private List<LineItem> lineItems;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -159,20 +159,84 @@ public class PrintPreviewActivity extends Activity {
         try {
             saleLedger = SaleLedger.getInstance();
             saleId = getIntent().getIntExtra("saleId", 0);
-            sale = saleLedger.getSaleById(saleId);
+            productCatalog = Inventory.getInstance().getProductCatalog();
+            if (getIntent().hasExtra("sale_intent")) { // has sale data from server
+                sale = (Sale) getIntent().getSerializableExtra("sale_intent");
+                if (getIntent().hasExtra("line_items_intent")) { // has line item data from server
+                    JSONArray arrLineItems = null;
+                    try {
+                        arrLineItems = new JSONArray(getIntent().getStringExtra("line_items_intent"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if (arrLineItems != null) {
+                        lineItems = new ArrayList<LineItem>();
+                        for (int m = 0; m < arrLineItems.length(); m++) {
+                            JSONObject line_object = null;
+                            try {
+                                line_object = arrLineItems.getJSONObject(m);
+                                Product p = productCatalog.getProductByBarcode(line_object.getString("barcode"));
+                                if (p != null) {
+                                    LineItem lineItem = new LineItem(
+                                            p,
+                                            line_object.getInt("qty"),
+                                            line_object.getInt("qty")
+                                    );
+                                    lineItem.setUnitPriceAtSale(line_object.getDouble("unit_price"));
+                                    lineItems.add(lineItem);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        sale.setAllLineItem(lineItems);
+                    }
+                }
+            } else {
+                sale = saleLedger.getSaleById(saleId);
+            }
 
             paymentCatalog = PaymentService.getInstance().getPaymentCatalog();
             if (saleId > 0) {
-                paymentList = paymentCatalog.getPaymentBySaleId(saleId);
+                if (getIntent().hasExtra("payment_intent")) {
+                    JSONArray arrPayment = null;
+                    try {
+                        arrPayment = new JSONArray(getIntent().getStringExtra("payment_intent"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if (arrPayment != null) {
+                        paymentList = new ArrayList<Payment>();
+                        for (int m = 0; m < arrPayment.length(); m++) {
+                            JSONObject pay_method = null;
+                            try {
+                                pay_method = arrPayment.getJSONObject(m);
+                                Payment payment = new Payment(
+                                        -1,
+                                        sale.getId(),
+                                        pay_method.getString("type"),
+                                        pay_method.getDouble("amount_tendered")
+                                );
+                                paymentList.add(payment);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                } else {
+                    paymentList = paymentCatalog.getPaymentBySaleId(saleId);
+                }
             }
 
             warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
             customerCatalog = CustomerService.getInstance().getCustomerCatalog();
 
-            sale = saleLedger.getSaleById(saleId);
-
             if (sale.getCustomerId() > 0) {
-                customer = customerCatalog.getCustomerById(sale.getCustomerId());
+                if (getIntent().hasExtra("customer_intent")) { // has sale data from server
+                    customer = (Customer) getIntent().getSerializableExtra("customer_intent");
+                } else {
+                    customer = customerCatalog.getCustomerById(sale.getCustomerId());
+                }
             }
 
             paramCatalog = ParamService.getInstance().getParamCatalog();
@@ -734,12 +798,23 @@ public class PrintPreviewActivity extends Activity {
                 }
 
                 UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-                socket = bluetoothDevice
-                        .createRfcommSocketToServiceRecord(uuid);
-                bluetoothAdapter.cancelDiscovery();
-                socket.connect();
-                outputStream = socket.getOutputStream();
-                inputStream = socket.getInputStream();
+                Boolean is_connected = true;
+                try {
+                    socket = bluetoothDevice.createRfcommSocketToServiceRecord(uuid);
+                    /*Method m = bluetoothDevice.getClass().getMethod(
+                            "createRfcommSocket", new Class[] { int.class });
+                    socket = (BluetoothSocket) m.invoke(bluetoothDevice, 1);*/
+                    bluetoothAdapter.cancelDiscovery();
+                    socket.connect();
+                } catch (IOException e){
+                    e.printStackTrace();
+                    is_connected = false;
+                }
+
+                if (is_connected) {
+                    outputStream = socket.getOutputStream();
+                    inputStream = socket.getInputStream();
+                }
             } else {
                 value += "No Devices found";
                 bluetoothDeviceList = new ArrayList<>();
@@ -747,7 +822,7 @@ public class PrintPreviewActivity extends Activity {
                 return false;
             }
         } catch (Exception ex) {
-            value += ex.toString() + "\n" + " InitPrinter \n";
+            value = ex.toString() + "\n" + " InitPrinter \n";
             Toast.makeText(this, value, Toast.LENGTH_LONG).show();
             return false;
         }

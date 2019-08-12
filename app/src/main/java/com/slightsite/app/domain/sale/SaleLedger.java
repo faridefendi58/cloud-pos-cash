@@ -109,4 +109,8 @@ public class SaleLedger {
 	public static void setFinished(Sale sale) {
 		saleDao.setFinished(sale);
 	}
+
+	public Sale getSaleByServerInvoiceId(int id) {
+		return saleDao.getSaleByServerInvoiceId(id);
+	}
 }

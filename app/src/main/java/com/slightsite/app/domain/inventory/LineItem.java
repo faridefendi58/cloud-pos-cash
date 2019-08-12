@@ -2,6 +2,7 @@ package com.slightsite.app.domain.inventory;
 
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -2,6 +2,7 @@ package com.slightsite.app.domain.sale;
 
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,7 @@ import com.slightsite.app.domain.inventory.Product;
  *
  *
  */
-public class Sale {
+public class Sale implements Serializable {
 	
 	private final int id;
 	private String startTime;
@@ -65,6 +66,10 @@ public class Sale {
 	 */
 	public List<LineItem> getAllLineItem(){
 		return items;
+	}
+
+	public void setAllLineItem(List<LineItem> _items) {
+		this.items = _items;
 	}
 	
 	/**
@@ -130,7 +135,11 @@ public class Sale {
 	public String getStatus() {
 		return status;
 	}
-	
+
+	public void setStatus(String _status) {
+		this.status = _status;
+	}
+
 	/**
 	 * Returns the total quantity of this Sale.
 	 * @return the total quantity of this Sale.

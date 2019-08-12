@@ -113,4 +113,6 @@ public interface SaleDao {
 	int getDiscount(int sale_id);
 
 	void setFinished(Sale sale);
+
+	Sale getSaleByServerInvoiceId(int id);
 }
