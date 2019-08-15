@@ -33,6 +33,8 @@ import com.slightsite.app.R;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Tools {
 
@@ -330,6 +332,16 @@ public class Tools {
 
     public static String getPaymentMethod(int index) {
         return Arrays.asList(getPaymentMethods()).get(index);
+    }
+
+    public static Map<String, String> getInvoiceStatusList() {
+        Map<String, String> list = new HashMap<String, String>();
+        list.put("lunas", "Lunas");
+        list.put("belum_lunas", "Belum Lunas");
+        list.put("hutang_tempo", "Hutang Tempo");
+        list.put("selesai", "Selesai");
+
+        return list;
     }
 }
 

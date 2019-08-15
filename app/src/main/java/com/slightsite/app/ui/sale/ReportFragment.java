@@ -11,12 +11,16 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -27,6 +31,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
@@ -58,6 +63,7 @@ import com.slightsite.app.domain.sale.SaleLedger;
 import com.slightsite.app.domain.sale.Shipping;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
+import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.component.UpdatableFragment;
 
@@ -112,6 +118,7 @@ public class ReportFragment extends UpdatableFragment {
 		}
 
 		View view = inflater.inflate(R.layout.layout_report, container, false);
+		setHasOptionsMenu(true);
 		
 		previousButton = (Button) view.findViewById(R.id.previousButton);
 		nextButton = (Button) view.findViewById(R.id.nextButton);
@@ -546,5 +553,54 @@ public class ReportFragment extends UpdatableFragment {
 
 	public interface VolleyCallback {
 		void onSuccess(String result);
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.menu_filter, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.nav_filter :
+				filterDialog();
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
+	private BottomSheetDialog bottomSheetDialog;
+	private EditText filter_invoice_number;
+	private EditText filter_customer_name;
+	private Spinner filter_status;
+	private Map<String, String> inv_status_map = new HashMap<String, String>();
+	private ArrayList<String> inv_status_items = new ArrayList<String>();
+
+	public void filterDialog() {
+		bottomSheetDialog = new BottomSheetDialog(getContext());
+		View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_filter_report, null);
+		bottomSheetDialog.setContentView(sheetView);
+
+		filter_invoice_number = (EditText) sheetView.findViewById(R.id.invoice_number);
+		filter_customer_name = (EditText) sheetView.findViewById(R.id.customer_name);
+		filter_status = (Spinner) sheetView.findViewById(R.id.status);
+
+		inv_status_map = Tools.getInvoiceStatusList();
+
+		for (String status : inv_status_map.values()) {
+			inv_status_items.add(status);
+		}
+
+		ArrayAdapter<String> stAdapter = new ArrayAdapter<String>(
+				getContext(),
+				R.layout.spinner_item, inv_status_items);
+		stAdapter.notifyDataSetChanged();
+		filter_status.setAdapter(stAdapter);
+
+		bottomSheetDialog.show();
+
+		//triggerBottomDialogButton(sheetView);
 	}
 }

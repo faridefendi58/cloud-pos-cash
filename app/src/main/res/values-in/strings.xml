@@ -102,6 +102,7 @@
     <string name="title_mark_complete">Selesaikan Order Ini</string>
     <string name="title_clear_sale">Batalkan Transaksi</string>
     <string name="title_bluetooth_devices">Pilih Printer Bluetooth</string>
+    <string name="title_filter_result">Filter Hasil</string>
 
     <string name="dashboard_income">Pendapatan</string>
     <string name="dashboard_transaction">Transaksi</string>
@@ -254,6 +255,7 @@
     <string name="label_to">Kepada</string>
     <string name="label_of">Dari</string>
     <string name="label_items">Item</string>
+    <string name="label_invoice_number">No Tagihan</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Mandiri</string>
@@ -271,6 +273,7 @@
     <string name="button_mark_as_complete">Proses Order Ini</string>
     <string name="button_close">Tutup</string>
     <string name="button_finish_and_print">Selesaikan Order and Cetak Tagihan</string>
+    <string name="button_search">Cari</string>
 
     <string name="confirm_edit">Anda yakin ingin mengubah data ini?</string>
 

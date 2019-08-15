@@ -100,6 +100,7 @@
     <string name="title_share">Share</string>
     <string name="title_mark_complete">Finish This Order</string>
     <string name="title_clear_sale">Clear Current Sale</string>
+    <string name="title_filter_result">Filter Result</string>
 
     <string name="dashboard_income">Income</string>
     <string name="dashboard_transaction">Transaction</string>
@@ -260,6 +261,7 @@
     <string name="label_to">To</string>
     <string name="label_of">Of</string>
     <string name="label_items">Items</string>
+    <string name="label_invoice_number">No Invoice</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>
@@ -277,6 +279,7 @@
     <string name="button_mark_as_complete">Proceed Order</string>
     <string name="button_close">Close</string>
     <string name="button_finish_and_print">Finish Order and Print Invoice</string>
+    <string name="button_search">Search</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
 

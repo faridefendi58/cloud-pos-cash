@@ -34,6 +34,8 @@ import android.os.Environment;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -977,6 +979,11 @@ public class SaleDetailActivity extends Activity{
 	}
 
 	private void triggerBottomDialogButton(View view) {
+		setTextChangeListener(cash_receive, "cashReceive");
+		setTextChangeListener(nominal_mandiri, "nominal_mandiri");
+		setTextChangeListener(nominal_bca, "nominal_bca");
+		setTextChangeListener(nominal_bri, "nominal_bri");
+
 		transfer_bank_header.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -1114,5 +1121,54 @@ public class SaleDetailActivity extends Activity{
 						hideDialog();
 					}
 				});
+	}
+
+	private void setTextChangeListener(final EditText etv, final String setType) {
+		etv.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			private String current_val;
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				if(!s.toString().equals(current_val)){
+					String cleanString = s.toString().replaceAll("[.]", "");
+					if (cleanString.length() >= 3) {
+						etv.removeTextChangedListener(this);
+
+						double parsed = Double.parseDouble(cleanString);
+						String formatted = CurrencyController.getInstance().moneyFormat(parsed);
+
+						current_val = formatted;
+						etv.setText(formatted);
+						etv.setSelection(formatted.length());
+						etv.addTextChangedListener(this);
+					}
+				}
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				try {
+					String cleanString = s.toString().replaceAll("[.]", "");
+
+					if (setType == "card_number") {
+						current_val = s.toString();
+					} else {
+						if (cleanString.length() >= 3) {
+							double parsed = Double.parseDouble(cleanString);
+							String formatted = CurrencyController.getInstance().moneyFormat(parsed);
+							current_val = formatted;
+						} else {
+							current_val = s.toString();
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 }

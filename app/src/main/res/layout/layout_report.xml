@@ -43,7 +43,8 @@
         android:id="@+id/searchBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter invoice ID here." >
+        android:hint="Enter invoice ID here."
+        android:visibility="gone">
     </EditText>
 
     <LinearLayout
