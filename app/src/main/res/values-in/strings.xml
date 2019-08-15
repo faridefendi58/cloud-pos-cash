@@ -126,6 +126,7 @@
     <string name="params_store_phone">No. Telepon</string>
 
     <string-array name="period">
+        <item>Custom</item>
         <item>Harian</item>
         <item>Mingguan</item>
         <item>Bulanan</item>

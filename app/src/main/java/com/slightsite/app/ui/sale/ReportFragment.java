@@ -96,11 +96,12 @@ public class ReportFragment extends UpdatableFragment {
 	private ProductCatalog productCatalog;
 	private int warehouse_id;
 
-	public static final int DAILY = 0;
-	public static final int WEEKLY = 1;
-	public static final int MONTHLY = 2;
-	public static final int YEARLY = 3;
-	
+	public static final int CUSTOM = 0;
+	public static final int DAILY = 1;
+	public static final int WEEKLY = 2;
+	public static final int MONTHLY = 3;
+	public static final int YEARLY = 4;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
@@ -322,7 +323,7 @@ public class ReportFragment extends UpdatableFragment {
 
 	@Override
 	public void update() {
-		int period = DAILY;
+		int period = CUSTOM;
 		if (spinner != null) {
 			period = spinner.getSelectedItemPosition();
 		}
@@ -361,15 +362,45 @@ public class ReportFragment extends UpdatableFragment {
 			eTime.add(Calendar.DATE, -1);
 			currentBox.setTextSize(20);
 			currentBox.setText(" [" + currentTime.get(Calendar.YEAR) +  "] ");
+		} else if (period == CUSTOM){
+			String toShow = " [" + DateTimeStrategy.getSQLDateFormat(cTime) +  "] ~ [";
+			eTime = (Calendar) cTime.clone();
+			eTime.add(Calendar.DATE, 30);
+			toShow += DateTimeStrategy.getSQLDateFormat(eTime) +  "] ";
+			currentBox.setTextSize(16);
+			currentBox.setText(toShow);
 		}
 		currentTime = cTime;
 		//list = saleLedger.getAllSaleDuring(cTime, eTime);
 		try {
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("warehouse_id", warehouse_id+"");
-			params.put("status_order", "belum_lunas");
+			if (filter_result.size() > 0) {
+				if (filter_result.containsKey("status")) {
+					params.put("status_order", filter_result.get("status"));
+				} else {
+					params.put("status_order", "belum_lunas");
+				}
+
+				if (filter_result.containsKey("customer_name")) {
+					params.put("customer_name", filter_result.get("customer_name"));
+				}
+
+				if (filter_result.containsKey("customer_phone")) {
+					params.put("customer_phone", filter_result.get("customer_phone"));
+				}
+
+				if (filter_result.containsKey("invoice_number")) {
+					params.put("invoice_number", filter_result.get("invoice_number"));
+				}
+			} else {
+				params.put("status_order", "belum_lunas");
+			}
 			params.put("created_at_from", DateTimeStrategy.getSQLDateFormat(cTime));
 			params.put("created_at_to", DateTimeStrategy.getSQLDateFormat(eTime));
+
+			//params.put("delivered_plan_at_from", DateTimeStrategy.getSQLDateFormat(cTime));
+			//params.put("delivered_plan_at_to", DateTimeStrategy.getSQLDateFormat(eTime));
 
 			Log.e(getTag(), "params : "+ params.toString());
 			setTransactionList(params);
@@ -574,9 +605,13 @@ public class ReportFragment extends UpdatableFragment {
 	private BottomSheetDialog bottomSheetDialog;
 	private EditText filter_invoice_number;
 	private EditText filter_customer_name;
+	private EditText filter_customer_phone;
 	private Spinner filter_status;
+	private Button finish_submit_button;
 	private Map<String, String> inv_status_map = new HashMap<String, String>();
+	private Map<String, String> inv_status_map_keys = new HashMap<String, String>();
 	private ArrayList<String> inv_status_items = new ArrayList<String>();
+	private Map<String, String> filter_result = new HashMap<String, String>();
 
 	public void filterDialog() {
 		bottomSheetDialog = new BottomSheetDialog(getContext());
@@ -585,12 +620,18 @@ public class ReportFragment extends UpdatableFragment {
 
 		filter_invoice_number = (EditText) sheetView.findViewById(R.id.invoice_number);
 		filter_customer_name = (EditText) sheetView.findViewById(R.id.customer_name);
+		filter_customer_phone = (EditText) sheetView.findViewById(R.id.customer_phone);
 		filter_status = (Spinner) sheetView.findViewById(R.id.status);
+		finish_submit_button = (Button) sheetView.findViewById(R.id.finish_submit_button);
 
 		inv_status_map = Tools.getInvoiceStatusList();
 
-		for (String status : inv_status_map.values()) {
-			inv_status_items.add(status);
+		inv_status_items.clear();
+		inv_status_map_keys.clear();
+		filter_result.clear();
+		for (Map.Entry<String, String> entry : inv_status_map.entrySet()) {
+			inv_status_items.add(entry.getValue());
+			inv_status_map_keys.put(entry.getValue(), entry.getKey());
 		}
 
 		ArrayAdapter<String> stAdapter = new ArrayAdapter<String>(
@@ -601,6 +642,37 @@ public class ReportFragment extends UpdatableFragment {
 
 		bottomSheetDialog.show();
 
-		//triggerBottomDialogButton(sheetView);
+		triggerBottomDialogButton(sheetView);
+	}
+
+	private void triggerBottomDialogButton(View view) {
+		finish_submit_button.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				bottomSheetDialog.dismiss();
+				String status = filter_status.getSelectedItem().toString();
+				if (status.length() > 0) {
+					status = inv_status_map_keys.get(status);
+					filter_result.put("status", status);
+				}
+
+				String invoice_number = filter_invoice_number.getText().toString();
+				if (invoice_number.length() > 0) {
+					filter_result.put("invoice_number", invoice_number);
+				}
+
+				String customer_name = filter_customer_name.getText().toString();
+				if (customer_name.length() > 0) {
+					filter_result.put("customer_name", customer_name);
+				}
+
+				String customer_phone = filter_customer_phone.getText().toString();
+				if (customer_phone.length() > 0) {
+					filter_result.put("customer_phone", customer_phone);
+				}
+
+				update();
+			}
+		});
 	}
 }

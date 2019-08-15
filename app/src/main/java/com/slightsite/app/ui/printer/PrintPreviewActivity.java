@@ -601,7 +601,7 @@ public class PrintPreviewActivity extends Activity {
         }
 
         res += "<tr><td colspan=\"4\"><hr/></td></tr></table>";
-        res += "<table width=\"100%\">";
+        res += "<table width=\"100%\" style=\"margin-bottom:25px;\">";
 
         int sub_total = 0;
         int ppn = 0;
@@ -668,7 +668,7 @@ public class PrintPreviewActivity extends Activity {
         }
         res += "<tr><td colspan=\"4\"><hr/></td></tr>";
 
-        res += "<tr class=\"ft-17\"><td colspan=\"4\"><center>Terimakasih.<br />Selamat belanja kembali.</center></td></tr></table>";
+        res += "<tr class=\"ft-17\" style=\"padding-bottom:25px;\"><td colspan=\"4\"><center>Terimakasih.<br />Selamat belanja kembali.</center></td></tr></table>";
 
         return res;
     }

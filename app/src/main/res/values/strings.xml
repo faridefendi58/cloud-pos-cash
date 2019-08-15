@@ -124,6 +124,7 @@
     <string name="params_store_phone">Store Phone</string>
 
     <string-array name="period">
+        <item>Custom</item>
         <item>Daily</item>
         <item>Weekly</item>
         <item>Monthly</item>
