@@ -263,6 +263,8 @@
     <string name="label_of">Of</string>
     <string name="label_items">Items</string>
     <string name="label_invoice_number">No Invoice</string>
+    <string name="label_date_from">Date From</string>
+    <string name="label_date_to">Date To</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>

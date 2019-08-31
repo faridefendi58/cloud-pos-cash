@@ -250,13 +250,15 @@
     <string name="label_payment_total_receieved">Total Dibayarkan</string>
     <string name="label_payment_change_due">Kembali</string>
     <string name="label_created_by">Dibuat Oleh</string>
-    <string name="label_processed_by">Diproses Oleh</string>
+    <string name="label_processed_by">Diproses</string>
     <string name="label_resume">Ringkasan</string>
     <string name="label_printer_configuration">Konfigurasi Printer</string>
     <string name="label_to">Kepada</string>
     <string name="label_of">Dari</string>
     <string name="label_items">Item</string>
     <string name="label_invoice_number">No Tagihan</string>
+    <string name="label_date_from">Tanggal Dari</string>
+    <string name="label_date_to">Tanggal Sampai</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Mandiri</string>

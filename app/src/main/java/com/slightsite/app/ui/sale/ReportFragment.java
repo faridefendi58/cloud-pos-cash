@@ -9,6 +9,7 @@ import java.util.Map;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
@@ -28,6 +29,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -36,6 +38,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -225,6 +228,8 @@ public class ReportFragment extends UpdatableFragment {
 		          startActivity(newActivity);  
 		      }     
 		});
+
+		update();
 	}
 	
 	/**
@@ -314,8 +319,8 @@ public class ReportFragment extends UpdatableFragment {
 				newActivity.putExtra("sale_intent", selected_sale);
 				newActivity.putExtra("customer_intent", list_of_customers.get(selected_sale.getCustomerId()));
 				newActivity.putExtra("shipping_intent", list_of_shippings.get(selected_sale.getId()));
-				newActivity.putExtra("payment_intent", list_of_payments.toString());
-				newActivity.putExtra("line_items_intent", list_of_line_items.toString());
+				newActivity.putExtra("payment_intent", list_of_payments2.get(selected_sale.getId()).toString());
+				newActivity.putExtra("line_items_intent", list_of_line_items2.get(selected_sale.getId()).toString());
 				startActivity(newActivity);
 			}
 		});
@@ -379,7 +384,7 @@ public class ReportFragment extends UpdatableFragment {
 				if (filter_result.containsKey("status")) {
 					params.put("status_order", filter_result.get("status"));
 				} else {
-					params.put("status_order", "belum_lunas");
+					params.put("status_order", "-");
 				}
 
 				if (filter_result.containsKey("customer_name")) {
@@ -394,13 +399,21 @@ public class ReportFragment extends UpdatableFragment {
 					params.put("invoice_number", filter_result.get("invoice_number"));
 				}
 			} else {
-				params.put("status_order", "belum_lunas");
+				params.put("status_order", "-");
 			}
-			params.put("created_at_from", DateTimeStrategy.getSQLDateFormat(cTime));
-			params.put("created_at_to", DateTimeStrategy.getSQLDateFormat(eTime));
+			//params.put("created_at_from", DateTimeStrategy.getSQLDateFormat(cTime));
+			//params.put("created_at_to", DateTimeStrategy.getSQLDateFormat(eTime));
 
-			//params.put("delivered_plan_at_from", DateTimeStrategy.getSQLDateFormat(cTime));
-			//params.put("delivered_plan_at_to", DateTimeStrategy.getSQLDateFormat(eTime));
+			if (!filter_result.containsKey("date_from")) {
+				filter_result.put("date_from", DateTimeStrategy.getSQLDateFormat(cTime));
+			}
+
+			if (!filter_result.containsKey("date_to")) {
+				filter_result.put("date_to", DateTimeStrategy.getSQLDateFormat(eTime));
+			}
+
+			params.put("delivered_plan_at_from", filter_result.get("date_from"));
+			params.put("delivered_plan_at_to", filter_result.get("date_to"));
 
 			Log.e(getTag(), "params : "+ params.toString());
 			setTransactionList(params);
@@ -438,8 +451,15 @@ public class ReportFragment extends UpdatableFragment {
 	private Map<Integer, Shipping> list_of_shippings = new HashMap<Integer, Shipping>();
 	private JSONArray list_of_payments;
 	private JSONArray list_of_line_items;
+	private Map<Integer, JSONArray> list_of_payments2 = new HashMap<Integer, JSONArray>();
+	private Map<Integer, JSONArray> list_of_line_items2 = new HashMap<Integer, JSONArray>();
 
 	public void setTransactionList(final Map<String, String> params) {
+		list_of_transactions.clear();
+		list_of_customers.clear();
+		list_of_shippings.clear();
+		list_of_payments2.clear();
+		list_of_line_items2.clear();
 		String url = Server.URL + "transaction/list?api-key=" + Server.API_KEY;
 		_string_request(Request.Method.GET, url, params, false,
 				new VolleyCallback() {
@@ -505,13 +525,15 @@ public class ReportFragment extends UpdatableFragment {
 										// build the payment
 										JSONArray arrPayment = config.getJSONArray("payment");
 										if (arrPayment.length() > 0) {
-											list_of_payments = arrPayment;
+											list_of_payments = arrPayment; // salah banget
+											list_of_payments2.put(sale.getId(), arrPayment);
 										}
 
 										// build the line item data
 										JSONArray arrItemsBelanja = config.getJSONArray("items_belanja");
 										if (arrItemsBelanja.length() > 0) {
 											list_of_line_items = arrItemsBelanja;
+											list_of_line_items2.put(sale.getId(), arrItemsBelanja);
 										}
 									}
 
@@ -612,6 +634,8 @@ public class ReportFragment extends UpdatableFragment {
 	private Map<String, String> inv_status_map_keys = new HashMap<String, String>();
 	private ArrayList<String> inv_status_items = new ArrayList<String>();
 	private Map<String, String> filter_result = new HashMap<String, String>();
+	private AutoCompleteTextView filter_date_from;
+	private AutoCompleteTextView filter_date_to;
 
 	public void filterDialog() {
 		bottomSheetDialog = new BottomSheetDialog(getContext());
@@ -623,6 +647,15 @@ public class ReportFragment extends UpdatableFragment {
 		filter_customer_phone = (EditText) sheetView.findViewById(R.id.customer_phone);
 		filter_status = (Spinner) sheetView.findViewById(R.id.status);
 		finish_submit_button = (Button) sheetView.findViewById(R.id.finish_submit_button);
+
+		filter_date_from = (AutoCompleteTextView) sheetView.findViewById(R.id.date_from);
+		filter_date_to = (AutoCompleteTextView) sheetView.findViewById(R.id.date_to);
+		if (filter_result.containsKey("date_from")) {
+			filter_date_from.setText(filter_result.get("date_from"));
+		}
+		if (filter_result.containsKey("date_to")) {
+			filter_date_to.setText(filter_result.get("date_to"));
+		}
 
 		inv_status_map = Tools.getInvoiceStatusList();
 
@@ -651,7 +684,7 @@ public class ReportFragment extends UpdatableFragment {
 			public void onClick(View v) {
 				bottomSheetDialog.dismiss();
 				String status = filter_status.getSelectedItem().toString();
-				if (status.length() > 0) {
+				if (status.length() > 0 && !status.equals("-")) {
 					status = inv_status_map_keys.get(status);
 					filter_result.put("status", status);
 				}
@@ -674,5 +707,41 @@ public class ReportFragment extends UpdatableFragment {
 				update();
 			}
 		});
+
+		filter_date_from.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				dialogDatePickerLight(v, "date_from");
+			}
+		});
+
+		filter_date_to.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				dialogDatePickerLight(v, "date_to");
+			}
+		});
+	}
+
+	private void dialogDatePickerLight(final View v, final String fiter_name) {
+		final Calendar cur_calender = Calendar.getInstance();
+
+		DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
+				new DatePickerDialog.OnDateSetListener() {
+
+					@Override
+					public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+
+						Calendar newDate = Calendar.getInstance();
+						newDate.set(year, monthOfYear, dayOfMonth);
+						long date = newDate.getTimeInMillis();
+						((EditText) v).setText(Tools.getFormattedDateShort(date));
+						filter_result.put(fiter_name, Tools.getFormattedDateFlat(date));
+
+					}
+
+				}, cur_calender.get(Calendar.YEAR), cur_calender.get(Calendar.MONTH), cur_calender.get(Calendar.DAY_OF_MONTH));
+
+		datePickerDialog.show();
 	}
 }

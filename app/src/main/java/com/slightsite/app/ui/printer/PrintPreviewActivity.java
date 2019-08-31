@@ -343,7 +343,8 @@ public class PrintPreviewActivity extends Activity {
         print_button_container = (LinearLayout) findViewById(R.id.print_button_container);
         finish_and_print_button = (Button) findViewById(R.id.finish_and_print_button);
 
-        if (shipping_method == 0) {
+        if (shipping_method == 0 || shipping_method == 3) { //directly and tokopedia
+            // bug #15-8, harusnya jangan tampil lg klo dah complete
             print_button_container.setVisibility(View.GONE);
             finish_and_print_button.setVisibility(View.VISIBLE);
         }
@@ -428,6 +429,15 @@ public class PrintPreviewActivity extends Activity {
                                     style += ".ft-26{font-size:26px !important;}";
                                     style += "</style>";
                                     print_webview.loadDataWithBaseURL(null, "<html>"+ style +"<body>" + formated_receipt + "</body></html>", "text/html", "utf-8", null);
+
+                                    if (server_invoice_data.has("status") && server_invoice_data.has("delivered")) {
+                                        int status = server_invoice_data.getInt("status");
+                                        int delivered = server_invoice_data.getInt("delivered");
+                                        if (status > 0 && delivered > 0) {
+                                            print_button_container.setVisibility(View.VISIBLE);
+                                            finish_and_print_button.setVisibility(View.GONE);
+                                        }
+                                    }
                                 } else {
                                     counter = counter + 1;
                                     if (counter <= 5) {

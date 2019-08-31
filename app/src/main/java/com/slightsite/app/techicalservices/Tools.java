@@ -336,6 +336,7 @@ public class Tools {
 
     public static Map<String, String> getInvoiceStatusList() {
         Map<String, String> list = new HashMap<String, String>();
+        list.put("-", "Semua");
         list.put("lunas", "Lunas");
         list.put("belum_lunas", "Belum Lunas");
         list.put("hutang_tempo", "Hutang Tempo");
