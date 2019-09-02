@@ -38,6 +38,8 @@ public class Sale implements Serializable {
 	private String paid_by_name;
 	private int refunded_by;
 	private String refunded_by_name;
+	private String delivered_plan_at;
+	private String delivered_at;
 
 	public Sale(int id, String startTime) {
 		this(id, startTime, startTime, "", new ArrayList<LineItem>(), 0);
@@ -284,5 +286,21 @@ public class Sale implements Serializable {
 
 	public String getRefundedByName() {
 		return refunded_by_name;
+	}
+
+	public void setDeliveredPlanAt(String delivered_plan_at) {
+		this.delivered_plan_at = delivered_plan_at;
+	}
+
+	public String getDeliveredPlanAt() {
+		return delivered_plan_at;
+	}
+
+	public void setDeliveredAt(String delivered_at) {
+		this.delivered_at = delivered_at;
+	}
+
+	public String getDeliveredAt() {
+		return delivered_at;
 	}
 }

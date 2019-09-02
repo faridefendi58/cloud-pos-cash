@@ -297,8 +297,23 @@ public class ReportFragment extends UpdatableFragment {
 				Customer cust = list_of_customers.get(sale.getCustomerId());
 				if (cust.getName().length() > 0) {
 					salemap.put("customer_data", cust.getName() + " - " + cust.getPhone() + " - " + cust.getAddress());
+					salemap.put("customer_name", cust.getName());
+					salemap.put("customer_phone", cust.getPhone());
+					salemap.put("customer_address", cust.getAddress());
 				}
 				salemap.put("status", sale.getStatus());
+				salemap.put("delivered_plan_at", sale.getDeliveredPlanAt());
+
+				Shipping shipping = list_of_shippings.get(sale.getId());
+				if (shipping != null) {
+					Log.e(getTag(), "shipping : "+ shipping.toMap().toString());
+					salemap.put("shipping_method", shipping.toMap().get("method_name"));
+					if (shipping.toMap().containsKey("pickup_date") && !shipping.toMap().get("pickup_date").equals("null")) {
+						salemap.put("delivered_plan_at", shipping.toMap().get("pickup_date"));
+					}
+				} else {
+					salemap.put("shipping_method", "-");
+				}
 			} catch (Exception e){
 				e.printStackTrace();
 			}
@@ -480,6 +495,7 @@ public class ReportFragment extends UpdatableFragment {
 										sale.setServerInvoiceId(data_n.getInt("id"));
 										sale.setCustomerId(data_n.getInt("customer_id"));
 										sale.setStatus(data_n.getString("status_order"));
+										sale.setDeliveredPlanAt(data_n.getString("delivered_plan_at"));
 
 										JSONObject config = data_n.getJSONObject("config");
 										sale.setDiscount(config.getInt("discount"));
