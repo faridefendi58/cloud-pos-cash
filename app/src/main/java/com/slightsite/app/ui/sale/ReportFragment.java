@@ -84,6 +84,7 @@ public class ReportFragment extends UpdatableFragment {
 	List<Map<String, String>> saleList;
 	private ListView saleLedgerListView;
 	private RecyclerView lineitemListRecycle;
+	private RecyclerView lineitemListRecycle2;
 	private TextView totalBox;
 	private Spinner spinner;
 	private Button previousButton;
@@ -98,6 +99,7 @@ public class ReportFragment extends UpdatableFragment {
 	private ParamCatalog paramCatalog;
 	private ProductCatalog productCatalog;
 	private int warehouse_id;
+	private Boolean has_been_filtered = false;
 
 	public static final int CUSTOM = 0;
 	public static final int DAILY = 1;
@@ -136,6 +138,11 @@ public class ReportFragment extends UpdatableFragment {
 		lineitemListRecycle.setLayoutManager(new LinearLayoutManager(getContext()));
 		lineitemListRecycle.setHasFixedSize(true);
 		lineitemListRecycle.setNestedScrollingEnabled(false);
+
+		lineitemListRecycle2 = (RecyclerView) view.findViewById(R.id.lineitemListRecycle2);
+		lineitemListRecycle2.setLayoutManager(new LinearLayoutManager(getContext()));
+		lineitemListRecycle2.setHasFixedSize(true);
+		lineitemListRecycle2.setNestedScrollingEnabled(false);
 		
 		initUI();
 
@@ -413,6 +420,14 @@ public class ReportFragment extends UpdatableFragment {
 				if (filter_result.containsKey("invoice_number")) {
 					params.put("invoice_number", filter_result.get("invoice_number"));
 				}
+
+				if (filter_result.containsKey("shipping_method")) {
+					String the_shipping_method = filter_result.get("shipping_method");
+					if (the_shipping_method == null) {
+						the_shipping_method = "0";
+					}
+					params.put("shipping_method", the_shipping_method);
+				}
 			} else {
 				params.put("status_order", "-");
 			}
@@ -429,9 +444,23 @@ public class ReportFragment extends UpdatableFragment {
 
 			params.put("delivered_plan_at_from", filter_result.get("date_from"));
 			params.put("delivered_plan_at_to", filter_result.get("date_to"));
+			params.put("custom_order_by", "status_order_code");
+			params.put("order_type", "ASC");
 
 			Log.e(getTag(), "params : "+ params.toString());
 			setTransactionList(params);
+		} catch (Exception e){e.printStackTrace();}
+
+		try {
+			if (!has_been_filtered) {
+				Map<String, String> params2 = new HashMap<String, String>();
+				params2.put("warehouse_id", warehouse_id + "");
+				params2.put("delivered", "0");
+				params2.put("custom_order_by", "status_order_code");
+				params2.put("order_type", "ASC");
+
+				setTransactionList2(params2);
+			}
 		} catch (Exception e){e.printStackTrace();}
 	}
 	
@@ -652,6 +681,9 @@ public class ReportFragment extends UpdatableFragment {
 	private Map<String, String> filter_result = new HashMap<String, String>();
 	private AutoCompleteTextView filter_date_from;
 	private AutoCompleteTextView filter_date_to;
+	private Spinner filter_shipping_method;
+	private ArrayList<String> shipping_method_items = new ArrayList<String>();
+	private Map<String, String> shipping_method_map_keys = new HashMap<String, String>();
 
 	public void filterDialog() {
 		bottomSheetDialog = new BottomSheetDialog(getContext());
@@ -662,6 +694,7 @@ public class ReportFragment extends UpdatableFragment {
 		filter_customer_name = (EditText) sheetView.findViewById(R.id.customer_name);
 		filter_customer_phone = (EditText) sheetView.findViewById(R.id.customer_phone);
 		filter_status = (Spinner) sheetView.findViewById(R.id.status);
+		filter_shipping_method = (Spinner) sheetView.findViewById(R.id.shipping_method);
 		finish_submit_button = (Button) sheetView.findViewById(R.id.finish_submit_button);
 
 		filter_date_from = (AutoCompleteTextView) sheetView.findViewById(R.id.date_from);
@@ -689,6 +722,24 @@ public class ReportFragment extends UpdatableFragment {
 		stAdapter.notifyDataSetChanged();
 		filter_status.setAdapter(stAdapter);
 
+		// build the shipping method list
+		shipping_method_items.clear();
+		shipping_method_map_keys.clear();
+		shipping_method_items.add("Semua");
+		String[] shipping_method_list = AppController.getPaymentMethods();
+		int numberOfItems = shipping_method_list.length;
+		for (int i=0; i < numberOfItems; i++)
+		{
+			String name = shipping_method_list[i];
+			shipping_method_items.add(name);
+			shipping_method_map_keys.put(name, i+"");
+		}
+		ArrayAdapter<String> spAdapter = new ArrayAdapter<String>(
+				getContext(),
+				R.layout.spinner_item, shipping_method_items);
+		spAdapter.notifyDataSetChanged();
+		filter_shipping_method.setAdapter(spAdapter);
+
 		bottomSheetDialog.show();
 
 		triggerBottomDialogButton(sheetView);
@@ -698,11 +749,31 @@ public class ReportFragment extends UpdatableFragment {
 		finish_submit_button.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				has_been_filtered = true;
+				lineitemListRecycle2.setVisibility(View.GONE);
+
 				bottomSheetDialog.dismiss();
 				String status = filter_status.getSelectedItem().toString();
 				if (status.length() > 0 && !status.equals("-")) {
 					status = inv_status_map_keys.get(status);
 					filter_result.put("status", status);
+				}
+
+				String ship_method = filter_shipping_method.getSelectedItem().toString();
+				Log.e(getClass().getSimpleName(), "ship_method : "+ ship_method);
+				Log.e(getClass().getSimpleName(), "shipping_method_map_keys : "+ shipping_method_map_keys.toString());
+				if (ship_method.length() > 0) {
+					if (shipping_method_map_keys.containsKey(ship_method)) {
+						ship_method = shipping_method_map_keys.get(ship_method);
+						if (ship_method != null) {
+							int ship_method_int = Integer.parseInt(ship_method) + 1;
+							ship_method = ship_method_int + "";
+						}
+					} else {
+						ship_method = "0";
+					}
+                    Log.e(getClass().getSimpleName(), "final ship_method : "+ ship_method);
+					filter_result.put("shipping_method", ship_method);
 				}
 
 				String invoice_number = filter_invoice_number.getText().toString();
@@ -759,5 +830,168 @@ public class ReportFragment extends UpdatableFragment {
 				}, cur_calender.get(Calendar.YEAR), cur_calender.get(Calendar.MONTH), cur_calender.get(Calendar.DAY_OF_MONTH));
 
 		datePickerDialog.show();
+	}
+
+	private List<Sale> list_of_transactions2 = new ArrayList<Sale>();
+	private Map<Integer, Customer> list_of_customers2 = new HashMap<Integer, Customer>();
+	private Map<Integer, Shipping> list_of_shippings2 = new HashMap<Integer, Shipping>();
+	private Map<Integer, JSONArray> list_of_payments3 = new HashMap<Integer, JSONArray>();
+	private Map<Integer, JSONArray> list_of_line_items3 = new HashMap<Integer, JSONArray>();
+
+	public void setTransactionList2(final Map<String, String> params) {
+		list_of_transactions2.clear();
+		list_of_customers2.clear();
+		list_of_shippings2.clear();
+		list_of_payments3.clear();
+		list_of_line_items3.clear();
+		String url = Server.URL + "transaction/list?api-key=" + Server.API_KEY;
+		_string_request(Request.Method.GET, url, params, false,
+				new VolleyCallback() {
+					@Override
+					public void onSuccess(String result) {
+						try {
+							Log.e(getClass().getSimpleName(), "result old data : "+ result);
+							if (result.contains("success")) {
+								JSONObject jObj = new JSONObject(result);
+								int success = jObj.getInt("success");
+								// Check for error node in json
+								if (success == 1) {
+									JSONArray data = jObj.getJSONArray("data");
+									for(int n = 0; n < data.length(); n++) {
+										JSONObject data_n = data.getJSONObject(n);
+										Sale sale = new Sale(data_n.getInt("id"), data_n.getString("created_at"));
+										sale.setServerInvoiceNumber(data_n.getString("invoice_number"));
+										sale.setServerInvoiceId(data_n.getInt("id"));
+										sale.setCustomerId(data_n.getInt("customer_id"));
+										sale.setStatus(data_n.getString("status_order"));
+										sale.setDeliveredPlanAt(data_n.getString("delivered_plan_at"));
+
+										JSONObject config = data_n.getJSONObject("config");
+										sale.setDiscount(config.getInt("discount"));
+
+										list_of_transactions2.add(sale);
+										Customer cust = new Customer(
+												sale.getCustomerId(),
+												data_n.getString("customer_name"),
+												data_n.getString("customer_email"),
+												data_n.getString("customer_phone"),
+												data_n.getString("customer_address"),
+												data_n.getInt("customer_status")
+										);
+										list_of_customers2.put(sale.getCustomerId(), cust);
+
+										// build the shipping
+										JSONArray arrShip = config.getJSONArray("shipping");
+										if (arrShip.length() > 0) {
+											JSONObject ship_method = arrShip.getJSONObject(0);
+											if (ship_method != null) {
+												Shipping shipping = new Shipping(
+														ship_method.getInt("method"),
+														ship_method.getString("date_added"),
+														ship_method.getString("address"),
+														ship_method.getInt("warehouse_id")
+												);
+												if (ship_method.has("warehouse_name")) {
+													shipping.setWarehouseName(ship_method.getString("warehouse_name"));
+												}
+												if (ship_method.has("recipient_name")) {
+													shipping.setName(ship_method.getString("recipient_name"));
+												}
+												if (ship_method.has("recipient_phone")) {
+													shipping.setPhone(ship_method.getString("recipient_phone"));
+												}
+												if (ship_method.has("pickup_date")) {
+													shipping.setPickupDate(ship_method.getString("pickup_date"));
+												}
+												list_of_shippings2.put(sale.getId(), shipping);
+											}
+										}
+
+										// build the payment
+										JSONArray arrPayment = config.getJSONArray("payment");
+										if (arrPayment.length() > 0) {
+											list_of_payments3.put(sale.getId(), arrPayment);
+										}
+
+										// build the line item data
+										JSONArray arrItemsBelanja = config.getJSONArray("items_belanja");
+										if (arrItemsBelanja.length() > 0) {
+											list_of_line_items3.put(sale.getId(), arrItemsBelanja);
+										}
+									}
+
+									double total = 0;
+									for (Sale sale : list_of_transactions2)
+										total += sale.getTotal();
+
+									String total_formated = CurrencyController.getInstance().moneyFormat(total);
+									totalBox.setText(total_formated);
+									showList3(list_of_transactions2);
+								}
+							} else {
+								Toast.makeText(getContext(), "Failed!, No product data in ",
+										Toast.LENGTH_LONG).show();
+							}
+
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+	}
+
+	List<Map<String, String>> saleList2;
+
+	private void showList3(List<Sale> list) {
+		saleList2 = new ArrayList<Map<String, String>>();
+		for (Sale sale : list) {
+			Map<String, String> salemap = sale.toMap();
+			salemap.put("customer_data", "-");
+			try {
+				Customer cust = list_of_customers2.get(sale.getCustomerId());
+				if (cust.getName().length() > 0) {
+					salemap.put("customer_data", cust.getName() + " - " + cust.getPhone() + " - " + cust.getAddress());
+					salemap.put("customer_name", cust.getName());
+					salemap.put("customer_phone", cust.getPhone());
+					salemap.put("customer_address", cust.getAddress());
+				}
+				salemap.put("status", sale.getStatus());
+				salemap.put("delivered_plan_at", sale.getDeliveredPlanAt());
+
+				Shipping shipping = list_of_shippings2.get(sale.getId());
+				if (shipping != null) {
+					Log.e(getTag(), "shipping : "+ shipping.toMap().toString());
+					salemap.put("shipping_method", shipping.toMap().get("method_name"));
+					if (shipping.toMap().containsKey("pickup_date") && !shipping.toMap().get("pickup_date").equals("null")) {
+						salemap.put("delivered_plan_at", shipping.toMap().get("pickup_date"));
+					}
+				} else {
+					salemap.put("shipping_method", "-");
+				}
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+
+			saleList2.add(salemap);
+		}
+
+		AdapterListInvoice invAdapter = new AdapterListInvoice(getActivity().getBaseContext() , saleList2);
+		lineitemListRecycle2.setAdapter(invAdapter);
+
+		invAdapter.setOnItemClickListener(new AdapterListInvoice.OnItemClickListener() {
+			@Override
+			public void onItemClick(View view, Map<String, String> _item, int position) {
+				String id = _item.get("id");
+				Intent newActivity = new Intent(getActivity().getBaseContext(), SaleDetailActivity.class);
+				newActivity.putExtra("id", id);
+				Sale selected_sale = list_of_transactions2.get(position);
+				newActivity.putExtra("sale_intent", selected_sale);
+				newActivity.putExtra("customer_intent", list_of_customers2.get(selected_sale.getCustomerId()));
+				newActivity.putExtra("shipping_intent", list_of_shippings2.get(selected_sale.getId()));
+				newActivity.putExtra("payment_intent", list_of_payments3.get(selected_sale.getId()).toString());
+				newActivity.putExtra("line_items_intent", list_of_line_items3.get(selected_sale.getId()).toString());
+				startActivity(newActivity);
+			}
+		});
 	}
 }

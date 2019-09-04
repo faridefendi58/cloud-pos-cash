@@ -136,6 +136,16 @@
         </ListView>
 
         <android.support.v7.widget.RecyclerView
+            android:id="@+id/lineitemListRecycle2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            android:scrollingCache="true"
+            android:layout_marginBottom="@dimen/spacing_large"
+            android:padding="@dimen/spacing_small"
+            android:background="@color/grey_600"/>
+
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/lineitemListRecycle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -80,10 +80,17 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
             view.pickup_date.setText(items.get(position).get("delivered_plan_at"));
             view.status.setText(items.get(position).get("status"));
             try {
-                if (items.get(position) != null && items.get(position).get("is_paid") != null) {
+                /*if (items.get(position) != null && items.get(position).get("is_paid") != null) {
                     if (Integer.parseInt(items.get(position).get("is_paid")) <= 0) {
                         view.status.setTextColor(view.itemView.getContext().getResources().getColor(R.color.red_800));
                     }
+                }*/
+                if (items.get(position).get("status").equals("Belum Lunas")) {
+                    view.status.setTextColor(view.itemView.getContext().getResources().getColor(R.color.red_800));
+                } else if (items.get(position).get("status").equals("Utang Tempo")){
+                    view.status.setTextColor(view.itemView.getContext().getResources().getColor(R.color.orange_800));
+                } else if (items.get(position).get("status").equals("Selesai")) {
+                    view.status.setTextColor(view.itemView.getContext().getResources().getColor(R.color.grey_800));
                 }
             } catch (Exception e){e.printStackTrace();}
             view.customer_data.setText(items.get(position).get("customer_data"));
