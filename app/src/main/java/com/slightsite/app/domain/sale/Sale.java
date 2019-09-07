@@ -293,6 +293,10 @@ public class Sale implements Serializable {
 	}
 
 	public String getDeliveredPlanAt() {
+		if (delivered_plan_at != null) {
+			return DateTimeStrategy.parseDate(delivered_plan_at, "dd MMM yyyy HH:ss");
+		}
+
 		return delivered_plan_at;
 	}
 

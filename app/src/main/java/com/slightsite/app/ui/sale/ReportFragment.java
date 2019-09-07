@@ -456,6 +456,7 @@ public class ReportFragment extends UpdatableFragment {
 				Map<String, String> params2 = new HashMap<String, String>();
 				params2.put("warehouse_id", warehouse_id + "");
 				params2.put("delivered", "0");
+				params2.put("status_order", "lunas");
 				params2.put("custom_order_by", "status_order_code");
 				params2.put("order_type", "ASC");
 
