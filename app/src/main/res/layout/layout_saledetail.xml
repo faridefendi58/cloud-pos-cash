@@ -674,6 +674,28 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/finish_button_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/finish_and_print_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textColor="@android:color/white"
+                android:background="@color/btnInfo"
+                android:text="@string/button_mark_as_complete"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:onClick="finishAndPrint"/>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"

@@ -212,6 +212,7 @@
     <string name="message_refunded">Refunded</string>
     <string name="message_thankyou">Thank You!</string>
     <string name="message_clear_empty_sale">Sorry, There is no sale to be cleared!</string>
+    <string name="message_no_data_found">Sorry, No data found!</string>
 
     <string name="title_print_invoice">Print Invoice</string>
     <string name="title_list_printer">Devices</string>
@@ -283,6 +284,7 @@
     <string name="button_close">Close</string>
     <string name="button_finish_and_print">Finish Order and Print Invoice</string>
     <string name="button_search">Search</string>
+    <string name="button_reset_to_default">Reset To Default</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
 

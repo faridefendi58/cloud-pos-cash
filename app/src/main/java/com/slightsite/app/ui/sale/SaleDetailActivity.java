@@ -135,6 +135,7 @@ public class SaleDetailActivity extends Activity{
 	private TextView shipping_recipient_phone;
 	private TextView created_by;
 	private LinearLayout complete_button_container;
+	private LinearLayout finish_button_container;
 
 	private PaymentCatalog paymentCatalog;
 	private List<Payment> paymentList;
@@ -298,6 +299,7 @@ public class SaleDetailActivity extends Activity{
 		spacer_debt = (View) findViewById(R.id.spacer_debt);
 		created_by = (TextView) findViewById(R.id.created_by);
 		complete_button_container = (LinearLayout) findViewById(R.id.complete_button_container);
+		finish_button_container = (LinearLayout) findViewById(R.id.finish_button_container);
 
 		lineitemListRecycle = (RecyclerView) findViewById(R.id.lineitemListRecycle);
 		lineitemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -931,6 +933,8 @@ public class SaleDetailActivity extends Activity{
 
 									if (server_invoice_data.getInt("status") == 0) {
 										complete_button_container.setVisibility(View.VISIBLE);
+									} else if (server_invoice_data.getInt("status") == 1) {
+										finish_button_container.setVisibility(View.VISIBLE);
 									}
 								}
 							}
@@ -1170,5 +1174,55 @@ public class SaleDetailActivity extends Activity{
 				}
 			}
 		});
+	}
+
+	public void finishAndPrint(View v) {
+		try {
+			Map<String, Object> mObj = new HashMap<String, Object>();
+			mObj.put("invoice_id", sale.getServerInvoiceId());
+
+			String _url = Server.URL + "transaction/complete?api-key=" + Server.API_KEY;
+			String qry = URLBuilder.httpBuildQuery(mObj, "UTF-8");
+			_url += "&"+ qry;
+
+			Map<String, String> params = new HashMap<String, String>();
+			String admin_id = sharedpreferences.getString(TAG_ID, null);
+			Params adminParam = paramCatalog.getParamByName("admin_id");
+			if (adminParam != null) {
+				admin_id = adminParam.getValue();
+			}
+
+			params.put("admin_id", admin_id);
+
+			_string_request(
+					Request.Method.POST,
+					_url,
+					params,
+					true,
+					new VolleyCallback(){
+						@Override
+						public void onSuccess(String result) {
+							try {
+								JSONObject jObj = new JSONObject(result);
+								success = jObj.getInt(TAG_SUCCESS);
+								// Check for error node in json
+								if (success == 1) {
+									String server_invoice_number = jObj.getString("invoice_number");
+									sale.setServerInvoiceNumber(server_invoice_number);
+									if (is_local_data) {
+										saleLedger.setFinished(sale);
+									}
+
+									Intent intent = new Intent(SaleDetailActivity.this, PrintPreviewActivity.class);
+									intent.putExtra("saleId", saleId);
+									finish();
+									startActivity(intent);
+								}
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
+						}
+					});
+		} catch (Exception e){e.printStackTrace();}
 	}
 }

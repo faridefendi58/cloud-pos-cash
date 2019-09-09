@@ -333,6 +333,8 @@ public class InventoryFragment extends UpdatableFragment {
 		update();
 	}
 
+	private Boolean show_animation = true;
+
 	public void updateCart() {
 		Double tot_cart = register.getTotal();
 		if (tot_cart > 0) {
@@ -348,20 +350,26 @@ public class InventoryFragment extends UpdatableFragment {
 
 			bottom_cart_container.setVisibility(View.VISIBLE);
 
-			TranslateAnimation animate = new TranslateAnimation(
-					0,                 // fromXDelta
-					0,                 // toXDelta
-					bottom_cart_container.getHeight() + 100,  // fromYDelta
-					0);                // toYDelta
-			animate.setDuration(500);
-			animate.setFillAfter(true);
-			bottom_cart_container.startAnimation(animate);
+			if (show_animation) {
+				TranslateAnimation animate = new TranslateAnimation(
+						0,                 // fromXDelta
+						0,                 // toXDelta
+						bottom_cart_container.getHeight() + 100,  // fromYDelta
+						0);                // toYDelta
+				animate.setDuration(500);
+				animate.setFillAfter(true);
+				bottom_cart_container.startAnimation(animate);
+
+				show_animation = false;
+			}
 		} else {
 			bottom_cart_container.getLayoutParams().height = 0;
 			bottom_cart_container.requestLayout();
 			bottom_cart_container.setVisibility(View.INVISIBLE);
 
 			cart_total.setText("Empty cart");
+
+			show_animation = true;
 		}
 	}
 

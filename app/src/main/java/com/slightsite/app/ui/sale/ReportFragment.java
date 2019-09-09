@@ -35,6 +35,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -85,10 +87,13 @@ public class ReportFragment extends UpdatableFragment {
 	private ListView saleLedgerListView;
 	private RecyclerView lineitemListRecycle;
 	private RecyclerView lineitemListRecycle2;
+	private ScrollView list_recycle_container;
+	private RelativeLayout no_data_container;
 	private TextView totalBox;
 	private Spinner spinner;
 	private Button previousButton;
 	private Button nextButton;
+	private Button button_reset_to_default;
 	private TextView currentBox;
 	private Calendar currentTime;
 	private DatePickerDialog datePicker;
@@ -143,6 +148,10 @@ public class ReportFragment extends UpdatableFragment {
 		lineitemListRecycle2.setLayoutManager(new LinearLayoutManager(getContext()));
 		lineitemListRecycle2.setHasFixedSize(true);
 		lineitemListRecycle2.setNestedScrollingEnabled(false);
+
+		list_recycle_container = (ScrollView) view.findViewById(R.id.list_recycle_container);
+		no_data_container = (RelativeLayout) view.findViewById(R.id.no_data_container);
+		button_reset_to_default = (Button) view.findViewById(R.id.button_reset_to_default);
 		
 		initUI();
 
@@ -234,6 +243,17 @@ public class ReportFragment extends UpdatableFragment {
 		          newActivity.putExtra("id", id);
 		          startActivity(newActivity);  
 		      }     
+		});
+
+		button_reset_to_default.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				filter_result.clear();
+				has_been_filtered = false;
+				no_data_container.setVisibility(View.GONE);
+				list_recycle_container.setVisibility(View.VISIBLE);
+				update();
+			}
 		});
 
 		update();
@@ -346,6 +366,11 @@ public class ReportFragment extends UpdatableFragment {
 				startActivity(newActivity);
 			}
 		});
+
+		if (has_been_filtered && saleList.size() <= 0) {
+			no_data_container.setVisibility(View.VISIBLE);
+			list_recycle_container.setVisibility(View.GONE);
+		}
 	}
 
 	@Override
