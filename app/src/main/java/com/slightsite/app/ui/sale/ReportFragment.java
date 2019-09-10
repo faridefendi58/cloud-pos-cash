@@ -94,6 +94,7 @@ public class ReportFragment extends UpdatableFragment {
 	private Button previousButton;
 	private Button nextButton;
 	private Button button_reset_to_default;
+	private Button button_research;
 	private TextView currentBox;
 	private Calendar currentTime;
 	private DatePickerDialog datePicker;
@@ -105,6 +106,7 @@ public class ReportFragment extends UpdatableFragment {
 	private ProductCatalog productCatalog;
 	private int warehouse_id;
 	private Boolean has_been_filtered = false;
+	private Boolean is_empty_data = false;
 
 	public static final int CUSTOM = 0;
 	public static final int DAILY = 1;
@@ -152,7 +154,8 @@ public class ReportFragment extends UpdatableFragment {
 		list_recycle_container = (ScrollView) view.findViewById(R.id.list_recycle_container);
 		no_data_container = (RelativeLayout) view.findViewById(R.id.no_data_container);
 		button_reset_to_default = (Button) view.findViewById(R.id.button_reset_to_default);
-		
+		button_research = (Button) view.findViewById(R.id.button_research);
+
 		initUI();
 
 		// search trigger
@@ -253,6 +256,13 @@ public class ReportFragment extends UpdatableFragment {
 				no_data_container.setVisibility(View.GONE);
 				list_recycle_container.setVisibility(View.VISIBLE);
 				update();
+			}
+		});
+
+		button_research.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				filterDialog();
 			}
 		});
 
@@ -370,6 +380,7 @@ public class ReportFragment extends UpdatableFragment {
 		if (has_been_filtered && saleList.size() <= 0) {
 			no_data_container.setVisibility(View.VISIBLE);
 			list_recycle_container.setVisibility(View.GONE);
+			lineitemListRecycle2.setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -471,6 +482,9 @@ public class ReportFragment extends UpdatableFragment {
 			params.put("delivered_plan_at_to", filter_result.get("date_to"));
 			params.put("custom_order_by", "status_order_code");
 			params.put("order_type", "ASC");
+			if (!filter_result.containsKey("delivered")) {
+				params.put("delivered", "0");
+			}
 
 			Log.e(getTag(), "params : "+ params.toString());
 			setTransactionList(params);
@@ -615,6 +629,19 @@ public class ReportFragment extends UpdatableFragment {
 									String total_formated = CurrencyController.getInstance().moneyFormat(total);
 									totalBox.setText(total_formated);
 									showList2(list_of_transactions);
+
+									Log.e(getTag(), "data.length on setTransactionList : "+ data.length());
+									if (data.length() <= 0) {
+										is_empty_data = true;
+										if (saleList2 != null && saleList2.size() <= 0) {
+											no_data_container.setVisibility(View.VISIBLE);
+											list_recycle_container.setVisibility(View.GONE);
+										}
+									} else {
+										is_empty_data = false;
+										no_data_container.setVisibility(View.GONE);
+										list_recycle_container.setVisibility(View.VISIBLE);
+									}
 								}
 							} else {
 								Toast.makeText(getContext(), "Failed!, No product data in ",
@@ -704,6 +731,7 @@ public class ReportFragment extends UpdatableFragment {
 	private Map<String, String> inv_status_map = new HashMap<String, String>();
 	private Map<String, String> inv_status_map_keys = new HashMap<String, String>();
 	private ArrayList<String> inv_status_items = new ArrayList<String>();
+	private ArrayList<String> inv_status_items_keys = new ArrayList<String>();
 	private Map<String, String> filter_result = new HashMap<String, String>();
 	private AutoCompleteTextView filter_date_from;
 	private AutoCompleteTextView filter_date_to;
@@ -726,19 +754,33 @@ public class ReportFragment extends UpdatableFragment {
 		filter_date_from = (AutoCompleteTextView) sheetView.findViewById(R.id.date_from);
 		filter_date_to = (AutoCompleteTextView) sheetView.findViewById(R.id.date_to);
 		if (filter_result.containsKey("date_from")) {
-			filter_date_from.setText(filter_result.get("date_from"));
+			filter_date_from.setText(DateTimeStrategy.parseDate(filter_result.get("date_from"), "MMM dd, yyyy"));
 		}
 		if (filter_result.containsKey("date_to")) {
-			filter_date_to.setText(filter_result.get("date_to"));
+			filter_date_to.setText(DateTimeStrategy.parseDate(filter_result.get("date_to"), "MMM dd, yyyy"));
+		}
+
+		if (filter_result.containsKey("invoice_number")) {
+			filter_invoice_number.setText(filter_result.get("invoice_number"));
+		}
+
+		if (filter_result.containsKey("customer_name")) {
+			filter_customer_name.setText(filter_result.get("customer_name"));
+		}
+
+		if (filter_result.containsKey("customer_phone")) {
+			filter_customer_phone.setText(filter_result.get("customer_phone"));
 		}
 
 		inv_status_map = Tools.getInvoiceStatusList();
 
 		inv_status_items.clear();
+		inv_status_items_keys.clear();
 		inv_status_map_keys.clear();
-		filter_result.clear();
+		//filter_result.clear();
 		for (Map.Entry<String, String> entry : inv_status_map.entrySet()) {
 			inv_status_items.add(entry.getValue());
+			inv_status_items_keys.add(entry.getKey());
 			inv_status_map_keys.put(entry.getValue(), entry.getKey());
 		}
 
@@ -747,6 +789,15 @@ public class ReportFragment extends UpdatableFragment {
 				R.layout.spinner_item, inv_status_items);
 		stAdapter.notifyDataSetChanged();
 		filter_status.setAdapter(stAdapter);
+		Log.e(getTag(), "filter_result : "+ filter_result.toString());
+        if (filter_result.containsKey("status")) {
+            int selected_status_id = 0;
+            if (inv_status_items_keys.contains(filter_result.get("status"))) {
+				selected_status_id = inv_status_items_keys.indexOf(filter_result.get("status"));
+			}
+
+            filter_status.setSelection(selected_status_id);
+        }
 
 		// build the shipping method list
 		shipping_method_items.clear();
@@ -765,6 +816,13 @@ public class ReportFragment extends UpdatableFragment {
 				R.layout.spinner_item, shipping_method_items);
 		spAdapter.notifyDataSetChanged();
 		filter_shipping_method.setAdapter(spAdapter);
+		if (filter_result.containsKey("shipping_method")) {
+			String selected_method = filter_result.get("shipping_method");
+			if (selected_method != null && selected_method.length() > 0) {
+				int selected_method_id = Integer.parseInt(selected_method);
+				filter_shipping_method.setSelection(selected_method_id);
+			}
+		}
 
 		bottomSheetDialog.show();
 
@@ -953,6 +1011,16 @@ public class ReportFragment extends UpdatableFragment {
 									String total_formated = CurrencyController.getInstance().moneyFormat(total);
 									totalBox.setText(total_formated);
 									showList3(list_of_transactions2);
+
+									if (data.length() <= 0) {
+										if (is_empty_data) {
+											no_data_container.setVisibility(View.VISIBLE);
+											list_recycle_container.setVisibility(View.GONE);
+										}
+										is_empty_data = true;
+									} else {
+										is_empty_data = false;
+									}
 								}
 							} else {
 								Toast.makeText(getContext(), "Failed!, No product data in ",

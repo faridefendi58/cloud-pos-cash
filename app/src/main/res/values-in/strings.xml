@@ -212,7 +212,7 @@
     <string name="message_refunded">Refund</string>
     <string name="message_thankyou">Terimakasih!</string>
     <string name="message_clear_empty_sale">Maaf, tidak ada data penjualan untuk dibersihkan!</string>
-    <string name="message_no_data_found">Maaf, Data yang Anda cari tidak ditemukan!</string>
+    <string name="message_no_data_found">Maaf, Data tidak ditemukan!</string>
 
     <string name="title_print_invoice">Print Preview</string>
     <string name="title_list_printer">Printer</string>
@@ -279,6 +279,7 @@
     <string name="button_finish_and_print">Selesaikan Order and Cetak Tagihan</string>
     <string name="button_search">Cari</string>
     <string name="button_reset_to_default">Reset Ke Default</string>
+    <string name="button_research">Cari Ulang</string>
 
     <string name="confirm_edit">Anda yakin ingin mengubah data ini?</string>
 

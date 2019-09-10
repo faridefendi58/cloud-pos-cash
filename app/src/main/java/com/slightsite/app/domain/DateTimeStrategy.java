@@ -57,6 +57,9 @@ public class DateTimeStrategy {
 	}
 
 	public static String parseDate(String time, String outputPattern) {
+		if (!time.contains(":")) {
+			time += " 00:00:00";
+		}
 		String inputPattern = "yyyy-MM-dd HH:mm:ss";
 		SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
 		SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);

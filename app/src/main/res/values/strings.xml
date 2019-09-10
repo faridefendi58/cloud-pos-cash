@@ -285,6 +285,7 @@
     <string name="button_finish_and_print">Finish Order and Print Invoice</string>
     <string name="button_search">Search</string>
     <string name="button_reset_to_default">Reset To Default</string>
+    <string name="button_research">Research</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
 

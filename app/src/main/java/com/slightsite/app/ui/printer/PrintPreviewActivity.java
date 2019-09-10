@@ -286,7 +286,14 @@ public class PrintPreviewActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                this.finish();
+                if (!getIntent().hasExtra("delayed")) {
+                    this.finish();
+                } else {
+                    Intent intent = new Intent(PrintPreviewActivity.this, MainActivity.class);
+                    intent.putExtra("refreshStock", true);
+                    finish();
+                    startActivity(intent);
+                }
                 return true;
             case R.id.nav_share :
                 shareInvoice();

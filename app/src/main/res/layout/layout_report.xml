@@ -146,24 +146,45 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/spacing_middle"
-                android:paddingVertical="@dimen/spacing_large"
+                android:paddingVertical="@dimen/spacing_xlarge"
                 android:layout_centerInParent="true"
-                android:layout_above="@+id/button_reset_to_default"
-                android:background="@color/yellow_900"
-                android:textColor="@color/grey_300"
+                android:layout_above="@+id/btn_reset_container"
+                android:background="@color/yellowDarkUcok"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/spacing_mxlarge"
                 android:gravity="center"
                 android:text="@string/message_no_data_found"/>
 
-            <Button
-                android:id="@+id/button_reset_to_default"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/btn_reset_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_xlarge"
-                android:padding="@dimen/spacing_middle"
                 android:layout_centerInParent="true"
-                android:background="@color/btnSuccess"
-                android:textColor="@color/colorWhite"
-                android:text="@string/button_reset_to_default"/>
+                android:layout_marginTop="@dimen/spacing_xlarge"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/button_research"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:padding="@dimen/spacing_middle"
+                    android:background="@color/btnSuccess"
+                    android:textColor="@color/colorWhite"
+                    android:text="@string/button_research"/>
+
+                <Button
+                    android:id="@+id/button_reset_to_default"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:padding="@dimen/spacing_middle"
+                    android:layout_centerInParent="true"
+                    android:background="@color/yellow_900"
+                    android:textColor="@color/colorWhite"
+                    android:text="@string/button_reset_to_default"/>
+
+            </LinearLayout>
 
         </RelativeLayout>
 
