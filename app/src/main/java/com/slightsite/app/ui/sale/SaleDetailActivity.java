@@ -531,6 +531,11 @@ public class SaleDetailActivity extends Activity{
 			case R.id.action_push:
 				pushInvoice(getCurrentFocus());
 				return true;
+			case R.id.action_retur:
+				Toast.makeText(getBaseContext(),
+						"Will be available soon!", Toast.LENGTH_SHORT)
+						.show();
+				return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}

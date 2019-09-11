@@ -61,6 +61,7 @@
     <string name="transaction">Transaction</string>
     <string name="remove_invoice">Remove Invoice</string>
     <string name="print_invoice">Print Invoice</string>
+    <string name="retur_invoice">Retur Invoice</string>
     <string name="print">Print</string>
     <string name="sync_product">Syncron Product</string>
     <string name="push">Push</string>

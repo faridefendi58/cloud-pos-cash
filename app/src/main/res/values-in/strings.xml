@@ -61,6 +61,7 @@
     <string name="transaction">Transaksi Penjualan</string>
     <string name="remove_invoice">Hapus Tagihan</string>
     <string name="print_invoice">Cetak Tagihan</string>
+    <string name="retur_invoice">Retur Tagihan</string>
     <string name="print">Print</string>
     <string name="sync_product">Sinkronisasi Produk</string>
     <string name="push">Push</string>

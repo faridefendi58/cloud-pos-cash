@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
 
     <GridLayout
         android:layout_width="match_parent"
@@ -10,39 +11,76 @@
         android:useDefaultMargins="true"
         android:alignmentMode="alignBounds"
         android:columnOrderPreserved="true"
-        android:columnCount="2"
-        android:padding="10dp">
+        android:columnCount="2">
 
-        <TextView
-            android:text="@string/message_syncronize"
-            android:textSize="16dip"
-            android:layout_columnSpan="2"
-            android:layout_gravity="center_horizontal"
-            android:textStyle="bold"
-            android:background="@color/alertWarning"
-            android:padding="@dimen/spacing_large"
-            />
-
-        <TextView
-            android:text="@string/label_warehouse_name"
-            android:layout_gravity="left"
-            android:layout_columnSpan="2"
-            android:paddingLeft="8dp"
-            android:textStyle="bold"/>
-
-        <Spinner
-            android:id="@+id/available_warehouse"
-            android:layout_gravity="fill_horizontal"
-            android:layout_columnSpan="2"/>
-
-        <CheckBox
-            android:id="@+id/sync_product"
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/label_syncron_product"
-            android:layout_width="fill_parent"
             android:layout_columnSpan="2"
-            android:checked="true">
-        </CheckBox>
+            android:layout_marginTop="@dimen/spacing_middle"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="1dp"
+            app:cardElevation="3dp"
+            app:cardUseCompatPadding="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/spacing_large"
+                android:paddingVertical="@dimen/spacing_middle"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/message_syncronize"
+                    android:textSize="16dip"
+                    android:layout_gravity="center_horizontal"
+                    android:textStyle="bold"
+                    android:background="@color/alertWarning"
+                    android:padding="@dimen/spacing_large"
+                    android:layout_marginBottom="@dimen/spacing_large"
+                    android:layout_marginHorizontal="@dimen/spacing_middle"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/spacing_middle"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/spacing_small"
+                        android:layout_weight="0.4"
+                        android:text="@string/label_choose_warehouse"
+                        android:textStyle="bold"/>
+
+                    <Spinner
+                        android:id="@+id/available_warehouse"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.6"
+                        android:background="@drawable/edit_text_round_bg_outline"
+                        android:drawableEnd="@drawable/ic_expand_arrow"
+                        android:drawableRight="@drawable/ic_expand_arrow"/>
+
+                </LinearLayout>
+
+                <CheckBox
+                    android:id="@+id/sync_product"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_syncron_product"
+                    android:layout_marginHorizontal="@dimen/spacing_middle"
+                    android:layout_marginTop="@dimen/spacing_middle"
+                    android:checked="true">
+                </CheckBox>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
 
         <CheckBox
             android:id="@+id/sync_customer"
@@ -53,18 +91,10 @@
             android:visibility="gone">
         </CheckBox>
 
-        <Space
-            android:layout_row="5"
-            android:layout_column="0"
-            android:layout_columnSpan="1"
-            android:layout_gravity="fill"
-            />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_row="6"
-            android:layout_column="1"
             android:weightSum="1">
 
             <Button
@@ -72,10 +102,9 @@
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
-                android:background="@color/btnWarning"
+                android:background="@color/yellowDarkUcok"
                 android:textColor="@color/colorWhite"
                 android:paddingHorizontal="20dp"
-                android:layout_marginTop="10dp"
                 android:onClick="backToPrevActivity"
                 android:clickable="true"
                 />
@@ -85,10 +114,9 @@
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
-                android:background="@color/btnInfo"
+                android:background="@color/greenUcok"
                 android:textColor="@color/colorWhite"
                 android:paddingHorizontal="20dp"
-                android:layout_marginTop="10dp"
                 android:onClick="syncronizeToServer"
                 android:clickable="true"
                 />

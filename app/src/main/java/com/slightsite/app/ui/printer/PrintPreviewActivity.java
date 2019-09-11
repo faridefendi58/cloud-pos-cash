@@ -16,6 +16,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -34,6 +35,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.print.PrintHelper;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,8 +44,10 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -152,6 +156,8 @@ public class PrintPreviewActivity extends Activity {
     private String formated_receipt;
     private int shipping_method = 0;
     private List<LineItem> lineItems;
+
+    private int screen_width = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -318,6 +324,16 @@ public class PrintPreviewActivity extends Activity {
         print_webview.setHorizontalScrollBarEnabled(false);
         print_webview.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
 
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        screen_width = size.x;
+
+        if (screen_width > 980) {
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(400, LinearLayout.LayoutParams.WRAP_CONTENT);
+            print_webview.setLayoutParams(params);
+        }
+
         /*print_webview.getSettings().setLoadWithOverviewMode(true);
         print_webview.getSettings().setUseWideViewPort(true);
         print_webview.getSettings().setMinimumFontSize(60);
@@ -371,7 +387,7 @@ public class PrintPreviewActivity extends Activity {
         print_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                just_print();
+                just_print(true);
             }
         });
 
@@ -706,6 +722,13 @@ public class PrintPreviewActivity extends Activity {
 
     private Bitmap screenShot(WebView view) {
         Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        /*if (screen_width > 980) {
+            float aspectRatio = view.getWidth() /
+                    (float) view.getHeight();
+            int width = 400; //400 lebar kertas
+            int height = Math.round(width / aspectRatio);
+            bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        }*/
         Canvas canvas = new Canvas(bitmap);
         view.draw(canvas);
         return bitmap;
@@ -903,7 +926,7 @@ public class PrintPreviewActivity extends Activity {
 
                                 saleLedger.setFinished(sale);
                                 // and then trigger print the invoice
-                                just_print();
+                                just_print(true);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -925,7 +948,7 @@ public class PrintPreviewActivity extends Activity {
         }
     }
 
-    private void just_print() {
+    private void just_print(Boolean animated) {
         try {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
@@ -957,6 +980,19 @@ public class PrintPreviewActivity extends Activity {
                     byte[] bitmapdata = printPic.printDraw();
 
                     outputStream.write(bitmapdata);
+
+                    if (animated) {
+                        Log.e(getClass().getSimpleName(), "finish_and_print_button.getVisibility() : "+ finish_and_print_button.getVisibility());
+                        if (finish_and_print_button.getVisibility() == View.VISIBLE) {
+                            finish_and_print_button.setBackgroundColor(getResources().getColor(R.color.grey_800));
+                            finish_and_print_button.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_check_white_24dp), null, null, null);
+                            finish_and_print_button.setPadding(10, 0, 0, 0);
+                        } else {
+                            print_button.setBackgroundColor(getResources().getColor(R.color.grey_800));
+                            print_button.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_check_white_24dp), null, null, null);
+                            print_button.setPadding(10, 0, 0, 0);
+                        }
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
