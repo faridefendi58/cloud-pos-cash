@@ -329,8 +329,9 @@ public class PrintPreviewActivity extends Activity {
         display.getSize(size);
         screen_width = size.x;
 
-        if (screen_width > 980) {
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(400, LinearLayout.LayoutParams.WRAP_CONTENT);
+        Log.e(getClass().getSimpleName(), "screen_width : "+ screen_width);
+        if (screen_width > 900) {
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(640, LinearLayout.LayoutParams.WRAP_CONTENT);
             print_webview.setLayoutParams(params);
         }
 

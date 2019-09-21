@@ -691,7 +691,7 @@
                 android:text="@string/button_mark_as_complete"
                 android:textSize="14sp"
                 android:clickable="true"
-                android:onClick="finishAndPrint"/>
+                android:onClick="printInvoice"/>
 
         </LinearLayout>
 
@@ -739,6 +739,28 @@
                 android:textSize="14sp"
                 android:clickable="true"
                 android:onClick="pushInvoice"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/retur_button_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/btn_retur"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textColor="@android:color/white"
+                android:background="@color/yellowDarkUcok"
+                android:text="@string/retur_invoice"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:onClick="returInvoice"/>
 
         </LinearLayout>
 

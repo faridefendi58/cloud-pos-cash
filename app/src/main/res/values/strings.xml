@@ -221,6 +221,7 @@
     <string name="title_print_config">Configs</string>
     <string name="title_change_warehouse">Change Warehouse</string>
     <string name="title_bluetooth_devices">Bluetooth Devices</string>
+    <string name="title_retur_invoice">Retur Invoice</string>
 
     <string name="label_print_char_length">Character Length :</string>
     <string name="label_print_header">Header :</string>

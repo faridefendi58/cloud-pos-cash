@@ -21,7 +21,8 @@
 
     <item
         android:id="@+id/action_retur"
-        android:title="@string/retur_invoice">
+        android:title="@string/retur_invoice"
+        android:visible="false">
     </item>
 
     <item

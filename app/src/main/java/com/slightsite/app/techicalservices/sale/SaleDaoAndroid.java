@@ -150,7 +150,10 @@ public class SaleDaoAndroid implements SaleDao {
 
         	list.add(sale);
         }
-        return list.get(0);
+        if (list != null) {
+			return list.get(0);
+		}
+		return null;
 	}
 
 	@Override

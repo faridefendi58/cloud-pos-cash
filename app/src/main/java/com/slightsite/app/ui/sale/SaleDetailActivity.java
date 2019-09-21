@@ -90,6 +90,7 @@ import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.inventory.ProductServerActivity;
 import com.slightsite.app.ui.printer.PrintPreviewActivity;
 import com.slightsite.app.ui.printer.PrinterActivity;
+import com.slightsite.app.ui.retur.ReturActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -136,6 +137,7 @@ public class SaleDetailActivity extends Activity{
 	private TextView created_by;
 	private LinearLayout complete_button_container;
 	private LinearLayout finish_button_container;
+	private LinearLayout retur_button_container;
 
 	private PaymentCatalog paymentCatalog;
 	private List<Payment> paymentList;
@@ -300,6 +302,7 @@ public class SaleDetailActivity extends Activity{
 		created_by = (TextView) findViewById(R.id.created_by);
 		complete_button_container = (LinearLayout) findViewById(R.id.complete_button_container);
 		finish_button_container = (LinearLayout) findViewById(R.id.finish_button_container);
+		retur_button_container = (LinearLayout) findViewById(R.id.retur_button_container);
 
 		lineitemListRecycle = (RecyclerView) findViewById(R.id.lineitemListRecycle);
 		lineitemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -939,7 +942,12 @@ public class SaleDetailActivity extends Activity{
 									if (server_invoice_data.getInt("status") == 0) {
 										complete_button_container.setVisibility(View.VISIBLE);
 									} else if (server_invoice_data.getInt("status") == 1) {
-										finish_button_container.setVisibility(View.VISIBLE);
+										if (server_invoice_data.getInt("delivered") == 1) {
+											retur_button_container.setVisibility(View.VISIBLE);
+											finish_button_container.setVisibility(View.GONE);
+										} else {
+											finish_button_container.setVisibility(View.VISIBLE);
+										}
 									}
 								}
 							}
@@ -1229,5 +1237,26 @@ public class SaleDetailActivity extends Activity{
 						}
 					});
 		} catch (Exception e){e.printStackTrace();}
+	}
+
+	public void returInvoice(View v) {
+		Intent intent = new Intent(SaleDetailActivity.this, ReturActivity.class);
+		intent.putExtra("saleId", saleId+"");
+		if (!is_local_data) {
+			Sale new_sale = new Sale(saleId, sale.getEndTime());
+			new_sale.setServerInvoiceNumber(sale.getServerInvoiceNumber());
+			new_sale.setServerInvoiceId(sale.getServerInvoiceId());
+			new_sale.setCustomerId(sale.getCustomerId());
+			new_sale.setStatus(sale.getStatus());
+			new_sale.setDiscount(sale.getDiscount());
+
+			intent.putExtra("sale_intent", new_sale);
+			intent.putExtra("customer_intent", customer_intent);
+			intent.putExtra("shipping_intent", shipping_intent);
+			intent.putExtra("payment_intent", payment_intent);
+			intent.putExtra("line_items_intent", line_items_intent);
+		}
+		finish();
+		startActivity(intent);
 	}
 }
