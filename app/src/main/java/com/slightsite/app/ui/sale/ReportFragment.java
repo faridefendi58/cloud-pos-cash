@@ -680,8 +680,8 @@ public class ReportFragment extends UpdatableFragment {
 			public void onErrorResponse(VolleyError error) {
 				error.printStackTrace();
 				Log.e(getClass().getSimpleName(), "ada error : "+ error.getMessage());
-				Toast.makeText(getContext(),
-						error.getMessage(), Toast.LENGTH_LONG).show();
+				/*Toast.makeText(getContext(),
+						error.getMessage(), Toast.LENGTH_LONG).show();*/
 			}
 		})
 		{
@@ -728,6 +728,7 @@ public class ReportFragment extends UpdatableFragment {
 	private EditText filter_customer_phone;
 	private Spinner filter_status;
 	private Button finish_submit_button;
+	private Button reset_default_button;
 	private Map<String, String> inv_status_map = new HashMap<String, String>();
 	private Map<String, String> inv_status_map_keys = new HashMap<String, String>();
 	private ArrayList<String> inv_status_items = new ArrayList<String>();
@@ -750,6 +751,7 @@ public class ReportFragment extends UpdatableFragment {
 		filter_status = (Spinner) sheetView.findViewById(R.id.status);
 		filter_shipping_method = (Spinner) sheetView.findViewById(R.id.shipping_method);
 		finish_submit_button = (Button) sheetView.findViewById(R.id.finish_submit_button);
+		reset_default_button = (Button) sheetView.findViewById(R.id.reset_default_button);
 
 		filter_date_from = (AutoCompleteTextView) sheetView.findViewById(R.id.date_from);
 		filter_date_to = (AutoCompleteTextView) sheetView.findViewById(R.id.date_to);
@@ -890,6 +892,30 @@ public class ReportFragment extends UpdatableFragment {
 			@Override
 			public void onClick(View v) {
 				dialogDatePickerLight(v, "date_to");
+			}
+		});
+
+		reset_default_button.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				filter_result.clear();
+				has_been_filtered = false;
+				no_data_container.setVisibility(View.GONE);
+				list_recycle_container.setVisibility(View.VISIBLE);
+				update();
+
+				// set the form to default
+				if (filter_result.containsKey("date_from")) {
+					filter_date_from.setText(DateTimeStrategy.parseDate(filter_result.get("date_from"), "MMM dd, yyyy"));
+				}
+				if (filter_result.containsKey("date_to")) {
+					filter_date_to.setText(DateTimeStrategy.parseDate(filter_result.get("date_to"), "MMM dd, yyyy"));
+				}
+				filter_invoice_number.setText("");
+				filter_customer_name.setText("");
+				filter_customer_phone.setText("");
+				filter_status.setSelection(0);
+				filter_shipping_method.setSelection(0);
 			}
 		});
 	}

@@ -372,6 +372,11 @@ public class PrintPreviewActivity extends Activity {
             print_button_container.setVisibility(View.GONE);
             finish_and_print_button.setVisibility(View.VISIBLE);
         }
+
+        if (getIntent().hasExtra("process_order")) {
+            print_button_container.setVisibility(View.GONE);
+            finish_and_print_button.setVisibility(View.VISIBLE);
+        }
     }
 
     private void initTriggerButton() {
@@ -401,6 +406,8 @@ public class PrintPreviewActivity extends Activity {
     }
 
     private int counter = 0;
+    private int is_delivered = 0;
+
     public void buildDataFromServer() {
         Map<String, String> params = new HashMap<String, String>();
 
@@ -440,6 +447,11 @@ public class PrintPreviewActivity extends Activity {
                                     sale.setRefundedBy(server_invoice_data.getInt("refunded_by"));
                                     sale.setRefundedByName(server_invoice_data.getString("refunded_by_name"));
 
+                                    // force to be delivered if trigger from proceed Order Button
+                                    if (getIntent().hasExtra("process_order")) {
+                                        is_delivered = 1;
+                                    }
+
                                     formated_receipt = getFormatedReceiptHtml();
 
                                     String style = "<style>";
@@ -457,6 +469,8 @@ public class PrintPreviewActivity extends Activity {
                                     if (server_invoice_data.has("status") && server_invoice_data.has("delivered")) {
                                         int status = server_invoice_data.getInt("status");
                                         int delivered = server_invoice_data.getInt("delivered");
+                                        is_delivered = delivered;
+
                                         if (status > 0 && delivered > 0) {
                                             print_button_container.setVisibility(View.VISIBLE);
                                             finish_and_print_button.setVisibility(View.GONE);
@@ -606,13 +620,15 @@ public class PrintPreviewActivity extends Activity {
 
         if (sale.getCreatedBy() > 0) {
             res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_created_by) + "</td><td colspan=\"3\"> : " + sale.getCreatedByName() + "</td></tr>";
-            if (sale.getPaidBy() > 0) {
+            if (sale.getPaidBy() > 0 && is_delivered > 0) {
                 res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + sale.getPaidByName() + "</td></tr>";
             }
         } else {
             if (adminData != null) {
                 res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_created_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
-                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
+                if (is_delivered > 0) {
+                    res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
+                }
             }
         }
 
@@ -623,7 +639,13 @@ public class PrintPreviewActivity extends Activity {
         }
 
         if (sale.getPaidBy() > 0) {
-            res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b>" + getResources().getString(R.string.message_paid) + "</b></td></tr>";
+            if (is_delivered > 0) {
+                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b>" +
+                        getResources().getString(R.string.message_paid_delivered) + "</b></td></tr>";
+            } else {
+                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b>" +
+                        getResources().getString(R.string.message_paid_undelivered) + "</b></td></tr>";
+            }
         } else {
             res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b style=\"color:red;\" class=\"ft-26\">" + getResources().getString(R.string.message_unpaid) + "</b></td></tr>";
         }

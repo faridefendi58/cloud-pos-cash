@@ -288,18 +288,25 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="1"
-        android:layout_marginTop="@dimen/spacing_middle">
+        android:layout_marginTop="@dimen/spacing_middle"
+        android:padding="@dimen/spacing_middle">
 
-        <View
+        <Button
+            android:id="@+id/reset_default_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"></View>
+            android:layout_weight="0.5"
+            android:layout_marginRight="@dimen/spacing_xsmall"
+            android:text="@string/button_reset_to_default"
+            android:textColor="@color/colorWhite"
+            android:background="@color/yellow_900" />
 
         <Button
             android:id="@+id/finish_submit_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
+            android:layout_marginLeft="@dimen/spacing_xsmall"
             android:text="@string/button_search"
             android:textColor="@color/colorWhite"
             android:background="@color/greenUcok" />

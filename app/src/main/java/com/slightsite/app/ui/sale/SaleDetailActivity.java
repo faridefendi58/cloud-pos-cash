@@ -1259,4 +1259,27 @@ public class SaleDetailActivity extends Activity{
 		finish();
 		startActivity(intent);
 	}
+
+	public void finishRequest(View v) {
+		Intent newActivity = new Intent(SaleDetailActivity.this,
+				PrintPreviewActivity.class);
+		newActivity.putExtra("saleId", saleId);
+		newActivity.putExtra("shipping_method", shipping.getMethod());
+		newActivity.putExtra("process_order", true);
+		if (!is_local_data) {
+			Sale new_sale = new Sale(saleId, sale.getEndTime());
+			new_sale.setServerInvoiceNumber(sale.getServerInvoiceNumber());
+			new_sale.setServerInvoiceId(sale.getServerInvoiceId());
+			new_sale.setCustomerId(sale.getCustomerId());
+			new_sale.setStatus(sale.getStatus());
+			new_sale.setDiscount(sale.getDiscount());
+
+			newActivity.putExtra("sale_intent", new_sale);
+			newActivity.putExtra("customer_intent", customer_intent);
+			newActivity.putExtra("shipping_intent", shipping_intent);
+			newActivity.putExtra("payment_intent", payment_intent);
+			newActivity.putExtra("line_items_intent", line_items_intent);
+		}
+		startActivity(newActivity);
+	}
 }

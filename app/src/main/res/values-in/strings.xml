@@ -214,6 +214,8 @@
     <string name="message_thankyou">Terimakasih!</string>
     <string name="message_clear_empty_sale">Maaf, tidak ada data penjualan untuk dibersihkan!</string>
     <string name="message_no_data_found">Maaf, Data tidak ditemukan!</string>
+    <string name="message_paid_delivered">Lunas/Sudah Diambil</string>
+    <string name="message_paid_undelivered">Lunas/Belum Diambil</string>
 
     <string name="title_print_invoice">Print Preview</string>
     <string name="title_list_printer">Printer</string>

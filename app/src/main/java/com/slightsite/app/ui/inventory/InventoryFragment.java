@@ -363,9 +363,24 @@ public class InventoryFragment extends UpdatableFragment {
 				show_animation = false;
 			}
 		} else {
-			bottom_cart_container.getLayoutParams().height = 0;
-			bottom_cart_container.requestLayout();
-			bottom_cart_container.setVisibility(View.INVISIBLE);
+			TranslateAnimation animate = new TranslateAnimation(
+					0,                 // fromXDelta
+					0,                 // toXDelta
+					0,  // fromYDelta
+					bottom_cart_container.getHeight() + 100);                // toYDelta
+			animate.setDuration(500);
+			animate.setFillAfter(true);
+			bottom_cart_container.startAnimation(animate);
+
+			new android.os.Handler().postDelayed(
+					new Runnable() {
+						public void run() {
+							bottom_cart_container.getLayoutParams().height = 0;
+							bottom_cart_container.requestLayout();
+							bottom_cart_container.setVisibility(View.INVISIBLE);
+						}
+					},
+					600);
 
 			cart_total.setText("Empty cart");
 
