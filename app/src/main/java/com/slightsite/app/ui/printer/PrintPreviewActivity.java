@@ -447,6 +447,7 @@ public class PrintPreviewActivity extends Activity {
                                     sale.setPaidByName(server_invoice_data.getString("paid_by_name"));
                                     sale.setRefundedBy(server_invoice_data.getInt("refunded_by"));
                                     sale.setRefundedByName(server_invoice_data.getString("refunded_by_name"));
+                                    sale.setDeliveredByName(server_invoice_data.getString("delivered_by_name"));
 
                                     // force to be delivered if trigger from proceed Order Button
                                     if (getIntent().hasExtra("process_order")) {
@@ -622,7 +623,8 @@ public class PrintPreviewActivity extends Activity {
         if (sale.getCreatedBy() > 0) {
             res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_created_by) + "</td><td colspan=\"3\"> : " + sale.getCreatedByName() + "</td></tr>";
             if (sale.getPaidBy() > 0 && is_delivered > 0) {
-                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + sale.getPaidByName() + "</td></tr>";
+                //res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + sale.getDeliveredByName() + "</td></tr>";
+                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
             }
         } else {
             if (adminData != null) {
@@ -918,14 +920,14 @@ public class PrintPreviewActivity extends Activity {
             }
 
             if (finish_and_print_button.getVisibility() == View.VISIBLE) {
-                TranslateAnimation animate = new TranslateAnimation(
+                /*TranslateAnimation animate = new TranslateAnimation(
                         -100,                 // fromXDelta
                         0,                 // toXDelta
                         0,  // fromYDelta
                         0);                // toYDelta
                 animate.setDuration(500);
                 animate.setFillAfter(true);
-                finish_and_print_button.startAnimation(animate);
+                finish_and_print_button.startAnimation(animate);*/
 
                 finish_and_print_button.setBackgroundColor(getResources().getColor(R.color.grey_800));
                 finish_and_print_button.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_check_white_24dp), null, null, null);

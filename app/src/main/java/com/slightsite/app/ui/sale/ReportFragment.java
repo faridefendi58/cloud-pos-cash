@@ -273,8 +273,8 @@ public class ReportFragment extends UpdatableFragment {
 			}
 		});
 
-		//update();
-		lyt_progress.setVisibility(View.VISIBLE);
+		update();
+		/*lyt_progress.setVisibility(View.VISIBLE);
 		lyt_progress.setAlpha(1.0f);
 		list_recycle_container.setVisibility(View.GONE);
 
@@ -290,7 +290,7 @@ public class ReportFragment extends UpdatableFragment {
 			public void run() {
 				update();
 			}
-		}, LOADING_DURATION + 400);
+		}, LOADING_DURATION + 400);*/
 	}
 	
 	/**
@@ -520,6 +520,7 @@ public class ReportFragment extends UpdatableFragment {
 				params2.put("warehouse_id", warehouse_id + "");
 				params2.put("delivered", "0");
 				params2.put("status_order", "lunas");
+				params2.put("delivered_plan_max_today", "1");
 				params2.put("custom_order_by", "status_order_code");
 				params2.put("order_type", "ASC");
 
@@ -940,6 +941,8 @@ public class ReportFragment extends UpdatableFragment {
 				filter_customer_phone.setText("");
 				filter_status.setSelection(0);
 				filter_shipping_method.setSelection(0);
+
+				bottomSheetDialog.dismiss();
 			}
 		});
 	}

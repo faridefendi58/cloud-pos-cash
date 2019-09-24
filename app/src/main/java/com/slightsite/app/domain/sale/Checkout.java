@@ -112,19 +112,25 @@ public class Checkout implements Serializable {
         }
         if (transfer_bank != null) {
             for (String key : transfer_bank.keySet()) {
-                PaymentItem pi = new PaymentItem(key, Double.parseDouble(transfer_bank.get(key)));
-                payment_items.add(pi);
+                if (transfer_bank.get(key) != null && transfer_bank.get(key).length() > 0) {
+                    PaymentItem pi = new PaymentItem(key, Double.parseDouble(transfer_bank.get(key)));
+                    payment_items.add(pi);
+                }
             }
         }
         if (edc != null) {
             for (String key : edc.keySet()) {
-                PaymentItem pi = new PaymentItem(key, Double.parseDouble(edc.get(key)));
-                payment_items.add(pi);
+                if (edc.get(key) != null && edc.get(key).length() > 0) {
+                    PaymentItem pi = new PaymentItem(key, Double.parseDouble(edc.get(key)));
+                    payment_items.add(pi);
+                }
             }
         }
         if (Integer.parseInt(wallet_tokopedia) > 0) {
-            PaymentItem _wallet = new PaymentItem("wallet_tokopedia", Double.parseDouble(wallet_tokopedia));
-            payment_items.add(_wallet);
+            if (wallet_tokopedia != null && wallet_tokopedia.length() > 0) {
+                PaymentItem _wallet = new PaymentItem("wallet_tokopedia", Double.parseDouble(wallet_tokopedia));
+                payment_items.add(_wallet);
+            }
         }
         return payment_items;
     }
@@ -149,13 +155,17 @@ public class Checkout implements Serializable {
 
         if (transfer_bank != null) {
             for (String key : transfer_bank.keySet()) {
-                payment_received = payment_received + Double.parseDouble(transfer_bank.get(key));
+                if (transfer_bank.get(key) != null && transfer_bank.get(key).length() > 0) {
+                    payment_received = payment_received + Double.parseDouble(transfer_bank.get(key));
+                }
             }
         }
 
         if (edc != null) {
             for (String key : edc.keySet()) {
-                payment_received = payment_received + Double.parseDouble(edc.get(key));
+                if (edc.get(key) != null && edc.get(key).length() > 0) {
+                    payment_received = payment_received + Double.parseDouble(edc.get(key));
+                }
             }
         }
 

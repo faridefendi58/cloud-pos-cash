@@ -104,13 +104,17 @@ public class ViewLoadingDotsGrow extends LinearLayout {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        for (int i = 0; i < OBJECT_SIZE; i++) {
-            if (animator[i].isRunning()) {
-                animator[i].removeAllListeners();
-                animator[i].end();
-                animator[i].cancel();
+        try {
+            if (OBJECT_SIZE > 0) {
+                for (int i = 0; i < OBJECT_SIZE; i++) {
+                    if (animator != null && animator[i].isRunning()) {
+                        animator[i].removeAllListeners();
+                        animator[i].end();
+                        animator[i].cancel();
+                    }
+                }
             }
-        }
+        } catch (Exception e){e.printStackTrace();}
     }
 
     private void animateView() {

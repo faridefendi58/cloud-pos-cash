@@ -265,6 +265,7 @@
     <string name="label_invoice_number">No Tagihan</string>
     <string name="label_date_from">Tanggal Dari</string>
     <string name="label_date_to">Tanggal Sampai</string>
+    <string name="label_checkout_order">Checkout Order</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Mandiri</string>
@@ -273,7 +274,7 @@
     <string name="payment_edc">Mesin EDC</string>
     <string name="payment_wallet_tokopedia">Wallet Tokopedia</string>
 
-    <string name="button_add_to_cart">Tambahkan</string>
+    <string name="button_add_to_cart">Tambah</string>
     <string name="button_syncron">Sinkronkan</string>
     <string name="button_back">Kembali</string>
     <string name="button_login">Masuk</string>
