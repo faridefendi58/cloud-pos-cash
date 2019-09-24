@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +15,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
@@ -37,6 +42,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,12 +60,14 @@ public class ReturActivity extends AppCompatActivity {
     private Customer customer_intent;
     private Shipping shipping_intent;
     private List<Map<String, String>> lineitemList = new ArrayList<Map<String, String>>();
+    private Map<Integer, Integer> product_qty_stacks = new HashMap<Integer, Integer>();
 
     private SharedPreferences sharedpreferences;
     private Register register;
     private Boolean is_local_data = false;
 
     private RecyclerView lineitemListRecycle;
+    private BottomSheetDialog bottomSheetDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,9 +88,9 @@ public class ReturActivity extends AppCompatActivity {
 
         try {
             saleLedger = SaleLedger.getInstance();
+            register = Register.getInstance();
             /*paramCatalog = ParamService.getInstance().getParamCatalog();
             warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
-            register = Register.getInstance();
             productCatalog = Inventory.getInstance().getProductCatalog();*/
         } catch (NoDaoSetException e) {
             e.printStackTrace();
@@ -90,6 +98,7 @@ public class ReturActivity extends AppCompatActivity {
 
         if (getIntent().hasExtra("sale_intent")) { // has sale data from server
             sale = (Sale) getIntent().getSerializableExtra("sale_intent");
+            Log.e(getClass().getSimpleName(), "sale : "+ sale.toMap().toString());
             sale_intent = sale;
             saleId = sale.getId();
             // check if any data in local db
@@ -146,10 +155,35 @@ public class ReturActivity extends AppCompatActivity {
     private void showList(List<LineItem> list) {
         lineitemList = new ArrayList<Map<String, String>>();
         for(LineItem line : list) {
+            product_qty_stacks.put(line.getProduct().getId(), line.getQuantity());
             lineitemList.add(line.toMap());
         }
 
-        //AdapterListOrder sAdap = new AdapterListOrder(ReturActivity.this, list, register, totalBox);
-        //lineitemListRecycle.setAdapter(sAdap);
+        AdapterListProductRetur sAdap = new AdapterListProductRetur(ReturActivity.this, list, register);
+        lineitemListRecycle.setAdapter(sAdap);
+    }
+
+    public void updateProductQtyStacks(int product_id, int qty) {
+        product_qty_stacks.put(product_id, qty);
+        Log.e(getClass().getSimpleName(), "product_qty_stacks : "+ product_qty_stacks.toString());
+    }
+
+    public void proceedRetur(View v) {
+        bottomSheetDialog = new BottomSheetDialog(ReturActivity.this);
+        View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_proceed_retur, null);
+        bottomSheetDialog.setContentView(sheetView);
+        /*((TextView) sheetView.findViewById(R.id.debt_must_pay)).setText(payment_debt.getText());
+        transfer_bank_header = (TextView) sheetView.findViewById(R.id.transfer_bank_header);
+        transfer_bank_container = (LinearLayout) sheetView.findViewById(R.id.transfer_bank_container);
+        finish_submit_button = (Button) sheetView.findViewById(R.id.finish_submit_button);
+        cash_receive = (EditText) sheetView.findViewById(R.id.cash_receive);
+        nominal_bca = (EditText) sheetView.findViewById(R.id.nominal_bca);
+        nominal_mandiri = (EditText) sheetView.findViewById(R.id.nominal_mandiri);
+        nominal_bri = (EditText) sheetView.findViewById(R.id.nominal_bri);*/
+
+        bottomSheetDialog.show();
+
+        //payment_items =  new ArrayList<PaymentItem>();
+        //triggerBottomDialogButton(sheetView);
     }
 }

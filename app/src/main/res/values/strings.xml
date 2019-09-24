@@ -102,6 +102,7 @@
     <string name="title_mark_complete">Finish This Order</string>
     <string name="title_clear_sale">Clear Current Sale</string>
     <string name="title_filter_result">Filter Result</string>
+    <string name="title_proceed_retur">Proceed Retur</string>
 
     <string name="dashboard_income">Income</string>
     <string name="dashboard_transaction">Transaction</string>
@@ -290,6 +291,7 @@
     <string name="button_search">Search</string>
     <string name="button_reset_to_default">Reset To Default</string>
     <string name="button_research">Research</string>
+    <string name="button_proceed_retur">Proceed Retur</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
 

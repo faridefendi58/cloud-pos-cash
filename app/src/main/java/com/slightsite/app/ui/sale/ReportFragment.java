@@ -12,6 +12,7 @@ import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -69,6 +70,7 @@ import com.slightsite.app.domain.sale.Shipping;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.Tools;
+import com.slightsite.app.techicalservices.ViewAnimation;
 import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.component.UpdatableFragment;
 
@@ -114,6 +116,9 @@ public class ReportFragment extends UpdatableFragment {
 	public static final int MONTHLY = 3;
 	public static final int YEARLY = 4;
 
+	private final static int LOADING_DURATION = 3500;
+	private LinearLayout lyt_progress;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
@@ -155,6 +160,8 @@ public class ReportFragment extends UpdatableFragment {
 		no_data_container = (RelativeLayout) view.findViewById(R.id.no_data_container);
 		button_reset_to_default = (Button) view.findViewById(R.id.button_reset_to_default);
 		button_research = (Button) view.findViewById(R.id.button_research);
+
+		lyt_progress = (LinearLayout) view.findViewById(R.id.lyt_progress);
 
 		initUI();
 
@@ -266,7 +273,24 @@ public class ReportFragment extends UpdatableFragment {
 			}
 		});
 
-		update();
+		//update();
+		lyt_progress.setVisibility(View.VISIBLE);
+		lyt_progress.setAlpha(1.0f);
+		list_recycle_container.setVisibility(View.GONE);
+
+		new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				ViewAnimation.fadeOut(lyt_progress);
+			}
+		}, LOADING_DURATION);
+
+		new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				update();
+			}
+		}, LOADING_DURATION + 400);
 	}
 	
 	/**

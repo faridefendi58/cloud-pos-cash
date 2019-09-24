@@ -325,6 +325,7 @@ public class SaleDetailActivity extends Activity{
 				JSONArray arrPayment = null;
 				try {
 					arrPayment = new JSONArray(getIntent().getStringExtra("payment_intent"));
+					Log.e(getClass().getSimpleName(), "arrPayment from payment_intent : "+ arrPayment.toString());
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -1061,6 +1062,7 @@ public class SaleDetailActivity extends Activity{
 					Toast.makeText(getApplicationContext(),
 							"Pembayaran masih kurang " + (tot_debt - tot_payment),
 							Toast.LENGTH_SHORT).show();
+					payment_items.clear();
 				} else {
 					// ready to submit
 					try {
@@ -1092,8 +1094,12 @@ public class SaleDetailActivity extends Activity{
 		});
 	}
 
-	private void _complete_inv(Map mObj) {
-		String _url = Server.URL + "transaction/complete?api-key=" + Server.API_KEY;
+	/**
+	 * Use to set complete to server
+	 * @param mObj
+	 */
+	private void _complete_inv(final Map mObj) {
+		String _url = Server.URL + "transaction/complete-payment?api-key=" + Server.API_KEY;
 		String qry = URLBuilder.httpBuildQuery(mObj, "UTF-8");
 		_url += "&"+ qry;
 
@@ -1127,7 +1133,40 @@ public class SaleDetailActivity extends Activity{
 
 								bottomSheetDialog.dismiss();
 
-								Intent newActivity = new Intent(getApplicationContext(), MainActivity.class);
+								//Intent newActivity = new Intent(getApplicationContext(), MainActivity.class);
+								Intent newActivity = new Intent(SaleDetailActivity.this,
+										PrintPreviewActivity.class);
+								newActivity.putExtra("saleId", saleId);
+								newActivity.putExtra("shipping_method", shipping.getMethod());
+								newActivity.putExtra("process_order", true);
+								if (!is_local_data) {
+									Sale new_sale = new Sale(saleId, sale.getEndTime());
+									new_sale.setServerInvoiceNumber(sale.getServerInvoiceNumber());
+									new_sale.setServerInvoiceId(sale.getServerInvoiceId());
+									new_sale.setCustomerId(sale.getCustomerId());
+									new_sale.setStatus(sale.getStatus());
+									new_sale.setDiscount(sale.getDiscount());
+
+									newActivity.putExtra("sale_intent", new_sale);
+									newActivity.putExtra("customer_intent", customer_intent);
+									newActivity.putExtra("shipping_intent", shipping_intent);
+
+                                    JSONArray arrPayment = null;
+                                    try {
+                                        arrPayment = new JSONArray(payment_intent);
+                                        if (arrPayment != null) {
+                                            for (PaymentItem pi : payment_items) {
+                                                arrPayment.put(pi.toMap());
+                                            }
+                                            payment_intent = arrPayment.toString();
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+									newActivity.putExtra("payment_intent", payment_intent);
+									newActivity.putExtra("line_items_intent", line_items_intent);
+								}
 								finish();
 								startActivity(newActivity);
 							}

@@ -244,6 +244,22 @@
 
         </ScrollView>
 
+        <LinearLayout
+            android:id="@+id/lyt_progress"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_centerInParent="true"
+            android:layout_margin="@dimen/spacing_medium"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <com.slightsite.app.techicalservices.ViewLoadingDotsGrow
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:background="@color/greenUcok" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
