@@ -452,6 +452,9 @@ public class SaleDetailActivity extends Activity{
 				shipping.setDate(date);
 			}
 			shipping_date.setText(shipping.getDate());
+			if (shipping.getPickupDate() != null) {
+				shipping_date.setText(shipping.getPickupDate());
+			}
 			shipping_warehouse.setText(shipping.getWarehouseName());
 			if (shipping.getAddress() != null && shipping.getMethod() > 1) {
 				shipping_warehouse.setText(shipping.getAddress());

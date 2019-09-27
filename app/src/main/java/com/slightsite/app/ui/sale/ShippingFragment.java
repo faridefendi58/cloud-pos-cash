@@ -474,7 +474,7 @@ public class ShippingFragment extends Fragment {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 
-                Calendar newDate = Calendar.getInstance();
+                final Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
                 long date = newDate.getTimeInMillis();
                 ((EditText) v).setText(Tools.getFormattedDateShort(date));
@@ -486,7 +486,7 @@ public class ShippingFragment extends Fragment {
                     new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                            Calendar cur_time = Calendar.getInstance();
+                            Calendar cur_time = newDate; //Calendar.getInstance();
                             cur_time.set(Calendar.HOUR_OF_DAY, hourOfDay);
                             cur_time.set(Calendar.MINUTE, minute);
                             long date2 = cur_time.getTimeInMillis();
