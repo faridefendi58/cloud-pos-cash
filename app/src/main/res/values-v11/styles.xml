@@ -6,6 +6,7 @@
     -->
     <style name="AppBaseTheme" parent="android:Theme.Material.Light.DarkActionBar">
         <!-- API 11 theme customizations can go here. -->
+        <item name="android:windowTitleBackgroundStyle">@color/greenUcok</item>
     </style>
 
 </resources>
