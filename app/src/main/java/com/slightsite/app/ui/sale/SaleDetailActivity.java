@@ -107,7 +107,7 @@ public class SaleDetailActivity extends Activity{
 	private TextView totalBox;
 	private TextView dateBox;
 	private RecyclerView lineitemListRecycle;
-	private ListView paymentitemListView;
+	private RecyclerView paymentitemListView;
 	private List<Map<String, String>> lineitemList;
 	private Sale sale;
 	private int saleId;
@@ -286,7 +286,11 @@ public class SaleDetailActivity extends Activity{
 		
 		totalBox = (TextView) findViewById(R.id.totalBox);
 		dateBox = (TextView) findViewById(R.id.dateBox);
-		paymentitemListView = (ListView) findViewById(R.id.paymentitemList);
+		paymentitemListView = (RecyclerView) findViewById(R.id.paymentitemList);
+		paymentitemListView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+		paymentitemListView.setHasFixedSize(true);
+		paymentitemListView.setNestedScrollingEnabled(false);
+
 		customerBox = (TextView) findViewById(R.id.customerBox);
 		status = (TextView) findViewById(R.id.status);
         invoice_number = (TextView) findViewById(R.id.invoice_number);
@@ -426,8 +430,9 @@ public class SaleDetailActivity extends Activity{
 			}
 		}
 
-		SimpleAdapter pAdap = new SimpleAdapter(SaleDetailActivity.this, pyitemList,
-				R.layout.listview_payment, new String[]{"formated_payment_channel","formated_amount"}, new int[] {R.id.title, R.id.price});
+		/*SimpleAdapter pAdap = new SimpleAdapter(SaleDetailActivity.this, pyitemList,
+				R.layout.listview_payment, new String[]{"formated_payment_channel","formated_amount"}, new int[] {R.id.title, R.id.price});*/
+		AdapterListPaymentSimple pAdap = new AdapterListPaymentSimple(paymentList);
 		paymentitemListView.setAdapter(pAdap);
 
 		// building shipping information
@@ -553,7 +558,7 @@ public class SaleDetailActivity extends Activity{
 	 */
 	public void update() {
 		totalBox.setText(CurrencyController.getInstance().moneyFormat(sale.getTotal()) + "");
-		dateBox.setText(DateTimeStrategy.parseDate(sale.getEndTime(), "dd/MM/yy HH:s") + "");
+		dateBox.setText(DateTimeStrategy.parseDate(sale.getEndTime(), "dd MMM yyyy HH:s") + "");
 		customerBox.setText(customer.getName());
 		status.setText(sale.getStatus());
 		Map<String, String> salemap = sale.toMap();

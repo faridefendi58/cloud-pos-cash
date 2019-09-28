@@ -565,12 +565,19 @@
 
                             </LinearLayout>
 
-                            <ListView
+                            <!--<ListView
                                 android:id="@+id/paymentitemList"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:paddingLeft="@dimen/spacing_middle">
-                            </ListView>
+                            </ListView>-->
+
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/paymentitemList"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:scrollbars="vertical"
+                                android:scrollingCache="true"/>
 
                             <View
                                 android:layout_width="match_parent"

@@ -1,6 +1,7 @@
 package com.slightsite.app.domain.payment;
 
 import com.slightsite.app.R;
+import com.slightsite.app.domain.AppController;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.ui.sale.CheckoutActivity;
 
@@ -83,12 +84,12 @@ public class Payment implements Serializable {
 
     public HashMap<String,String> getPaymentTypes() {
         HashMap<String,String> types = new HashMap<String, String>();
-        types.put("cash_receive", "Cash");
-        types.put("nominal_mandiri", "Bank Mandiri");
-        types.put("nominal_bca", "Bank BCA");
-        types.put("nominal_bri", "Bank BRI");
-        types.put("nominal_edc", "EDC Payment");
-        types.put("wallet_tokopedia", "Wallet Tokopedia");
+        types.put("cash_receive", AppController.getInstance().getString(R.string.payment_cash));
+        types.put("nominal_mandiri", AppController.getInstance().getString(R.string.payment_mandiri));
+        types.put("nominal_bca", AppController.getInstance().getString(R.string.payment_bca));
+        types.put("nominal_bri", AppController.getInstance().getString(R.string.payment_bri));
+        types.put("nominal_edc", AppController.getInstance().getString(R.string.payment_edc));
+        types.put("wallet_tokopedia", AppController.getInstance().getString(R.string.payment_wallet_tokopedia));
 
         return types;
     }

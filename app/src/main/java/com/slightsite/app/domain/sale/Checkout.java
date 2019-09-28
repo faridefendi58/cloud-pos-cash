@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.util.Log;
 
+import com.slightsite.app.R;
+import com.slightsite.app.domain.AppController;
 import com.slightsite.app.domain.customer.Customer;
 
 import java.io.Serializable;
@@ -137,12 +139,13 @@ public class Checkout implements Serializable {
 
     public HashMap<String,String> getPaymentTypes() {
         HashMap<String,String> types = new HashMap<String, String>();
-        types.put("cash_receive", "Cash Payment");
-        types.put("nominal_mandiri", "Transfer Bank Mandiri");
-        types.put("nominal_bca", "Transfer Bank BCA");
-        types.put("nominal_bri", "Transfer Bank BRI");
-        types.put("nominal_edc", "EDC Payment");
-        types.put("wallet_tokopedia", "Wallet Tokopedia");
+
+        types.put("cash_receive", AppController.getInstance().getString(R.string.payment_cash));
+        types.put("nominal_mandiri", AppController.getInstance().getString(R.string.payment_mandiri));
+        types.put("nominal_bca", AppController.getInstance().getString(R.string.payment_bca));
+        types.put("nominal_bri", AppController.getInstance().getString(R.string.payment_bri));
+        types.put("nominal_edc", AppController.getInstance().getString(R.string.payment_edc));
+        types.put("wallet_tokopedia", AppController.getInstance().getString(R.string.payment_wallet_tokopedia));
 
         return types;
     }
