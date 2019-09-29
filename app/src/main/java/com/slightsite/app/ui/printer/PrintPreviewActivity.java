@@ -40,6 +40,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.webkit.WebSettings;
@@ -112,6 +113,7 @@ import java.util.UUID;
 
 import static com.slightsite.app.ui.LoginActivity.TAG_ID;
 
+@SuppressLint("ClickableViewAccessibility")
 public class PrintPreviewActivity extends Activity {
 
     private static final String TAG = PrintPreviewActivity.class.getSimpleName();
@@ -394,7 +396,20 @@ public class PrintPreviewActivity extends Activity {
         print_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                just_print(true);
+                just_print(false);
+            }
+        });
+
+        print_button.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    print_button.setBackgroundColor(getResources().getColor(R.color.grey_800));
+                } else if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                    print_button.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_check_white_24dp), null, null, null);
+                    print_button.setPadding(10, 0, 0, 0);
+                }
+                return false;
             }
         });
 
@@ -402,6 +417,19 @@ public class PrintPreviewActivity extends Activity {
             @Override
             public void onClick(View v) {
                 finishAndPrint();
+            }
+        });
+
+        finish_and_print_button.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    finish_and_print_button.setBackgroundColor(getResources().getColor(R.color.grey_800));
+                } else if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                    finish_and_print_button.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_check_white_24dp), null, null, null);
+                    finish_and_print_button.setPadding(10, 0, 0, 0);
+                }
+                return false;
             }
         });
     }
@@ -920,18 +948,9 @@ public class PrintPreviewActivity extends Activity {
             }
 
             if (finish_and_print_button.getVisibility() == View.VISIBLE) {
-                /*TranslateAnimation animate = new TranslateAnimation(
-                        -100,                 // fromXDelta
-                        0,                 // toXDelta
-                        0,  // fromYDelta
-                        0);                // toYDelta
-                animate.setDuration(500);
-                animate.setFillAfter(true);
-                finish_and_print_button.startAnimation(animate);*/
-
-                finish_and_print_button.setBackgroundColor(getResources().getColor(R.color.grey_800));
+                /*finish_and_print_button.setBackgroundColor(getResources().getColor(R.color.grey_800));
                 finish_and_print_button.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_check_white_24dp), null, null, null);
-                finish_and_print_button.setPadding(10, 0, 0, 0);
+                finish_and_print_button.setPadding(10, 0, 0, 0);*/
                 finish_and_print_button.setText(getResources().getString(R.string.button_new_transaction));
                 is_finished = true;
             }
@@ -1033,21 +1052,21 @@ public class PrintPreviewActivity extends Activity {
                     if (animated) {
                         Log.e(getClass().getSimpleName(), "finish_and_print_button.getVisibility() : "+ finish_and_print_button.getVisibility());
 
-                        TranslateAnimation animate = new TranslateAnimation(
+                        /*TranslateAnimation animate = new TranslateAnimation(
                                 -100,                 // fromXDelta
                                 0,                 // toXDelta
                                 0,  // fromYDelta
                                 0);                // toYDelta
                         animate.setDuration(500);
-                        animate.setFillAfter(true);
+                        animate.setFillAfter(true);*/
                         if (finish_and_print_button.getVisibility() == View.VISIBLE) {
-                            finish_and_print_button.startAnimation(animate);
+                            //finish_and_print_button.startAnimation(animate);
 
                             finish_and_print_button.setBackgroundColor(getResources().getColor(R.color.grey_800));
                             finish_and_print_button.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_check_white_24dp), null, null, null);
                             finish_and_print_button.setPadding(10, 0, 0, 0);
                         } else {
-                            print_button.startAnimation(animate);
+                            //print_button.startAnimation(animate);
 
                             print_button.setBackgroundColor(getResources().getColor(R.color.grey_800));
                             print_button.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_check_white_24dp), null, null, null);
