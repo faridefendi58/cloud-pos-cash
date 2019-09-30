@@ -7,7 +7,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.slightsite.app.R;
@@ -27,6 +29,7 @@ public class AdapterListProductRetur extends RecyclerView.Adapter<RecyclerView.V
     private OnItemClickListener mOnItemClickListener;
     private Register register;
     private Map<Integer, Bitmap> image_stacks = new HashMap<Integer, Bitmap>();
+    private Map<String, Integer> qty_stacks = new HashMap<String, Integer>();
 
     public interface OnItemClickListener {
         void onItemClick(View view, LineItem obj, int position);
@@ -52,6 +55,9 @@ public class AdapterListProductRetur extends RecyclerView.Adapter<RecyclerView.V
         public TextView add_qty;
         public View lyt_parent;
         public View line_separator;
+        public Button addReturButton;
+        public LinearLayout add_to_queue_container;
+        public LinearLayout add_qty_container;
 
         public OriginalViewHolder(View v) {
             super(v);
@@ -63,6 +69,9 @@ public class AdapterListProductRetur extends RecyclerView.Adapter<RecyclerView.V
             add_qty = (TextView) v.findViewById(R.id.add_qty);
             lyt_parent = (View) v.findViewById(R.id.lyt_parent);
             line_separator = (View) v.findViewById(R.id.line_separator);
+            addReturButton = (Button) v.findViewById(R.id.addReturButton);
+            add_to_queue_container = (LinearLayout) v.findViewById(R.id.add_to_queue_container);
+            add_qty_container = (LinearLayout) v.findViewById(R.id.add_qty_container);
         }
     }
 
@@ -83,18 +92,18 @@ public class AdapterListProductRetur extends RecyclerView.Adapter<RecyclerView.V
 
             final LineItem p = items.get(position);
             view.title.setText(p.getProduct().getName());
-            int qty = 1;
             double prc = 0.0;
-            double sub_total = 0.0;
+            int qty = 0;
             try {
                 qty = p.getQuantity();
                 prc = p.getPriceAtSale();
+                qty_stacks.put(p.getProduct().getName(), qty);
             } catch (Exception e) {
                 Log.e("Adapter List Cart", e.getMessage());
             }
             view.price.setText(""+ qty +" x "+ CurrencyController.getInstance().moneyFormat(prc));
-            view.quantity.setText(qty+"");
-            //sub_total = prc * qty;
+            view.quantity.setText("0");
+            Log.e(getClass().getSimpleName(), "qty_stacks : "+ qty_stacks.toString());
 
             view.image.setImageResource(R.drawable.ic_no_image);
             try {
@@ -133,8 +142,12 @@ public class AdapterListProductRetur extends RecyclerView.Adapter<RecyclerView.V
                         }
 
                         view.quantity.setText(current_qty+"");
-                        if (current_qty > 0) {
-                            ((ReturActivity) ctx).updateProductQtyStacks(p.getProduct().getId(), current_qty);
+                        if (current_qty >= 0) {
+                            ((ReturActivity) ctx).updateProductReturStacks(p.getProduct().getId(), current_qty);
+                            if (current_qty == 0) {
+                                view.add_to_queue_container.setVisibility(View.VISIBLE);
+                                view.add_qty_container.setVisibility(View.GONE);
+                            }
                         }
                     } catch (Exception e){e.printStackTrace();}
                 }
@@ -145,15 +158,28 @@ public class AdapterListProductRetur extends RecyclerView.Adapter<RecyclerView.V
                 public void onClick(View v) {
                     try {
                         int current_qty = Integer.parseInt(view.quantity.getText().toString());
+                        int max_qty = qty_stacks.get(view.title.getText().toString());
                         if (current_qty > 0) {
-                            current_qty = current_qty + 1;
+                            if (current_qty < max_qty) {
+                                current_qty = current_qty + 1;
+                            }
                         }
 
                         view.quantity.setText(current_qty+"");
-                        if (current_qty > 0) {
-                            ((ReturActivity) ctx).updateProductQtyStacks(p.getProduct().getId(), current_qty);
+                        if (current_qty > 0 && current_qty <= max_qty) {
+                            ((ReturActivity) ctx).updateProductReturStacks(p.getProduct().getId(), current_qty);
                         }
                     } catch (Exception e){e.printStackTrace();}
+                }
+            });
+
+            view.addReturButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((ReturActivity) ctx).updateProductReturStacks(p.getProduct().getId(), 1);
+                    view.quantity.setText("1");
+                    view.add_qty_container.setVisibility(View.VISIBLE);
+                    view.add_to_queue_container.setVisibility(View.GONE);
                 }
             });
         }

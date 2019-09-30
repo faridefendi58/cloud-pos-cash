@@ -29,6 +29,8 @@ import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.inventory.Inventory;
 import com.slightsite.app.domain.inventory.LineItem;
+import com.slightsite.app.domain.inventory.Product;
+import com.slightsite.app.domain.inventory.ProductCatalog;
 import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.payment.Payment;
 import com.slightsite.app.domain.sale.PaymentItem;
@@ -40,6 +42,8 @@ import com.slightsite.app.domain.warehouse.WarehouseService;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.ui.sale.AdapterListOrder;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
@@ -65,6 +69,10 @@ public class ReturActivity extends AppCompatActivity {
     private Shipping shipping_intent;
     private List<Map<String, String>> lineitemList = new ArrayList<Map<String, String>>();
     private Map<Integer, Integer> product_qty_stacks = new HashMap<Integer, Integer>();
+    private Map<Integer, Integer> product_retur_stacks = new HashMap<Integer, Integer>();
+    private String line_items_intent;
+    private List<LineItem> lineItems;
+    private ProductCatalog productCatalog;
 
     private SharedPreferences sharedpreferences;
     private Register register;
@@ -93,9 +101,9 @@ public class ReturActivity extends AppCompatActivity {
         try {
             saleLedger = SaleLedger.getInstance();
             register = Register.getInstance();
+            productCatalog = Inventory.getInstance().getProductCatalog();
             /*paramCatalog = ParamService.getInstance().getParamCatalog();
-            warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
-            productCatalog = Inventory.getInstance().getProductCatalog();*/
+            warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();*/
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -119,6 +127,40 @@ public class ReturActivity extends AppCompatActivity {
                 customer = (Customer) getIntent().getSerializableExtra("customer_intent");
                 customer_intent = customer;
             }
+
+            if (getIntent().hasExtra("line_items_intent")) { // has line item data from server
+                line_items_intent = getIntent().getStringExtra("line_items_intent");
+                JSONArray arrLineItems = null;
+                try {
+                    arrLineItems = new JSONArray(getIntent().getStringExtra("line_items_intent"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (arrLineItems != null) {
+                    lineItems = new ArrayList<LineItem>();
+                    for (int m = 0; m < arrLineItems.length(); m++) {
+                        JSONObject line_object = null;
+                        try {
+                            line_object = arrLineItems.getJSONObject(m);
+                            Product p = productCatalog.getProductByBarcode(line_object.getString("barcode"));
+                            if (p != null) {
+                                LineItem lineItem = new LineItem(
+                                        p,
+                                        line_object.getInt("qty"),
+                                        line_object.getInt("qty")
+                                );
+                                lineItem.setUnitPriceAtSale(line_object.getDouble("unit_price"));
+                                lineItems.add(lineItem);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    sale.setAllLineItem(lineItems);
+                }
+            }
+
+            showList(sale.getAllLineItem());
         } else {
             saleId = Integer.parseInt(getIntent().getStringExtra("saleId"));
             is_local_data = true;
@@ -170,6 +212,15 @@ public class ReturActivity extends AppCompatActivity {
     public void updateProductQtyStacks(int product_id, int qty) {
         product_qty_stacks.put(product_id, qty);
         Log.e(getClass().getSimpleName(), "product_qty_stacks : "+ product_qty_stacks.toString());
+    }
+
+    public void updateProductReturStacks(int product_id, int qty) {
+        if (qty > 0) {
+            product_retur_stacks.put(product_id, qty);
+        } else {
+            product_retur_stacks.remove(product_id);
+        }
+        Log.e(getClass().getSimpleName(), "product_retur_stacks : "+ product_retur_stacks.toString());
     }
 
     private TextView transfer_bank_header;

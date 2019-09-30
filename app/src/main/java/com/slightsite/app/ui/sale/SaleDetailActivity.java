@@ -1289,7 +1289,7 @@ public class SaleDetailActivity extends Activity{
 	public void returInvoice(View v) {
 		Intent intent = new Intent(SaleDetailActivity.this, ReturActivity.class);
 		intent.putExtra("saleId", saleId+"");
-		if (!is_local_data) {
+		//if (!is_local_data) {
 			Sale new_sale = new Sale(saleId, sale.getEndTime());
 			new_sale.setServerInvoiceNumber(sale.getServerInvoiceNumber());
 			new_sale.setServerInvoiceId(sale.getServerInvoiceId());
@@ -1302,7 +1302,8 @@ public class SaleDetailActivity extends Activity{
 			intent.putExtra("shipping_intent", shipping_intent);
 			intent.putExtra("payment_intent", payment_intent);
 			intent.putExtra("line_items_intent", line_items_intent);
-		}
+		//}
+
 		finish();
 		startActivity(intent);
 	}
