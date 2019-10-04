@@ -1052,7 +1052,7 @@ public class SaleDetailActivity extends Activity{
 					if (mandiri.contains(".")) {
 						mandiri = mandiri.replaceAll("\\.", "");
 					}
-					PaymentItem pi_mandiri = new PaymentItem("nominal_mandiri", Double.parseDouble(bca));
+					PaymentItem pi_mandiri = new PaymentItem("nominal_mandiri", Double.parseDouble(mandiri));
 					payment_items.add(pi_mandiri);
 					tot_payment = tot_payment + Double.parseDouble(mandiri);
 				}
@@ -1061,7 +1061,7 @@ public class SaleDetailActivity extends Activity{
 					if (bri.contains(".")) {
 						bri = bri.replaceAll("\\.", "");
 					}
-					PaymentItem pi_bri = new PaymentItem("pi_bri", Double.parseDouble(bca));
+					PaymentItem pi_bri = new PaymentItem("nominal_bri", Double.parseDouble(bri));
 					payment_items.add(pi_bri);
 					tot_payment = tot_payment + Double.parseDouble(bri);
 				}

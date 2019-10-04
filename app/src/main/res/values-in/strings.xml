@@ -288,6 +288,7 @@
     <string name="button_research">Cari Ulang</string>
     <string name="button_proceed_retur">Proses Retur</string>
     <string name="button_add_to_retur">Retur</string>
+    <string name="button_finish_retur">Selesaikan Retur</string>
 
     <string name="confirm_edit">Anda yakin ingin mengubah data ini?</string>
 

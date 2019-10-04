@@ -464,6 +464,27 @@ public class PrintPreviewActivity extends Activity {
                                 if (server_invoice_data.has("shipping")) {
                                     JSONArray arr_shipping = server_invoice_data.getJSONArray("shipping");
                                     JSONObject obj_shipping = arr_shipping.getJSONObject(0);
+                                    // instead of using local data, its better build payment data from server
+                                    // in order to get latest data
+                                    JSONArray arr_payment = server_invoice_data.getJSONArray("payment");
+                                    if (arr_payment.length() > 0) {
+                                        paymentList.clear();
+                                        for (int m = 0; m < arr_payment.length(); m++) {
+                                            JSONObject pay_method = null;
+                                            try {
+                                                pay_method = arr_payment.getJSONObject(m);
+                                                Payment payment = new Payment(
+                                                        -1,
+                                                        sale.getId(),
+                                                        pay_method.getString("type"),
+                                                        pay_method.getDouble("amount_tendered")
+                                                );
+                                                paymentList.add(payment);
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }
                                 }
 
                                 if (server_invoice_data.has("created_by") && !server_invoice_data.getString("created_by").toString().equals("null")) {
@@ -725,15 +746,20 @@ public class PrintPreviewActivity extends Activity {
                 int amnt = 0;
                 String amnt_str = String.format("%.0f", py.getAmount());
                 try {
-                    amnt = Integer.parseInt(amnt_str);
-                    payment_total = payment_total + amnt;
+                    if (amnt_str != "0" || amnt_str != "0.0") {
+                        amnt = Integer.parseInt(amnt_str);
+                        payment_total = payment_total + amnt;
+                    }
                 } catch (Exception e){
                     Log.e(getClass().getSimpleName(), e.getMessage());
                 }
 
-                res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(getPaymentChannel(py.getPaymentChannel())) +" :</td>" +
-                        "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(amnt) +"</td>";
-
+                if (amnt > 0) {
+                    try {
+                        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">" + getResources().getString(getPaymentChannel(py.getPaymentChannel())) + " :</td>" +
+                                "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(amnt) + "</td>";
+                    } catch (Exception e){e.printStackTrace();}
+                }
                 /*res += "<tr><td colspan=\"2\" style=\"text-align:right;\">"+ py.toMap().get("formated_payment_channel") +" :</td>" +
                         "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(amnt) +"</td>";*/
             }

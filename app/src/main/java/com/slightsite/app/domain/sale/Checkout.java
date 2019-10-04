@@ -65,7 +65,12 @@ public class Checkout implements Serializable {
         if (nominal.contains(".")) {
             nominal = nominal.split("\\.")[0];
         }
+
         this.cash_receive = nominal;
+    }
+
+    public void removeCashReceive() {
+        this.cash_receive = "0";
     }
 
     public String getCashReceive() {
@@ -102,15 +107,15 @@ public class Checkout implements Serializable {
 
     public List<PaymentItem> getPaymentItems() {
         payment_items =  new ArrayList<PaymentItem>();
-        if (Integer.parseInt(cash_receive) > 0) {
+        if (cash_receive.length() > 0 && Integer.parseInt(cash_receive) > 0) {
             PaymentItem cash = new PaymentItem("cash_receive", Double.parseDouble(cash_receive));
             payment_items.add(cash);
         } else {
-            // ini hanya default value
-            if (Integer.parseInt(wallet_tokopedia) == 0) {
+            // ini hanya default value, tp ini bermasalah jika nilai cash_receive diubah jadi 0 dr form
+            /*if (Integer.parseInt(wallet_tokopedia) == 0) {
                 PaymentItem cash = new PaymentItem("cash_receive", 0.0);
                 payment_items.add(cash);
-            }
+            }*/
         }
         if (transfer_bank != null) {
             for (String key : transfer_bank.keySet()) {
@@ -134,6 +139,13 @@ public class Checkout implements Serializable {
                 payment_items.add(_wallet);
             }
         }
+
+        // last check if null payment_items
+        if (payment_items.size() == 0) {
+            PaymentItem cash = new PaymentItem("cash_receive", 0.0);
+            payment_items.add(cash);
+        }
+
         return payment_items;
     }
 
@@ -152,7 +164,7 @@ public class Checkout implements Serializable {
 
     public Double getTotalPaymentReceived() {
         Double payment_received = 0.00;
-        if (Integer.parseInt(cash_receive) > 0) {
+        if (cash_receive.length() > 0 && Integer.parseInt(cash_receive) > 0) {
             payment_received = payment_received + Double.parseDouble(cash_receive);
         }
 

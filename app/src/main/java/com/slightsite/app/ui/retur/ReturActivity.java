@@ -69,7 +69,9 @@ public class ReturActivity extends AppCompatActivity {
     private Shipping shipping_intent;
     private List<Map<String, String>> lineitemList = new ArrayList<Map<String, String>>();
     private Map<Integer, Integer> product_qty_stacks = new HashMap<Integer, Integer>();
+    private Map<Integer, Double> product_price_stacks = new HashMap<Integer, Double>();
     private Map<Integer, Integer> product_retur_stacks = new HashMap<Integer, Integer>();
+
     private String line_items_intent;
     private List<LineItem> lineItems;
     private ProductCatalog productCatalog;
@@ -202,6 +204,7 @@ public class ReturActivity extends AppCompatActivity {
         lineitemList = new ArrayList<Map<String, String>>();
         for(LineItem line : list) {
             product_qty_stacks.put(line.getProduct().getId(), line.getQuantity());
+            product_price_stacks.put(line.getProduct().getId(), line.getPriceAtSale());
             lineitemList.add(line.toMap());
         }
 
@@ -231,12 +234,24 @@ public class ReturActivity extends AppCompatActivity {
     private EditText nominal_mandiri;
     private EditText nominal_bri;
     private List<PaymentItem> payment_items;
+    private RecyclerView returItemListRecycle;
 
     public void proceedRetur(View v) {
         bottomSheetDialog = new BottomSheetDialog(ReturActivity.this);
         View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_proceed_retur, null);
         bottomSheetDialog.setContentView(sheetView);
-        ((TextView) sheetView.findViewById(R.id.debt_must_pay)).setText(sale.toMap().get("total"));
+
+        // get total retur price
+        Double tot_price = 0.0;
+        try {
+            if (product_retur_stacks.size() > 0) {
+                for (Map.Entry<Integer, Integer> entry : product_retur_stacks.entrySet()) {
+                    tot_price = tot_price + product_price_stacks.get(entry.getKey()) * entry.getValue();
+                }
+            }
+            ((TextView) sheetView.findViewById(R.id.debt_must_pay)).setText(CurrencyController.getInstance().moneyFormat(tot_price));
+        } catch (Exception e){e.printStackTrace();}
+
         transfer_bank_header = (TextView) sheetView.findViewById(R.id.transfer_bank_header);
         transfer_bank_container = (LinearLayout) sheetView.findViewById(R.id.transfer_bank_container);
         finish_submit_button = (Button) sheetView.findViewById(R.id.finish_submit_button);
@@ -244,6 +259,14 @@ public class ReturActivity extends AppCompatActivity {
         nominal_bca = (EditText) sheetView.findViewById(R.id.nominal_bca);
         nominal_mandiri = (EditText) sheetView.findViewById(R.id.nominal_mandiri);
         nominal_bri = (EditText) sheetView.findViewById(R.id.nominal_bri);
+
+        returItemListRecycle = (RecyclerView) sheetView.findViewById(R.id.returItemListRecycle);
+        returItemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        returItemListRecycle.setHasFixedSize(true);
+        returItemListRecycle.setNestedScrollingEnabled(false);
+
+        //AdapterListConfirmRetur sAdap = new AdapterListConfirmRetur(ReturActivity.this, list, register);
+        //returItemListRecycle.setAdapter(sAdap);
 
         bottomSheetDialog.show();
 

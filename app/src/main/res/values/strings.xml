@@ -294,6 +294,7 @@
     <string name="button_research">Research</string>
     <string name="button_proceed_retur">Proceed Retur</string>
     <string name="button_add_to_retur">Retur</string>
+    <string name="button_finish_retur">Finish Retur</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
 

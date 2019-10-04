@@ -283,7 +283,13 @@ public class PaymentFragment extends Fragment {
                 try {
                     String cleanString = s.toString().replaceAll("[.]", "");
                     if (setType == "cashReceive") {
-                        c_data.setCashReceive(cleanString);
+                        if (cleanString.length() > 0) {
+                            c_data.setCashReceive(cleanString);
+                        } else {
+                            if (s.toString().length() == 0) {
+                                c_data.removeCashReceive();
+                            }
+                        }
                     } else if (setType == "nominal_mandiri") {
                         if (banks.containsKey(setType)) {
                             banks.remove(setType);

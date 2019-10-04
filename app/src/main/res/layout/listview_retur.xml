@@ -67,7 +67,7 @@
                     android:id="@+id/addReturButton"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/spacing_xlarge"
-                    android:background="@color/yellowDarkUcok"
+                    android:background="@color/orange_600"
                     android:text="@string/button_add_to_retur"
                     android:textColor="@color/colorWhite"
                     android:textSize="@dimen/spacing_middle"
