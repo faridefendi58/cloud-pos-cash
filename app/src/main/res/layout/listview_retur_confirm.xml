@@ -51,7 +51,7 @@
                 android:id="@+id/addReturStockButton"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/spacing_xlarge"
-                android:background="@color/greenUcok"
+                android:background="@color/orange_600"
                 android:text="@string/button_change"
                 android:textColor="@color/colorWhite"
                 android:textSize="@dimen/spacing_middle"

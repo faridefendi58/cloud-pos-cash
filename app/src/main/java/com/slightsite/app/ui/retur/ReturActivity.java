@@ -1,5 +1,6 @@
 package com.slightsite.app.ui.retur;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -33,6 +34,7 @@ import com.slightsite.app.domain.inventory.Product;
 import com.slightsite.app.domain.inventory.ProductCatalog;
 import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.payment.Payment;
+import com.slightsite.app.domain.retur.Retur;
 import com.slightsite.app.domain.sale.PaymentItem;
 import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.domain.sale.Sale;
@@ -73,6 +75,7 @@ public class ReturActivity extends AppCompatActivity {
     private Map<Integer, Double> product_price_stacks = new HashMap<Integer, Double>();
     private Map<Integer, Integer> product_retur_stacks = new HashMap<Integer, Integer>();
     private Map<Integer, Integer> stock_retur_stacks = new HashMap<Integer, Integer>();
+    private Map<Integer, String> product_name_stacks = new HashMap<Integer, String>();
 
     private String line_items_intent;
     private List<LineItem> lineItems;
@@ -207,6 +210,7 @@ public class ReturActivity extends AppCompatActivity {
         for(LineItem line : list) {
             product_qty_stacks.put(line.getProduct().getId(), line.getQuantity());
             product_price_stacks.put(line.getProduct().getId(), line.getPriceAtSale());
+            product_name_stacks.put(line.getProduct().getId(), line.getProduct().getName());
             lineitemList.add(line.toMap());
         }
 
@@ -396,6 +400,7 @@ public class ReturActivity extends AppCompatActivity {
                         ArrayList arrRefundList = new ArrayList();
                         for (Map.Entry<Integer, Integer> entry : product_qty_stacks.entrySet()) {
                             Map<String, String> arrRefundList2 = new HashMap<String, String>();
+                            arrRefundList2.put("title", product_name_stacks.get(entry.getKey()));
                             arrRefundList2.put("product_id", entry.getKey()+"");
                             arrRefundList2.put("quantity", entry.getValue()+"");
                             arrRefundList2.put("price", product_price_stacks.get(entry.getKey())+"");
@@ -409,7 +414,22 @@ public class ReturActivity extends AppCompatActivity {
                         }
                         mObj.put("payment", arrPaymentList);
                         mObj.put("items", arrRefundList);
+
+                        Retur retur = new Retur(sale.getServerInvoiceId());
+                        retur.setItems(arrRefundList);
+                        retur.setPayment(arrPaymentList);
+                        retur.setCustomer(customer);
+
                         Log.e(getClass().getSimpleName(), "mObj : "+ mObj.toString());
+
+                        bottomSheetDialog.dismiss();
+
+                        Intent newActivity = new Intent(ReturActivity.this,
+                                PrintReturActivity.class);
+                        newActivity.putExtra("retur_intent", retur);
+                        finish();
+                        startActivity(newActivity);
+
                     } catch (Exception e){
                         e.printStackTrace();
                     }
