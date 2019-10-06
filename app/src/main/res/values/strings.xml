@@ -103,6 +103,8 @@
     <string name="title_clear_sale">Clear Current Sale</string>
     <string name="title_filter_result">Filter Result</string>
     <string name="title_proceed_retur">Proceed Retur</string>
+    <string name="title_change_the_item">Change The Item</string>
+    <string name="title_change_the_money">Money Back</string>
 
     <string name="dashboard_income">Income</string>
     <string name="dashboard_transaction">Transaction</string>
@@ -293,8 +295,9 @@
     <string name="button_reset_to_default">Reset To Default</string>
     <string name="button_research">Research</string>
     <string name="button_proceed_retur">Proceed Retur</string>
-    <string name="button_add_to_retur">Retur</string>
+    <string name="button_add_to_retur">Change</string>
     <string name="button_finish_retur">Finish Retur</string>
+    <string name="button_change">Change</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
 

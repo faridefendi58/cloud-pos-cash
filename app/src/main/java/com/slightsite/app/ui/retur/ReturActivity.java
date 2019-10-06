@@ -68,9 +68,11 @@ public class ReturActivity extends AppCompatActivity {
     private Customer customer_intent;
     private Shipping shipping_intent;
     private List<Map<String, String>> lineitemList = new ArrayList<Map<String, String>>();
+    private List<LineItem> cartitemList = new ArrayList<LineItem>();
     private Map<Integer, Integer> product_qty_stacks = new HashMap<Integer, Integer>();
     private Map<Integer, Double> product_price_stacks = new HashMap<Integer, Double>();
     private Map<Integer, Integer> product_retur_stacks = new HashMap<Integer, Integer>();
+    private Map<Integer, Integer> stock_retur_stacks = new HashMap<Integer, Integer>();
 
     private String line_items_intent;
     private List<LineItem> lineItems;
@@ -226,6 +228,24 @@ public class ReturActivity extends AppCompatActivity {
         Log.e(getClass().getSimpleName(), "product_retur_stacks : "+ product_retur_stacks.toString());
     }
 
+    public void updateReturStockStacks(int product_id, int qty) {
+        if (qty > 0) {
+            stock_retur_stacks.put(product_id, qty);
+        } else {
+            stock_retur_stacks.remove(product_id);
+        }
+    }
+
+    public Map<Integer, Integer> getReturStockStacks() {
+        return stock_retur_stacks;
+    }
+
+    private Double refund_must_pay = 0.0;
+
+    public void setRefundMustPay(Double amount) {
+        this.refund_must_pay = amount;
+    }
+
     private TextView transfer_bank_header;
     private LinearLayout transfer_bank_container;
     private Button finish_submit_button;
@@ -237,41 +257,57 @@ public class ReturActivity extends AppCompatActivity {
     private RecyclerView returItemListRecycle;
 
     public void proceedRetur(View v) {
-        bottomSheetDialog = new BottomSheetDialog(ReturActivity.this);
-        View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_proceed_retur, null);
-        bottomSheetDialog.setContentView(sheetView);
+        if (product_retur_stacks.size() > 0) {
+            bottomSheetDialog = new BottomSheetDialog(ReturActivity.this);
+            View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_proceed_retur, null);
+            bottomSheetDialog.setContentView(sheetView);
 
-        // get total retur price
-        Double tot_price = 0.0;
-        try {
-            if (product_retur_stacks.size() > 0) {
-                for (Map.Entry<Integer, Integer> entry : product_retur_stacks.entrySet()) {
-                    tot_price = tot_price + product_price_stacks.get(entry.getKey()) * entry.getValue();
+            // get total retur price
+            Double tot_price = 0.0;
+            try {
+                if (product_retur_stacks.size() > 0) {
+                    for (Map.Entry<Integer, Integer> entry : product_retur_stacks.entrySet()) {
+                        tot_price = tot_price + product_price_stacks.get(entry.getKey()) * entry.getValue();
+                    }
+                }
+                ((TextView) sheetView.findViewById(R.id.debt_must_pay)).setText(CurrencyController.getInstance().moneyFormat(tot_price));
+            } catch (Exception e){e.printStackTrace();}
+
+            refund_must_pay = tot_price;
+
+            transfer_bank_header = (TextView) sheetView.findViewById(R.id.transfer_bank_header);
+            transfer_bank_container = (LinearLayout) sheetView.findViewById(R.id.transfer_bank_container);
+            finish_submit_button = (Button) sheetView.findViewById(R.id.finish_submit_button);
+            cash_receive = (EditText) sheetView.findViewById(R.id.cash_receive);
+            nominal_bca = (EditText) sheetView.findViewById(R.id.nominal_bca);
+            nominal_mandiri = (EditText) sheetView.findViewById(R.id.nominal_mandiri);
+            nominal_bri = (EditText) sheetView.findViewById(R.id.nominal_bri);
+
+            returItemListRecycle = (RecyclerView) sheetView.findViewById(R.id.returItemListRecycle);
+            returItemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            returItemListRecycle.setHasFixedSize(true);
+            returItemListRecycle.setNestedScrollingEnabled(false);
+
+            cartitemList.clear();
+            for(LineItem line : sale.getAllLineItem()) {
+                if (product_retur_stacks.containsKey(line.getProduct().getId())) {
+                    line.setQuantity(product_qty_stacks.get(line.getProduct().getId()));
+                    cartitemList.add(line);
                 }
             }
-            ((TextView) sheetView.findViewById(R.id.debt_must_pay)).setText(CurrencyController.getInstance().moneyFormat(tot_price));
-        } catch (Exception e){e.printStackTrace();}
 
-        transfer_bank_header = (TextView) sheetView.findViewById(R.id.transfer_bank_header);
-        transfer_bank_container = (LinearLayout) sheetView.findViewById(R.id.transfer_bank_container);
-        finish_submit_button = (Button) sheetView.findViewById(R.id.finish_submit_button);
-        cash_receive = (EditText) sheetView.findViewById(R.id.cash_receive);
-        nominal_bca = (EditText) sheetView.findViewById(R.id.nominal_bca);
-        nominal_mandiri = (EditText) sheetView.findViewById(R.id.nominal_mandiri);
-        nominal_bri = (EditText) sheetView.findViewById(R.id.nominal_bri);
+            AdapterListConfirmRetur sAdap = new AdapterListConfirmRetur(ReturActivity.this, cartitemList, register);
+            sAdap.setSheetView(sheetView);
+            sAdap.setTotalRefund(tot_price);
+            returItemListRecycle.setAdapter(sAdap);
 
-        returItemListRecycle = (RecyclerView) sheetView.findViewById(R.id.returItemListRecycle);
-        returItemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        returItemListRecycle.setHasFixedSize(true);
-        returItemListRecycle.setNestedScrollingEnabled(false);
+            bottomSheetDialog.show();
 
-        //AdapterListConfirmRetur sAdap = new AdapterListConfirmRetur(ReturActivity.this, list, register);
-        //returItemListRecycle.setAdapter(sAdap);
-
-        bottomSheetDialog.show();
-
-        payment_items =  new ArrayList<PaymentItem>();
-        triggerBottomDialogButton(sheetView);
+            payment_items =  new ArrayList<PaymentItem>();
+            triggerBottomDialogButton(sheetView);
+        } else {
+            // no item to be retured
+        }
     }
 
     private void triggerBottomDialogButton(View view) {
@@ -296,6 +332,7 @@ public class ReturActivity extends AppCompatActivity {
         finish_submit_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                payment_items.clear();
                 // get all total data
                 String cash = cash_receive.getText().toString();
                 String bca = nominal_bca.getText().toString();
@@ -322,7 +359,7 @@ public class ReturActivity extends AppCompatActivity {
                     if (mandiri.contains(".")) {
                         mandiri = mandiri.replaceAll("\\.", "");
                     }
-                    PaymentItem pi_mandiri = new PaymentItem("nominal_mandiri", Double.parseDouble(bca));
+                    PaymentItem pi_mandiri = new PaymentItem("nominal_mandiri", Double.parseDouble(mandiri));
                     payment_items.add(pi_mandiri);
                     tot_payment = tot_payment + Double.parseDouble(mandiri);
                 }
@@ -331,14 +368,14 @@ public class ReturActivity extends AppCompatActivity {
                     if (bri.contains(".")) {
                         bri = bri.replaceAll("\\.", "");
                     }
-                    PaymentItem pi_bri = new PaymentItem("pi_bri", Double.parseDouble(bca));
+                    PaymentItem pi_bri = new PaymentItem("pi_bri", Double.parseDouble(bri));
                     payment_items.add(pi_bri);
                     tot_payment = tot_payment + Double.parseDouble(bri);
                 }
 
-                /*if (tot_payment < tot_debt) {
+                if (tot_payment < refund_must_pay) {
                     Toast.makeText(getApplicationContext(),
-                            "Pembayaran masih kurang " + (tot_debt - tot_payment),
+                            "Pembayaran masih kurang " + (refund_must_pay - tot_payment),
                             Toast.LENGTH_SHORT).show();
                     payment_items.clear();
                 } else {
@@ -355,11 +392,28 @@ public class ReturActivity extends AppCompatActivity {
                             arrPaymentList.add(arrPayment2);
                         }
 
+                        // the items data include id, price, qty, and how much item to be changed
+                        ArrayList arrRefundList = new ArrayList();
+                        for (Map.Entry<Integer, Integer> entry : product_qty_stacks.entrySet()) {
+                            Map<String, String> arrRefundList2 = new HashMap<String, String>();
+                            arrRefundList2.put("product_id", entry.getKey()+"");
+                            arrRefundList2.put("quantity", entry.getValue()+"");
+                            arrRefundList2.put("price", product_price_stacks.get(entry.getKey())+"");
+                            int change_item = 0;
+                            if (stock_retur_stacks.containsKey(entry.getKey())) {
+                                change_item = stock_retur_stacks.get(entry.getKey());
+                            }
+                            arrRefundList2.put("change_item", change_item+"");
+
+                            arrRefundList.add(arrRefundList2);
+                        }
                         mObj.put("payment", arrPaymentList);
+                        mObj.put("items", arrRefundList);
+                        Log.e(getClass().getSimpleName(), "mObj : "+ mObj.toString());
                     } catch (Exception e){
                         e.printStackTrace();
                     }
-                }*/
+                }
             }
         });
     }

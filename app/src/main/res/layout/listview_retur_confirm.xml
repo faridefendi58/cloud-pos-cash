@@ -11,11 +11,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:padding="@dimen/spacing_large">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical">
@@ -41,13 +41,60 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/add_to_queue_container"
+            android:id="@+id/add_to_stock_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
+            <Button
+                android:id="@+id/addReturStockButton"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/spacing_xlarge"
+                android:background="@color/greenUcok"
+                android:text="@string/button_change"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/spacing_middle"
+                android:paddingBottom="@dimen/spacing_xsmall"
+                android:layout_marginTop="@dimen/spacing_middle"
+                />
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/add_qty_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/substract_qty"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/spacing_xlarge"
+                android:clickable="true"
+                android:drawableLeft="@drawable/ic_remove_black" />
+
+            <TextView
+                android:id="@+id/quantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/spacing_large"
+                android:layout_marginRight="@dimen/spacing_large"
+                android:gravity="center_vertical"
+                android:text="0"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:textColor="@color/grey_40"
+                app:fontFamily="sans-serif-medium" />
+
+            <TextView
+                android:id="@+id/add_qty"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/spacing_xlarge"
+                android:clickable="true"
+                android:drawableLeft="@drawable/ic_add_black" />
 
         </LinearLayout>
 
