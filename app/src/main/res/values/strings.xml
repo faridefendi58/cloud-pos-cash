@@ -291,6 +291,7 @@
     <string name="button_mark_as_complete">Proceed Order</string>
     <string name="button_close">Close</string>
     <string name="button_finish_and_print">Finish Order and Print Invoice</string>
+    <string name="button_finish_retur_and_print">Finish Retur and Print Invoice</string>
     <string name="button_search">Search</string>
     <string name="button_reset_to_default">Reset To Default</string>
     <string name="button_research">Research</string>

@@ -14,6 +14,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -69,9 +70,11 @@ import com.slightsite.app.domain.warehouse.WarehouseService;
 import com.slightsite.app.domain.warehouse.Warehouses;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
+import com.slightsite.app.techicalservices.URLBuilder;
 import com.slightsite.app.ui.LoginActivity;
 import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.printer.GridListAdapter;
+import com.slightsite.app.ui.printer.PrintPic;
 import com.slightsite.app.ui.sale.SaleDetailActivity;
 
 import org.json.JSONArray;
@@ -80,15 +83,19 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import static com.slightsite.app.ui.LoginActivity.TAG_ID;
 
@@ -109,7 +116,6 @@ public class PrintReturActivity extends Activity {
 
     private ParamCatalog paramCatalog;
     private WarehouseCatalog warehouseCatalog;
-    private List<Map<String, String>> lineitemList;
     private int warehouse_id;
     private Warehouses warehouse;
     private Customer customer;
@@ -236,22 +242,11 @@ public class PrintReturActivity extends Activity {
         print_button_container = (LinearLayout) findViewById(R.id.print_button_container);
         finish_and_print_button = (Button) findViewById(R.id.finish_and_print_button);
 
+        print_button_container.setVisibility(View.GONE);
+        finish_and_print_button.setVisibility(View.GONE);
+
         try {
             buildDataFromServer();
-            /*print_webview.loadDataWithBaseURL(null, "<html><body>Loading ...</body></html>", "text/html", "utf-8", null);
-            formated_receipt = getFormatedReceiptHtml();
-
-            String style = "<style>";
-            style += ".ft-14{font-size:10px !important;}";
-            style += ".ft-16{font-size:16px !important;}";
-            style += ".ft-17{font-size:17px !important;}";
-            style += ".ft-18{font-size:18px !important;}";
-            style += ".ft-20{font-size:20px !important;}";
-            style += ".ft-22{font-size:22px !important;}";
-            style += ".ft-24{font-size:24px !important;}";
-            style += ".ft-26{font-size:26px !important;}";
-            style += "</style>";
-            print_webview.loadDataWithBaseURL(null, "<html>"+ style +"<body>" + formated_receipt + "</body></html>", "text/html", "utf-8", null);*/
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -271,7 +266,7 @@ public class PrintReturActivity extends Activity {
         print_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //just_print(false);
+                just_print(false);
             }
         });
 
@@ -291,7 +286,7 @@ public class PrintReturActivity extends Activity {
         finish_and_print_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //finishAndPrint();
+                finishAndPrint();
             }
         });
 
@@ -370,13 +365,14 @@ public class PrintReturActivity extends Activity {
         Double sale_total = 0.00;
         Double amount_tendered = 0.00;
         try {
-            current_time = sale.getEndTime();
+            //current_time = sale.getEndTime();
+            current_time = DateTimeStrategy.parseDate(current_time, "dd MMM yyyy hh:mm");
             sale_total = sale.getTotal();
         } catch (Exception e) { e.printStackTrace(); }
 
-        String[] separated = current_time.split(" ");
+        //String[] separated = current_time.split(" ");
         res += "<tr class=\"ft-18\"><td>"+ getResources().getString(R.string.label_date)+ "</td>" +
-                "<td colspan=\"3\" class=\"ft-17\"> : "+ separated[0] +"</td>";
+                "<td colspan=\"3\" class=\"ft-17\"> : "+ current_time +"</td>";
         String date_transaction = sale.getEndTime();
         try {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MMM-dd  hh:mm a");
@@ -393,6 +389,9 @@ public class PrintReturActivity extends Activity {
         String no_nota = date_transaction+"/"+sale.getId();
         if (sale.getServerInvoiceNumber() != null) {
             no_nota = sale.getServerInvoiceNumber();
+            if (no_nota.contains("PAID")) {
+                no_nota = no_nota.replace("PAID", "REFUND");
+            }
         } else {
             if (admin_id != null) {
                 no_nota = date_transaction + "/" + admin_id + "/" + sale.getId();
@@ -400,7 +399,6 @@ public class PrintReturActivity extends Activity {
         }
 
         res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.label_no_nota)+ "</td><td colspan=\"3\"> : "+ no_nota +"</td></tr>";
-        res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.label_hour)+ "</td><td colspan=\"3\"> : "+ separated[1] +"</td></tr>";
 
         if (sale.getCreatedBy() > 0) {
             res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_created_by) + "</td><td colspan=\"3\"> : " + sale.getCreatedByName() + "</td></tr>";
@@ -460,38 +458,40 @@ public class PrintReturActivity extends Activity {
 
         int grand_total = sub_total;
 
-        int cash = grand_total;
-        int change_due = grand_total - cash;
         res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.total) +" :</td>" +
                 "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(grand_total) +"</td>";
 
-        res += "<tr><td colspan=\"4\">&nbsp;</td></tr>";
-        res += "<tr><td colspan=\"4\" style=\"text-align:right;\"><b>Cara Pembayaran</b></td></tr>";
-        res += "<tr><td colspan=\"4\">&nbsp;</td></tr>";
+        if (grand_total > 0) {
+            res += "<tr><td colspan=\"4\">&nbsp;</td></tr>";
+            res += "<tr><td colspan=\"4\" style=\"text-align:right;\"><b>Cara Pembayaran</b></td></tr>";
+            res += "<tr><td colspan=\"4\">&nbsp;</td></tr>";
 
-        List<Map<String, String >> payments = retur.getPayment();
-        Log.e(getClass().getSimpleName(), "payments : "+ payments.toString());
-        for (Map<String, String> payment : payments) {
-            int amnt = 0;
-            String amnt_str = payment.get("amount_tendered");
-            try {
-                if (amnt_str.contains(".")) {
-                    //amnt_str = amnt_str.replace(".", "");
-                    amnt_str = amnt_str.substring(0, amnt_str.indexOf("."));
-                }
-                if (amnt_str != "0" || amnt_str != "0.0") {
-                    amnt = Integer.parseInt(amnt_str);
-                }
-            } catch (Exception e){
-                Log.e(getClass().getSimpleName(), e.getMessage());
-            }
-
-            if (amnt > 0) {
+            List<Map<String, String>> payments = retur.getPayment();
+            Log.e(getClass().getSimpleName(), "payments : " + payments.toString());
+            for (Map<String, String> payment : payments) {
+                int amnt = 0;
+                String amnt_str = payment.get("amount_tendered");
                 try {
-                    String pay_channel = payment.get("type");
-                    res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">" + getResources().getString(getPaymentChannel(pay_channel)) + " :</td>" +
-                            "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(amnt) + "</td>";
-                } catch (Exception e){e.printStackTrace();}
+                    if (amnt_str.contains(".")) {
+                        //amnt_str = amnt_str.replace(".", "");
+                        amnt_str = amnt_str.substring(0, amnt_str.indexOf("."));
+                    }
+                    if (amnt_str != "0" || amnt_str != "0.0") {
+                        amnt = Integer.parseInt(amnt_str);
+                    }
+                } catch (Exception e) {
+                    Log.e(getClass().getSimpleName(), e.getMessage());
+                }
+
+                if (amnt > 0) {
+                    try {
+                        String pay_channel = payment.get("type");
+                        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">" + getResources().getString(getPaymentChannel(pay_channel)) + " :</td>" +
+                                "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(amnt) + "</td>";
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
 
@@ -592,10 +592,6 @@ public class PrintReturActivity extends Activity {
                             // Check for error node in json
                             if (success == 1) {
                                 server_invoice_data = jObj.getJSONObject("data");
-                                /*if (server_invoice_data.has("shipping")) {
-                                    JSONArray arr_shipping = server_invoice_data.getJSONArray("shipping");
-                                    JSONObject obj_shipping = arr_shipping.getJSONObject(0);
-                                }*/
                                 if (server_invoice_data.has("created_by") && !server_invoice_data.getString("created_by").toString().equals("null")) {
                                     // setup the sale
                                     sale = new Sale(server_invoice_data.getInt("id"), server_invoice_data.getString("created_at"));
@@ -627,10 +623,9 @@ public class PrintReturActivity extends Activity {
                                         int delivered = server_invoice_data.getInt("delivered");
                                         is_delivered = delivered;
 
-                                        if (status > 0 && delivered > 0) {
-                                            print_button_container.setVisibility(View.VISIBLE);
-                                            finish_and_print_button.setVisibility(View.GONE);
-                                        }
+                                        print_button_container.setVisibility(View.GONE);
+                                        finish_and_print_button.setText(getResources().getString(R.string.button_finish_retur_and_print));
+                                        finish_and_print_button.setVisibility(View.VISIBLE);
                                     }
                                 } else {
                                     counter = counter + 1;
@@ -719,5 +714,202 @@ public class PrintReturActivity extends Activity {
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
+    }
+
+    private void just_print(Boolean animated) {
+        try {
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+
+            Bitmap bm = screenShot(print_webview);
+            //File file = saveBitmap(bm, sale.getServerInvoiceNumber() +".png");
+
+            Boolean is_connect = initPrinter();
+
+            if (is_connect) {
+                byte[] printformat = {0x1B, 0x21, 0x10};
+                outputStream.write(printformat);
+
+                try {
+                    Bitmap bitmap = bm;
+                    Log.e(getClass().getSimpleName(), "old bitmap.getHeight() : " + bitmap.getHeight());
+                    Log.e(getClass().getSimpleName(), "old bitmap.getWidth() : " + bitmap.getWidth());
+                    float aspectRatio = bitmap.getWidth() /
+                            (float) bitmap.getHeight();
+                    int width = 400; //400 lebar kertas
+                    int height = Math.round(width / aspectRatio);
+
+                    bitmap = getResizedBitmap(bitmap, width, height);
+                    Log.e(getClass().getSimpleName(), "bitmap.getHeight() : " + bitmap.getHeight());
+                    Log.e(getClass().getSimpleName(), "bitmap.getWidth() : " + bitmap.getWidth());
+
+                    PrintPic printPic = PrintPic.getInstance();
+                    printPic.init(bitmap);
+                    byte[] bitmapdata = printPic.printDraw();
+
+                    outputStream.write(bitmapdata);
+
+                    if (animated) {
+                        Log.e(getClass().getSimpleName(), "finish_and_print_button.getVisibility() : "+ finish_and_print_button.getVisibility());
+
+                        if (finish_and_print_button.getVisibility() == View.VISIBLE) {
+                            //finish_and_print_button.startAnimation(animate);
+
+                            finish_and_print_button.setBackgroundColor(getResources().getColor(R.color.grey_800));
+                            finish_and_print_button.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_check_white_24dp), null, null, null);
+                            finish_and_print_button.setPadding(10, 0, 0, 0);
+                        } else {
+                            //print_button.startAnimation(animate);
+
+                            print_button.setBackgroundColor(getResources().getColor(R.color.grey_800));
+                            print_button.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_check_white_24dp), null, null, null);
+                            print_button.setPadding(10, 0, 0, 0);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Boolean initPrinter() {
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        try {
+            if (!bluetoothAdapter.isEnabled()) {
+                Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBluetooth, 0);
+            }
+
+            Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+
+            if (pairedDevices.size() > 0) {
+                bluetoothDeviceList = new ArrayList<>();
+                for (BluetoothDevice device : pairedDevices) {
+                    bluetoothDeviceList.add(device.getName());
+                    if (device.getName().equals(bluetoothDeviceName)) //Note, you will need to change this to match the name of your device
+                    {
+                        bluetoothDevice = device;
+                        break;
+                    }
+                }
+
+                UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+                Boolean is_connected = true;
+                try {
+                    socket = bluetoothDevice.createRfcommSocketToServiceRecord(uuid);
+                    /*Method m = bluetoothDevice.getClass().getMethod(
+                            "createRfcommSocket", new Class[] { int.class });
+                    socket = (BluetoothSocket) m.invoke(bluetoothDevice, 1);*/
+                    bluetoothAdapter.cancelDiscovery();
+                    socket.connect();
+                } catch (IOException e){
+                    e.printStackTrace();
+                    is_connected = false;
+                }
+
+                if (is_connected) {
+                    outputStream = socket.getOutputStream();
+                    inputStream = socket.getInputStream();
+                }
+            } else {
+                value += "No Devices found";
+                bluetoothDeviceList = new ArrayList<>();
+                Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+                return false;
+            }
+        } catch (Exception ex) {
+            value = ex.toString() + "\n" + " InitPrinter \n";
+            Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        return true;
+    }
+
+    private Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // CREATE A MATRIX FOR THE MANIPULATION
+        Matrix matrix = new Matrix();
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight);
+
+        // "RECREATE" THE NEW BITMAP
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false);
+        bm.recycle();
+        return resizedBitmap;
+    }
+
+    private Boolean is_finished = false;
+
+    private void finishAndPrint() {
+        if (!is_finished) {
+            try {
+                Map<String, Object> mObj = new HashMap<String, Object>();
+                mObj.put("invoice_id", serverInvoiceId);
+                _create_retur_inv(mObj);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (finish_and_print_button.getVisibility() == View.VISIBLE) {
+                finish_and_print_button.setText(getResources().getString(R.string.button_new_transaction));
+                is_finished = true;
+            }
+        } else {
+            Intent intent = new Intent(PrintReturActivity.this, MainActivity.class);
+            intent.putExtra("refreshStock", true);
+            finish();
+            startActivity(intent);
+        }
+    }
+
+    private void _create_retur_inv(Map mObj) {
+        just_print(false); //utk sementara api blm siap
+
+        /*String _url = Server.URL + "transaction/retur?api-key=" + Server.API_KEY;
+        String qry = URLBuilder.httpBuildQuery(mObj, "UTF-8");
+        _url += "&"+ qry;
+
+        Map<String, String> params = new HashMap<String, String>();
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        Params adminParam = paramCatalog.getParamByName("admin_id");
+        if (adminParam != null) {
+            admin_id = adminParam.getValue();
+        }
+
+        params.put("admin_id", admin_id);
+
+        _string_request(
+                Request.Method.POST,
+                _url,
+                params,
+                true,
+                new VolleyCallback(){
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                String server_invoice_number = jObj.getString("invoice_number");
+                                sale.setServerInvoiceNumber(server_invoice_number);
+                                // and then trigger print the invoice
+                                just_print(false);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        hideDialog();
+                    }
+                });*/
     }
 }

@@ -235,7 +235,7 @@
     <string name="label_detail">Rincian</string>
     <string name="label_customer_name">Nama Pelanggan</string>
     <string name="label_customer_address">Alamat</string>
-    <string name="label_customer_phone">No Telepon</string>
+    <string name="label_customer_phone">Telepon</string>
     <string name="label_role_cs">Customer Support</string>
     <string name="label_role_cashier">Kasir</string>
     <string name="label_total_amount">Jumlah Total</string>
@@ -285,6 +285,7 @@
     <string name="button_mark_as_complete">Proses Order Ini</string>
     <string name="button_close">Tutup</string>
     <string name="button_finish_and_print">Selesaikan Order and Cetak Tagihan</string>
+    <string name="button_finish_retur_and_print">Selesaikan Retur and Cetak Struk</string>
     <string name="button_search">Cari</string>
     <string name="button_reset_to_default">Reset Ke Default</string>
     <string name="button_research">Cari Ulang</string>

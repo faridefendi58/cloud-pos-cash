@@ -398,7 +398,7 @@ public class ReturActivity extends AppCompatActivity {
 
                         // the items data include id, price, qty, and how much item to be changed
                         ArrayList arrRefundList = new ArrayList();
-                        for (Map.Entry<Integer, Integer> entry : product_qty_stacks.entrySet()) {
+                        for (Map.Entry<Integer, Integer> entry : product_retur_stacks.entrySet()) {
                             Map<String, String> arrRefundList2 = new HashMap<String, String>();
                             arrRefundList2.put("title", product_name_stacks.get(entry.getKey()));
                             arrRefundList2.put("product_id", entry.getKey()+"");
