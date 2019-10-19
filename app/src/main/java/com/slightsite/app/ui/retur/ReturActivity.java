@@ -295,7 +295,7 @@ public class ReturActivity extends AppCompatActivity {
             cartitemList.clear();
             for(LineItem line : sale.getAllLineItem()) {
                 if (product_retur_stacks.containsKey(line.getProduct().getId())) {
-                    line.setQuantity(product_qty_stacks.get(line.getProduct().getId()));
+                    line.setQuantity(product_retur_stacks.get(line.getProduct().getId()));
                     cartitemList.add(line);
                 }
             }

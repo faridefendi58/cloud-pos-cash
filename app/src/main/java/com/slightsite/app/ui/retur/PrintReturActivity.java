@@ -426,7 +426,7 @@ public class PrintReturActivity extends Activity {
         }*/
 
         res += "<tr><td colspan=\"4\"><hr/></td></tr>";
-        res += "<tr><td colspan=\"4\"><b>Pengembalian Dana & Ganti Barang</b></td></tr>";
+        res += "<tr><td colspan=\"4\"><b>Ganti Barang & Pengembalian Uang</b></td></tr>";
         res += "<tr><td colspan=\"4\"><hr/></td></tr></table>";
         res += "<table width=\"100%\" style=\"margin-bottom:25px;\">";
 
