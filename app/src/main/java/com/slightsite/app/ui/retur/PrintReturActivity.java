@@ -853,6 +853,46 @@ public class PrintReturActivity extends Activity {
             try {
                 Map<String, Object> mObj = new HashMap<String, Object>();
                 mObj.put("invoice_id", serverInvoiceId);
+
+                List<Map<String, String >> list = retur.getItems();
+                ArrayList arrItems = new ArrayList();
+                for (Map<String, String> entry : list) {
+                    int qty = Integer.parseInt(entry.get("quantity"));
+                    int change_qty = Integer.parseInt(entry.get("change_item"));
+                    int refund_qty = qty - change_qty;
+                    String str_price = entry.get("price");
+                    if (str_price.contains(".")) {
+                        str_price = str_price.substring(0, str_price.indexOf("."));
+                    }
+                    int prc = Integer.parseInt(str_price);
+                    //int tot = prc * refund_qty;
+
+                    Map<String, String> mItem = new HashMap<String, String>();
+                    mItem.put("name", entry.get("title"));
+                    mItem.put("total_qty", qty +"");
+                    mItem.put("returned_qty", change_qty +"");
+                    mItem.put("refunded_qty", refund_qty +"");
+                    mItem.put("price", prc +"");
+                    arrItems.add(mItem);
+                }
+                mObj.put("items", arrItems);
+
+                ArrayList arrPaymentList = new ArrayList();
+                Map<String, String> arrPayment = new HashMap<String, String>();
+
+                List<Map<String, String>> payments = retur.getPayment();
+                for (Map<String, String> payment : payments) {
+                    int amnt = 0;
+                    String amnt_str = payment.get("amount_tendered");
+                    if (amnt_str.contains(".")) {
+                        amnt_str = amnt_str.substring(0, amnt_str.indexOf("."));
+                    }
+                    arrPayment.put("type", payment.get("type"));
+                    arrPayment.put("amount", amnt_str);
+                    arrPaymentList.add(arrPayment);
+                }
+                mObj.put("payments", arrPaymentList);
+
                 _create_retur_inv(mObj);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -871,11 +911,10 @@ public class PrintReturActivity extends Activity {
     }
 
     private void _create_retur_inv(Map mObj) {
-        just_print(false); //utk sementara api blm siap
-
-        /*String _url = Server.URL + "transaction/retur?api-key=" + Server.API_KEY;
+        String _url = Server.URL + "transaction/refund?api-key=" + Server.API_KEY;
         String qry = URLBuilder.httpBuildQuery(mObj, "UTF-8");
         _url += "&"+ qry;
+        Log.e(getClass().getSimpleName(), "url : "+ qry);
 
         Map<String, String> params = new HashMap<String, String>();
         String admin_id = sharedpreferences.getString(TAG_ID, null);
@@ -910,6 +949,6 @@ public class PrintReturActivity extends Activity {
 
                         hideDialog();
                     }
-                });*/
+                });
     }
 }
