@@ -1353,8 +1353,13 @@ public class SaleDetailActivity extends Activity{
 	private List<LineItem> returitemList = new ArrayList<LineItem>();
 	private List<LineItem> refunditemList = new ArrayList<LineItem>();
 	private JSONArray returJSONArray = new JSONArray();
+	private JSONArray paymentJSONArray = new JSONArray();
 	private LinearLayout change_item_container;
 	private LinearLayout refund_item_container;
+	private RecyclerView returPaymentListView;
+	private TextView retur_invoice_number;
+	private TextView retur_proceed_by;
+	private TextView refunded_at;
 
 	private void buildReturInformation() {
 		returItemListRecycle = (RecyclerView) findViewById(R.id.returItemListRecycle);
@@ -1372,6 +1377,14 @@ public class SaleDetailActivity extends Activity{
 
 		try {
 			returJSONArray = obj_retur.getJSONArray("items");
+			paymentJSONArray = obj_retur.getJSONArray("payments");
+			// build other information
+			retur_invoice_number = (TextView) findViewById(R.id.retur_invoice_number);
+			retur_invoice_number.setText(obj_retur.getString("invoice_number"));
+			retur_proceed_by = (TextView) findViewById(R.id.retur_proceed_by);
+			retur_proceed_by.setText(obj_retur.getString("refunded_by_name"));
+			refunded_at = (TextView) findViewById(R.id.refunded_at);
+			refunded_at.setText(DateTimeStrategy.parseDate(obj_retur.getString("refunded_at"), "dd MMM yyyy HH:s") + "");
 		} catch (Exception e){}
 
 		returitemList.clear();
@@ -1404,6 +1417,34 @@ public class SaleDetailActivity extends Activity{
 		AdapterListReturReport rfAdap = new AdapterListReturReport(SaleDetailActivity.this, refunditemList, register);
 		rfAdap.setType("refund");
 		refundItemListRecycle.setAdapter(rfAdap);
+
+		// build the payment if any
+		if (refunditemList.size() > 0) {
+			returPaymentListView = (RecyclerView) findViewById(R.id.returPaymentList);
+			returPaymentListView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+			returPaymentListView.setHasFixedSize(true);
+			returPaymentListView.setNestedScrollingEnabled(false);
+
+			List<Payment> pyitemList = new ArrayList<Payment>();
+			if (paymentJSONArray != null && paymentJSONArray.length() > 0) {
+				for (int i = 0; i < paymentJSONArray.length(); i++) {
+					try {
+						JSONObject obj_payment_item = paymentJSONArray.getJSONObject(i);
+						Payment payment = new Payment(
+								-1,
+								sale.getId(),
+								obj_payment_item.getString("type"),
+								obj_payment_item.getDouble("amount")
+						);
+
+						pyitemList.add(payment);
+					} catch (Exception e){}
+				}
+			}
+
+			AdapterListPaymentSimple pAdap = new AdapterListPaymentSimple(pyitemList);
+			returPaymentListView.setAdapter(pAdap);
+		}
 
 		retur_information.setVisibility(View.VISIBLE);
 	}

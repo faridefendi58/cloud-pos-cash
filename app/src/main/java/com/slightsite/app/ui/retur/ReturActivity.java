@@ -372,7 +372,7 @@ public class ReturActivity extends AppCompatActivity {
                     if (bri.contains(".")) {
                         bri = bri.replaceAll("\\.", "");
                     }
-                    PaymentItem pi_bri = new PaymentItem("pi_bri", Double.parseDouble(bri));
+                    PaymentItem pi_bri = new PaymentItem("nominal_bri", Double.parseDouble(bri));
                     payment_items.add(pi_bri);
                     tot_payment = tot_payment + Double.parseDouble(bri);
                 }
