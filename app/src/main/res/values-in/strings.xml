@@ -309,4 +309,5 @@
     <string name="heading_shipping_detail">Rincian Pengiriman</string>
     <string name="heading_payment_detail">Rincian Pembayaran</string>
     <string name="heading_product_detail">Rincian Barang</string>
+    <string name="heading_retur_detail">Rincian Retur</string>
 </resources>

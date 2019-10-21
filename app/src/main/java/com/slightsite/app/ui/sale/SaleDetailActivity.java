@@ -90,6 +90,8 @@ import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.inventory.ProductServerActivity;
 import com.slightsite.app.ui.printer.PrintPreviewActivity;
 import com.slightsite.app.ui.printer.PrinterActivity;
+import com.slightsite.app.ui.retur.AdapterListConfirmRetur;
+import com.slightsite.app.ui.retur.AdapterListReturReport;
 import com.slightsite.app.ui.retur.ReturActivity;
 
 import org.json.JSONArray;
@@ -138,6 +140,7 @@ public class SaleDetailActivity extends Activity{
 	private LinearLayout complete_button_container;
 	private LinearLayout finish_button_container;
 	private LinearLayout retur_button_container;
+	private LinearLayout retur_information;
 
 	private PaymentCatalog paymentCatalog;
 	private List<Payment> paymentList;
@@ -157,6 +160,7 @@ public class SaleDetailActivity extends Activity{
 	private final HashMap<Integer, String> warehouse_names = new HashMap<Integer, String>();
 	private JSONArray warehouse_data;
 	private JSONObject server_invoice_data;
+	private JSONObject obj_retur = new JSONObject();
 
 	private static final String TAG = SaleDetailActivity.class.getSimpleName();
 	private static final String TAG_SUCCESS = "success";
@@ -307,6 +311,7 @@ public class SaleDetailActivity extends Activity{
 		complete_button_container = (LinearLayout) findViewById(R.id.complete_button_container);
 		finish_button_container = (LinearLayout) findViewById(R.id.finish_button_container);
 		retur_button_container = (LinearLayout) findViewById(R.id.retur_button_container);
+		retur_information = (LinearLayout) findViewById(R.id.retur_information);
 
 		lineitemListRecycle = (RecyclerView) findViewById(R.id.lineitemListRecycle);
 		lineitemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -948,12 +953,24 @@ public class SaleDetailActivity extends Activity{
 										shipping_recipient_phone.setText(shipping.getPhone());
 									}
 
+									// find the retur data
+									try {
+										obj_retur = server_invoice_data.getJSONObject("refund");
+									} catch (JSONException e) {
+										Log.e("JSON Parser", "Error parsing data " + e.toString());
+									}
+									Log.e(getClass().getSimpleName(), "obj_retur : "+ obj_retur.toString());
+
 									if (server_invoice_data.getInt("status") == 0) {
 										complete_button_container.setVisibility(View.VISIBLE);
 									} else if (server_invoice_data.getInt("status") == 1) {
 										if (server_invoice_data.getInt("delivered") == 1) {
-											retur_button_container.setVisibility(View.VISIBLE);
-											finish_button_container.setVisibility(View.GONE);
+											if (!obj_retur.has("id")) { // hanya yg belum pnh retur
+												retur_button_container.setVisibility(View.VISIBLE);
+												finish_button_container.setVisibility(View.GONE);
+											} else {
+												buildReturInformation();
+											}
 										} else {
 											finish_button_container.setVisibility(View.VISIBLE);
 										}
@@ -1329,5 +1346,65 @@ public class SaleDetailActivity extends Activity{
 			newActivity.putExtra("line_items_intent", line_items_intent);
 		}
 		startActivity(newActivity);
+	}
+
+	private RecyclerView returItemListRecycle;
+	private RecyclerView refundItemListRecycle;
+	private List<LineItem> returitemList = new ArrayList<LineItem>();
+	private List<LineItem> refunditemList = new ArrayList<LineItem>();
+	private JSONArray returJSONArray = new JSONArray();
+	private LinearLayout change_item_container;
+	private LinearLayout refund_item_container;
+
+	private void buildReturInformation() {
+		returItemListRecycle = (RecyclerView) findViewById(R.id.returItemListRecycle);
+		returItemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+		returItemListRecycle.setHasFixedSize(true);
+		returItemListRecycle.setNestedScrollingEnabled(false);
+
+		refundItemListRecycle = (RecyclerView) findViewById(R.id.refundItemListRecycle);
+		refundItemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+		refundItemListRecycle.setHasFixedSize(true);
+		refundItemListRecycle.setNestedScrollingEnabled(false);
+
+		change_item_container = (LinearLayout) findViewById(R.id.refund_item_container);
+		refund_item_container = (LinearLayout) findViewById(R.id.refund_item_container);
+
+		try {
+			returJSONArray = obj_retur.getJSONArray("items");
+		} catch (Exception e){}
+
+		returitemList.clear();
+		if(returJSONArray!=null && returJSONArray.length()>0){
+			for (int i = 0; i < returJSONArray.length(); i++) {
+				try {
+					JSONObject obj_retur_item = returJSONArray.getJSONObject(i);
+					Product product = productCatalog.getProductByBarcode(obj_retur_item.getString("id"));
+					if (obj_retur_item.has("returned_qty") && obj_retur_item.getInt("returned_qty") > 0) {
+						LineItem lineItem = new LineItem(product, obj_retur_item.getInt("returned_qty"), 0);
+						returitemList.add(lineItem);
+					}
+					if (obj_retur_item.has("refunded_qty") && obj_retur_item.getInt("refunded_qty") > 0) {
+						LineItem lineItem2 = new LineItem(product, obj_retur_item.getInt("refunded_qty"), 0);
+						refunditemList.add(lineItem2);
+					}
+				} catch (JSONException e) {}
+			}
+			if (returitemList.size() <= 0) {
+				change_item_container.setVisibility(View.GONE);
+			}
+			if (refunditemList.size() <= 0) {
+				refund_item_container.setVisibility(View.GONE);
+			}
+		}
+
+		AdapterListReturReport sAdap = new AdapterListReturReport(SaleDetailActivity.this, returitemList, register);
+		returItemListRecycle.setAdapter(sAdap);
+
+		AdapterListReturReport rfAdap = new AdapterListReturReport(SaleDetailActivity.this, refunditemList, register);
+		rfAdap.setType("refund");
+		refundItemListRecycle.setAdapter(rfAdap);
+
+		retur_information.setVisibility(View.VISIBLE);
 	}
 }

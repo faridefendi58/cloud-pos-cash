@@ -878,7 +878,6 @@ public class PrintReturActivity extends Activity {
                 mObj.put("items", arrItems);
 
                 ArrayList arrPaymentList = new ArrayList();
-                Map<String, String> arrPayment = new HashMap<String, String>();
 
                 List<Map<String, String>> payments = retur.getPayment();
                 for (Map<String, String> payment : payments) {
@@ -887,11 +886,13 @@ public class PrintReturActivity extends Activity {
                     if (amnt_str.contains(".")) {
                         amnt_str = amnt_str.substring(0, amnt_str.indexOf("."));
                     }
+                    Map<String, String> arrPayment = new HashMap<String, String>();
                     arrPayment.put("type", payment.get("type"));
                     arrPayment.put("amount", amnt_str);
                     arrPaymentList.add(arrPayment);
                 }
                 mObj.put("payments", arrPaymentList);
+                Log.e(getClass().getSimpleName(), "mObj : "+ mObj.toString());
 
                 _create_retur_inv(mObj);
             } catch (Exception e) {
@@ -941,7 +942,7 @@ public class PrintReturActivity extends Activity {
                                 String server_invoice_number = jObj.getString("invoice_number");
                                 sale.setServerInvoiceNumber(server_invoice_number);
                                 // and then trigger print the invoice
-                                just_print(false);
+                                //just_print(false);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
