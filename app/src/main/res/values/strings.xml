@@ -244,6 +244,8 @@
     <string name="label_customer_phone">Phone Number</string>
     <string name="label_role_cs">Customer Support</string>
     <string name="label_role_cashier">Cashier</string>
+    <string name="label_role_staff">Staff</string>
+    <string name="label_role_manager">Manager</string>
     <string name="label_total_amount">Total Amount</string>
     <string name="label_next">Next</string>
     <string name="label_contact_detail">Contact Detail</string>

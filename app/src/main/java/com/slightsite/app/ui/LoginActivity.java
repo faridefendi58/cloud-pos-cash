@@ -154,6 +154,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     private WarehouseCatalog warehouseCatalog;
     private AdminInWarehouseCatalog adminInWarehouseCatalog;
     private Boolean is_cashier = true;
+    private int group_id = 5;
+    private HashMap<Integer, Integer> roles = new HashMap<Integer, Integer>();
+    private HashMap<Integer, String> role_names = new HashMap<Integer, String>();
     private Boolean success_register = false;
 
     private final HashMap<Integer, String> warehouse_names = new HashMap<Integer, String>();
@@ -177,6 +180,14 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             }
             adminInWarehouseCatalog = AdminInWarehouseService.getInstance().getAdminInWarehouseCatalog();
             current_lang = LanguageController.getInstance().getLanguage();
+            //build the roles
+            roles.put(R.id.role_cashier, 5);
+            roles.put(R.id.role_cs, 4);
+            roles.put(R.id.role_manager, 6);
+
+            role_names.put(4, "cs");
+            role_names.put(5, "cashier");
+            role_names.put(6, "manager");
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -771,11 +782,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         String full_name = nameBox.getText().toString();
         String phone = phoneBox.getText().toString();
         int role_id = role_group.getCheckedRadioButtonId();
-        if (role_id == R.id.role_cashier) {
-            is_cashier = true;
-        } else {
-            is_cashier = false;
-        }
+        group_id = roles.get(role_id);
+
         String warehouse_name = available_warehouse.getSelectedItem().toString();
         if (warehouse_ids.containsKey(warehouse_name)) {
             warehouse_id = Integer.parseInt(warehouse_ids.get(warehouse_name));
@@ -845,11 +853,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             content.put("password", password);
             content.put("password_repeat", password_repeat);
             content.put("phone", phone);
-            int group_id = 5;
-            if (!is_cashier) {
-                group_id = 4;
-            }
             content.put("group_id", ""+group_id);
+            content.put("warehouse_name", warehouse_name);
             content.put("date_added", DateTimeStrategy.getCurrentTime());
 
             if (conMgr.getActiveNetworkInfo() != null
@@ -883,6 +888,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         content.remove("password_repeat");
         content.remove("username");
         content.remove("group_id");
+        content.remove("warehouse_name");
 
         int id = ProfileController.getInstance().register(content);
         if (id > 0) {
@@ -918,7 +924,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                         String name = jObj.getString(TAG_NAME);
                         String email = jObj.getString(TAG_EMAIL);
                         String phone = jObj.getString(TAG_PHONE);
-                        int group_id = jObj.getInt("group_id");
+                        int server_group_id = jObj.getInt("group_id");
 
                         // update the params first
                         Params admin_id = paramCatalog.getParamByName("admin_id");
@@ -943,13 +949,14 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                         content.put("password", password);
                         content.put("phone", phone);
                         content.put("server_admin_id", id);
-                        content.put("server_group_id", group_id);
+                        content.put("server_group_id", server_group_id);
                         content.put("date_added", DateTimeStrategy.getCurrentTime());
                         int new_id = ProfileController.getInstance().register(content);
                         if (new_id > 0) {
-                            if (group_id != 5) {
+                            if (server_group_id != 5) {
                                 is_cashier = true;
                             }
+                            group_id = server_group_id;
                             addRoleParams();
                         }
 
@@ -1103,6 +1110,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 params.put("email", content.getAsString("email"));
                 params.put("status", "1");
                 params.put("group_id", content.getAsString("group_id"));
+                params.put("warehouse_name", content.getAsString("warehouse_name"));
                 Log.e(getClass().getSimpleName(), "params to be submited : "+ params.toString());
 
                 return params;
@@ -1126,9 +1134,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
     private void addRoleParams() {
         String role = "cashier";
-        if (!is_cashier) {
-            role = "cs";
-        }
+        try {
+            role = role_names.get(group_id);
+        } catch (Exception e){e.printStackTrace();}
+
         Params prole = paramCatalog.getParamByName("role");
         if (prole instanceof Params) {
             if (prole.getValue() != role) {

@@ -238,6 +238,8 @@
     <string name="label_customer_phone">Telepon</string>
     <string name="label_role_cs">Customer Support</string>
     <string name="label_role_cashier">Kasir</string>
+    <string name="label_role_staff">Staff</string>
+    <string name="label_role_manager">Manager</string>
     <string name="label_total_amount">Jumlah Total</string>
     <string name="label_next">Selanjutnya</string>
     <string name="label_contact_detail">Rincian Data Pelanggan</string>
