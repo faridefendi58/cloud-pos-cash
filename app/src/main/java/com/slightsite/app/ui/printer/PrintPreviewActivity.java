@@ -158,6 +158,8 @@ public class PrintPreviewActivity extends Activity {
 
     private String formated_receipt;
     private int shipping_method = 0;
+    private int berhutang = 0;
+    private Boolean should_be_finished = false;
     private List<LineItem> lineItems;
 
     private int screen_width = 0;
@@ -255,7 +257,13 @@ public class PrintPreviewActivity extends Activity {
                 warehouse = warehouseCatalog.getWarehouseByWarehouseId(warehouse_id);
             }
 
+            if (getIntent().hasExtra("hutang")) { // has sale data from server
+                berhutang = getIntent().getIntExtra("hutang", 0);
+            }
             shipping_method = getIntent().getIntExtra("shipping_method", 0);
+            if (shipping_method == 0 && berhutang == 0) {
+                should_be_finished = true;
+            }
 
             Params bParam = paramCatalog.getParamByName("bluetooth_device_name");
             if (bParam != null) {
@@ -671,9 +679,14 @@ public class PrintPreviewActivity extends Activity {
 
         if (sale.getCreatedBy() > 0) {
             res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_created_by) + "</td><td colspan=\"3\"> : " + sale.getCreatedByName() + "</td></tr>";
-            if (sale.getPaidBy() > 0 && is_delivered > 0) {
-                //res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + sale.getDeliveredByName() + "</td></tr>";
-                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
+            if (sale.getPaidBy() > 0) {
+                if (is_delivered > 0 || should_be_finished) {
+                    res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
+                }
+            } else {
+                if (should_be_finished) {
+                    res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
+                }
             }
         } else {
             if (adminData != null) {
@@ -695,8 +708,13 @@ public class PrintPreviewActivity extends Activity {
                 res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b>" +
                         getResources().getString(R.string.message_paid_delivered) + "</b></td></tr>";
             } else {
-                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b>" +
-                        getResources().getString(R.string.message_paid_undelivered) + "</b></td></tr>";
+                if (should_be_finished) {
+                    res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b>" +
+                            getResources().getString(R.string.message_paid_delivered) + "</b></td></tr>";
+                } else {
+                    res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b>" +
+                            getResources().getString(R.string.message_paid_undelivered) + "</b></td></tr>";
+                }
             }
         } else {
             res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b style=\"color:red;\" class=\"ft-26\">" + getResources().getString(R.string.message_unpaid) + "</b></td></tr>";

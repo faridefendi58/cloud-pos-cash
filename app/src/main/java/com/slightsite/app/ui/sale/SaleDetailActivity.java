@@ -953,6 +953,15 @@ public class SaleDetailActivity extends Activity{
 										shipping_recipient_phone.setText(shipping.getPhone());
 									}
 
+									// null value on pickup date when ship method 0
+									if (shipping.getMethod() == 0) {
+										try {
+											if (server_invoice_data.getInt("delivered") == 1) {
+												shipping_date.setText(DateTimeStrategy.parseDate(server_invoice_data.getString("delivered_at"), "dd MMM yyyy HH:ss") + "");
+											}
+										} catch (Exception e){}
+									}
+
 									// find the retur data
 									try {
 										obj_retur = server_invoice_data.getJSONObject("refund");
