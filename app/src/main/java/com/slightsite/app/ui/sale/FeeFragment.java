@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,10 +14,13 @@ import android.view.ViewGroup;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
+import com.slightsite.app.domain.sale.Fee;
 import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.component.UpdatableFragment;
+
+import java.util.ArrayList;
 
 @SuppressLint("ValidFragment")
 public class FeeFragment extends UpdatableFragment {
@@ -27,6 +32,8 @@ public class FeeFragment extends UpdatableFragment {
     private ViewPager viewPager;
 
     private View root;
+
+    private RecyclerView feeListRecycle;
 
     public FeeFragment() {
         super();
@@ -45,6 +52,7 @@ public class FeeFragment extends UpdatableFragment {
         main = (MainActivity) getActivity();
         viewPager = main.getViewPager();
 
+        buildListFee();
         return root;
     }
 
@@ -60,6 +68,19 @@ public class FeeFragment extends UpdatableFragment {
     }
 
     private void buildListFee() {
+        feeListRecycle = (RecyclerView) root.findViewById(R.id.feeListRecycle);
+        feeListRecycle.setLayoutManager(new LinearLayoutManager(main.getApplicationContext()));
+        feeListRecycle.setHasFixedSize(true);
+        feeListRecycle.setNestedScrollingEnabled(false);
 
+        // dummy data
+        ArrayList<Fee> listFee = new ArrayList<Fee>();
+        for (int m = 1; m < 30; m++) {
+            int tot = m*1000;
+            Fee _fee = new Fee("2019-10-"+m, m*3, Double.parseDouble(tot+""));
+            listFee.add(_fee);
+        }
+        AdapterListFee adapter = new AdapterListFee(main.getApplicationContext(), listFee);
+        feeListRecycle.setAdapter(adapter);
     }
 }
