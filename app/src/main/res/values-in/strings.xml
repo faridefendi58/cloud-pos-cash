@@ -50,6 +50,7 @@
     <string name="report">Laporan</string>
     <string name="invoice">Tagihan</string>
     <string name="customer">Pelanggan</string>
+    <string name="fee">Fee</string>
     <string name="pick_customer">Pilih Pelanggan</string>
     <string name="language">Bahasa</string>
     <string name="payment">Pembayaran</string>

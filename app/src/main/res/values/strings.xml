@@ -50,6 +50,7 @@
     <string name="report">Report</string>
     <string name="invoice">Invoice</string>
     <string name="customer">Customer</string>
+    <string name="fee">Fee</string>
     <string name="pick_customer">Pick Customer</string>
     <string name="language">Language</string>
     <string name="payment">Payment</string>
