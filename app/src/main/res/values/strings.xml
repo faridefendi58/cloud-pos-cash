@@ -106,6 +106,7 @@
     <string name="title_proceed_retur">Proceed Retur</string>
     <string name="title_change_the_item">Change The Item</string>
     <string name="title_change_the_money">Money Back</string>
+    <string name="title_change_other_item">Change Other Items</string>
 
     <string name="dashboard_income">Income</string>
     <string name="dashboard_transaction">Transaction</string>

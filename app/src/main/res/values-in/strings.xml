@@ -108,6 +108,7 @@
     <string name="title_proceed_retur">Proses Retur dan Refund</string>
     <string name="title_change_the_item">Penukaran Barang</string>
     <string name="title_change_the_money">Pengembalian Uang</string>
+    <string name="title_change_other_item">Ganti Item Lain</string>
 
     <string name="dashboard_income">Pendapatan</string>
     <string name="dashboard_transaction">Transaksi</string>

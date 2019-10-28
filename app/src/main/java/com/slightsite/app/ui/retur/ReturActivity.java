@@ -71,6 +71,7 @@ public class ReturActivity extends AppCompatActivity {
     private Shipping shipping_intent;
     private List<Map<String, String>> lineitemList = new ArrayList<Map<String, String>>();
     private List<LineItem> cartitemList = new ArrayList<LineItem>();
+    private List<Product> otheritemList = new ArrayList<Product>();
     private Map<Integer, Integer> product_qty_stacks = new HashMap<Integer, Integer>();
     private Map<Integer, Double> product_price_stacks = new HashMap<Integer, Double>();
     private Map<Integer, Integer> product_retur_stacks = new HashMap<Integer, Integer>();
@@ -259,11 +260,15 @@ public class ReturActivity extends AppCompatActivity {
     private EditText nominal_bri;
     private List<PaymentItem> payment_items;
     private RecyclerView returItemListRecycle;
+    private TextView change_other_item_btn;
+    private LinearLayout change_other_item_container;
+    private RecyclerView changeOtherItemListRecycle;
+    private View sheetView;
 
     public void proceedRetur(View v) {
         if (product_retur_stacks.size() > 0) {
             bottomSheetDialog = new BottomSheetDialog(ReturActivity.this);
-            View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_proceed_retur, null);
+            sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_proceed_retur, null);
             bottomSheetDialog.setContentView(sheetView);
 
             // get total retur price
@@ -304,6 +309,15 @@ public class ReturActivity extends AppCompatActivity {
             sAdap.setSheetView(sheetView);
             sAdap.setTotalRefund(tot_price);
             returItemListRecycle.setAdapter(sAdap);
+
+            change_other_item_btn = (TextView) sheetView.findViewById(R.id.change_other_item_btn);
+            change_other_item_container = (LinearLayout) sheetView.findViewById(R.id.change_other_item_container);
+            changeOtherItemListRecycle = (RecyclerView) sheetView.findViewById(R.id.changeOtherItemListRecycle);
+            changeOtherItemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            changeOtherItemListRecycle.setHasFixedSize(true);
+            changeOtherItemListRecycle.setNestedScrollingEnabled(false);
+
+            buildChangeOtherItemList();
 
             bottomSheetDialog.show();
 
@@ -436,6 +450,17 @@ public class ReturActivity extends AppCompatActivity {
                 }
             }
         });
+
+        change_other_item_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (change_other_item_container.getVisibility() == View.VISIBLE) {
+                    change_other_item_container.setVisibility(View.GONE);
+                } else {
+                    change_other_item_container.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     private void setTextChangeListener(final EditText etv, final String setType) {
@@ -485,5 +510,24 @@ public class ReturActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void buildChangeOtherItemList() {
+        otheritemList.clear();
+        try {
+            List<Product> products = productCatalog.getAllProduct();
+            for(Product product : products) {
+                if (!product_retur_stacks.containsKey(product.getId())) {
+                    otheritemList.add(product);
+                }
+            }
+        } catch (Exception e){e.printStackTrace();}
+
+        Log.e(getClass().getSimpleName(), "otheritemList size : "+ otheritemList.size());
+        if (otheritemList.size() > 0) {
+            AdapterListProductChange pAdap = new AdapterListProductChange(ReturActivity.this, otheritemList, register);
+            pAdap.setSheetView(sheetView);
+            changeOtherItemListRecycle.setAdapter(pAdap);
+        }
     }
 }

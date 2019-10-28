@@ -130,7 +130,6 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="0.5"
                             android:layout_marginTop="@dimen/spacing_middle"
-                            android:textAlignment="textEnd"
                             android:hint="0"
                             android:textStyle="bold"
                             android:layout_gravity="right"/>
@@ -329,6 +328,40 @@
                         <!-- end of bca -->
 
                     </LinearLayout>
+
+                </LinearLayout>
+
+                <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/grey_10" />
+
+                <TextView
+                        android:id="@+id/change_other_item_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/title_change_other_item"
+                        android:textSize="@dimen/spacing_large"
+                        android:textStyle="bold"
+                        android:layout_marginTop="@dimen/spacing_large"
+                        android:layout_marginBottom="@dimen/spacing_large"
+                        android:drawableRight="@drawable/ic_expand_arrow"
+                        android:clickable="true"/>
+
+                <LinearLayout
+                        android:id="@+id/change_other_item_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                    <android.support.v7.widget.RecyclerView
+                            android:id="@+id/changeOtherItemListRecycle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:scrollbars="vertical"
+                            android:scrollingCache="true" />
 
                 </LinearLayout>
 
