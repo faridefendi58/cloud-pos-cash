@@ -10,6 +10,7 @@ public class Retur implements Serializable {
     private int server_invoice_id;
     private ArrayList payments = new ArrayList();
     private ArrayList items = new ArrayList();
+    private ArrayList items_change = new ArrayList();
     private Customer customer;
 
     public Retur(int server_invoice_id) {
@@ -42,5 +43,12 @@ public class Retur implements Serializable {
 
     public Customer getCustomer() {
         return customer;
+    }
+
+    public void setItemsChange(ArrayList _change_item) {
+        this.items_change = _change_item;
+    }
+    public ArrayList getItemsChange() {
+        return items_change;
     }
 }

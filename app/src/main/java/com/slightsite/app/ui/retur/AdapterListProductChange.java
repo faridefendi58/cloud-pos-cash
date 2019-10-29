@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
@@ -32,6 +33,7 @@ public class AdapterListProductChange extends RecyclerView.Adapter<RecyclerView.
     private Map<String, Integer> qty_stacks = new HashMap<String, Integer>();
 
     private View sheetView;
+    private Double deposit_limit = 0.0;
 
     public interface OnItemClickListener {
         void onItemClick(View view, Product obj, int position);
@@ -137,11 +139,18 @@ public class AdapterListProductChange extends RecyclerView.Adapter<RecyclerView.
                         int current_qty = Integer.parseInt(view.quantity.getText().toString());
                         if (current_qty > 0) {
                             current_qty = current_qty - 1;
+                            try {
+                                deposit_limit = deposit_limit + p.getUnitPrice();
+                                ((ReturActivity) ctx).setRefundMustPay(deposit_limit);
+                                ((TextView) sheetView.findViewById(R.id.debt_must_pay)).setText(CurrencyController.getInstance().moneyFormat(deposit_limit));
+
+                                view.quantity.setText(current_qty+"");
+                            } catch (Exception e){}
                         }
 
                         view.quantity.setText(current_qty+"");
                         if (current_qty >= 0) {
-                            ((ReturActivity) ctx).updateProductReturStacks(p.getId(), current_qty);
+                            ((ReturActivity) ctx).updateProductChangeStacks(p.getId(), current_qty, p);
                             if (current_qty == 0) {
                                 view.add_to_queue_container.setVisibility(View.VISIBLE);
                                 view.add_qty_container.setVisibility(View.GONE);
@@ -156,16 +165,19 @@ public class AdapterListProductChange extends RecyclerView.Adapter<RecyclerView.
                 public void onClick(View v) {
                     try {
                         int current_qty = Integer.parseInt(view.quantity.getText().toString());
-                        int max_qty = qty_stacks.get(view.title.getText().toString());
-                        if (current_qty > 0) {
-                            if (current_qty < max_qty) {
-                                current_qty = current_qty + 1;
-                            }
-                        }
+                        if (p.getUnitPrice() <= deposit_limit) {
+                            try {
+                                deposit_limit = deposit_limit - p.getUnitPrice();
+                                ((ReturActivity) ctx).setRefundMustPay(deposit_limit);
+                                ((TextView) sheetView.findViewById(R.id.debt_must_pay)).setText(CurrencyController.getInstance().moneyFormat(deposit_limit));
 
-                        view.quantity.setText(current_qty+"");
-                        if (current_qty > 0 && current_qty <= max_qty) {
-                            ((ReturActivity) ctx).updateProductReturStacks(p.getId(), current_qty);
+                                int _qty = current_qty + 1;
+                                view.quantity.setText(_qty+"");
+                                ((ReturActivity) ctx).updateProductChangeStacks(p.getId(), _qty, p);
+                            } catch (Exception e){}
+                        } else {
+                            Toast.makeText(ctx, "Not enough balance. Maksimum " + CurrencyController.getInstance().moneyFormat(deposit_limit),
+                                    Toast.LENGTH_LONG).show();
                         }
                     } catch (Exception e){e.printStackTrace();}
                 }
@@ -176,10 +188,20 @@ public class AdapterListProductChange extends RecyclerView.Adapter<RecyclerView.
             view.addReturButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((ReturActivity) ctx).updateProductReturStacks(p.getId(), 1);
-                    view.quantity.setText("1");
-                    view.add_qty_container.setVisibility(View.VISIBLE);
-                    view.add_to_queue_container.setVisibility(View.GONE);
+                    if (p.getUnitPrice() <= deposit_limit) {
+                        try {
+                            deposit_limit = deposit_limit - p.getUnitPrice();
+                            ((ReturActivity) ctx).setRefundMustPay(deposit_limit);
+                            ((TextView) sheetView.findViewById(R.id.debt_must_pay)).setText(CurrencyController.getInstance().moneyFormat(deposit_limit));
+                        } catch (Exception e){}
+                        view.quantity.setText("1");
+                        view.add_qty_container.setVisibility(View.VISIBLE);
+                        view.add_to_queue_container.setVisibility(View.GONE);
+                        ((ReturActivity) ctx).updateProductChangeStacks(p.getId(), 1, p);
+                    } else {
+                        Toast.makeText(ctx, "Not enough balance. Maksimum " + CurrencyController.getInstance().moneyFormat(deposit_limit),
+                                Toast.LENGTH_LONG).show();
+                    }
                 }
             });
         }
@@ -192,5 +214,9 @@ public class AdapterListProductChange extends RecyclerView.Adapter<RecyclerView.
 
     public void setSheetView(View _sheetView) {
         this.sheetView = _sheetView;
+    }
+
+    public void setDepositLimit(Double _limit) {
+        this.deposit_limit = _limit;
     }
 }

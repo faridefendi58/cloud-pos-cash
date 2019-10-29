@@ -75,6 +75,8 @@ public class ReturActivity extends AppCompatActivity {
     private Map<Integer, Integer> product_qty_stacks = new HashMap<Integer, Integer>();
     private Map<Integer, Double> product_price_stacks = new HashMap<Integer, Double>();
     private Map<Integer, Integer> product_retur_stacks = new HashMap<Integer, Integer>();
+    private Map<Integer, Integer> product_change_stacks = new HashMap<Integer, Integer>();
+    private Map<Integer, LineItem> product_change_lineitem_stacks = new HashMap<Integer, LineItem>();
     private Map<Integer, Integer> stock_retur_stacks = new HashMap<Integer, Integer>();
     private Map<Integer, String> product_name_stacks = new HashMap<Integer, String>();
 
@@ -85,6 +87,7 @@ public class ReturActivity extends AppCompatActivity {
     private SharedPreferences sharedpreferences;
     private Register register;
     private Boolean is_local_data = false;
+    private int total_inv_qty = 0;
 
     private RecyclerView lineitemListRecycle;
     private BottomSheetDialog bottomSheetDialog;
@@ -159,6 +162,7 @@ public class ReturActivity extends AppCompatActivity {
                                 );
                                 lineItem.setUnitPriceAtSale(line_object.getDouble("unit_price"));
                                 lineItems.add(lineItem);
+                                total_inv_qty = total_inv_qty + line_object.getInt("qty");
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -317,8 +321,6 @@ public class ReturActivity extends AppCompatActivity {
             changeOtherItemListRecycle.setHasFixedSize(true);
             changeOtherItemListRecycle.setNestedScrollingEnabled(false);
 
-            buildChangeOtherItemList();
-
             bottomSheetDialog.show();
 
             payment_items =  new ArrayList<PaymentItem>();
@@ -426,13 +428,34 @@ public class ReturActivity extends AppCompatActivity {
 
                             arrRefundList.add(arrRefundList2);
                         }
+
+                        // store the change other items if any
+                        ArrayList arrChangeItemList = new ArrayList();
+                        if (product_change_stacks.size() > 0) {
+                            for (Map.Entry<Integer, LineItem> entry : product_change_lineitem_stacks.entrySet()) {
+                                Map<String, String> arrChangeItemList2 = new HashMap<String, String>();
+                                LineItem lineItem = entry.getValue();
+                                arrChangeItemList2.put("id", lineItem.getProduct().getId()+"");
+                                arrChangeItemList2.put("product_id", lineItem.getProduct().getId()+"");
+                                arrChangeItemList2.put("title", lineItem.getProduct().getName());
+                                arrChangeItemList2.put("quantity", lineItem.getQuantity()+"");
+                                arrChangeItemList2.put("price", lineItem.getPriceAtSale()+"");
+                                arrChangeItemList2.put("quantity_total", total_inv_qty+"");
+                                arrChangeItemList.add(arrChangeItemList2);
+                            }
+                        }
+
                         mObj.put("payment", arrPaymentList);
                         mObj.put("items", arrRefundList);
+                        if (arrChangeItemList.size() > 0) {
+                            mObj.put("items_change", arrChangeItemList);
+                        }
 
                         Retur retur = new Retur(sale.getServerInvoiceId());
                         retur.setItems(arrRefundList);
                         retur.setPayment(arrPaymentList);
                         retur.setCustomer(customer);
+                        retur.setItemsChange(arrChangeItemList);
 
                         Log.e(getClass().getSimpleName(), "mObj : "+ mObj.toString());
 
@@ -458,6 +481,7 @@ public class ReturActivity extends AppCompatActivity {
                     change_other_item_container.setVisibility(View.GONE);
                 } else {
                     change_other_item_container.setVisibility(View.VISIBLE);
+                    buildChangeOtherItemList();
                 }
             }
         });
@@ -513,21 +537,45 @@ public class ReturActivity extends AppCompatActivity {
     }
 
     private void buildChangeOtherItemList() {
+        Log.e(getClass().getSimpleName(), "total_inv_qty : "+ total_inv_qty);
         otheritemList.clear();
         try {
             List<Product> products = productCatalog.getAllProduct();
             for(Product product : products) {
                 if (!product_retur_stacks.containsKey(product.getId())) {
+                    product.setUnitPrice(product.getUnitPriceByQuantity(product.getId(), total_inv_qty));
                     otheritemList.add(product);
                 }
             }
         } catch (Exception e){e.printStackTrace();}
 
-        Log.e(getClass().getSimpleName(), "otheritemList size : "+ otheritemList.size());
+        Log.e(getClass().getSimpleName(), "refund_must_pay : "+ refund_must_pay);
         if (otheritemList.size() > 0) {
             AdapterListProductChange pAdap = new AdapterListProductChange(ReturActivity.this, otheritemList, register);
             pAdap.setSheetView(sheetView);
+            pAdap.setDepositLimit(refund_must_pay);
             changeOtherItemListRecycle.setAdapter(pAdap);
         }
+    }
+
+    /**
+     * Change other product on retur
+     * @param product_id
+     * @param qty
+     */
+    public void updateProductChangeStacks(int product_id, int qty, Product p) {
+        if (qty > 0) {
+            product_change_stacks.put(product_id, qty);
+            LineItem lineItem = new LineItem(
+                    p,
+                    qty,
+                    total_inv_qty
+            );
+            product_change_lineitem_stacks.put(product_id, lineItem);
+        } else {
+            product_change_stacks.remove(product_id);
+            product_change_lineitem_stacks.remove(product_id);
+        }
+        Log.e(getClass().getSimpleName(), "product_change_stacks : "+ product_change_stacks.toString());
     }
 }
