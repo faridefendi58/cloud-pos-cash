@@ -919,6 +919,26 @@ public class PrintReturActivity extends Activity {
                     arrPaymentList.add(arrPayment);
                 }
                 mObj.put("payments", arrPaymentList);
+
+                List<Map<String, String >> change_item_list = retur.getItemsChange();
+                if (change_item_list.size() > 0) {
+                    ArrayList arrChangeItems = new ArrayList();
+                    for (Map<String, String> entry : change_item_list) {
+                        String str_price = entry.get("price");
+                        if (str_price.contains(".")) {
+                            str_price = str_price.substring(0, str_price.indexOf("."));
+                        }
+                        int prc = Integer.parseInt(str_price);
+
+                        Map<String, String> mItem = new HashMap<String, String>();
+                        mItem.put("name", entry.get("title"));
+                        mItem.put("quantity", entry.get("quantity"));
+                        mItem.put("quantity_total", entry.get("quantity_total"));
+                        mItem.put("price", prc +"");
+                        arrChangeItems.add(mItem);
+                    }
+                    mObj.put("items_change", arrChangeItems);
+                }
                 Log.e(getClass().getSimpleName(), "mObj : "+ mObj.toString());
 
                 _create_retur_inv(mObj);
@@ -969,7 +989,7 @@ public class PrintReturActivity extends Activity {
                                 String server_invoice_number = jObj.getString("invoice_number");
                                 sale.setServerInvoiceNumber(server_invoice_number);
                                 // and then trigger print the invoice
-                                //just_print(false);
+                                just_print(false);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
