@@ -274,23 +274,6 @@ public class ReportFragment extends UpdatableFragment {
 		});
 
 		update();
-		/*lyt_progress.setVisibility(View.VISIBLE);
-		lyt_progress.setAlpha(1.0f);
-		list_recycle_container.setVisibility(View.GONE);
-
-		new Handler().postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				ViewAnimation.fadeOut(lyt_progress);
-			}
-		}, LOADING_DURATION);
-
-		new Handler().postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				update();
-			}
-		}, LOADING_DURATION + 400);*/
 	}
 	
 	/**
@@ -780,6 +763,12 @@ public class ReportFragment extends UpdatableFragment {
 
 		filter_date_from = (AutoCompleteTextView) sheetView.findViewById(R.id.date_from);
 		filter_date_to = (AutoCompleteTextView) sheetView.findViewById(R.id.date_to);
+
+		// set tobe unfocusable in order to pretend softkeyboard opened automatically
+		filter_invoice_number.setFocusable(false);
+		filter_customer_name.setFocusable(false);
+		filter_customer_phone.setFocusable(false);
+
 		if (filter_result.containsKey("date_from")) {
 			filter_date_from.setText(DateTimeStrategy.parseDate(filter_result.get("date_from"), "MMM dd, yyyy"));
 		}

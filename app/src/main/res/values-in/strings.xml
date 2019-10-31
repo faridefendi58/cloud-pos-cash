@@ -13,6 +13,7 @@
     <string name="action_logout">Logout</string>
 
     <string name="total">Total</string>
+    <string name="total_refund">Total Pengembalian</string>
     <string name="barcode">Barcode</string>
     <string name="cancel">Batal</string>
     <string name="clear">Batalkan</string>

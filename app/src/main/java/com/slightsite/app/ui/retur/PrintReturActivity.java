@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.support.design.widget.BottomSheetDialog;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
@@ -418,22 +419,12 @@ public class PrintReturActivity extends Activity {
             res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.label_customer_phone)+ "</td><td colspan=\"3\"> : "+ customer.getPhone() +"</td></tr>";
         }
 
-        /*if (sale.getPaidBy() > 0) {
-            res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b>" +
-                    getResources().getString(R.string.message_paid_delivered) + "</b></td></tr>";
-        } else {
-            res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b style=\"color:red;\" class=\"ft-26\">" + getResources().getString(R.string.message_unpaid) + "</b></td></tr>";
-        }*/
-
         res += "<tr><td colspan=\"4\"><hr/></td></tr>";
-        res += "<tr><td colspan=\"4\"><b>Ganti Barang & Pengembalian Uang</b></td></tr>";
-        res += "<tr><td colspan=\"4\"><hr/></td></tr></table>";
-        res += "<table width=\"100%\" style=\"margin-bottom:25px;\">";
 
         List<Map<String, String >> list = retur.getItems();
         int sub_total = 0;
+        Map<String,Integer> list_tukar_barang = new HashMap<>();
         for (Map<String, String> entry : list) {
-            res += "<tr class=\"ft-17\"><td colspan=\"4\">"+ entry.get("title") +"</td></tr>";
             int qty = Integer.parseInt(entry.get("quantity"));
             int change_qty = Integer.parseInt(entry.get("change_item"));
             int refund_qty = qty - change_qty;
@@ -443,28 +434,60 @@ public class PrintReturActivity extends Activity {
             }
             int prc = Integer.parseInt(str_price);
             int tot = prc * refund_qty;
-            if (refund_qty > 0) {
-                res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"padding-left:10px;\">" + refund_qty + " x " + CurrencyController.getInstance().moneyFormat(prc) + "</td>";
-                res += "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(tot) + "</td></tr>";
-            }
             if (change_qty > 0) {
-                res += "<tr class=\"ft-17\"><td colspan=\"4\" style=\"padding-left:10px;\">" + change_qty + " pcs tukar barang</td>";
+                list_tukar_barang.put(entry.get("title"), change_qty);
             }
 
             sub_total = sub_total + tot;
+        }
+
+        if (list_tukar_barang.size() > 0) {
+            res += "<tr><td colspan=\"4\"><b>Penukaran Barang</b></td></tr>";
+            res += "<tr><td colspan=\"4\"><hr/></td></tr></table>";
+            res += "<table width=\"100%\" style=\"margin-bottom:25px;\">";
+            for (Map.Entry<String, Integer> tb_entry : list_tukar_barang.entrySet()) {
+                res += "<tr class=\"ft-17\"><td colspan=\"4\">"+ tb_entry.getKey() +"</td></tr>";
+                res += "<tr class=\"ft-17\"><td colspan=\"4\" style=\"padding-left:10px;\">" + tb_entry.getValue() + " pcs tukar barang</td>";
+            }
+        } else {
+            res += "</table><table width=\"100%\" style=\"margin-bottom:25px;\">";
+        }
+
+        if (sub_total > 0) {
+            if (list_tukar_barang.size() > 0) {
+                res += "<tr><td colspan=\"4\">&nbsp;</td></tr>";
+            }
+            res += "<tr><td colspan=\"4\"><b>Pengembalian Uang</b></td></tr>";
+            res += "<tr><td colspan=\"4\"><hr/></td></tr>";
+            for (Map<String, String> entry2 : list) {
+                int qty = Integer.parseInt(entry2.get("quantity"));
+                int change_qty = Integer.parseInt(entry2.get("change_item"));
+                int refund_qty = qty - change_qty;
+                String str_price = entry2.get("price");
+                if (str_price.contains(".")) {
+                    str_price = str_price.substring(0, str_price.indexOf("."));
+                }
+                int prc = Integer.parseInt(str_price);
+                int tot = prc * refund_qty;
+                if (refund_qty > 0) {
+                    res += "<tr class=\"ft-17\"><td colspan=\"4\">" + entry2.get("title") + "</td></tr>";
+                    res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"padding-left:10px;\">" + refund_qty + " x " + CurrencyController.getInstance().moneyFormat(prc) + "</td>";
+                    res += "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(tot) + "</td></tr>";
+                }
+            }
         }
 
         res += "<tr><td colspan=\"4\"><hr/></td></tr>";
 
         int grand_total = sub_total;
 
-        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.total) +" :</td>" +
+        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.total_refund) +" :</td>" +
                 "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(grand_total) +"</td>";
 
         List<Map<String, String >> list_change = retur.getItemsChange();
         if (list_change.size() > 0) {
             res += "<tr><td colspan=\"4\">&nbsp;</td></tr>";
-            res += "<tr><td colspan=\"4\" style=\"text-align:right;\"><b>Penukaran Dengan Item Lain</b></td></tr>";
+            res += "<tr><td colspan=\"4\" style=\"text-align:left;\"><b>Penukaran Dengan Item Lain</b></td></tr>";
             res += "<tr><td colspan=\"4\"><hr/></td></tr>";
             int tot_ctot = 0;
             for (Map<String, String> c_entry : list_change) {
@@ -477,20 +500,20 @@ public class PrintReturActivity extends Activity {
                 int cprc = Integer.parseInt(str_price);
                 int ctot = cprc * cqty;
                 tot_ctot = tot_ctot + ctot;
-                res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"padding-left:10px;\">" + c_entry.get("quantity") + " x "+ CurrencyController.getInstance().moneyFormat(cprc) +"</td>";
-                res += "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(ctot) + "</td></tr>";
+                res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"padding-left:10px;\">" + c_entry.get("quantity") + " x -"+ CurrencyController.getInstance().moneyFormat(cprc) +"</td>";
+                res += "<td style=\"text-align:right;\">-" + CurrencyController.getInstance().moneyFormat(ctot) + "</td></tr>";
             }
             res += "<tr><td colspan=\"4\"><hr/></td></tr>";
-            res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">Total :</td>" +
-                    "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(tot_ctot) + "</td>";
+            res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">Total Harga :</td>" +
+                    "<td style=\"text-align:right;\">-" + CurrencyController.getInstance().moneyFormat(tot_ctot) + "</td>";
             int sisa = grand_total - tot_ctot;
-            res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">Sisa Dana :</td>" +
+            res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">Sisa Pengembalian :</td>" +
                     "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(sisa) + "</td>";
         }
 
         if (grand_total > 0) {
             res += "<tr><td colspan=\"4\">&nbsp;</td></tr>";
-            res += "<tr><td colspan=\"4\" style=\"text-align:right;\"><b>Cara Pembayaran</b></td></tr>";
+            res += "<tr><td colspan=\"4\" style=\"text-align:right;\"><b>Cara Pengembalian</b></td></tr>";
             res += "<tr><td colspan=\"4\">&nbsp;</td></tr>";
 
             List<Map<String, String>> payments = retur.getPayment();
