@@ -108,6 +108,7 @@
     <string name="title_change_the_item">Change The Item</string>
     <string name="title_change_the_money">Money Back</string>
     <string name="title_change_other_item">Change Other Items</string>
+    <string name="title_fee_report">Fee Report</string>
 
     <string name="dashboard_income">Income</string>
     <string name="dashboard_transaction">Transaction</string>
@@ -279,6 +280,9 @@
     <string name="label_date_from">Date From</string>
     <string name="label_date_to">Date To</string>
     <string name="label_checkout_order">Checkout Order</string>
+    <string name="label_total_omzet">Total Omzet</string>
+    <string name="label_total_fee">Total Fee</string>
+    <string name="label_total_transaction">Total Transaction</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>

@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.slightsite.app.R;
 import com.slightsite.app.domain.params.ParamCatalog;
@@ -35,6 +36,11 @@ public class FeeFragment extends UpdatableFragment {
 
     private RecyclerView feeListRecycle;
 
+    private TextView fee_report_title;
+    private TextView total_omzet;
+    private TextView total_fee;
+    private TextView total_transaction;
+
     public FeeFragment() {
         super();
     }
@@ -52,6 +58,7 @@ public class FeeFragment extends UpdatableFragment {
         main = (MainActivity) getActivity();
         viewPager = main.getViewPager();
 
+        initView();
         buildListFee();
         return root;
     }
@@ -65,6 +72,13 @@ public class FeeFragment extends UpdatableFragment {
     public void onResume() {
         super.onResume();
         update();
+    }
+
+    private void initView() {
+        fee_report_title = (TextView) root.findViewById(R.id.fee_report_title);
+        total_fee = (TextView) root.findViewById(R.id.total_fee);
+        total_omzet = (TextView) root.findViewById(R.id.total_omzet);
+        total_transaction = (TextView) root.findViewById(R.id.total_transaction);
     }
 
     private void buildListFee() {

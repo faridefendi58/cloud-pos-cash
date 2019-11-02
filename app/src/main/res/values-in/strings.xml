@@ -110,6 +110,7 @@
     <string name="title_change_the_item">Penukaran Barang</string>
     <string name="title_change_the_money">Pengembalian Uang</string>
     <string name="title_change_other_item">Ganti Item Lain</string>
+    <string name="title_fee_report">Laporan Fee</string>
 
     <string name="dashboard_income">Pendapatan</string>
     <string name="dashboard_transaction">Transaksi</string>
@@ -273,6 +274,9 @@
     <string name="label_date_from">Tanggal Dari</string>
     <string name="label_date_to">Tanggal Sampai</string>
     <string name="label_checkout_order">Checkout Order</string>
+    <string name="label_total_omzet">Total Omset</string>
+    <string name="label_total_fee">Total Fee</string>
+    <string name="label_total_transaction">Total Transaksi</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Bank Mandiri</string>
