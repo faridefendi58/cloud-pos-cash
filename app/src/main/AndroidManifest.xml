@@ -88,6 +88,11 @@
                 android:screenOrientation="portrait"
                 android:theme="@style/AppCompatTheme">
         </activity>
+        <activity
+                android:name=".ui.fee.FeeDetailActivity"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppCompatTheme">
+        </activity>
     </application>
 
 </manifest>

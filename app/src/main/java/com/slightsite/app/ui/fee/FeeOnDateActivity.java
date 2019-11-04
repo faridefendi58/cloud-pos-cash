@@ -6,20 +6,51 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.slightsite.app.R;
+import com.slightsite.app.domain.AppController;
+import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.DateTimeStrategy;
+import com.slightsite.app.domain.params.ParamCatalog;
+import com.slightsite.app.domain.params.ParamService;
+import com.slightsite.app.domain.sale.Fee;
+import com.slightsite.app.domain.sale.FeeOn;
+import com.slightsite.app.domain.sale.Register;
+import com.slightsite.app.techicalservices.NoDaoSetException;
+import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.Tools;
+import com.slightsite.app.ui.sale.AdapterListFee;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class FeeOnDateActivity extends AppCompatActivity {
 
+    private Register register;
+    private ParamCatalog paramCatalog;
+
     private String date_fee = "";
+    private RecyclerView feeListRecycle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,18 +62,27 @@ public class FeeOnDateActivity extends AppCompatActivity {
             date_fee = intent.getExtras().get("date").toString();
         }
 
+        try {
+            register = Register.getInstance();
+            paramCatalog = ParamService.getInstance().getParamCatalog();
+        } catch (NoDaoSetException e) {
+            e.printStackTrace();
+        }
+
         initToolbar();
+        buildListFee();
     }
 
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_close);
-        toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.grey_60), PorterDuff.Mode.SRC_ATOP);
+        toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.colorWhite), PorterDuff.Mode.SRC_ATOP);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(getResources().getString(R.string.invoice_detail));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        Tools.setSystemBarColor(this, R.color.greenUcok);
-        Tools.setSystemBarLight(this);
+
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#019e47")));
+        getSupportActionBar().setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#e2e3e5")));
 
         TextView toolbar_title = (TextView) findViewById(R.id.toolbar_title);
         if (date_fee.length() > 0) {
@@ -56,5 +96,124 @@ public class FeeOnDateActivity extends AppCompatActivity {
             finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private TextView total_fee;
+    private TextView total_transaction;
+
+    private void buildListFee() {
+        feeListRecycle = (RecyclerView) findViewById(R.id.feeListRecycle);
+        feeListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        feeListRecycle.setHasFixedSize(true);
+        feeListRecycle.setNestedScrollingEnabled(false);
+
+        total_fee = (TextView) findViewById(R.id.total_fee);
+        total_transaction = (TextView) findViewById(R.id.total_transaction);
+
+        int warehouse_id = Integer.parseInt(paramCatalog.getParamByName("warehouse_id").getValue());
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("warehouse_id", warehouse_id + "");
+        params.put("created_at", date_fee);
+        params.put("group_by", "invoice_id");
+
+        String url = Server.URL + "transaction/list-fee-on?api-key=" + Server.API_KEY;
+        _string_request(Request.Method.GET, url, params, false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            Log.e(getClass().getSimpleName(), "result : "+ result);
+                            if (result.contains("success")) {
+                                JSONObject jObj = new JSONObject(result);
+                                int success = jObj.getInt("success");
+                                // Check for error node in json
+                                ArrayList<FeeOn> listFee = new ArrayList<FeeOn>();
+                                if (success == 1) {
+                                    JSONObject data = jObj.getJSONObject("data");
+                                    JSONArray items_data = data.getJSONArray("items");
+                                    for(int n = 0; n < items_data.length(); n++) {
+                                        JSONObject item_data = items_data.getJSONObject(n);
+                                        FeeOn _fee = new FeeOn(
+                                                item_data.getString("paid_at"),
+                                                item_data.getString("invoice_number"),
+                                                Double.parseDouble(item_data.getString("total_fee")));
+                                        listFee.add(_fee);
+                                    }
+
+                                    JSONObject summary_data = data.getJSONObject("summary");
+                                    total_fee.setText(CurrencyController.getInstance().moneyFormat(summary_data.getDouble("total_fee")));
+                                    total_transaction.setText(CurrencyController.getInstance().moneyFormat(summary_data.getDouble("total_transaction")) +" transaksi");
+                                }
+
+                                AdapterListFeeOn adapter = new AdapterListFeeOn(getApplicationContext(), listFee);
+                                feeListRecycle.setAdapter(adapter);
+
+                                adapter.setOnItemClickListener(new AdapterListFeeOn.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(View view, FeeOn obj, int position) {
+                                        Intent newActivity = new Intent(getBaseContext(), FeeDetailActivity.class);
+                                        //newActivity.putExtra("date", obj.getDate());
+                                        startActivity(newActivity);
+                                    }
+                                });
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Failed!, No product data in ",
+                                        Toast.LENGTH_LONG).show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    private void _string_request(int method, String url, final Map params, final Boolean show_dialog, final VolleyCallback callback) {
+
+        if (method == Request.Method.GET) { //get method doesnt support getParams
+            Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
+            while(iterator.hasNext())
+            {
+                Map.Entry<String, String> pair = iterator.next();
+                String pair_value = pair.getValue();
+                if (pair_value.contains(" "))
+                    pair_value = pair.getValue().replace(" ", "%20");
+                url += "&" + pair.getKey() + "=" + pair_value;
+            }
+        }
+
+        StringRequest strReq = new StringRequest(method, url, new Response.Listener < String > () {
+
+            @Override
+            public void onResponse(String Response) {
+                callback.onSuccess(Response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Log.e(getClass().getSimpleName(), "ada error : "+ error.getMessage());
+            }
+        })
+        {
+            // set headers
+            @Override
+            protected Map<String, String> getParams() {
+                return params;
+            }
+        };
+
+        strReq.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        try {
+            AppController.getInstance().addToRequestQueue(strReq, "json_obj_req");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public interface VolleyCallback {
+        void onSuccess(String result);
     }
 }

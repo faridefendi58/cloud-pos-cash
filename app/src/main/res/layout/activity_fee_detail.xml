@@ -4,7 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.fee.FeeOnDateActivity">
+        tools:context=".ui.fee.FeeDetailActivity">
 
     <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -34,7 +34,7 @@
                         android:id="@+id/toolbar_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text=""
+                        android:text="@string/invoice_detail"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/colorWhite"
                         app:fontFamily="sans-serif-medium" />
@@ -48,54 +48,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/spacing_middle">
-
-            <!-- Header fee report -->
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginTop="@dimen/spacing_middle"
-                    android:layout_marginBottom="@dimen/spacing_middle">
-
-                <TextView
-                        android:id="@+id/total_fee"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textSize="24dp"
-                        android:textStyle="bold"
-                        android:gravity="center"/>
-
-                <TextView
-                        android:id="@+id/total_transaction"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:gravity="center"/>
-
-            </LinearLayout>
-            <!-- Header fee report -->
-
-            <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                    <android.support.v7.widget.RecyclerView
-                            android:id="@+id/feeListRecycle"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:scrollbars="vertical"
-                            android:scrollingCache="true" />
-
-                </LinearLayout>
-
-            </RelativeLayout>
 
         </LinearLayout>
 
