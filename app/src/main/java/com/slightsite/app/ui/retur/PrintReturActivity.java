@@ -962,6 +962,15 @@ public class PrintReturActivity extends Activity {
                     }
                     mObj.put("items_change", arrChangeItems);
                 }
+
+                ArrayList<String> retur_reasons = retur.getItemsReason();
+                if (retur_reasons.size() > 0) {
+                    mObj.put("reasons", retur_reasons);
+                }
+                String retur_notes = retur.getNotes();
+                if (retur_notes !=null && retur_notes.length() > 0) {
+                    mObj.put("notes", retur_notes);
+                }
                 Log.e(getClass().getSimpleName(), "mObj : "+ mObj.toString());
 
                 _create_retur_inv(mObj);

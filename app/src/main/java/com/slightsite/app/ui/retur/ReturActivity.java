@@ -19,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
@@ -79,6 +80,7 @@ public class ReturActivity extends AppCompatActivity {
     private Map<Integer, LineItem> product_change_lineitem_stacks = new HashMap<Integer, LineItem>();
     private Map<Integer, Integer> stock_retur_stacks = new HashMap<Integer, Integer>();
     private Map<Integer, String> product_name_stacks = new HashMap<Integer, String>();
+    private ArrayList<String> retur_reason = new ArrayList<String>();
 
     private String line_items_intent;
     private List<LineItem> lineItems;
@@ -203,11 +205,23 @@ public class ReturActivity extends AppCompatActivity {
         }
     }
 
+    private CheckBox cb_mentah;
+    private CheckBox cb_hambar;
+    private CheckBox cb_asam;
+    private CheckBox cb_menghitam;
+    private EditText retur_notes;
+
     private void initView() {
         lineitemListRecycle = (RecyclerView) findViewById(R.id.lineitemListRecycle);
         lineitemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         lineitemListRecycle.setHasFixedSize(true);
         lineitemListRecycle.setNestedScrollingEnabled(false);
+
+        cb_mentah = (CheckBox) findViewById(R.id.cb_mentah);
+        cb_hambar = (CheckBox) findViewById(R.id.cb_hambar);
+        cb_asam = (CheckBox) findViewById(R.id.cb_asam);
+        cb_menghitam = (CheckBox) findViewById(R.id.cb_menghitam);
+        retur_notes = (EditText) findViewById(R.id.retur_notes);
     }
 
     private void showList(List<LineItem> list) {
@@ -270,7 +284,10 @@ public class ReturActivity extends AppCompatActivity {
     private View sheetView;
 
     public void proceedRetur(View v) {
-        if (product_retur_stacks.size() > 0) {
+        // check the reason first
+        Boolean has_retur_reason = hasReturReason();
+        Log.e(getClass().getSimpleName(), "has_retur_reason : "+ has_retur_reason);
+        if (product_retur_stacks.size() > 0 && has_retur_reason) {
             bottomSheetDialog = new BottomSheetDialog(ReturActivity.this);
             sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_proceed_retur, null);
             bottomSheetDialog.setContentView(sheetView);
@@ -456,6 +473,12 @@ public class ReturActivity extends AppCompatActivity {
                         retur.setPayment(arrPaymentList);
                         retur.setCustomer(customer);
                         retur.setItemsChange(arrChangeItemList);
+                        if (retur_reason.size() > 0) {
+                            retur.setItemsReason(retur_reason);
+                        }
+                        if (retur_notes.getText().toString().length() > 0) {
+                            retur.setNotes(retur_notes.getText().toString());
+                        }
 
                         Log.e(getClass().getSimpleName(), "mObj : "+ mObj.toString());
 
@@ -577,5 +600,31 @@ public class ReturActivity extends AppCompatActivity {
             product_change_lineitem_stacks.remove(product_id);
         }
         Log.e(getClass().getSimpleName(), "product_change_stacks : "+ product_change_stacks.toString());
+    }
+
+    private Boolean hasReturReason() {
+        retur_reason.clear();
+        if (cb_mentah.isChecked()) {
+            retur_reason.add("mentah");
+        }
+        if (cb_asam.isChecked()) {
+            retur_reason.add("asam");
+        }
+        if (cb_hambar.isChecked()) {
+            retur_reason.add("hambar");
+        }
+        if (cb_menghitam.isChecked()) {
+            retur_reason.add("menghitam");
+        }
+
+        if (retur_reason.size() > 0) {
+            return true;
+        } else {
+            if (retur_notes.getText().toString().length() > 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

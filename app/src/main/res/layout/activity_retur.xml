@@ -60,6 +60,56 @@
                     android:scrollbars="vertical"
                     android:scrollingCache="true" />
 
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/spacing_middle">
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/spacing_middle"
+                            android:text="@string/heading_retur_reason"
+                            android:textStyle="bold"/>
+
+                    <CheckBox
+                            android:id="@+id/cb_mentah"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_reason_mentah" />
+
+                    <CheckBox
+                            android:id="@+id/cb_hambar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="@string/label_reason_hambar" />
+
+                    <CheckBox
+                            android:id="@+id/cb_asam"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_reason_asam" />
+
+                    <CheckBox
+                            android:id="@+id/cb_menghitam"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_reason_menghitam" />
+
+                    <EditText
+                            android:id="@+id/retur_notes"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginTop="@dimen/spacing_middle"
+                            android:inputType="text|textMultiLine"
+                            android:background="@drawable/edit_text_round_bg_outline"
+                            android:hint="@string/hint_retur_notes"
+                            android:textSize="14dp"/>
+
+                </LinearLayout>
+
             </LinearLayout>
 
         </android.support.v4.widget.NestedScrollView>

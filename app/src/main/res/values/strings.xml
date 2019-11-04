@@ -283,6 +283,10 @@
     <string name="label_total_omzet">Total Omzet</string>
     <string name="label_total_fee">Total Fee</string>
     <string name="label_total_transaction">Total Transaction</string>
+    <string name="label_reason_mentah">Mentah</string>
+    <string name="label_reason_hambar">Hambar</string>
+    <string name="label_reason_asam">Asam</string>
+    <string name="label_reason_menghitam">Menghitam</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>
@@ -317,6 +321,7 @@
     <string name="shipping_method_tokopedia">Tokopedia</string>
 
     <string name="hint_email">E.g: john@gmail.com</string>
+    <string name="hint_retur_notes">Add some notes if needed.</string>
 
     <string name="heading_billing_information">Billing Information</string>
     <string name="heading_payment_method">Payment Method</string>
@@ -325,4 +330,5 @@
     <string name="heading_payment_detail">Payment Detail</string>
     <string name="heading_product_detail">Product Detail</string>
     <string name="heading_retur_detail">Retur Detail</string>
+    <string name="heading_retur_reason">Retur Reason</string>
 </resources>

@@ -230,6 +230,10 @@
     <string name="title_print_config">Konfigurasi</string>
     <string name="title_retur_invoice">Retur Tagihan</string>
 
+    <string name="label_print_char_length">Panjang Karakter :</string>
+    <string name="label_print_header">Header :</string>
+    <string name="label_print_footer">Footer :</string>
+
     <string name="label_change_due">Uang Kembali</string>
     <string name="label_dept">Hutang</string>
     <string name="label_date">Tanggal</string>
@@ -277,6 +281,10 @@
     <string name="label_total_omzet">Total Omset</string>
     <string name="label_total_fee">Total Fee</string>
     <string name="label_total_transaction">Total Transaksi</string>
+    <string name="label_reason_mentah">Mentah</string>
+    <string name="label_reason_hambar">Hambar</string>
+    <string name="label_reason_asam">Asam</string>
+    <string name="label_reason_menghitam">Menghitam</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Bank Mandiri</string>
@@ -311,6 +319,7 @@
     <string name="shipping_method_tokopedia">Tokopedia</string>
 
     <string name="hint_email">Contoh: john@gmail.com</string>
+    <string name="hint_retur_notes">Tambahkan catatan jika diperlukan.</string>
 
     <string name="heading_billing_information">Informasi Tagihan</string>
     <string name="heading_payment_method">Cara Pembayaran</string>
@@ -319,4 +328,5 @@
     <string name="heading_payment_detail">Rincian Pembayaran</string>
     <string name="heading_product_detail">Rincian Barang</string>
     <string name="heading_retur_detail">Rincian Retur</string>
+    <string name="heading_retur_reason">Alasan Retur</string>
 </resources>
