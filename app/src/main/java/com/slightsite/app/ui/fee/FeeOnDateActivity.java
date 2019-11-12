@@ -86,7 +86,7 @@ public class FeeOnDateActivity extends AppCompatActivity {
 
         TextView toolbar_title = (TextView) findViewById(R.id.toolbar_title);
         if (date_fee.length() > 0) {
-            toolbar_title.setText("Detail Fee On "+ DateTimeStrategy.parseDate(date_fee, "dd MMM yyyy"));
+            toolbar_title.setText("Penjualan "+ DateTimeStrategy.parseDate(date_fee, "dd MMM yyyy"));
         }
     }
 
@@ -98,6 +98,8 @@ public class FeeOnDateActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private TextView fee_report_title;
+    private TextView total_omzet;
     private TextView total_fee;
     private TextView total_transaction;
 
@@ -107,6 +109,8 @@ public class FeeOnDateActivity extends AppCompatActivity {
         feeListRecycle.setHasFixedSize(true);
         feeListRecycle.setNestedScrollingEnabled(false);
 
+        fee_report_title = (TextView) findViewById(R.id.fee_report_title);
+        total_omzet = (TextView) findViewById(R.id.total_omzet);
         total_fee = (TextView) findViewById(R.id.total_fee);
         total_transaction = (TextView) findViewById(R.id.total_transaction);
 
@@ -124,10 +128,12 @@ public class FeeOnDateActivity extends AppCompatActivity {
                         try {
                             Log.e(getClass().getSimpleName(), "result : "+ result);
                             if (result.contains("success")) {
-                                JSONObject jObj = new JSONObject(result);
+                                final JSONObject jObj = new JSONObject(result);
                                 int success = jObj.getInt("success");
                                 // Check for error node in json
+                                final Map<Integer, Integer> invoice_ids = new HashMap<Integer, Integer>();;
                                 ArrayList<FeeOn> listFee = new ArrayList<FeeOn>();
+                                final Map<Integer, JSONObject> items_datas = new HashMap<Integer, JSONObject>();;
                                 if (success == 1) {
                                     JSONObject data = jObj.getJSONObject("data");
                                     JSONArray items_data = data.getJSONArray("items");
@@ -136,11 +142,16 @@ public class FeeOnDateActivity extends AppCompatActivity {
                                         FeeOn _fee = new FeeOn(
                                                 item_data.getString("paid_at"),
                                                 item_data.getString("invoice_number"),
-                                                Double.parseDouble(item_data.getString("total_fee")));
+                                                Double.parseDouble(item_data.getString("total_fee")),
+                                                Double.parseDouble(item_data.getString("total_revenue")));
                                         listFee.add(_fee);
+                                        invoice_ids.put(n, item_data.getInt("invoice_id"));
+                                        items_datas.put(n, item_data);
                                     }
 
                                     JSONObject summary_data = data.getJSONObject("summary");
+                                    fee_report_title.setText(getResources().getString(R.string.transaction)+" "+ DateTimeStrategy.parseDate(date_fee, "dd MMM yyyy"));
+                                    total_omzet.setText(CurrencyController.getInstance().moneyFormat(summary_data.getDouble("total_revenue")));
                                     total_fee.setText(CurrencyController.getInstance().moneyFormat(summary_data.getDouble("total_fee")));
                                     total_transaction.setText(CurrencyController.getInstance().moneyFormat(summary_data.getDouble("total_transaction")) +" transaksi");
                                 }
@@ -152,7 +163,8 @@ public class FeeOnDateActivity extends AppCompatActivity {
                                     @Override
                                     public void onItemClick(View view, FeeOn obj, int position) {
                                         Intent newActivity = new Intent(getBaseContext(), FeeDetailActivity.class);
-                                        //newActivity.putExtra("date", obj.getDate());
+                                        newActivity.putExtra("invoice_id", invoice_ids.get(position));
+                                        newActivity.putExtra("fee_data", items_datas.get(position).toString());
                                         startActivity(newActivity);
                                     }
                                 });

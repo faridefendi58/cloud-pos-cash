@@ -39,6 +39,7 @@ public class AdapterListFeeOn extends RecyclerView.Adapter<RecyclerView.ViewHold
         public TextView date;
         public TextView total_invoice;
         public TextView total_fee;
+        public TextView total_revenue;
         public View lyt_parent;
 
         public OriginalViewHolder(View v) {
@@ -46,6 +47,7 @@ public class AdapterListFeeOn extends RecyclerView.Adapter<RecyclerView.ViewHold
             date = (TextView) v.findViewById(R.id.date);
             total_invoice = (TextView) v.findViewById(R.id.total_invoice);
             total_fee = (TextView) v.findViewById(R.id.total_fee);
+            total_revenue = (TextView) v.findViewById(R.id.total_revenue);
             lyt_parent = (View) v.findViewById(R.id.lyt_parent);
         }
     }
@@ -71,6 +73,7 @@ public class AdapterListFeeOn extends RecyclerView.Adapter<RecyclerView.ViewHold
                 view.date.setText(fee_to_map.get("invoice_number"));
                 view.total_invoice.setText(fee_to_map.get("date"));
                 view.total_fee.setText(fee_to_map.get("total_fee"));
+                view.total_revenue.setText(fee_to_map.get("total_revenue"));
             } catch (Exception e){}
 
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {

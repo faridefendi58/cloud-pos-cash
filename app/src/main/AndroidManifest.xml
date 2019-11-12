@@ -4,7 +4,6 @@
         android:versionCode="1"
         android:versionName="1.0">
 
-    <uses-sdk android:targetSdkVersion="28" />
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />

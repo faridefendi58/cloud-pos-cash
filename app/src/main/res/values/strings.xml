@@ -287,6 +287,7 @@
     <string name="label_reason_hambar">Hambar</string>
     <string name="label_reason_asam">Asam</string>
     <string name="label_reason_menghitam">Menghitam</string>
+    <string name="label_month">Month</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>

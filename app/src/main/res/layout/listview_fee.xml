@@ -16,13 +16,14 @@
         <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="0.5"
                 android:orientation="vertical">
 
             <TextView
                     android:id="@+id/date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="24dp"
                     android:layout_weight="1"
                     android:paddingLeft="@dimen/spacing_middle"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
@@ -40,14 +41,32 @@
 
         </LinearLayout>
 
-        <TextView
-                android:id="@+id/total_fee"
-                android:layout_width="wrap_content"
+        <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:textColor="@color/grey_90"
-                app:fontFamily="sans-serif-black"
-                android:drawableRight="@drawable/ic_chevron_right_black_24dp"/>
+                android:layout_weight="0.5"
+                android:orientation="vertical">
+
+            <TextView
+                    android:id="@+id/total_revenue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="@color/grey_90"
+                    android:gravity="end"
+                    app:fontFamily="sans-serif-black"
+                    android:drawableRight="@drawable/ic_chevron_right_black_24dp"/>
+
+            <TextView
+                    android:id="@+id/total_fee"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:gravity="end"
+                    android:paddingEnd="@dimen/spacing_mxlarge"
+                    app:fontFamily="sans-serif-black"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
