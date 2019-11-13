@@ -27,6 +27,7 @@ import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
+import com.slightsite.app.domain.payment.Payment;
 import com.slightsite.app.domain.sale.Fee;
 import com.slightsite.app.domain.sale.FeeOn;
 import com.slightsite.app.domain.sale.Register;
@@ -34,6 +35,7 @@ import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.ui.sale.AdapterListFee;
+import com.slightsite.app.ui.sale.AdapterListPaymentSimple;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,6 +53,7 @@ public class FeeOnDateActivity extends AppCompatActivity {
 
     private String date_fee = "";
     private RecyclerView feeListRecycle;
+    private RecyclerView paymentitemListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +112,11 @@ public class FeeOnDateActivity extends AppCompatActivity {
         feeListRecycle.setHasFixedSize(true);
         feeListRecycle.setNestedScrollingEnabled(false);
 
+        paymentitemListView = (RecyclerView) findViewById(R.id.paymentListRecycle);
+        paymentitemListView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        paymentitemListView.setHasFixedSize(true);
+        paymentitemListView.setNestedScrollingEnabled(false);
+
         fee_report_title = (TextView) findViewById(R.id.fee_report_title);
         total_omzet = (TextView) findViewById(R.id.total_omzet);
         total_fee = (TextView) findViewById(R.id.total_fee);
@@ -133,6 +141,7 @@ public class FeeOnDateActivity extends AppCompatActivity {
                                 // Check for error node in json
                                 final Map<Integer, Integer> invoice_ids = new HashMap<Integer, Integer>();;
                                 ArrayList<FeeOn> listFee = new ArrayList<FeeOn>();
+                                ArrayList<Payment> paymentList = new ArrayList<Payment>();
                                 final Map<Integer, JSONObject> items_datas = new HashMap<Integer, JSONObject>();;
                                 if (success == 1) {
                                     JSONObject data = jObj.getJSONObject("data");
@@ -154,6 +163,20 @@ public class FeeOnDateActivity extends AppCompatActivity {
                                     total_omzet.setText(CurrencyController.getInstance().moneyFormat(summary_data.getDouble("total_revenue")));
                                     total_fee.setText(CurrencyController.getInstance().moneyFormat(summary_data.getDouble("total_fee")));
                                     total_transaction.setText(CurrencyController.getInstance().moneyFormat(summary_data.getDouble("total_transaction")) +" transaksi");
+
+                                    JSONObject payments = summary_data.getJSONObject("payments");
+                                    if (payments.length() > 0) {
+                                        Iterator<String> pkeys = payments.keys();
+                                        int no = 1;
+                                        while(pkeys.hasNext()) {
+                                            String key = pkeys.next();
+                                            try {
+                                                Payment pym = new Payment(no, key, payments.getDouble(key));
+                                                paymentList.add(pym);
+                                                no = no + 1;
+                                            } catch (Exception e){}
+                                        }
+                                    }
                                 }
 
                                 AdapterListFeeOn adapter = new AdapterListFeeOn(getApplicationContext(), listFee);
@@ -168,6 +191,9 @@ public class FeeOnDateActivity extends AppCompatActivity {
                                         startActivity(newActivity);
                                     }
                                 });
+
+                                AdapterListPaymentSimple pAdap = new AdapterListPaymentSimple(paymentList);
+                                paymentitemListView.setAdapter(pAdap);
                             } else {
                                 Toast.makeText(getApplicationContext(), "Failed!, No product data in ",
                                         Toast.LENGTH_LONG).show();

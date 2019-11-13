@@ -56,7 +56,6 @@ import com.slightsite.app.domain.customer.CustomerService;
 import com.slightsite.app.domain.inventory.Inventory;
 import com.slightsite.app.domain.inventory.LineItem;
 import com.slightsite.app.domain.inventory.Product;
-import com.slightsite.app.domain.inventory.ProductCatalog;
 import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.params.Params;
@@ -954,6 +953,9 @@ public class PrintReturActivity extends Activity {
                         int prc = Integer.parseInt(str_price);
 
                         Map<String, String> mItem = new HashMap<String, String>();
+                        if (entry.containsKey("product_id")) {
+                            mItem.put("id", entry.get("product_id"));
+                        }
                         mItem.put("name", entry.get("title"));
                         mItem.put("quantity", entry.get("quantity"));
                         mItem.put("quantity_total", entry.get("quantity_total"));

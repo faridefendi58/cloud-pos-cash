@@ -44,6 +44,7 @@ import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.params.Params;
 import com.slightsite.app.domain.payment.Payment;
+import com.slightsite.app.domain.retur.Retur;
 import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.domain.sale.SaleLedger;
@@ -182,6 +183,7 @@ public class FeeDetailActivity extends AppCompatActivity {
     private Customer customer;
     private Boolean should_be_finished = false;
     private List<Map<String, String>> lineitemList;
+    private Retur retur;
 
     public void buildDataFromServer() {
         Map<String, String> params = new HashMap<String, String>();
@@ -274,6 +276,57 @@ public class FeeDetailActivity extends AppCompatActivity {
                                     if (server_invoice_data.has("status") && server_invoice_data.has("delivered")) {
                                         int delivered = server_invoice_data.getInt("delivered");
                                         is_delivered = delivered;
+                                    }
+
+                                    if (server_invoice_data.has("refund") && server_invoice_data.getString("refund") != null) {
+                                        JSONObject refundObj = new JSONObject();
+                                        try {
+                                            refundObj = server_invoice_data.getJSONObject("refund");
+                                            if (refundObj.length() > 0) {
+                                                retur = new Retur(refundObj.getInt("id"));
+                                                JSONArray arrRefunds = refundObj.getJSONArray("items");
+
+                                                ArrayList arrRefundList = new ArrayList();
+                                                for (int ir = 0; ir < arrRefunds.length(); ++ir) {
+                                                    JSONObject ref = arrRefunds.getJSONObject(ir);
+                                                    Map<String, String> arrRefundList2 = new HashMap<String, String>();
+                                                    arrRefundList2.put("title", ref.getString("name"));
+                                                    arrRefundList2.put("product_id", ref.getString("id"));
+                                                    arrRefundList2.put("quantity", ref.getString("refunded_qty"));
+                                                    arrRefundList2.put("price", ref.getString("price"));
+                                                    arrRefundList2.put("change_item", ref.getString("returned_qty"));
+
+                                                    arrRefundList.add(arrRefundList2);
+                                                }
+
+                                                ArrayList arrChangeItemList = new ArrayList();
+                                                JSONArray arrChanges = refundObj.getJSONArray("items_change");
+                                                if (arrChanges.length() > 0) {
+                                                    for (int ic = 0; ic < arrChanges.length(); ++ic) {
+                                                        JSONObject chg = arrChanges.getJSONObject(ic);
+                                                        Map<String, String> arrChangeItemList2 = new HashMap<String, String>();
+                                                        arrChangeItemList2.put("id", ic+"");
+                                                        if (chg.has("id")) {
+                                                            arrChangeItemList2.put("product_id", chg.getString("id"));
+                                                        } else {
+                                                            arrChangeItemList2.put("product_id", ic+"");
+                                                        }
+                                                        arrChangeItemList2.put("title", chg.getString("name"));
+                                                        arrChangeItemList2.put("quantity", chg.getString("quantity"));
+                                                        arrChangeItemList2.put("price", chg.getString("price"));
+                                                        arrChangeItemList2.put("quantity_total", chg.getString("quantity_total"));
+                                                        if (chg.has("fee")) {
+                                                            arrChangeItemList2.put("fee", chg.getString("fee"));
+                                                        }
+                                                        arrChangeItemList.add(arrChangeItemList2);
+                                                    }
+                                                }
+                                                retur.setItems(arrRefundList);
+                                                if (arrChangeItemList.size() > 0) {
+                                                    retur.setItemsChange(arrChangeItemList);
+                                                }
+                                            }
+                                        } catch (Exception e){}
                                     }
 
                                     formated_receipt = getFormatedReceiptHtml();
@@ -512,12 +565,14 @@ public class FeeDetailActivity extends AppCompatActivity {
 
         if (fee_data != null) {
             res += "<tr><td colspan=\"4\"><hr/></td></tr>";
-            res += "<tr><td colspan=\"4\">Fee Penjualan</td></tr>";
+            res += "<tr><td colspan=\"4\"><b>Fee Penjualan</b></td></tr>";
             res += "<tr><td colspan=\"4\"><hr/></td></tr>";
             JSONObject item_configs = new JSONObject();
             try {
                 item_configs = fee_data.getJSONObject("configs");
             } catch (Exception e){}
+
+            Map<String,Integer> product_fees = new HashMap<>();
             // print the items if any
             if (item_configs.length() > 0) {
                 Double sub_total_fee = 0.0;
@@ -541,8 +596,97 @@ public class FeeDetailActivity extends AppCompatActivity {
                             sub_total_fee = sub_total_fee + original_fee;
                             res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"padding-left:10px;\">"+ qty +" x "+ CurrencyController.getInstance().moneyFormat(fee) +"</td>";
                             res += "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(original_fee) +"</td></tr>";
+                            // build product fees for retur
+                            product_fees.put(cfg.getString("name"), fee);
                         }
                     } catch (Exception e){e.printStackTrace();}
+                }
+Log.e(getClass().getSimpleName(), "product_fees : "+ product_fees.toString());
+                // retur if any
+                if (retur != null) {
+                    res += "<tr><td colspan=\"4\"><hr/></td></tr>";
+
+                    List<Map<String, String >> rlist = retur.getItems();
+                    int sub_total_r = 0;
+                    Map<String,Integer> list_tukar_barang = new HashMap<>();
+                    for (Map<String, String> entry : rlist) {
+                        int qty = Integer.parseInt(entry.get("quantity"));
+                        int change_qty = Integer.parseInt(entry.get("change_item"));
+                        int refund_qty = qty - change_qty;
+                        String str_price = entry.get("price");
+                        if (str_price.contains(".")) {
+                            str_price = str_price.substring(0, str_price.indexOf("."));
+                        }
+                        int prc = Integer.parseInt(str_price);
+                        int tot = prc * refund_qty;
+                        if (change_qty > 0) {
+                            list_tukar_barang.put(entry.get("title"), change_qty);
+                        }
+
+                        sub_total_r = sub_total_r + tot;
+                    }
+
+                    if (sub_total_r > 0) {
+                        res += "<tr><td colspan=\"4\"><b>Fee Retur</b></td></tr>";
+                        res += "<tr><td colspan=\"4\"><hr/></td></tr>";
+                        for (Map<String, String> entry2 : rlist) {
+                            int qty = Integer.parseInt(entry2.get("quantity"));
+                            int change_qty = Integer.parseInt(entry2.get("change_item"));
+                            int refund_qty = qty - change_qty;
+                            String str_price = entry2.get("price");
+                            if (str_price.contains(".")) {
+                                str_price = str_price.substring(0, str_price.indexOf("."));
+                            }
+                            int rprc = 0; //Integer.parseInt(str_price);
+                            if (product_fees.containsKey(entry2.get("title"))) {
+                                rprc = product_fees.get(entry2.get("title"));
+                            }
+                            int rtot = rprc * refund_qty;
+                            if (refund_qty > 0) {
+                                res += "<tr class=\"ft-17\"><td colspan=\"4\">" + entry2.get("title") + "</td></tr>";
+                                res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"padding-left:10px;\">" + refund_qty + " x -" + CurrencyController.getInstance().moneyFormat(rprc) + "</td>";
+                                res += "<td style=\"text-align:right;\">-" + CurrencyController.getInstance().moneyFormat(rtot) + "</td></tr>";
+                                sub_total_fee = sub_total_fee - rtot;
+                            }
+                        }
+                    }
+
+                    List<Map<String, String >> list_change = retur.getItemsChange();
+                    if (list_change.size() > 0) {
+                        if (sub_total_r == 0) {
+                            res += "<tr><td colspan=\"4\">&nbsp;</td></tr>";
+                            res += "<tr><td colspan=\"4\" style=\"text-align:left;\"><b>Penukaran Dengan Item Lain</b></td></tr>";
+                            res += "<tr><td colspan=\"4\"><hr/></td></tr>";
+                        }
+                        int tot_ctot = 0;
+                        for (Map<String, String> c_entry : list_change) {
+                            res += "<tr class=\"ft-17\"><td colspan=\"4\">"+ c_entry.get("title") +"</td></tr>";
+                            int cqty = Integer.parseInt(c_entry.get("quantity"));
+                            String str_price = c_entry.get("price");
+                            if (str_price.contains(".")) {
+                                str_price = str_price.substring(0, str_price.indexOf("."));
+                            }
+                            int cprc = 0; //Integer.parseInt(str_price);
+                            if (product_fees.containsKey(c_entry.get("title"))) {
+                                cprc = product_fees.get(c_entry.get("title"));
+                            } else {
+                                if (c_entry.containsKey("fee")) {
+                                    String str_fee = c_entry.get("fee");
+                                    if (str_fee.contains(".")) {
+                                        str_fee = str_fee.substring(0, str_fee.indexOf("."));
+                                    }
+                                    cprc = Integer.parseInt(str_fee);
+                                    cprc = cprc/cqty;
+                                }
+                            }
+                            int ctot = cprc * cqty;
+                            tot_ctot = tot_ctot + ctot;
+                            res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"padding-left:10px;\">" + c_entry.get("quantity") + " x "+ CurrencyController.getInstance().moneyFormat(cprc) +"</td>";
+                            res += "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(ctot) + "</td></tr>";
+
+                            sub_total_fee = sub_total_fee + tot_ctot;
+                        }
+                    }
                 }
 
                 if (sub_total_fee > 0) {

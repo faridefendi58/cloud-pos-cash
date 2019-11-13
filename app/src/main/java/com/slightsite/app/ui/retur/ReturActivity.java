@@ -453,7 +453,7 @@ public class ReturActivity extends AppCompatActivity {
                                 Map<String, String> arrChangeItemList2 = new HashMap<String, String>();
                                 LineItem lineItem = entry.getValue();
                                 arrChangeItemList2.put("id", lineItem.getProduct().getId()+"");
-                                arrChangeItemList2.put("product_id", lineItem.getProduct().getId()+"");
+                                arrChangeItemList2.put("product_id", lineItem.getProduct().getBarcode()+"");
                                 arrChangeItemList2.put("title", lineItem.getProduct().getName());
                                 arrChangeItemList2.put("quantity", lineItem.getQuantity()+"");
                                 arrChangeItemList2.put("price", lineItem.getPriceAtSale()+"");
