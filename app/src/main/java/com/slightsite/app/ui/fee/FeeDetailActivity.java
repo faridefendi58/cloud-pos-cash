@@ -602,9 +602,9 @@ public class FeeDetailActivity extends AppCompatActivity {
                     } catch (Exception e){e.printStackTrace();}
                 }
 
-                Log.e(getClass().getSimpleName(), "retur.getItems() : "+ retur.getItems().toString());
                 // retur if any
                 if (retur != null) {
+                    Log.e(getClass().getSimpleName(), "retur.getItems() : "+ retur.getItems().toString());
                     res += "<tr><td colspan=\"4\"><hr/></td></tr>";
 
                     List<Map<String, String >> rlist = retur.getItems();

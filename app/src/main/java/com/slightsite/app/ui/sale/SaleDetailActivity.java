@@ -1359,12 +1359,16 @@ public class SaleDetailActivity extends Activity{
 
 	private RecyclerView returItemListRecycle;
 	private RecyclerView refundItemListRecycle;
+	private RecyclerView changeItemListRecycle;
 	private List<LineItem> returitemList = new ArrayList<LineItem>();
 	private List<LineItem> refunditemList = new ArrayList<LineItem>();
+	private List<LineItem> changeitemList = new ArrayList<LineItem>();
 	private JSONArray returJSONArray = new JSONArray();
 	private JSONArray paymentJSONArray = new JSONArray();
+	private JSONArray changeOtherItemsJSONArray = new JSONArray();
 	private LinearLayout change_item_container;
 	private LinearLayout refund_item_container;
+	private LinearLayout change_other_item_container;
 	private RecyclerView returPaymentListView;
 	private TextView retur_invoice_number;
 	private TextView retur_proceed_by;
@@ -1381,12 +1385,19 @@ public class SaleDetailActivity extends Activity{
 		refundItemListRecycle.setHasFixedSize(true);
 		refundItemListRecycle.setNestedScrollingEnabled(false);
 
-		change_item_container = (LinearLayout) findViewById(R.id.refund_item_container);
+		changeItemListRecycle = (RecyclerView) findViewById(R.id.changeItemListRecycle);
+		changeItemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+		changeItemListRecycle.setHasFixedSize(true);
+		changeItemListRecycle.setNestedScrollingEnabled(false);
+
+		change_item_container = (LinearLayout) findViewById(R.id.change_item_container);
 		refund_item_container = (LinearLayout) findViewById(R.id.refund_item_container);
+		change_other_item_container = (LinearLayout) findViewById(R.id.change_other_item_container);
 
 		try {
 			returJSONArray = obj_retur.getJSONArray("items");
 			paymentJSONArray = obj_retur.getJSONArray("payments");
+			changeOtherItemsJSONArray = obj_retur.getJSONArray("items_change");
 			// build other information
 			retur_invoice_number = (TextView) findViewById(R.id.retur_invoice_number);
 			retur_invoice_number.setText(obj_retur.getString("invoice_number"));
@@ -1420,12 +1431,39 @@ public class SaleDetailActivity extends Activity{
 			}
 		}
 
+		// also build change other items
+		changeitemList.clear();
+		if(changeOtherItemsJSONArray!=null && changeOtherItemsJSONArray.length()>0){
+			for (int i = 0; i < changeOtherItemsJSONArray.length(); i++) {
+				try {
+					JSONObject obj_change_item = changeOtherItemsJSONArray.getJSONObject(i);
+					Product product;
+					if (obj_change_item.has("id")) {
+						product = productCatalog.getProductByBarcode(obj_change_item.getString("id"));
+					} else {
+						product = productCatalog.getProductByName(obj_change_item.getString("name")).get(0);
+					}
+					if ((product != null) && obj_change_item.has("quantity") && obj_change_item.getInt("quantity") > 0) {
+						LineItem lineItem = new LineItem(product, obj_change_item.getInt("quantity"), obj_change_item.getInt("quantity_total"));
+						changeitemList.add(lineItem);
+					}
+				} catch (JSONException e) {}
+			}
+			if (changeitemList.size() > 0) {
+				change_other_item_container.setVisibility(View.VISIBLE);
+			}
+		}
+
 		AdapterListReturReport sAdap = new AdapterListReturReport(SaleDetailActivity.this, returitemList, register);
 		returItemListRecycle.setAdapter(sAdap);
 
 		AdapterListReturReport rfAdap = new AdapterListReturReport(SaleDetailActivity.this, refunditemList, register);
 		rfAdap.setType("refund");
 		refundItemListRecycle.setAdapter(rfAdap);
+
+		AdapterListReturReport ciAdap = new AdapterListReturReport(SaleDetailActivity.this, changeitemList, register);
+		ciAdap.setType("refund");
+		changeItemListRecycle.setAdapter(ciAdap);
 
 		// build the payment if any
 		if (refunditemList.size() > 0) {
