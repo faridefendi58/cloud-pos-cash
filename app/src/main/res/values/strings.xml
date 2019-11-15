@@ -109,6 +109,7 @@
     <string name="title_change_the_money">Money Back</string>
     <string name="title_change_other_item">Change Other Items</string>
     <string name="title_fee_report">Fee Report</string>
+    <string name="title_fee_detail">Fee Detail</string>
 
     <string name="dashboard_income">Income</string>
     <string name="dashboard_transaction">Transaction</string>

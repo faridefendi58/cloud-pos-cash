@@ -111,6 +111,7 @@
     <string name="title_change_the_money">Pengembalian Uang</string>
     <string name="title_change_other_item">Ganti Item Lain</string>
     <string name="title_fee_report">Laporan Penjualan</string>
+    <string name="title_fee_detail">Rincian Fee</string>
 
     <string name="dashboard_income">Pendapatan</string>
     <string name="dashboard_transaction">Transaksi</string>

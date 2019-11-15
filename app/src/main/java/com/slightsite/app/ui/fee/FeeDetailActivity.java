@@ -292,7 +292,7 @@ public class FeeDetailActivity extends AppCompatActivity {
                                                     Map<String, String> arrRefundList2 = new HashMap<String, String>();
                                                     arrRefundList2.put("title", ref.getString("name"));
                                                     arrRefundList2.put("product_id", ref.getString("id"));
-                                                    arrRefundList2.put("quantity", ref.getString("refunded_qty"));
+                                                    arrRefundList2.put("quantity", ref.getString("total_qty"));
                                                     arrRefundList2.put("price", ref.getString("price"));
                                                     arrRefundList2.put("change_item", ref.getString("returned_qty"));
 
@@ -601,7 +601,8 @@ public class FeeDetailActivity extends AppCompatActivity {
                         }
                     } catch (Exception e){e.printStackTrace();}
                 }
-Log.e(getClass().getSimpleName(), "product_fees : "+ product_fees.toString());
+
+                Log.e(getClass().getSimpleName(), "retur.getItems() : "+ retur.getItems().toString());
                 // retur if any
                 if (retur != null) {
                     res += "<tr><td colspan=\"4\"><hr/></td></tr>";
@@ -683,9 +684,8 @@ Log.e(getClass().getSimpleName(), "product_fees : "+ product_fees.toString());
                             tot_ctot = tot_ctot + ctot;
                             res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"padding-left:10px;\">" + c_entry.get("quantity") + " x "+ CurrencyController.getInstance().moneyFormat(cprc) +"</td>";
                             res += "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(ctot) + "</td></tr>";
-
-                            sub_total_fee = sub_total_fee + tot_ctot;
                         }
+                        sub_total_fee = sub_total_fee + tot_ctot;
                     }
                 }
 
