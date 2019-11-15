@@ -279,7 +279,9 @@
     <string name="label_date_to">Tanggal Sampai</string>
     <string name="label_checkout_order">Checkout Order</string>
     <string name="label_total_omzet">Total Omset</string>
+    <string name="label_omzet">Omset</string>
     <string name="label_total_fee">Total Fee</string>
+    <string name="label_fee">Fee</string>
     <string name="label_total_transaction">Total Transaksi</string>
     <string name="label_reason_mentah">Mentah</string>
     <string name="label_reason_hambar">Hambar</string>
