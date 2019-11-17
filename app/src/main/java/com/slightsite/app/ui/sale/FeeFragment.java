@@ -5,9 +5,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,10 +15,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,7 +45,6 @@ import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.component.UpdatableFragment;
 import com.slightsite.app.ui.fee.FeeOnDateActivity;
-import com.slightsite.app.ui.printer.PrinterActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,7 +57,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 @SuppressLint("ValidFragment")
@@ -314,23 +313,41 @@ public class FeeFragment extends UpdatableFragment {
     private Button finish_submit_button;
     private Button button_reset_to_default;
     private Map<String, String> filter_result = new HashMap<String, String>();
-    private AutoCompleteTextView filter_month;
+    private Spinner month_spinner;
+    private Spinner year_spinner;
+    private String[] years;
+    private int sel_month = -1;
+    private int sel_year = -1;
 
     private void filterDialog() {
         bottomSheetDialog = new BottomSheetDialog(getContext());
         View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_filter_fee, null);
         bottomSheetDialog.setContentView(sheetView);
 
-        filter_month = (AutoCompleteTextView) sheetView.findViewById(R.id.filter_month);
         if (filter_result.containsKey("filter_month")) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
             // convert format
             try {
                 Date d = dateFormat.parse(filter_result.get("filter_month"));
                 dateFormat.applyPattern("yyyy-MM-dd");
-                filter_month.setText(DateTimeStrategy.parseDate(dateFormat.format(d), "MMM, yyyy"));
             } catch (Exception e){e.printStackTrace();}
         }
+
+        month_spinner = (Spinner) sheetView.findViewById(R.id.month_spinner);
+        year_spinner = (Spinner) sheetView.findViewById(R.id.year_spinner);
+        String[] months = new String[]{"Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"};
+        ArrayAdapter<String> monthAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, months);
+        month_spinner.setAdapter(monthAdapter);
+
+        Calendar cur_calender = Calendar.getInstance();
+        List<String> arr_years = new ArrayList<String>();
+        for (int y=cur_calender.get(Calendar.YEAR)-3; y<cur_calender.get(Calendar.YEAR)+1; y++) {
+            arr_years.add(y+"");
+        }
+        years = new String[arr_years.size()];
+        years = arr_years.toArray(years);
+        ArrayAdapter<String> yearAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, years);
+        year_spinner.setAdapter(yearAdapter);
 
         finish_submit_button = (Button) sheetView.findViewById(R.id.finish_submit_button);
         button_reset_to_default = (Button) sheetView.findViewById(R.id.reset_default_button);
@@ -341,12 +358,6 @@ public class FeeFragment extends UpdatableFragment {
     }
 
     private void triggerBottomDialogButton(View view) {
-        filter_month.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogDatePickerLight(v, "filter_month");
-            }
-        });
 
         finish_submit_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -360,54 +371,59 @@ public class FeeFragment extends UpdatableFragment {
             @Override
             public void onClick(View v) {
                 filter_result.clear();
+                sel_month = -1;
+                sel_year = -1;
                 update();
                 bottomSheetDialog.dismiss();
             }
         });
-    }
 
-    private void dialogDatePickerLight(final View v, final String fiter_name) {
-        final Calendar cur_calender = Calendar.getInstance();
+        if (sel_month < 1) {
+            month_spinner.setSelection(Calendar.getInstance().get(Calendar.MONTH));
+        } else {
+            month_spinner.setSelection(sel_month);
+        }
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
-                new DatePickerDialog.OnDateSetListener() {
-
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-
-                        Calendar newDate = Calendar.getInstance();
-                        newDate.set(year, monthOfYear, dayOfMonth);
-                        long date = newDate.getTimeInMillis();
-                        ((EditText) v).setText(Tools.getFormattedDateShort(date));
-                        filter_result.put(fiter_name, Tools.getFormattedDateFlat(date));
-
-                    }
-
-                }, cur_calender.get(Calendar.YEAR), cur_calender.get(Calendar.MONTH), cur_calender.get(Calendar.DAY_OF_MONTH));
-
-        // modify date
-        /*try {
-            java.lang.reflect.Field[] datePickerDialogFields = datePickerDialog.getClass().getDeclaredFields();
-            for (java.lang.reflect.Field datePickerDialogField : datePickerDialogFields) {
-                Log.e(getTag(), "datePickerDialogField.getName() : "+ datePickerDialogField.getName());
-                if (datePickerDialogField.getName().equals("mDatePicker")) {
-                    datePickerDialogField.setAccessible(true);
-                    DatePicker datePicker = (DatePicker) datePickerDialogField.get(datePickerDialog);
-                    java.lang.reflect.Field[] datePickerFields = datePickerDialogField.getType().getDeclaredFields();
-                    for (java.lang.reflect.Field datePickerField : datePickerFields) {
-                        Log.e("test", datePickerField.getName());
-                        if ("MODE_SPINNER".equals(datePickerField.getName())) {
-                            datePickerField.setAccessible(true);
-                            Object dayPicker = datePickerField.get(datePicker);
-                            Log.e(getTag(), "dayPicker : "+ dayPicker.toString());
-                            //((View) dayPicker).setVisibility(View.GONE);
-
-                        }
-                    }
+        if (sel_year < 1) {
+            year_spinner.setSelection(years.length - 1);
+        } else {
+            year_spinner.setSelection(sel_year);
+        }
+        month_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                sel_month = i;
+                int j = i+1;
+                String month = j+"";
+                if (j<10) {
+                    month = "0"+ j;
                 }
+                String date = "01-" + month + "-"+ year_spinner.getSelectedItem().toString();
+                filter_result.put("filter_month", date);
             }
-        } catch (Exception ex) { ex.printStackTrace();}*/
 
-        datePickerDialog.show();
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        year_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                sel_year = i;
+                int pos = month_spinner.getSelectedItemPosition() + 1;
+                String month = pos+"";
+                if (pos<10) {
+                    month = "0"+ pos;
+                }
+                String date = "01-" + month + "-"+ years[i];
+                filter_result.put("filter_month", date);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 }

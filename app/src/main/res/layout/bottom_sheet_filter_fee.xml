@@ -38,7 +38,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-        <!-- start of date -->
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -57,30 +56,19 @@
                     android:textAllCaps="true"
                     app:fontFamily="sans-serif-medium" />
 
-            <AutoCompleteTextView
-                    android:id="@+id/filter_month"
-                    style="@style/EditText.Flat.Grey"
-                    android:layout_width="0dp"
+            <Spinner
+                    android:id="@+id/month_spinner"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:minHeight="@dimen/spacing_xmlarge"
-                    android:layout_marginTop="@dimen/spacing_large"
-                    android:layout_marginRight="@dimen/spacing_small"
-                    android:background="@drawable/edit_text_round_bg_outline"
-                    android:drawableEnd="@drawable/ic_arrow_drop_grey"
-                    android:drawableRight="@drawable/ic_arrow_drop_grey"
-                    android:editable="false"
-                    android:hint="@string/label_month"
-                    android:focusable="false"
-                    android:maxLines="1"
-                    android:singleLine="true"/>
+                    />
+
+            <Spinner
+                    android:id="@+id/year_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
 
         </LinearLayout>
-
-        <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/grey_10" />
 
     </LinearLayout>
 
