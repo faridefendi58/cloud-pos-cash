@@ -21,6 +21,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,6 +74,10 @@ public class FeeFragment extends UpdatableFragment {
 
     private RecyclerView feeListRecycle;
     private RecyclerView paymentitemListView;
+    private LinearLayout fee_information_container;
+    private RelativeLayout no_data_container;
+    private Button button_fee_research;
+    private Button button_fee_reset_to_default;
 
     private TextView fee_report_title;
     private TextView total_omzet;
@@ -134,6 +140,25 @@ public class FeeFragment extends UpdatableFragment {
         total_fee = (TextView) root.findViewById(R.id.total_fee);
         total_omzet = (TextView) root.findViewById(R.id.total_omzet);
         total_transaction = (TextView) root.findViewById(R.id.total_transaction);
+        fee_information_container = (LinearLayout) root.findViewById(R.id.fee_information_container);
+        no_data_container = (RelativeLayout) root.findViewById(R.id.no_fee_data_container);
+        button_fee_research = (Button) root.findViewById(R.id.button_fee_research);
+        button_fee_reset_to_default = (Button) root.findViewById(R.id.button_fee_reset_to_default);
+
+        button_fee_reset_to_default.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                filter_result.clear();
+                update();
+            }
+        });
+
+        button_fee_research.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                filterDialog();
+            }
+        });
     }
 
     private String date_from;
@@ -233,21 +258,29 @@ public class FeeFragment extends UpdatableFragment {
                                     }
                                 }
 
-                                AdapterListFee adapter = new AdapterListFee(main.getApplicationContext(), listFee);
-                                feeListRecycle.setAdapter(adapter);
+                                if (listFee.size() > 0) {
+                                    fee_information_container.setVisibility(View.VISIBLE);
+                                    no_data_container.setVisibility(View.GONE);
 
-                                adapter.setOnItemClickListener(new AdapterListFee.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(View view, Fee obj, int position) {
-                                        Log.e(getTag(), "position : "+ position);
-                                        Intent newActivity = new Intent(getActivity().getBaseContext(), FeeOnDateActivity.class);
-                                        newActivity.putExtra("date", obj.getDate());
-                                        startActivity(newActivity);
-                                    }
-                                });
+                                    AdapterListFee adapter = new AdapterListFee(main.getApplicationContext(), listFee);
+                                    feeListRecycle.setAdapter(adapter);
 
-                                AdapterListPaymentSimple pAdap = new AdapterListPaymentSimple(paymentList);
-                                paymentitemListView.setAdapter(pAdap);
+                                    adapter.setOnItemClickListener(new AdapterListFee.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(View view, Fee obj, int position) {
+                                            Log.e(getTag(), "position : " + position);
+                                            Intent newActivity = new Intent(getActivity().getBaseContext(), FeeOnDateActivity.class);
+                                            newActivity.putExtra("date", obj.getDate());
+                                            startActivity(newActivity);
+                                        }
+                                    });
+
+                                    AdapterListPaymentSimple pAdap = new AdapterListPaymentSimple(paymentList);
+                                    paymentitemListView.setAdapter(pAdap);
+                                } else {
+                                    fee_information_container.setVisibility(View.GONE);
+                                    no_data_container.setVisibility(View.VISIBLE);
+                                }
                             } else {
                                 Toast.makeText(getContext(), "Failed!, No product data in ",
                                         Toast.LENGTH_LONG).show();

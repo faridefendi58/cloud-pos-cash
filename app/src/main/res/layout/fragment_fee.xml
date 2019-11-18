@@ -12,79 +12,166 @@
             android:layout_margin="@dimen/spacing_large"
             android:orientation="vertical">
 
-        <!-- Header fee report -->
-        <include
-                layout="@layout/partial_fee_header"
+        <LinearLayout
+                android:id="@+id/fee_information_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="false"/>
-        <!-- Header fee report -->
+                android:orientation="vertical">
 
-        <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            <LinearLayout
+            <!-- Header fee report -->
+            <include
+                    layout="@layout/partial_fee_header"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_alignParentBottom="false"/>
+            <!-- Header fee report -->
 
-                <android.support.v7.widget.RecyclerView
-                        android:id="@+id/feeListRecycle"
+            <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:scrollbars="vertical"
-                        android:scrollingCache="true" />
+                        android:orientation="vertical">
 
-            </LinearLayout>
+                    <android.support.v7.widget.RecyclerView
+                            android:id="@+id/feeListRecycle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:scrollbars="vertical"
+                            android:scrollingCache="true" />
 
-        </RelativeLayout>
+                </LinearLayout>
 
-        <!-- Strat Footer fee report -->
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:background="@color/grey_10">
+            </RelativeLayout>
 
+            <!-- Strat Footer fee report -->
             <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/spacing_middle">
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:background="@color/grey_10">
 
-                <TextView
+                <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:gravity="center"
-                        android:text="@string/heading_payment_detail"
-                        android:textSize="@dimen/spacing_large"/>
+                        android:orientation="horizontal"
+                        android:padding="@dimen/spacing_middle">
 
-            </LinearLayout>
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:text="@string/heading_payment_detail"
+                            android:textSize="@dimen/spacing_large"/>
 
-            <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/grey_20"/>
+                </LinearLayout>
 
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/grey_20"/>
 
-                <android.support.v7.widget.RecyclerView
-                        android:id="@+id/paymentListRecycle"
+                <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:scrollbars="vertical"
-                        android:scrollingCache="true" />
+                        android:orientation="vertical">
+
+                    <android.support.v7.widget.RecyclerView
+                            android:id="@+id/paymentListRecycle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:scrollbars="vertical"
+                            android:scrollingCache="true" />
+
+                </LinearLayout>
 
             </LinearLayout>
+            <!-- End of Footer fee report -->
 
         </LinearLayout>
-        <!-- End of Footer fee report -->
+
+        <RelativeLayout
+                android:id="@+id/no_fee_data_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+            <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/spacing_small"
+                    android:layout_marginRight="@dimen/spacing_small"
+                    app:cardBackgroundColor="@android:color/white"
+                    app:cardCornerRadius="2dp"
+                    app:cardElevation="2dp"
+                    app:cardUseCompatPadding="true"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    xmlns:android="http://schemas.android.com/apk/res/android">
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/spacing_middle">
+
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="@dimen/spacing_middle"
+                            android:paddingVertical="@dimen/spacing_xlarge"
+                            android:layout_centerInParent="true"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:text="@string/message_no_data_found"/>
+
+                    <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/grey_10" />
+
+                    <LinearLayout
+                            android:id="@+id/btn_reset_fee_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_middle"
+                            android:layout_centerInParent="true"
+                            android:orientation="horizontal">
+
+                        <Button
+                                android:id="@+id/button_fee_research"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.45"
+                                android:padding="@dimen/spacing_middle"
+                                android:layout_marginRight="@dimen/spacing_xsmall"
+                                android:background="@color/btnSuccess"
+                                android:textColor="@color/colorWhite"
+                                android:text="@string/button_research"/>
+
+                        <Button
+                                android:id="@+id/button_fee_reset_to_default"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.45"
+                                android:padding="@dimen/spacing_middle"
+                                android:layout_marginLeft="@dimen/spacing_xsmall"
+                                android:layout_centerInParent="true"
+                                android:background="@color/yellow_900"
+                                android:textColor="@color/colorWhite"
+                                android:text="@string/button_reset_to_default"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </RelativeLayout>
 
     </LinearLayout>
 
