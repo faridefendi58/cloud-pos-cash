@@ -49,6 +49,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.AppController;
 import com.slightsite.app.domain.CurrencyController;
@@ -357,6 +358,12 @@ public class ReportFragment extends UpdatableFragment {
 					}
 				} else {
 					salemap.put("shipping_method", "-");
+				}
+
+				// show the payment icons
+				String icons = showPaymentIcons(sale.getId(), list_of_payments2);
+				if (icons.length() > 0) {
+					salemap.put("payment_icons", icons);
 				}
 			} catch (Exception e){
 				e.printStackTrace();
@@ -1105,6 +1112,12 @@ public class ReportFragment extends UpdatableFragment {
 				} else {
 					salemap.put("shipping_method", "-");
 				}
+
+				// show the payment icons
+				String icons = showPaymentIcons(sale.getId(), list_of_payments3);
+				if (icons.length() > 0) {
+					salemap.put("payment_icons", icons);
+				}
 			} catch (Exception e){
 				e.printStackTrace();
 			}
@@ -1130,5 +1143,30 @@ public class ReportFragment extends UpdatableFragment {
 				startActivity(newActivity);
 			}
 		});
+	}
+
+	private String showPaymentIcons(int sale_id, Map<Integer, JSONArray> pyms) {
+		List<String> icons = new ArrayList<String>();
+		try {
+			JSONArray arrPayments = pyms.get(sale_id);
+			if (arrPayments.length() > 0) {
+				for (int j = 0; j < arrPayments.length(); j++) {
+					JSONObject pdata = arrPayments.getJSONObject(j);
+					if (pdata != null && pdata.has("type")) {
+						if (pdata.getString("type").equals("nominal_mandiri")
+								|| pdata.getString("type").equals("nominal_bca")
+								|| pdata.getString("type").equals("nominal_bri")) {
+							icons.add(pdata.getString("type"));
+						}
+					}
+				}
+			}
+		} catch (Exception e){e.printStackTrace();}
+
+		String icon_str = "";
+		if (icons.size() > 0) {
+			icon_str = new Gson().toJson(icons);
+		}
+		return icon_str;
 	}
 }

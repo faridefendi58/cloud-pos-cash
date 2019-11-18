@@ -38,4 +38,5 @@ dependencies {
     implementation 'com.android.volley:volley:1.1.0'
     implementation 'com.balysv:material-ripple:1.0.2'
     implementation 'com.otaliastudios:autocomplete:1.1.0'
+    implementation 'com.google.code.gson:gson:2.8.4'
 }

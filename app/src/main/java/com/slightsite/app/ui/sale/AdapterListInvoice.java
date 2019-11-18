@@ -1,6 +1,7 @@
 package com.slightsite.app.ui.sale;
 
 import android.content.Context;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +13,8 @@ import android.widget.TextView;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.inventory.LineItem;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +49,7 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
         public TextView customer_phone;
         public TextView customer_address;
         public TextView shipping_method;
+        public RecyclerView bank_transfer_icons;
         public LinearLayout lyt_parent;
 
         public OriginalViewHolder(View v) {
@@ -58,7 +62,12 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
             customer_phone = (TextView) v.findViewById(R.id.customer_phone);
             customer_address = (TextView) v.findViewById(R.id.customer_address);
             shipping_method = (TextView) v.findViewById(R.id.shipping_method);
+            bank_transfer_icons = (RecyclerView) v.findViewById(R.id.bank_transfer_icons);
             lyt_parent = (LinearLayout) v.findViewById(R.id.lyt_parent);
+
+            bank_transfer_icons.setLayoutManager(new LinearLayoutManager(ctx, LinearLayoutManager.HORIZONTAL, false));
+            bank_transfer_icons.setHasFixedSize(true);
+            bank_transfer_icons.setNestedScrollingEnabled(false);
         }
     }
 
@@ -98,6 +107,16 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
             view.customer_phone.setText(items.get(position).get("customer_phone"));
             view.customer_address.setText(items.get(position).get("customer_address"));
             view.shipping_method.setText(items.get(position).get("shipping_method"));
+            if (items.get(position).containsKey("payment_icons")) {
+                String str_p_icons = items.get(position).get("payment_icons");
+                try {
+                    JSONArray jsonArray = new JSONArray(str_p_icons);
+                    AdapterListBank bankAdapter = new AdapterListBank(ctx, jsonArray);
+                    view.bank_transfer_icons.setAdapter(bankAdapter);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
 
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
