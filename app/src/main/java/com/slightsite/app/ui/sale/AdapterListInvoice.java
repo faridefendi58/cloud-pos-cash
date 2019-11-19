@@ -1,6 +1,7 @@
 package com.slightsite.app.ui.sale;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.inventory.LineItem;
+import com.slightsite.app.ui.MainActivity;
 
 import org.json.JSONArray;
 
@@ -26,6 +28,7 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private Context ctx;
     private OnItemClickListener mOnItemClickListener;
+    private ReportFragment fragment;
 
     public interface OnItemClickListener {
         void onItemClick(View view, Map<String, String> _item, int position);
@@ -50,6 +53,7 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
         public TextView customer_address;
         public TextView shipping_method;
         public RecyclerView bank_transfer_icons;
+        public LinearLayout bank_icons_container;
         public LinearLayout lyt_parent;
 
         public OriginalViewHolder(View v) {
@@ -63,6 +67,7 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
             customer_address = (TextView) v.findViewById(R.id.customer_address);
             shipping_method = (TextView) v.findViewById(R.id.shipping_method);
             bank_transfer_icons = (RecyclerView) v.findViewById(R.id.bank_transfer_icons);
+            bank_icons_container = (LinearLayout) v.findViewById(R.id.bank_icons_container);
             lyt_parent = (LinearLayout) v.findViewById(R.id.lyt_parent);
 
             bank_transfer_icons.setLayoutManager(new LinearLayoutManager(ctx, LinearLayoutManager.HORIZONTAL, false));
@@ -109,12 +114,27 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
             view.shipping_method.setText(items.get(position).get("shipping_method"));
             if (items.get(position).containsKey("payment_icons")) {
                 String str_p_icons = items.get(position).get("payment_icons");
+                JSONArray jsonArray = new JSONArray();
                 try {
-                    JSONArray jsonArray = new JSONArray(str_p_icons);
-                    AdapterListBank bankAdapter = new AdapterListBank(ctx, jsonArray);
-                    view.bank_transfer_icons.setAdapter(bankAdapter);
+                    jsonArray = new JSONArray(str_p_icons);
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+
+                if (jsonArray.length() > 0) {
+                    AdapterListBank bankAdapter = new AdapterListBank(ctx, jsonArray);
+                    view.bank_transfer_icons.setAdapter(bankAdapter);
+
+                    final int pos = position;
+                    final JSONArray jArray = jsonArray;
+                    bankAdapter.setOnItemClickListener(new AdapterListBank.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(View view, String obj, int position) {
+                            if (fragment != null) {
+                                fragment.verifyBankTransfer(items.get(pos).get("sale_id"), jArray, items.get(pos).get("payment_method"));
+                            }
+                        }
+                    });
                 }
             }
 
@@ -132,5 +152,9 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public int getItemCount() {
         return items.size();
+    }
+
+    public void setFragment(ReportFragment fragment){
+        this.fragment = fragment;
     }
 }

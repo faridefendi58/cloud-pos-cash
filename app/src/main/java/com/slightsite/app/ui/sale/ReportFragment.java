@@ -320,6 +320,7 @@ public class ReportFragment extends UpdatableFragment {
 		saleLedgerListView.setAdapter(sAdap);*/
 
 		AdapterListInvoice invAdapter = new AdapterListInvoice(getActivity().getBaseContext() , saleList);
+		invAdapter.setFragment(ReportFragment.this);
 		lineitemListRecycle.setAdapter(invAdapter);
 
 		invAdapter.setOnItemClickListener(new AdapterListInvoice.OnItemClickListener() {
@@ -364,6 +365,8 @@ public class ReportFragment extends UpdatableFragment {
 				String icons = showPaymentIcons(sale.getId(), list_of_payments2);
 				if (icons.length() > 0) {
 					salemap.put("payment_icons", icons);
+                    salemap.put("sale_id", sale.getServerInvoiceId()+"");
+                    salemap.put("payment_method", list_of_payments2.get(sale.getId()).toString());
 				}
 			} catch (Exception e){
 				e.printStackTrace();
@@ -373,6 +376,7 @@ public class ReportFragment extends UpdatableFragment {
 		}
 
 		AdapterListInvoice invAdapter = new AdapterListInvoice(getActivity().getBaseContext() , saleList);
+        invAdapter.setFragment(ReportFragment.this);
 		lineitemListRecycle.setAdapter(invAdapter);
 
 		invAdapter.setOnItemClickListener(new AdapterListInvoice.OnItemClickListener() {
@@ -1104,7 +1108,6 @@ public class ReportFragment extends UpdatableFragment {
 
 				Shipping shipping = list_of_shippings2.get(sale.getId());
 				if (shipping != null) {
-					Log.e(getTag(), "shipping : "+ shipping.toMap().toString());
 					salemap.put("shipping_method", shipping.toMap().get("method_name"));
 					if (shipping.toMap().containsKey("pickup_date") && !shipping.toMap().get("pickup_date").equals("null")) {
 						salemap.put("delivered_plan_at", shipping.toMap().get("pickup_date"));
@@ -1117,6 +1120,8 @@ public class ReportFragment extends UpdatableFragment {
 				String icons = showPaymentIcons(sale.getId(), list_of_payments3);
 				if (icons.length() > 0) {
 					salemap.put("payment_icons", icons);
+					salemap.put("sale_id", sale.getId()+"");
+					salemap.put("payment_method", list_of_payments3.get(sale.getId()).toString());
 				}
 			} catch (Exception e){
 				e.printStackTrace();
@@ -1126,6 +1131,7 @@ public class ReportFragment extends UpdatableFragment {
 		}
 
 		AdapterListInvoice invAdapter = new AdapterListInvoice(getActivity().getBaseContext() , saleList2);
+        invAdapter.setFragment(ReportFragment.this);
 		lineitemListRecycle2.setAdapter(invAdapter);
 
 		invAdapter.setOnItemClickListener(new AdapterListInvoice.OnItemClickListener() {
@@ -1169,4 +1175,77 @@ public class ReportFragment extends UpdatableFragment {
 		}
 		return icon_str;
 	}
+
+    private BottomSheetDialog verifySheetDialog;
+	private RecyclerView bank_transfer_recycle;
+	private Button verify_submit_button;
+	private Button cancel_verify_button;
+
+	public void verifyBankTransfer(String sale_id, JSONArray jsonArray, String payment_method) {
+	    JSONArray methods = new JSONArray();
+	    List<String> channels = new ArrayList<String>();
+        try {
+            methods = new JSONArray(payment_method);
+            for (int j=0; j < jsonArray.length(); j++) {
+                channels.add(jsonArray.getString(j));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (methods.length() > 0) {
+            verifySheetDialog = new BottomSheetDialog(getContext());
+            View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_verify_payment, null);
+            verifySheetDialog.setContentView(sheetView);
+
+            verify_submit_button = (Button) sheetView.findViewById(R.id.verify_submit_button);
+            cancel_verify_button = (Button) sheetView.findViewById(R.id.cancel_verify_button);
+
+            bank_transfer_recycle = (RecyclerView) sheetView.findViewById(R.id.bank_transfer_recycle);
+            bank_transfer_recycle.setLayoutManager(new LinearLayoutManager(getContext()));
+            bank_transfer_recycle.setHasFixedSize(true);
+            bank_transfer_recycle.setNestedScrollingEnabled(false);
+
+            ArrayList<Payment> paymentList = new ArrayList<Payment>();
+            for (int i=0; i < methods.length(); i++) {
+                try {
+                    JSONObject jsonObject = methods.getJSONObject(i);
+                    if (jsonObject.has("type") && channels.contains(jsonObject.getString("type"))) {
+                        Double amount = 0.0;
+                        if (jsonObject.has("amount_tendered")) {
+                            amount = jsonObject.getDouble("amount_tendered");
+                        } else if (jsonObject.has("amount")) {
+                            amount = jsonObject.getDouble("amount");
+                        }
+                        Payment pym = new Payment(i, jsonObject.getString("type"), amount);
+                        paymentList.add(pym);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            AdapterListPaymentSimple btAdapter = new AdapterListPaymentSimple(paymentList);
+            bank_transfer_recycle.setAdapter(btAdapter);
+
+            triggerVerifyDialogButton(sheetView);
+            verifySheetDialog.show();
+        }
+    }
+
+    private void triggerVerifyDialogButton(View view) {
+        verify_submit_button.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                verifySheetDialog.dismiss();
+            }
+        });
+
+        cancel_verify_button.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                verifySheetDialog.dismiss();
+            }
+        });
+    }
 }

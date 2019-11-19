@@ -22,13 +22,13 @@ public class AdapterListBank extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private Context context;
     private Map<String, Integer> icons = new HashMap<String, Integer>();
 
-    private AdapterListBank.OnItemClickListener mOnItemClickListener;
+    private OnItemClickListener mOnItemClickListener;
 
     public interface OnItemClickListener {
         void onItemClick(View view, String obj, int position);
     }
 
-    public void setOnItemClickListener(final AdapterListBank.OnItemClickListener mItemClickListener) {
+    public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
         this.mOnItemClickListener = mItemClickListener;
     }
 
@@ -40,14 +40,14 @@ public class AdapterListBank extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
         public ImageButton bank_icon;
         public TextView price;
-        public View lyt_parent;
+        public View lyt_parent2;
         public RecyclerView bank_transfer_icons;
 
         public OriginalViewHolder(View v) {
             super(v);
             bank_icon = (ImageButton) v.findViewById(R.id.bank_icon);
             bank_transfer_icons = (RecyclerView) v.findViewById(R.id.bank_transfer_icons);
-            lyt_parent = (View) v.findViewById(R.id.lyt_parent);
+            lyt_parent2 = (View) v.findViewById(R.id.lyt_parent);
         }
     }
 
@@ -75,6 +75,19 @@ public class AdapterListBank extends RecyclerView.Adapter<RecyclerView.ViewHolde
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            view.bank_icon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mOnItemClickListener != null) {
+                        try {
+                            mOnItemClickListener.onItemClick(view, items.getString(position), position);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
         }
     }
 

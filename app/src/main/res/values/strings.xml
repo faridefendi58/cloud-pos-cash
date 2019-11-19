@@ -110,6 +110,7 @@
     <string name="title_change_other_item">Change Other Items</string>
     <string name="title_fee_report">Fee Report</string>
     <string name="title_fee_detail">Fee Detail</string>
+    <string name="title_verify_payment">Verify Payment</string>
 
     <string name="dashboard_income">Income</string>
     <string name="dashboard_transaction">Transaction</string>
@@ -316,6 +317,7 @@
     <string name="button_add_to_retur">Change</string>
     <string name="button_finish_retur">Finish Retur</string>
     <string name="button_change">Change</string>
+    <string name="button_mark_as_verified">Mark As Verified</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
 
