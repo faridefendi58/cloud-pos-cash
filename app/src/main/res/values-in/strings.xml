@@ -297,6 +297,8 @@
     <string name="payment_bri">Transfer Bank BRI</string>
     <string name="payment_edc">Mesin EDC</string>
     <string name="payment_wallet_tokopedia">Wallet Tokopedia</string>
+    <string name="payment_wallet_gofood">Wallet GoFood</string>
+    <string name="payment_wallet_grab_food">Wallet Grab Food</string>
 
     <string name="button_add_to_cart">Tambah</string>
     <string name="button_syncron">Sinkronkan</string>
@@ -321,8 +323,10 @@
 
     <string name="shipping_method_direct">Beli Langsung</string>
     <string name="shipping_method_take_it_later">Ambil Nanti</string>
-    <string name="shipping_method_gojek_grab">Gojek / Grab</string>
+    <string name="shipping_method_gojek_grab">GoSend / Grab Express</string>
     <string name="shipping_method_tokopedia">Tokopedia</string>
+    <string name="shipping_method_gofood">GoFood</string>
+    <string name="shipping_method_grab_food">Grab Food</string>
 
     <string name="hint_email">Contoh: john@gmail.com</string>
     <string name="hint_retur_notes">Tambahkan catatan jika diperlukan.</string>

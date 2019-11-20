@@ -26,6 +26,8 @@ public class Checkout implements Serializable {
     private Shipping shipping;
     private int discount;
     private String wallet_tokopedia = "0";
+    private String wallet_gofood = "0";
+    private String wallet_grabfood = "0";
 
     public Checkout() {}
 
@@ -140,6 +142,20 @@ public class Checkout implements Serializable {
             }
         }
 
+        if (Integer.parseInt(wallet_gofood) > 0) {
+            if (wallet_gofood != null && wallet_gofood.length() > 0) {
+                PaymentItem _wallet = new PaymentItem("wallet_gofood", Double.parseDouble(wallet_gofood));
+                payment_items.add(_wallet);
+            }
+        }
+
+        if (Integer.parseInt(wallet_grabfood) > 0) {
+            if (wallet_grabfood != null && wallet_grabfood.length() > 0) {
+                PaymentItem _wallet = new PaymentItem("wallet_grabfood", Double.parseDouble(wallet_grabfood));
+                payment_items.add(_wallet);
+            }
+        }
+
         // last check if null payment_items
         if (payment_items.size() == 0) {
             PaymentItem cash = new PaymentItem("cash_receive", 0.0);
@@ -158,6 +174,8 @@ public class Checkout implements Serializable {
         types.put("nominal_bri", AppController.getInstance().getString(R.string.payment_bri));
         types.put("nominal_edc", AppController.getInstance().getString(R.string.payment_edc));
         types.put("wallet_tokopedia", AppController.getInstance().getString(R.string.payment_wallet_tokopedia));
+        types.put("wallet_gofood", AppController.getInstance().getString(R.string.payment_wallet_gofood));
+        types.put("wallet_grabfood", AppController.getInstance().getString(R.string.payment_wallet_grab_food));
 
         return types;
     }
@@ -186,6 +204,14 @@ public class Checkout implements Serializable {
 
         if (wallet_tokopedia != null && wallet_tokopedia != "0") {
             payment_received = Double.parseDouble(wallet_tokopedia);
+        }
+
+        if (wallet_gofood != null && wallet_gofood != "0") {
+            payment_received = Double.parseDouble(wallet_gofood);
+        }
+
+        if (wallet_grabfood != null && wallet_grabfood != "0") {
+            payment_received = Double.parseDouble(wallet_grabfood);
         }
 
         return payment_received;
@@ -229,5 +255,25 @@ public class Checkout implements Serializable {
 
     public String getWalletTokopedia() {
         return wallet_tokopedia;
+    }
+
+    public void setWalletGoFood(String nominal) {
+        if (nominal.contains(".")) {
+            nominal = nominal.split("\\.")[0];
+        }
+        this.wallet_gofood = nominal;
+        if (!cash_receive.equals("0")) {
+            cash_receive = "0";
+        }
+    }
+
+    public void setWalletGrabFood(String nominal) {
+        if (nominal.contains(".")) {
+            nominal = nominal.split("\\.")[0];
+        }
+        this.wallet_grabfood = nominal;
+        if (!cash_receive.equals("0")) {
+            cash_receive = "0";
+        }
     }
 }

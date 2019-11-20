@@ -814,6 +814,8 @@ public class PrintPreviewActivity extends Activity {
         result.put("nominal_edc", R.string.payment_edc);
         result.put("nominal_wallet_tokopedia", R.string.payment_wallet_tokopedia);
         result.put("wallet_tokopedia", R.string.payment_wallet_tokopedia);
+        result.put("wallet_gofood", R.string.payment_wallet_gofood);
+        result.put("wallet_grabfood", R.string.payment_wallet_grab_food);
 
         return result.get(channel);
     }

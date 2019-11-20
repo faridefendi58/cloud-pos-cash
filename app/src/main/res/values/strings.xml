@@ -299,6 +299,8 @@
     <string name="payment_bri">BRI Transfer</string>
     <string name="payment_edc">EDC Payment</string>
     <string name="payment_wallet_tokopedia">Wallet Tokopedia</string>
+    <string name="payment_wallet_gofood">Wallet GoFood</string>
+    <string name="payment_wallet_grab_food">Wallet Grab Food</string>
 
     <string name="button_add_to_cart">Add To Cart</string>
     <string name="button_syncron">Syncronize Now</string>
@@ -323,8 +325,10 @@
 
     <string name="shipping_method_direct">Buy Directly</string>
     <string name="shipping_method_take_it_later">Take It Later</string>
-    <string name="shipping_method_gojek_grab">Gojek / Grab</string>
+    <string name="shipping_method_gojek_grab">GoSend / Grab Express</string>
     <string name="shipping_method_tokopedia">Tokopedia</string>
+    <string name="shipping_method_gofood">GoFood</string>
+    <string name="shipping_method_grab_food">Grab Food</string>
 
     <string name="hint_email">E.g: john@gmail.com</string>
     <string name="hint_retur_notes">Add some notes if needed.</string>

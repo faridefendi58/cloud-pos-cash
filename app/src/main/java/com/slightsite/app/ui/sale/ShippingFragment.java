@@ -444,6 +444,8 @@ public class ShippingFragment extends Fragment {
                 }
 
                 c_data.setWalletTokopedia("0");
+                c_data.setWalletGoFood("0");
+                c_data.setWalletGrabFood("0");
                 ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
                 setupShippingForm(i);
                 ((EditText) v).setText(ship_methods[i]);
@@ -452,7 +454,15 @@ public class ShippingFragment extends Fragment {
                 }
                 if (i == 3) { //Tokopedia
                     Double tot_inv = register.getTotal();
-                    c_data.setWalletTokopedia(tot_inv+"");
+                    c_data.setWalletTokopedia(tot_inv + "");
+                    ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
+                } else if (i == 4) {
+                    Double tot_inv = register.getTotal();
+                    c_data.setWalletGoFood(tot_inv + "");
+                    ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
+                } else if (i == 5) {
+                    Double tot_inv = register.getTotal();
+                    c_data.setWalletGrabFood(tot_inv + "");
                     ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
                 } else {
                     c_data.setWalletTokopedia("0");

@@ -297,7 +297,9 @@ public class CheckoutActivity extends AppCompatActivity {
                             vibe.vibrate(200);
                             return;
                         }
-                        if (checkout_data.getShipping().getMethod() == 3) {
+                        if (checkout_data.getShipping().getMethod() == 3
+                                || checkout_data.getShipping().getMethod() == 4
+                                || checkout_data.getShipping().getMethod() == 5) {
                             idx_state = idx_state + 1;
                         }
                     } else if (array_state[idx_state] == State.PAYMENT) {
@@ -352,7 +354,9 @@ public class CheckoutActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (idx_state < 1) {finish();return;};
                 idx_state--;
-                if (checkout_data.getShipping().getMethod() == 3) { //special for tokopedia
+                if (checkout_data.getShipping().getMethod() == 3
+                        || checkout_data.getShipping().getMethod() == 4
+                        || checkout_data.getShipping().getMethod() == 5) { //special for tokopedia, gofood, grab food
                     idx_state = 0;
                 }
                 displayFragment(array_state[idx_state]);

@@ -90,6 +90,8 @@ public class Payment implements Serializable {
         types.put("nominal_bri", AppController.getInstance().getString(R.string.payment_bri));
         types.put("nominal_edc", AppController.getInstance().getString(R.string.payment_edc));
         types.put("wallet_tokopedia", AppController.getInstance().getString(R.string.payment_wallet_tokopedia));
+        types.put("wallet_gofood", AppController.getInstance().getString(R.string.payment_wallet_gofood));
+        types.put("wallet_grabfood", AppController.getInstance().getString(R.string.payment_wallet_grab_food));
 
         return types;
     }
