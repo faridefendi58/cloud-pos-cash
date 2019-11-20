@@ -286,8 +286,7 @@ public class CheckoutActivity extends AppCompatActivity {
                 } else {
                     if (array_state[idx_state] == State.SHIPPING) {
                         // cek customer data dl
-                        //Log.e(TAG, "shipping data on SHIPPING : "+ checkout_data.getShipping().toMap().toString());
-                        //Log.e(TAG, "customer data on SHIPPING : "+ checkout_data.getCustomer().toMap().toString());
+                        Log.e(TAG, "customer data on SHIPPING : "+ checkout_data.getCustomer().toMap().toString());
                         if (checkout_data.getCustomer().equals("null")
                                 || checkout_data.getCustomer().getEmail() == "email@email.com"
                                 || (checkout_data.getCustomer().getName().length() == 0)) {

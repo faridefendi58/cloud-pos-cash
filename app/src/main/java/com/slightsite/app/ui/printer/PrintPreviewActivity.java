@@ -699,8 +699,10 @@ public class PrintPreviewActivity extends Activity {
 
         if (customer != null) {
             res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.customer)+ "</td><td colspan=\"3\"> : "+ customer.getName() +"</td></tr>";
-            res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.label_customer_address)+ "</td><td colspan=\"3\"> : "+ customer.getAddress() +"</td></tr>";
-            res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.label_customer_phone)+ "</td><td colspan=\"3\"> : "+ customer.getPhone() +"</td></tr>";
+            if (customer.getServerCustomerId() > 1) {
+                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_customer_address) + "</td><td colspan=\"3\"> : " + customer.getAddress() + "</td></tr>";
+                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_customer_phone) + "</td><td colspan=\"3\"> : " + customer.getPhone() + "</td></tr>";
+            }
         }
 
         if (sale.getPaidBy() > 0) {

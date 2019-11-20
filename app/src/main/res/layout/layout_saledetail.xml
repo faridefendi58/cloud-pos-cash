@@ -316,6 +316,7 @@
                                 android:background="@color/grey_10" />
 
                             <LinearLayout
+                                    android:id="@+id/customer_address_container"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:baselineAligned="false"
@@ -349,6 +350,7 @@
                                 android:background="@color/grey_10" />
 
                             <LinearLayout
+                                    android:id="@+id/customer_phone_container"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:baselineAligned="false"

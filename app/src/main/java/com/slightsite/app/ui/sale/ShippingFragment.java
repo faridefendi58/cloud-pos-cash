@@ -322,6 +322,16 @@ public class ShippingFragment extends Fragment {
                             ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
                         }
                     }
+
+                    if (setType == "customer_name" && selected_cust_id <= 0) {
+                        if (s.toString().length() > 2) {
+                            cust.setName(customer_name);
+                            if (cust.getEmail().equals("email@email.com")) {
+                                cust.setEmail("walkin@email.com");
+                            }
+                            ((CheckoutActivity) getActivity()).setCustomer(cust);
+                        }
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -333,6 +343,7 @@ public class ShippingFragment extends Fragment {
         c_data = ((CheckoutActivity) getActivity()).getCheckoutData();
         cust = c_data.getCustomer();
         //setTextChangeListener(phone, "phone");
+        setTextChangeListener(customer_name_autocomplete, "customer_name");
         setTextChangeListener(address, "address");
 
         if (ship == null) {

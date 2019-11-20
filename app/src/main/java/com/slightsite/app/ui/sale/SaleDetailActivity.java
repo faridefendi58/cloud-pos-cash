@@ -119,7 +119,9 @@ public class SaleDetailActivity extends Activity{
 	private TextView status;
 	private TextView invoice_number;
 	private TextView customer_address;
+	private LinearLayout customer_address_container;
 	private TextView customer_phone;
+	private LinearLayout customer_phone_container;
 	private TextView payment_subtotal;
 	private TextView payment_discount;
 	private TextView payment_grand_total;
@@ -299,7 +301,9 @@ public class SaleDetailActivity extends Activity{
 		status = (TextView) findViewById(R.id.status);
         invoice_number = (TextView) findViewById(R.id.invoice_number);
 		customer_address = (TextView) findViewById(R.id.customer_address);
+		customer_address_container = (LinearLayout) findViewById(R.id.customer_address_container);
 		customer_phone = (TextView) findViewById(R.id.customer_phone);
+		customer_phone_container = (LinearLayout) findViewById(R.id.customer_phone_container);
 		payment_subtotal = (TextView) findViewById(R.id.payment_subtotal);
 		payment_discount = (TextView) findViewById(R.id.payment_discount);
 		payment_grand_total = (TextView) findViewById(R.id.payment_grand_total);
@@ -591,6 +595,14 @@ public class SaleDetailActivity extends Activity{
 
 		customer_address.setText(customer.getAddress());
 		customer_phone.setText(customer.getPhone());
+
+		if (customer.getPhone().equals("-")) {
+			customer_phone_container.setVisibility(View.GONE);
+		}
+
+		if (customer.getAddress().equals("-")) {
+			customer_address_container.setVisibility(View.GONE);
+		}
 	}
 	
 	@Override

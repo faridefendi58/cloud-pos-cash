@@ -609,6 +609,16 @@ public class ReportFragment extends UpdatableFragment {
 												data_n.getString("customer_address"),
 												data_n.getInt("customer_status")
 										);
+										if (sale.getCustomerId() == 1) {
+											try {
+												JSONObject cust_dt = config.getJSONObject("customer");
+												if (cust_dt.has("name")) {
+													cust.setName(cust_dt.getString("name"));
+													cust.setPhone("-");
+													cust.setAddress("-");
+												}
+											} catch (Exception e){}
+										}
 										list_of_customers.put(sale.getCustomerId(), cust);
 
 										// build the shipping
@@ -1031,6 +1041,16 @@ public class ReportFragment extends UpdatableFragment {
 												data_n.getString("customer_address"),
 												data_n.getInt("customer_status")
 										);
+										if (sale.getCustomerId() == 1) {
+											try {
+												JSONObject cust_dt = config.getJSONObject("customer");
+												if (cust_dt.has("name")) {
+													cust.setName(cust_dt.getString("name"));
+													cust.setPhone("-");
+													cust.setAddress("-");
+												}
+											} catch (Exception e){}
+										}
 										list_of_customers2.put(sale.getCustomerId(), cust);
 
 										// build the shipping
