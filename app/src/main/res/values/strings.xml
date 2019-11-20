@@ -317,7 +317,7 @@
     <string name="button_add_to_retur">Change</string>
     <string name="button_finish_retur">Finish Retur</string>
     <string name="button_change">Change</string>
-    <string name="button_mark_as_verified">Mark As Verified</string>
+    <string name="button_mark_as_verified">Verified</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
 

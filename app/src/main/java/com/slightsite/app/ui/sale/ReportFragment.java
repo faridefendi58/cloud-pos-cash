@@ -10,7 +10,9 @@ import java.util.Map;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.BottomSheetDialog;
@@ -72,12 +74,15 @@ import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.techicalservices.ViewAnimation;
+import com.slightsite.app.ui.LoginActivity;
 import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.component.UpdatableFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import static com.slightsite.app.ui.LoginActivity.TAG_ID;
 
 /**
  * UI for showing sale's record.
@@ -119,6 +124,7 @@ public class ReportFragment extends UpdatableFragment {
 
 	private final static int LOADING_DURATION = 3500;
 	private LinearLayout lyt_progress;
+	private SharedPreferences sharedpreferences;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -132,6 +138,9 @@ public class ReportFragment extends UpdatableFragment {
 				warehouse_id = Integer.parseInt(pWarehouseId.getValue());
 			}
 			productCatalog = Inventory.getInstance().getProductCatalog();
+			if (sharedpreferences == null) {
+				sharedpreferences = getActivity().getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
+			}
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
 		}
@@ -588,6 +597,9 @@ public class ReportFragment extends UpdatableFragment {
 										JSONObject config = data_n.getJSONObject("config");
 										sale.setDiscount(config.getInt("discount"));
 
+										if (config.has("is_verified_payment")) {
+											sale.setIsVerifiedPayment(config.getInt("is_verified_payment"));
+										}
 										list_of_transactions.add(sale);
 										Customer cust = new Customer(
 												sale.getCustomerId(),
@@ -1007,6 +1019,9 @@ public class ReportFragment extends UpdatableFragment {
 										JSONObject config = data_n.getJSONObject("config");
 										sale.setDiscount(config.getInt("discount"));
 
+										if (config.has("is_verified_payment")) {
+											sale.setIsVerifiedPayment(config.getInt("is_verified_payment"));
+										}
 										list_of_transactions2.add(sale);
 										Customer cust = new Customer(
 												sale.getCustomerId(),
@@ -1228,16 +1243,48 @@ public class ReportFragment extends UpdatableFragment {
             AdapterListPaymentSimple btAdapter = new AdapterListPaymentSimple(paymentList);
             bank_transfer_recycle.setAdapter(btAdapter);
 
-            triggerVerifyDialogButton(sheetView);
+            triggerVerifyDialogButton(sheetView, sale_id);
             verifySheetDialog.show();
         }
     }
 
-    private void triggerVerifyDialogButton(View view) {
+    private void triggerVerifyDialogButton(View view, final String sale_id) {
         verify_submit_button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 verifySheetDialog.dismiss();
+
+                Map<String, String> params = new HashMap<String, String>();
+				String admin_id = sharedpreferences.getString(TAG_ID, null);
+				params.put("admin_id", admin_id);
+                params.put("invoice_id", sale_id);
+
+                String url = Server.URL + "transaction/verify-transfer?api-key=" + Server.API_KEY;
+                _string_request(Request.Method.POST, url, params, false,
+                        new VolleyCallback() {
+                            @Override
+                            public void onSuccess(String result) {
+                                try {
+                                    Log.e(getClass().getSimpleName(), "result old data : "+ result);
+                                    if (result.contains("success")) {
+                                        JSONObject jObj = new JSONObject(result);
+                                        int success = jObj.getInt("success");
+                                        // Check for error node in json
+                                        if (success == 1) {
+                                        	String message = jObj.getString("message");
+											Toast.makeText(getContext(), message,
+													Toast.LENGTH_LONG).show();
+                                        }
+                                    } else {
+                                        Toast.makeText(getContext(), "Failed!, unable to verify bank transfer data",
+                                                Toast.LENGTH_LONG).show();
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
             }
         });
 

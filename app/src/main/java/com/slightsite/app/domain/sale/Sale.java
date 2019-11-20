@@ -41,6 +41,7 @@ public class Sale implements Serializable {
 	private String delivered_plan_at;
 	private String delivered_at;
 	private String delivered_by_name;
+	private int is_verified_payment = 0;
 
 	public Sale(int id, String startTime) {
 		this(id, startTime, startTime, "", new ArrayList<LineItem>(), 0);
@@ -178,7 +179,8 @@ public class Sale implements Serializable {
 
 		map.put("invoiceNumber", invoice_number);
 		map.put("server_invoice_number", server_invoice_number);
-		
+		map.put("is_verified_payment", is_verified_payment+"");
+
 		return map;
 	}
 
@@ -315,5 +317,13 @@ public class Sale implements Serializable {
 
 	public String getDeliveredByName() {
 		return delivered_by_name;
+	}
+
+	public void setIsVerifiedPayment(int is_verified_payment) {
+		this.is_verified_payment = is_verified_payment;
+	}
+
+	public int getIsVerifiedPayment() {
+		return is_verified_payment;
 	}
 }

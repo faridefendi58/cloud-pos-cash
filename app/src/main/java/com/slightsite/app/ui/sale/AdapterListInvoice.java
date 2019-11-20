@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ import com.slightsite.app.ui.MainActivity;
 
 import org.json.JSONArray;
 
+import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +56,7 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
         public TextView shipping_method;
         public RecyclerView bank_transfer_icons;
         public LinearLayout bank_icons_container;
+        public ImageView is_verified_payment;
         public LinearLayout lyt_parent;
 
         public OriginalViewHolder(View v) {
@@ -68,6 +71,7 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
             shipping_method = (TextView) v.findViewById(R.id.shipping_method);
             bank_transfer_icons = (RecyclerView) v.findViewById(R.id.bank_transfer_icons);
             bank_icons_container = (LinearLayout) v.findViewById(R.id.bank_icons_container);
+            is_verified_payment = (ImageView) v.findViewById(R.id.is_verified_payment);
             lyt_parent = (LinearLayout) v.findViewById(R.id.lyt_parent);
 
             bank_transfer_icons.setLayoutManager(new LinearLayoutManager(ctx, LinearLayoutManager.HORIZONTAL, false));
@@ -136,6 +140,15 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
                         }
                     });
                 }
+            }
+
+            if (items.get(position).containsKey("is_verified_payment")) {
+                try {
+                    int is_verified = Integer.parseInt(items.get(position).get("is_verified_payment"));
+                    if (is_verified > 0) {
+                        view.is_verified_payment.setVisibility(View.VISIBLE);
+                    }
+                } catch (Exception e){e.printStackTrace();}
             }
 
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {

@@ -315,7 +315,7 @@
     <string name="button_add_to_retur">Retur</string>
     <string name="button_finish_retur">Selesaikan Retur</string>
     <string name="button_change">Tukar</string>
-    <string name="button_mark_as_verified">Tandai Sudah Terverifikasi</string>
+    <string name="button_mark_as_verified">Terverifikasi</string>
 
     <string name="confirm_edit">Anda yakin ingin mengubah data ini?</string>
 

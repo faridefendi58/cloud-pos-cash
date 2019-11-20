@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:layout_marginLeft="@dimen/spacing_xsmall"
-                android:text="@string/action_submit"
+                android:text="@string/button_mark_as_verified"
                 android:textColor="@color/colorWhite"
                 android:background="@color/greenUcok" />
 
