@@ -244,6 +244,7 @@ public class FeeFragment extends UpdatableFragment {
                                     fee_report_title.setText(getResources().getString(R.string.title_fee_report)+" "+ selected_month);
 
                                     JSONObject payments = summary_data.getJSONObject("payments");
+                                    Log.e(getTag(), "payments : "+ payments.toString());
                                     if (payments.length() > 0) {
                                         Iterator<String> pkeys = payments.keys();
                                         int no = 1;

@@ -60,6 +60,8 @@ public class AdapterListBank extends RecyclerView.Adapter<RecyclerView.ViewHolde
         icons.put("nominal_mandiri", R.drawable.ic_mandiri);
         icons.put("nominal_bca", R.drawable.ic_bca);
         icons.put("nominal_bri", R.drawable.ic_bri);
+        icons.put("wallet_gofood", R.drawable.ic_gofood_gojek);
+        icons.put("wallet_grabfood", R.drawable.ic_grabfood);
         return vh;
     }
 

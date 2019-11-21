@@ -565,6 +565,7 @@ public class ReportFragment extends UpdatableFragment {
 	private JSONArray list_of_line_items;
 	private Map<Integer, JSONArray> list_of_payments2 = new HashMap<Integer, JSONArray>();
 	private Map<Integer, JSONArray> list_of_line_items2 = new HashMap<Integer, JSONArray>();
+	private List<Integer> verified_sale_ids = new ArrayList<Integer>();
 
 	public void setTransactionList(final Map<String, String> params) {
 		list_of_transactions.clear();
@@ -599,6 +600,7 @@ public class ReportFragment extends UpdatableFragment {
 
 										if (config.has("is_verified_payment")) {
 											sale.setIsVerifiedPayment(config.getInt("is_verified_payment"));
+											verified_sale_ids.add(sale.getServerInvoiceId());
 										}
 										list_of_transactions.add(sale);
 										Customer cust = new Customer(
@@ -1031,6 +1033,7 @@ public class ReportFragment extends UpdatableFragment {
 
 										if (config.has("is_verified_payment")) {
 											sale.setIsVerifiedPayment(config.getInt("is_verified_payment"));
+											verified_sale_ids.add(sale.getServerInvoiceId());
 										}
 										list_of_transactions2.add(sale);
 										Customer cust = new Customer(
@@ -1196,7 +1199,9 @@ public class ReportFragment extends UpdatableFragment {
 					if (pdata != null && pdata.has("type")) {
 						if (pdata.getString("type").equals("nominal_mandiri")
 								|| pdata.getString("type").equals("nominal_bca")
-								|| pdata.getString("type").equals("nominal_bri")) {
+								|| pdata.getString("type").equals("nominal_bri")
+								|| pdata.getString("type").equals("wallet_gofood")
+								|| pdata.getString("type").equals("wallet_grabfood")) {
 							icons.add(pdata.getString("type"));
 						}
 					}
@@ -1240,6 +1245,12 @@ public class ReportFragment extends UpdatableFragment {
             bank_transfer_recycle.setLayoutManager(new LinearLayoutManager(getContext()));
             bank_transfer_recycle.setHasFixedSize(true);
             bank_transfer_recycle.setNestedScrollingEnabled(false);
+
+            try {
+            	if (verified_sale_ids.contains(Integer.parseInt(sale_id))) {
+					verify_submit_button.setVisibility(View.GONE);
+				}
+			} catch (Exception e){e.printStackTrace();}
 
             ArrayList<Payment> paymentList = new ArrayList<Payment>();
             for (int i=0; i < methods.length(); i++) {

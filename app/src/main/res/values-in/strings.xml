@@ -110,6 +110,8 @@
     <string name="title_change_the_item">Penukaran Barang</string>
     <string name="title_change_the_money">Pengembalian Uang</string>
     <string name="title_change_other_item">Ganti Item Lain</string>
+    <string name="title_return_the_item">Pengembalian Barang</string>
+    <string name="title_refund_method">Cara Pengembalian</string>
     <string name="title_fee_report">Laporan Penjualan</string>
     <string name="title_fee_detail">Rincian Fee</string>
     <string name="title_verify_payment">Verifikasi Pembayaran</string>
@@ -317,7 +319,7 @@
     <string name="button_add_to_retur">Retur</string>
     <string name="button_finish_retur">Selesaikan Retur</string>
     <string name="button_change">Tukar</string>
-    <string name="button_mark_as_verified">Terverifikasi</string>
+    <string name="button_mark_as_verified">Verifikasikan</string>
 
     <string name="confirm_edit">Anda yakin ingin mengubah data ini?</string>
 

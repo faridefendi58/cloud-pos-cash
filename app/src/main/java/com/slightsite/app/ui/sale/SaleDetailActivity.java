@@ -920,6 +920,7 @@ public class SaleDetailActivity extends Activity{
 		}
 	}
 
+	private int tot_inv_qty = 0;
 	private void getDetailFromServer() {
 		Map<String, String> params = new HashMap<String, String>();
 
@@ -941,6 +942,7 @@ public class SaleDetailActivity extends Activity{
 							// Check for error node in json
 							if (success == 1) {
 								server_invoice_data = jObj.getJSONObject("data");
+                                tot_inv_qty = server_invoice_data.getInt("total_quantity");
 								created_by.setText(server_invoice_data.getString("created_by_name"));
 								if (server_invoice_data.has("shipping")) {
 									JSONArray arr_shipping = server_invoice_data.getJSONArray("shipping");
@@ -1426,11 +1428,11 @@ public class SaleDetailActivity extends Activity{
 					JSONObject obj_retur_item = returJSONArray.getJSONObject(i);
 					Product product = productCatalog.getProductByBarcode(obj_retur_item.getString("id"));
 					if (obj_retur_item.has("returned_qty") && obj_retur_item.getInt("returned_qty") > 0) {
-						LineItem lineItem = new LineItem(product, obj_retur_item.getInt("returned_qty"), 0);
+						LineItem lineItem = new LineItem(product, obj_retur_item.getInt("returned_qty"), tot_inv_qty);
 						returitemList.add(lineItem);
 					}
 					if (obj_retur_item.has("refunded_qty") && obj_retur_item.getInt("refunded_qty") > 0) {
-						LineItem lineItem2 = new LineItem(product, obj_retur_item.getInt("refunded_qty"), 0);
+						LineItem lineItem2 = new LineItem(product, obj_retur_item.getInt("refunded_qty"), tot_inv_qty);
 						refunditemList.add(lineItem2);
 					}
 				} catch (JSONException e) {}
@@ -1445,10 +1447,12 @@ public class SaleDetailActivity extends Activity{
 
 		// also build change other items
 		changeitemList.clear();
+		int inv_quantity_total = 0;
 		if(changeOtherItemsJSONArray!=null && changeOtherItemsJSONArray.length()>0){
 			for (int i = 0; i < changeOtherItemsJSONArray.length(); i++) {
 				try {
 					JSONObject obj_change_item = changeOtherItemsJSONArray.getJSONObject(i);
+                    inv_quantity_total = obj_change_item.getInt("quantity_total");
 					Product product;
 					if (obj_change_item.has("id")) {
 						product = productCatalog.getProductByBarcode(obj_change_item.getString("id"));
@@ -1474,7 +1478,7 @@ public class SaleDetailActivity extends Activity{
 		refundItemListRecycle.setAdapter(rfAdap);
 
 		AdapterListReturReport ciAdap = new AdapterListReturReport(SaleDetailActivity.this, changeitemList, register);
-		ciAdap.setType("refund");
+		ciAdap.setType("change_item");
 		changeItemListRecycle.setAdapter(ciAdap);
 
 		// build the payment if any

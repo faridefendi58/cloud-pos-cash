@@ -85,6 +85,9 @@ public class AdapterListReturReport extends RecyclerView.Adapter<RecyclerView.Vi
             if (type.equals("refund")) {
                 String price_info = p.getQuantity() + " x " + CurrencyController.getInstance().moneyFormat(p.getPriceAtSale());
                 view.price.setText(price_info);
+            } else if (type.equals("change_item")) {
+                String price_info = p.getQuantity() + " x -" + CurrencyController.getInstance().moneyFormat(p.getPriceAtSale());
+                view.price.setText(price_info);
             } else {
                 view.price.setText("@ "+ CurrencyController.getInstance().moneyFormat(p.getPriceAtSale()));
                 view.sub_total.setText(""+ p.getQuantity()+" pcs");
@@ -95,6 +98,8 @@ public class AdapterListReturReport extends RecyclerView.Adapter<RecyclerView.Vi
                 subtotal_stacks.put(p.getProduct().getId(), sub_total);
                 if (type.equals("refund")) {
                     view.sub_total.setText(CurrencyController.getInstance().moneyFormat(sub_total));
+                } else if (type.equals("change_item")) {
+                    view.sub_total.setText("-"+ CurrencyController.getInstance().moneyFormat(sub_total));
                 }
             } catch (Exception e) {
                 Log.e(getClass().getSimpleName(), e.getMessage());
