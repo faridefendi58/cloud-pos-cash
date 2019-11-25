@@ -266,6 +266,7 @@ public class FeeDetailActivity extends AppCompatActivity {
                                     sale.setPaidByName(server_invoice_data.getString("paid_by_name"));
                                     sale.setRefundedBy(server_invoice_data.getInt("refunded_by"));
                                     sale.setRefundedByName(server_invoice_data.getString("refunded_by_name"));
+                                    sale.setDeliveredAt(server_invoice_data.getString("delivered_at"));
                                     sale.setDeliveredByName(server_invoice_data.getString("delivered_by_name"));
 
                                     // force to be delivered if trigger from proceed Order Button
@@ -433,8 +434,7 @@ public class FeeDetailActivity extends AppCompatActivity {
         } catch (Exception e) { e.printStackTrace(); }
 
         String[] separated = current_time.split(" ");
-        res += "<tr class=\"ft-18\"><td>"+ getResources().getString(R.string.label_date)+ "</td>" +
-                "<td colspan=\"3\" class=\"ft-17\"> : "+ separated[0] +"</td>";
+
         String date_transaction = sale.getEndTime();
         try {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MMM-dd  hh:mm a");
@@ -458,17 +458,28 @@ public class FeeDetailActivity extends AppCompatActivity {
         }
 
         res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.label_no_nota)+ "</td><td colspan=\"3\"> : "+ no_nota +"</td></tr>";
-        res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.label_hour)+ "</td><td colspan=\"3\"> : "+ separated[1] +"</td></tr>";
+        //res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.label_hour)+ "</td><td colspan=\"3\"> : "+ separated[1] +"</td></tr>";
+        res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.label_date_created)+ "</td>" +
+                "<td colspan=\"3\" class=\"ft-17\"> : "+ DateTimeStrategy.parseDate(sale.getEndTime(), "dd MMM yyyy HH:mm") +"</td>";
 
         if (sale.getCreatedBy() > 0) {
             res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_created_by) + "</td><td colspan=\"3\"> : " + sale.getCreatedByName() + "</td></tr>";
             if (sale.getPaidBy() > 0) {
                 if (is_delivered > 0 || should_be_finished) {
-                    res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
+                    if (sale.getDeliveredAt() != null) {
+                        res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_date_finished) + "</td>" +
+                                "<td colspan=\"3\" class=\"ft-17\"> : " + DateTimeStrategy.parseDate(sale.getDeliveredAt(), "dd MMM yyyy HH:mm") + "</td>";
+                    } else {
+                        res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_date_finished) + "</td>" +
+                                "<td colspan=\"3\" class=\"ft-17\"> : " + DateTimeStrategy.parseDate(DateTimeStrategy.getCurrentTime(), "dd MMM yyyy HH:mm") + "</td>";
+                    }
+                    res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_finished_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
                 }
             } else {
                 if (should_be_finished) {
-                    res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
+                    res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_date_finished) + "</td>" +
+                            "<td colspan=\"3\" class=\"ft-17\"> : " + DateTimeStrategy.parseDate(DateTimeStrategy.getCurrentTime(), "dd MMM yyyy HH:mm") + "</td>";
+                    res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_finished_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
                 }
             }
         } else {

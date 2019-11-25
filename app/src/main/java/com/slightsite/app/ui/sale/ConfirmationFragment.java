@@ -193,7 +193,7 @@ public class ConfirmationFragment extends Fragment {
                 conf_customer_name.setText(customer.getName());
                 conf_customer_phone.setText(customer.getPhone());
                 conf_customer_address.setText(customer.getAddress());
-                if (customer.getId() <= 0) {
+                if (customer.getId() <= 0 && customer.getPhone() == "0000") {
                     conf_customer_phone.setVisibility(View.GONE);
                     conf_customer_address.setVisibility(View.GONE);
                 }

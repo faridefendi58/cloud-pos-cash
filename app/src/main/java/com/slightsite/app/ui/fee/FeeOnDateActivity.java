@@ -149,7 +149,7 @@ public class FeeOnDateActivity extends AppCompatActivity {
                                     for(int n = 0; n < items_data.length(); n++) {
                                         JSONObject item_data = items_data.getJSONObject(n);
                                         FeeOn _fee = new FeeOn(
-                                                item_data.getString("paid_at"),
+                                                item_data.getString("delivered_at"),
                                                 item_data.getString("invoice_number"),
                                                 Double.parseDouble(item_data.getString("total_fee")),
                                                 Double.parseDouble(item_data.getString("total_revenue")));
