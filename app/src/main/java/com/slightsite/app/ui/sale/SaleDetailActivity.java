@@ -139,10 +139,13 @@ public class SaleDetailActivity extends Activity{
 	private TextView shipping_recipient_name;
 	private TextView shipping_recipient_phone;
 	private TextView created_by;
+	private TextView finished_by;
+	private TextView dateFinished;
 	private LinearLayout complete_button_container;
 	private LinearLayout finish_button_container;
 	private LinearLayout retur_button_container;
 	private LinearLayout retur_information;
+	private LinearLayout finished_date_container;
 
 	private PaymentCatalog paymentCatalog;
 	private List<Payment> paymentList;
@@ -312,10 +315,13 @@ public class SaleDetailActivity extends Activity{
 		payment_debt = (TextView) findViewById(R.id.payment_debt);
 		spacer_debt = (View) findViewById(R.id.spacer_debt);
 		created_by = (TextView) findViewById(R.id.created_by);
+		finished_by = (TextView) findViewById(R.id.finished_by);
+		dateFinished = (TextView) findViewById(R.id.dateFinished);
 		complete_button_container = (LinearLayout) findViewById(R.id.complete_button_container);
 		finish_button_container = (LinearLayout) findViewById(R.id.finish_button_container);
 		retur_button_container = (LinearLayout) findViewById(R.id.retur_button_container);
 		retur_information = (LinearLayout) findViewById(R.id.retur_information);
+		finished_date_container = (LinearLayout) findViewById(R.id.finished_date_container);
 
 		lineitemListRecycle = (RecyclerView) findViewById(R.id.lineitemListRecycle);
 		lineitemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -623,6 +629,8 @@ public class SaleDetailActivity extends Activity{
 			new_sale.setCustomerId(sale.getCustomerId());
 			new_sale.setStatus(sale.getStatus());
 			new_sale.setDiscount(sale.getDiscount());
+			new_sale.setDeliveredAt(sale.getDeliveredAt());
+			new_sale.setDeliveredByName(sale.getDeliveredByName());
 
 			newActivity.putExtra("sale_intent", new_sale);
 			newActivity.putExtra("customer_intent", customer_intent);
@@ -971,7 +979,7 @@ public class SaleDetailActivity extends Activity{
 									if (shipping.getMethod() == 0) {
 										try {
 											if (server_invoice_data.getInt("delivered") == 1) {
-												shipping_date.setText(DateTimeStrategy.parseDate(server_invoice_data.getString("delivered_at"), "dd MMM yyyy HH:ss") + "");
+												shipping_date.setText(DateTimeStrategy.parseDate(server_invoice_data.getString("delivered_at"), "dd MMM yyyy HH:mm") + "");
 											}
 										} catch (Exception e){}
 									}
@@ -988,6 +996,15 @@ public class SaleDetailActivity extends Activity{
 										complete_button_container.setVisibility(View.VISIBLE);
 									} else if (server_invoice_data.getInt("status") == 1) {
 										if (server_invoice_data.getInt("delivered") == 1) {
+											try {
+												finished_date_container.setVisibility(View.VISIBLE);
+												if (server_invoice_data.has("delivered_at") && !server_invoice_data.getString("delivered_at").equals("null")) {
+													dateFinished.setText(DateTimeStrategy.parseDate(server_invoice_data.getString("delivered_at"), "dd MMM yyyy HH:mm"));
+													sale.setDeliveredAt(server_invoice_data.getString("delivered_at"));
+													sale.setDeliveredByName(server_invoice_data.getString("delivered_by_name"));
+												}
+												finished_by.setText(server_invoice_data.getString("delivered_by_name"));
+											} catch (Exception e){}
 											if (!obj_retur.has("id")) { // hanya yg belum pnh retur
 												retur_button_container.setVisibility(View.VISIBLE);
 												finish_button_container.setVisibility(View.GONE);
@@ -1383,6 +1400,7 @@ public class SaleDetailActivity extends Activity{
 	private LinearLayout change_item_container;
 	private LinearLayout refund_item_container;
 	private LinearLayout change_other_item_container;
+	private LinearLayout payment_detail_container;
 	private RecyclerView returPaymentListView;
 	private TextView retur_invoice_number;
 	private TextView retur_proceed_by;
@@ -1407,10 +1425,13 @@ public class SaleDetailActivity extends Activity{
 		change_item_container = (LinearLayout) findViewById(R.id.change_item_container);
 		refund_item_container = (LinearLayout) findViewById(R.id.refund_item_container);
 		change_other_item_container = (LinearLayout) findViewById(R.id.change_other_item_container);
+		payment_detail_container = (LinearLayout) findViewById(R.id.payment_detail_container);
 
 		try {
 			returJSONArray = obj_retur.getJSONArray("items");
-			paymentJSONArray = obj_retur.getJSONArray("payments");
+			if (obj_retur.has("payments") && !obj_retur.getString("payments").equals("null")) {
+				paymentJSONArray = obj_retur.getJSONArray("payments");
+			}
 			changeOtherItemsJSONArray = obj_retur.getJSONArray("items_change");
 			// build other information
 			retur_invoice_number = (TextView) findViewById(R.id.retur_invoice_number);
@@ -1419,7 +1440,7 @@ public class SaleDetailActivity extends Activity{
 			retur_proceed_by.setText(obj_retur.getString("refunded_by_name"));
 			refunded_at = (TextView) findViewById(R.id.refunded_at);
 			refunded_at.setText(DateTimeStrategy.parseDate(obj_retur.getString("refunded_at"), "dd MMM yyyy HH:s") + "");
-		} catch (Exception e){}
+		} catch (Exception e){e.printStackTrace();}
 
 		returitemList.clear();
 		if(returJSONArray!=null && returJSONArray.length()>0){
@@ -1448,6 +1469,7 @@ public class SaleDetailActivity extends Activity{
 		// also build change other items
 		changeitemList.clear();
 		int inv_quantity_total = 0;
+		Log.e(getClass().getSimpleName(), "changeOtherItemsJSONArray : " + changeOtherItemsJSONArray.toString());
 		if(changeOtherItemsJSONArray!=null && changeOtherItemsJSONArray.length()>0){
 			for (int i = 0; i < changeOtherItemsJSONArray.length(); i++) {
 				try {
@@ -1507,6 +1529,10 @@ public class SaleDetailActivity extends Activity{
 
 			AdapterListPaymentSimple pAdap = new AdapterListPaymentSimple(pyitemList);
 			returPaymentListView.setAdapter(pAdap);
+		}
+
+		if (paymentJSONArray.length() <= 0) {
+			payment_detail_container.setVisibility(View.GONE);
 		}
 
 		retur_information.setVisibility(View.VISIBLE);

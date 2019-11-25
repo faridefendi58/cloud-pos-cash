@@ -243,6 +243,8 @@
     <string name="label_change_due">Change Due</string>
     <string name="label_dept">Dept</string>
     <string name="label_date">Date</string>
+    <string name="label_date_created">Date Created</string>
+    <string name="label_date_finished">Date Finished</string>
     <string name="label_hour">Hour</string>
     <string name="label_cashier">Cashier</string>
     <string name="label_no_nota">No. Nota</string>
@@ -275,6 +277,7 @@
     <string name="label_payment_change_due">Change Due</string>
     <string name="label_created_by">Created By</string>
     <string name="label_processed_by">Processed By</string>
+    <string name="label_finished_by">Finished By</string>
     <string name="label_resume">Resume</string>
     <string name="label_printer_configuration">Printer Configs</string>
     <string name="label_to">To</string>

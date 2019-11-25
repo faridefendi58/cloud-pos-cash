@@ -649,9 +649,6 @@ public class PrintPreviewActivity extends Activity {
             sale_total = sale.getTotal();
         } catch (Exception e) { e.printStackTrace(); }
 
-        String[] separated = current_time.split(" ");
-        res += "<tr class=\"ft-18\"><td>"+ getResources().getString(R.string.label_date)+ "</td>" +
-                "<td colspan=\"3\" class=\"ft-17\"> : "+ separated[0] +"</td>";
         String date_transaction = sale.getEndTime();
         try {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MMM-dd  hh:mm a");
@@ -674,52 +671,64 @@ public class PrintPreviewActivity extends Activity {
             }
         }
 
-        res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.label_no_nota)+ "</td><td colspan=\"3\"> : "+ no_nota +"</td></tr>";
-        res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.label_hour)+ "</td><td colspan=\"3\"> : "+ separated[1] +"</td></tr>";
+        res += "<tr class=\"ft-16\"><td>"+ getResources().getString(R.string.label_no_nota)+ "</td><td colspan=\"3\"> : "+ no_nota +"</td></tr>";
+        //res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.label_hour)+ "</td><td colspan=\"3\"> : "+ separated[1] +"</td></tr>";
+        String[] separated = current_time.split(" ");
+        res += "<tr class=\"ft-16\"><td>"+ getResources().getString(R.string.label_date_created)+ "</td>" +
+                "<td colspan=\"3\" class=\"ft-16\"> : "+ DateTimeStrategy.parseDate(sale.getEndTime(), "dd MMM yyyy HH:mm") +"</td>";
 
         if (sale.getCreatedBy() > 0) {
-            res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_created_by) + "</td><td colspan=\"3\"> : " + sale.getCreatedByName() + "</td></tr>";
+            res += "<tr class=\"ft-16\"><td>" + getResources().getString(R.string.label_created_by) + "</td><td colspan=\"3\"> : " + sale.getCreatedByName() + "</td></tr>";
             if (sale.getPaidBy() > 0) {
                 if (is_delivered > 0 || should_be_finished) {
-                    res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
+                    if (sale.getDeliveredAt() != null) {
+                        res += "<tr class=\"ft-16\"><td>" + getResources().getString(R.string.label_date_finished) + "</td>" +
+                                "<td colspan=\"3\" class=\"ft-16\"> : " + DateTimeStrategy.parseDate(sale.getDeliveredAt(), "dd MMM yyyy HH:mm") + "</td>";
+                    } else {
+                        res += "<tr class=\"ft-16\"><td>" + getResources().getString(R.string.label_date_finished) + "</td>" +
+                                "<td colspan=\"3\" class=\"ft-16\"> : " + DateTimeStrategy.parseDate(DateTimeStrategy.getCurrentTime(), "dd MMM yyyy HH:mm") + "</td>";
+                    }
+                    res += "<tr class=\"ft-16\"><td>" + getResources().getString(R.string.label_finished_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
                 }
             } else {
                 if (should_be_finished) {
-                    res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
+                    res += "<tr class=\"ft-16\"><td>" + getResources().getString(R.string.label_date_finished) + "</td>" +
+                            "<td colspan=\"3\" class=\"ft-16\"> : " + DateTimeStrategy.parseDate(DateTimeStrategy.getCurrentTime(), "dd MMM yyyy HH:mm") + "</td>";
+                    res += "<tr class=\"ft-16\"><td>" + getResources().getString(R.string.label_finished_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
                 }
             }
         } else {
             if (adminData != null) {
-                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_created_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
+                res += "<tr class=\"ft-16\"><td>" + getResources().getString(R.string.label_created_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
                 if (is_delivered > 0) {
-                    res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
+                    res += "<tr class=\"ft-16\"><td>" + getResources().getString(R.string.label_finished_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
                 }
             }
         }
 
         if (customer != null) {
-            res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.customer)+ "</td><td colspan=\"3\"> : "+ customer.getName() +"</td></tr>";
+            res += "<tr class=\"ft-16\"><td>"+ getResources().getString(R.string.customer)+ "</td><td colspan=\"3\"> : "+ customer.getName() +"</td></tr>";
             if (customer.getServerCustomerId() > 1) {
-                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_customer_address) + "</td><td colspan=\"3\"> : " + customer.getAddress() + "</td></tr>";
-                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_customer_phone) + "</td><td colspan=\"3\"> : " + customer.getPhone() + "</td></tr>";
+                res += "<tr class=\"ft-16\"><td>" + getResources().getString(R.string.label_customer_address) + "</td><td colspan=\"3\"> : " + customer.getAddress() + "</td></tr>";
+                res += "<tr class=\"ft-16\"><td>" + getResources().getString(R.string.label_customer_phone) + "</td><td colspan=\"3\"> : " + customer.getPhone() + "</td></tr>";
             }
         }
 
         if (sale.getPaidBy() > 0) {
             if (is_delivered > 0) {
-                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b>" +
+                res += "<tr class=\"ft-16\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b>" +
                         getResources().getString(R.string.message_paid_delivered) + "</b></td></tr>";
             } else {
                 if (should_be_finished) {
-                    res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b>" +
+                    res += "<tr class=\"ft-16\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b>" +
                             getResources().getString(R.string.message_paid_delivered) + "</b></td></tr>";
                 } else {
-                    res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b>" +
+                    res += "<tr class=\"ft-16\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b>" +
                             getResources().getString(R.string.message_paid_undelivered) + "</b></td></tr>";
                 }
             }
         } else {
-            res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b style=\"color:red;\" class=\"ft-26\">" + getResources().getString(R.string.message_unpaid) + "</b></td></tr>";
+            res += "<tr class=\"ft-16\"><td>" + getResources().getString(R.string.status) + "</td><td colspan=\"3\"> : <b style=\"color:red;\" class=\"ft-26\">" + getResources().getString(R.string.message_unpaid) + "</b></td></tr>";
         }
 
         List<LineItem> list = sale.getAllLineItem();
@@ -734,29 +743,29 @@ public class PrintPreviewActivity extends Activity {
         int sub_total = 0;
         int ppn = 0;
         for (int i = 0; i < lineitemList.size(); ++i) {
-            res += "<tr class=\"ft-17\"><td colspan=\"4\">"+ lineitemList.get(i).get("name") +"</td></tr>";
+            res += "<tr class=\"ft-16\"><td colspan=\"4\">"+ lineitemList.get(i).get("name") +"</td></tr>";
             int qty = Integer.parseInt(lineitemList.get(i).get("quantity"));
             int prc = Integer.parseInt(lineitemList.get(i).get("price").replace(".", ""));
             int tot = prc * qty;
-            res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"padding-left:10px;\">"+ qty +" x "+ CurrencyController.getInstance().moneyFormat(prc) +"</td>";
+            res += "<tr class=\"ft-16\"><td colspan=\"3\" style=\"padding-left:10px;\">"+ qty +" x "+ CurrencyController.getInstance().moneyFormat(prc) +"</td>";
             res += "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(tot) +"</td></tr>";
 
             sub_total = sub_total + tot;
         }
         res += "<tr><td colspan=\"4\"><hr/></td></tr>";
 
-        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_sub_total) +" :</td>" +
+        res += "<tr class=\"ft-16\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_sub_total) +" :</td>" +
                 "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(sub_total) +"</td>";
         //res += "<tr><td colspan=\"2\" style=\"text-align:right;\">PPN :</td><td style=\"text-align:right;\">"+ ppn +"</td>";
         int discount = sale.getDiscount();
-        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_discount) +" :</td>" +
+        res += "<tr class=\"ft-16\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_discount) +" :</td>" +
                 "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(discount) +"</td>";
 
         int grand_total = sub_total + ppn - discount;
 
         int cash = grand_total;
         int change_due = grand_total - cash;
-        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_grand_total) +" :</td>" +
+        res += "<tr class=\"ft-16\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_grand_total) +" :</td>" +
                 "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(grand_total) +"</td>";
 
         if (paymentList != null && !paymentList.isEmpty()) {
@@ -776,7 +785,7 @@ public class PrintPreviewActivity extends Activity {
 
                 if (amnt > 0) {
                     try {
-                        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">" + getResources().getString(getPaymentChannel(py.getPaymentChannel())) + " :</td>" +
+                        res += "<tr class=\"ft-16\"><td colspan=\"3\" style=\"text-align:right;\">" + getResources().getString(getPaymentChannel(py.getPaymentChannel())) + " :</td>" +
                                 "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(amnt) + "</td>";
                     } catch (Exception e){e.printStackTrace();}
                 }
@@ -785,7 +794,7 @@ public class PrintPreviewActivity extends Activity {
             }
             change_due = payment_total - grand_total;
         } else {
-            res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.payment_cash) +" :</td>" +
+            res += "<tr class=\"ft-16\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.payment_cash) +" :</td>" +
                     "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(cash) +"</td>";
         }
 
@@ -795,13 +804,13 @@ public class PrintPreviewActivity extends Activity {
         } else {
             int debt = -1 * change_due;
             if (debt < 0) {
-                res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\"><b>" + getResources().getString(R.string.label_dept) + " :</b></td>" +
+                res += "<tr class=\"ft-16\"><td colspan=\"3\" style=\"text-align:right;\"><b>" + getResources().getString(R.string.label_dept) + " :</b></td>" +
                         "<td style=\"text-align:right;\"><b>" + CurrencyController.getInstance().moneyFormat(debt) + "</b></td>";
             }
         }
         res += "<tr><td colspan=\"4\"><hr/></td></tr>";
 
-        res += "<tr class=\"ft-17\" style=\"padding-bottom:25px;\"><td colspan=\"4\"><center>Terimakasih.<br />Selamat belanja kembali.</center></td></tr></table>";
+        res += "<tr class=\"ft-16\" style=\"padding-bottom:25px;\"><td colspan=\"4\"><center>Terimakasih.<br />Selamat belanja kembali.</center></td></tr></table>";
 
         return res;
     }

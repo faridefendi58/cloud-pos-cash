@@ -241,6 +241,8 @@
     <string name="label_change_due">Uang Kembali</string>
     <string name="label_dept">Hutang</string>
     <string name="label_date">Tanggal</string>
+    <string name="label_date_created">Tanggal Buat</string>
+    <string name="label_date_finished">Tanggal Selesai</string>
     <string name="label_hour">Jam</string>
     <string name="label_cashier">Kasir</string>
     <string name="label_no_nota">No. Nota</string>
@@ -273,6 +275,7 @@
     <string name="label_payment_change_due">Kembali</string>
     <string name="label_created_by">Dibuat Oleh</string>
     <string name="label_processed_by">Diproses</string>
+    <string name="label_finished_by">Diselesaikan Oleh</string>
     <string name="label_resume">Ringkasan</string>
     <string name="label_printer_configuration">Konfigurasi Printer</string>
     <string name="label_to">Kepada</string>
