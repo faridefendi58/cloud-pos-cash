@@ -162,7 +162,7 @@ public class FeeOnDateActivity extends AppCompatActivity {
                                     fee_report_title.setText(getResources().getString(R.string.transaction)+" "+ DateTimeStrategy.parseDate(date_fee, "dd MMM yyyy"));
                                     total_omzet.setText(CurrencyController.getInstance().moneyFormat(summary_data.getDouble("total_revenue")));
                                     total_fee.setText(CurrencyController.getInstance().moneyFormat(summary_data.getDouble("total_fee")));
-                                    total_transaction.setText(CurrencyController.getInstance().moneyFormat(summary_data.getDouble("total_transaction")) +" transaksi");
+                                    total_transaction.setText(CurrencyController.getInstance().moneyFormat(summary_data.getDouble("total_transaction")) +"");
 
                                     JSONObject payments = summary_data.getJSONObject("payments");
                                     if (payments.length() > 0) {
@@ -192,7 +192,7 @@ public class FeeOnDateActivity extends AppCompatActivity {
                                     }
                                 });
 
-                                AdapterListPaymentSimple pAdap = new AdapterListPaymentSimple(paymentList);
+                                AdapterListPaymentOn pAdap = new AdapterListPaymentOn(paymentList);
                                 paymentitemListView.setAdapter(pAdap);
                             } else {
                                 Toast.makeText(getApplicationContext(), "Failed!, No product data in ",

@@ -46,6 +46,7 @@ import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.component.UpdatableFragment;
+import com.slightsite.app.ui.fee.AdapterListPaymentOn;
 import com.slightsite.app.ui.fee.FeeOnDateActivity;
 
 import org.json.JSONArray;
@@ -74,7 +75,9 @@ public class FeeFragment extends UpdatableFragment {
 
     private RecyclerView feeListRecycle;
     private RecyclerView paymentitemListView;
+    private RecyclerView refundListRecycle;
     private LinearLayout fee_information_container;
+    private LinearLayout refund_detail_container;
     private RelativeLayout no_data_container;
     private Button button_fee_research;
     private Button button_fee_reset_to_default;
@@ -141,6 +144,7 @@ public class FeeFragment extends UpdatableFragment {
         total_omzet = (TextView) root.findViewById(R.id.total_omzet);
         total_transaction = (TextView) root.findViewById(R.id.total_transaction);
         fee_information_container = (LinearLayout) root.findViewById(R.id.fee_information_container);
+        refund_detail_container = (LinearLayout) root.findViewById(R.id.refund_detail_container);
         no_data_container = (RelativeLayout) root.findViewById(R.id.no_fee_data_container);
         button_fee_research = (Button) root.findViewById(R.id.button_fee_research);
         button_fee_reset_to_default = (Button) root.findViewById(R.id.button_fee_reset_to_default);
@@ -205,6 +209,11 @@ public class FeeFragment extends UpdatableFragment {
         paymentitemListView.setHasFixedSize(true);
         paymentitemListView.setNestedScrollingEnabled(false);
 
+        refundListRecycle = (RecyclerView) root.findViewById(R.id.refundListRecycle);
+        refundListRecycle.setLayoutManager(new LinearLayoutManager(main.getApplicationContext()));
+        refundListRecycle.setHasFixedSize(true);
+        refundListRecycle.setNestedScrollingEnabled(false);
+
         int warehouse_id = Integer.parseInt(paramCatalog.getParamByName("warehouse_id").getValue());
         Map<String, String> params = new HashMap<String, String>();
         params.put("warehouse_id", warehouse_id + "");
@@ -224,6 +233,7 @@ public class FeeFragment extends UpdatableFragment {
                                 // Check for error node in json
                                 ArrayList<Fee> listFee = new ArrayList<Fee>();
                                 ArrayList<Payment> paymentList = new ArrayList<Payment>();
+                                ArrayList<Payment> refundList = new ArrayList<Payment>();
                                 if (success == 1) {
                                     JSONObject data = jObj.getJSONObject("data");
                                     JSONArray items_data = data.getJSONArray("items");
@@ -257,6 +267,23 @@ public class FeeFragment extends UpdatableFragment {
                                             } catch (Exception e){}
                                         }
                                     }
+
+                                    if (summary_data.has("refunds")) {
+                                        JSONObject refunds = summary_data.getJSONObject("refunds");
+                                        Log.e(getTag(), "refunds : "+ refunds.toString());
+                                        if (refunds.length() > 0) {
+                                            Iterator<String> rkeys = refunds.keys();
+                                            int no = 1;
+                                            while(rkeys.hasNext()) {
+                                                String key = rkeys.next();
+                                                try {
+                                                    Payment pym = new Payment(no, key, refunds.getDouble(key));
+                                                    refundList.add(pym);
+                                                    no = no + 1;
+                                                } catch (Exception e){}
+                                            }
+                                        }
+                                    }
                                 }
 
                                 if (listFee.size() > 0) {
@@ -276,8 +303,13 @@ public class FeeFragment extends UpdatableFragment {
                                         }
                                     });
 
-                                    AdapterListPaymentSimple pAdap = new AdapterListPaymentSimple(paymentList);
+                                    AdapterListPaymentOn pAdap = new AdapterListPaymentOn(paymentList);
                                     paymentitemListView.setAdapter(pAdap);
+
+                                    if (refundList.size() > 0) {
+                                        AdapterListPaymentOn rfAdap = new AdapterListPaymentOn(refundList);
+                                        refundListRecycle.setAdapter(rfAdap);
+                                    }
                                 } else {
                                     fee_information_container.setVisibility(View.GONE);
                                     no_data_container.setVisibility(View.VISIBLE);

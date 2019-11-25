@@ -345,5 +345,6 @@
     <string name="heading_payment_detail">Payment Detail</string>
     <string name="heading_product_detail">Product Detail</string>
     <string name="heading_retur_detail">Retur Detail</string>
+    <string name="heading_refund_detail">Refund Detail</string>
     <string name="heading_retur_reason">Retur Reason</string>
 </resources>

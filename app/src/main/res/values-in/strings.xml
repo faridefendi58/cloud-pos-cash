@@ -343,5 +343,6 @@
     <string name="heading_payment_detail">Rincian Pembayaran</string>
     <string name="heading_product_detail">Rincian Barang</string>
     <string name="heading_retur_detail">Rincian Retur</string>
+    <string name="heading_refund_detail">Rincian Refund</string>
     <string name="heading_retur_reason">Alasan Retur</string>
 </resources>

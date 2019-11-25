@@ -44,9 +44,9 @@
 
         <TextView
                 android:id="@+id/total_omzet"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5"
+                android:textColor="@color/grey_90"
                 android:text="0"/>
 
     </LinearLayout>
@@ -66,9 +66,9 @@
 
         <TextView
                 android:id="@+id/total_fee"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5"
+                android:textColor="@color/grey_90"
                 android:text="0"/>
 
     </LinearLayout>
@@ -88,9 +88,9 @@
 
         <TextView
                 android:id="@+id/total_transaction"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5"
+                android:textColor="@color/grey_90"
                 android:text="0"/>
 
     </LinearLayout>
