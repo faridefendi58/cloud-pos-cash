@@ -131,6 +131,53 @@
                 </LinearLayout>
 
             </LinearLayout>
+
+            <LinearLayout
+                    android:id="@+id/refund_detail_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginTop="@dimen/spacing_large"
+                    android:orientation="vertical"
+                    android:background="@color/grey_10"
+                    android:visibility="gone">
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/spacing_middle">
+
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:text="@string/heading_refund_detail"
+                            android:textSize="@dimen/spacing_large"/>
+
+                </LinearLayout>
+
+                <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/grey_20"/>
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                    <android.support.v7.widget.RecyclerView
+                            android:id="@+id/refundListRecycle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:scrollbars="vertical"
+                            android:scrollingCache="true" />
+
+                </LinearLayout>
+
+            </LinearLayout>
             <!-- End of Footer fee report -->
 
         </LinearLayout>

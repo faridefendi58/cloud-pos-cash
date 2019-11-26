@@ -51,6 +51,7 @@
             app:cardUseCompatPadding="true">
 
             <LinearLayout
+                    android:id="@+id/normal_billing_info_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -168,6 +169,75 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                    android:id="@+id/gofood_billing_info_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="1"
+                        android:padding="@dimen/spacing_large">
+
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_middle"
+                            android:padding="@dimen/spacing_middle"
+                            android:text="@string/message_gofood_billing_info"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:background="@color/alertWarning"
+                            android:textColor="@color/alertWarningFontColor"
+                            android:textStyle="bold"
+                            android:textAllCaps="true"
+                            android:textAlignment="center"
+                            app:fontFamily="sans-serif-medium" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="1"
+                        android:padding="@dimen/spacing_large">
+
+                    <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:text="@string/label_total_invoice"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textColor="@color/grey_40"
+                            android:textStyle="bold"
+                            android:textAllCaps="true"
+                            app:fontFamily="sans-serif-medium" />
+
+                    <EditText
+                            style="@style/EditText.Flat.Grey"
+                            android:id="@+id/gograbfood_total"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:background="@drawable/edit_text_round_bg_outline"
+                            android:drawableEnd="@drawable/ic_expand_arrow"
+                            android:layout_marginTop="@dimen/spacing_middle"
+                            android:drawableRight="@drawable/ic_money_black_24dp"
+                            android:hint="0"
+                            android:minHeight="@dimen/spacing_xmlarge"
+                            android:inputType="number"
+                            android:singleLine="true"
+                            android:imeOptions="actionDone"/>
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
         </android.support.v7.widget.CardView>
 
         <!-- pay segment -->
@@ -216,6 +286,57 @@
                 android:orientation="vertical">
 
                 <!-- start of payment form -->
+                <!-- grab / gofood if any -->
+                <LinearLayout
+                        android:id="@+id/payment_gograbfood_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="1"
+                            android:padding="@dimen/spacing_large">
+
+                        <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:text="@string/label_gograb_pay"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                                android:textColor="@color/grey_40"
+                                android:textStyle="bold"
+                                android:textAllCaps="true"
+                                app:fontFamily="sans-serif-medium" />
+
+                        <EditText
+                                style="@style/EditText.Flat.Grey"
+                                android:id="@+id/nominal_gograbfood"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:background="@drawable/edit_text_round_bg_outline"
+                                android:layout_marginTop="@dimen/spacing_middle"
+                                android:hint="0"
+                                android:minHeight="@dimen/spacing_xmlarge"
+                                android:inputType="number"
+                                android:singleLine="true"
+                                android:imeOptions="actionDone"/>
+
+
+                    </LinearLayout>
+
+                    <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/grey_10" />
+
+                </LinearLayout>
+                <!-- end of go / grab food -->
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

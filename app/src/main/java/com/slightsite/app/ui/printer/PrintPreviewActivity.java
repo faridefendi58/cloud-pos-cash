@@ -265,6 +265,10 @@ public class PrintPreviewActivity extends Activity {
                 should_be_finished = true;
             }
 
+            if (shipping_method == 4 || shipping_method == 5) {
+                should_be_finished = true;
+            }
+
             Params bParam = paramCatalog.getParamByName("bluetooth_device_name");
             if (bParam != null) {
                 bluetoothDeviceName = bParam.getValue();
@@ -378,7 +382,7 @@ public class PrintPreviewActivity extends Activity {
         print_button_container = (LinearLayout) findViewById(R.id.print_button_container);
         finish_and_print_button = (Button) findViewById(R.id.finish_and_print_button);
 
-        if (shipping_method == 0 || shipping_method == 3) { //directly and tokopedia
+        if (shipping_method == 0 || shipping_method == 3 || shipping_method == 4 || shipping_method == 5) { //directly and tokopedia
             // bug #15-8, harusnya jangan tampil lg klo dah complete
             print_button_container.setVisibility(View.GONE);
             finish_and_print_button.setVisibility(View.VISIBLE);
@@ -444,6 +448,7 @@ public class PrintPreviewActivity extends Activity {
 
     private int counter = 0;
     private int is_delivered = 0;
+    private JSONObject merchant_data = new JSONObject();
 
     public void buildDataFromServer() {
         Map<String, String> params = new HashMap<String, String>();
@@ -493,6 +498,12 @@ public class PrintPreviewActivity extends Activity {
                                             }
                                         }
                                     }
+                                }
+
+                                if (server_invoice_data.has("merchant")) {
+                                    try {
+                                        merchant_data = server_invoice_data.getJSONObject("merchant");
+                                    } catch (Exception e){}
                                 }
 
                                 if (server_invoice_data.has("created_by") && !server_invoice_data.getString("created_by").toString().equals("null")) {
@@ -768,6 +779,32 @@ public class PrintPreviewActivity extends Activity {
         res += "<tr class=\"ft-16\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_grand_total) +" :</td>" +
                 "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(grand_total) +"</td>";
 
+        // check is use go/grab food
+        Boolean hide_change_due = false;
+        if (merchant_data.length() > 0) {
+            int fee_merchant = 0;
+            try {
+                if (merchant_data.has("total_invoice")) {
+                    String str_total_invoice = merchant_data.getString("total_invoice");
+                    if (str_total_invoice.contains(".")) {
+                        str_total_invoice = str_total_invoice.split("\\.")[0];
+                    }
+                    fee_merchant = Integer.parseInt(str_total_invoice) - grand_total;
+                    if (fee_merchant > 0) {
+                        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\"> Fee " + merchant_data.getString("name") + " :</td>" +
+                                "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(fee_merchant) + "</td>";
+                        change_due = change_due - fee_merchant;
+                        if (change_due <= 0) {
+                            hide_change_due = true;
+                        }
+                    } else {
+                        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\"> Diskon " + merchant_data.getString("name") + " :</td>" +
+                                "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(fee_merchant) + "</td>";
+                    }
+                }
+            } catch (Exception e){}
+        }
+
         if (paymentList != null && !paymentList.isEmpty()) {
             int payment_total = 0;
             for (int j = 0; j < paymentList.size(); ++j) {
@@ -798,16 +835,19 @@ public class PrintPreviewActivity extends Activity {
                     "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(cash) +"</td>";
         }
 
-        if (change_due > 0) {
-            res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_change_due) +" :</td>" +
-                    "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(change_due) +"</td>";
-        } else {
-            int debt = -1 * change_due;
-            if (debt < 0) {
-                res += "<tr class=\"ft-16\"><td colspan=\"3\" style=\"text-align:right;\"><b>" + getResources().getString(R.string.label_dept) + " :</b></td>" +
-                        "<td style=\"text-align:right;\"><b>" + CurrencyController.getInstance().moneyFormat(debt) + "</b></td>";
+        if (!hide_change_due) {
+            if (change_due > 0) {
+                res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">" + getResources().getString(R.string.label_change_due) + " :</td>" +
+                        "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(change_due) + "</td>";
+            } else {
+                int debt = -1 * change_due;
+                if (debt < 0) {
+                    res += "<tr class=\"ft-16\"><td colspan=\"3\" style=\"text-align:right;\"><b>" + getResources().getString(R.string.label_dept) + " :</b></td>" +
+                            "<td style=\"text-align:right;\"><b>" + CurrencyController.getInstance().moneyFormat(debt) + "</b></td>";
+                }
             }
         }
+
         res += "<tr><td colspan=\"4\"><hr/></td></tr>";
 
         res += "<tr class=\"ft-16\" style=\"padding-bottom:25px;\"><td colspan=\"4\"><center>Terimakasih.<br />Selamat belanja kembali.</center></td></tr></table>";

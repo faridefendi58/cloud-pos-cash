@@ -42,6 +42,9 @@ public class PaymentFragment extends Fragment {
 
     private LinearLayout transfer_bank_container;
     private LinearLayout edc_container;
+    private LinearLayout normal_billing_info_container;
+    private LinearLayout gofood_billing_info_container;
+    private LinearLayout payment_gograbfood_container;
     private SwitchCompat switch_tranfer;
     private SwitchCompat switch_edc;
 
@@ -53,6 +56,8 @@ public class PaymentFragment extends Fragment {
     private EditText edc_card_type;
     private EditText edc_card_number;
     private EditText edc_nominal;
+    private EditText gograbfood_total;
+    private EditText nominal_gograbfood;
     private TextView total_order;
     private EditText total_discount;
     private TextView grand_total;
@@ -96,6 +101,9 @@ public class PaymentFragment extends Fragment {
     private void initView() {
         transfer_bank_container = (LinearLayout) root.findViewById(R.id.transfer_bank_container);
         edc_container = (LinearLayout) root.findViewById(R.id.edc_container);
+        normal_billing_info_container = (LinearLayout) root.findViewById(R.id.normal_billing_info_container);
+        gofood_billing_info_container = (LinearLayout) root.findViewById(R.id.gofood_billing_info_container);
+        payment_gograbfood_container = (LinearLayout) root.findViewById(R.id.payment_gograbfood_container);
         switch_tranfer = (SwitchCompat) root.findViewById(R.id.switch_tranfer);
         switch_edc = (SwitchCompat) root.findViewById(R.id.switch_edc);
         cash_receive = (EditText) root.findViewById(R.id.cash_receive);
@@ -105,6 +113,8 @@ public class PaymentFragment extends Fragment {
         edc_card_type = (EditText) root.findViewById(R.id.edc_card_type);
         edc_card_number  = (EditText) root.findViewById(R.id.edc_card_number);
         edc_nominal  = (EditText) root.findViewById(R.id.edc_nominal);
+        gograbfood_total  = (EditText) root.findViewById(R.id.gograbfood_total);
+        nominal_gograbfood  = (EditText) root.findViewById(R.id.nominal_gograbfood);
         total_order  = (TextView) root.findViewById(R.id.total_order);
         total_discount  = (EditText) root.findViewById(R.id.total_discount);
         grand_total  = (TextView) root.findViewById(R.id.grand_total);
@@ -162,6 +172,8 @@ public class PaymentFragment extends Fragment {
         setTextChangeListener(ed_nominal_bri, "nominal_bri");
         setTextChangeListener(edc_card_number, "card_number");
         setTextChangeListener(edc_nominal, "nominal_edc");
+        setTextChangeListener(gograbfood_total, "gograbfood_total");
+        setTextChangeListener(nominal_gograbfood, "nominal_gograbfood");
 
         String tot_order = CurrencyController.getInstance().moneyFormat(register.getTotal());
         total_order.setText(tot_order);
@@ -316,6 +328,22 @@ public class PaymentFragment extends Fragment {
                         }
                         edcs.put(setType, cleanString);
                         c_data.setEdc(edcs);
+                    } else if (setType == "nominal_gograbfood") {
+                        if (cleanString.length() > 0) {
+                            if (c_data.getUseGoFood()) {
+                                c_data.setWalletGoFood(cleanString);
+                            } else if (c_data.getUseGrabFood()) {
+                                c_data.setWalletGrabFood(cleanString);
+                            }
+                        }
+                    } else if (setType == "gograbfood_total") {
+                        if (cleanString.length() > 0) {
+                            if (c_data.getUseGoFood()) {
+                                c_data.setTotalGoFoodInvoice(cleanString);
+                            } else if (c_data.getUseGrabFood()) {
+                                c_data.setTotalGrabFoodInvoice(cleanString);
+                            }
+                        }
                     }
 
                     if (setType == "card_number") {
@@ -406,6 +434,29 @@ public class PaymentFragment extends Fragment {
                     grand_total_current = grand_total_now - c_data.getDiscount();
                 }
                 grand_total.setText(CurrencyController.getInstance().moneyFormat(Double.parseDouble(grand_total_current+"")));
+            }
+
+            if (c_data.getUseGoFood() || c_data.getUseGrabFood()) {
+                Log.e("CUK", c_data.getWalletGoFood());
+                Log.e("CUK", c_data.getWalletGrabFood());
+                Log.e("CUK", c_data.getUseGoFood()+"");
+                Log.e("CUK", c_data.getUseGrabFood()+"");
+                normal_billing_info_container.setVisibility(View.GONE);
+                gofood_billing_info_container.setVisibility(View.VISIBLE);
+                payment_gograbfood_container.setVisibility(View.VISIBLE);
+                String gograbfood = "0";
+                String total_gograbfood = "0";
+                if (c_data.getUseGoFood()) {
+                    gograbfood = c_data.getWalletGoFood();
+                    total_gograbfood = c_data.getTotalGoFoodInvoice();
+                } else if (c_data.getUseGrabFood()) {
+                    gograbfood = c_data.getWalletGrabFood();
+                    total_gograbfood = c_data.getTotalGrabFoodInvoice();
+                }
+                nominal_gograbfood.setText(gograbfood);
+                if (!total_gograbfood.equals("0")) {
+                    gograbfood_total.setText(total_gograbfood);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

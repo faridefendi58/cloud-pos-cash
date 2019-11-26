@@ -79,13 +79,13 @@
                 <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:paddingVertical="@dimen/spacing_middle"
                         android:orientation="vertical">
 
                     <android.support.v7.widget.RecyclerView
                             android:id="@+id/paymentListRecycle"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginVertical="@dimen/spacing_middle"
+                            android:layout_height="match_parent"
                             android:scrollbars="vertical"
                             android:scrollingCache="true" />
 
@@ -100,7 +100,8 @@
                     android:layout_weight="1"
                     android:layout_marginTop="@dimen/spacing_large"
                     android:orientation="vertical"
-                    android:background="@color/grey_10">
+                    android:background="@color/grey_10"
+                    android:visibility="gone">
 
                 <LinearLayout
                         android:layout_width="match_parent"

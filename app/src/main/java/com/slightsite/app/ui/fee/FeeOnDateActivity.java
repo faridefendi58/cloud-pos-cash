@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +55,8 @@ public class FeeOnDateActivity extends AppCompatActivity {
     private String date_fee = "";
     private RecyclerView feeListRecycle;
     private RecyclerView paymentitemListView;
+    private LinearLayout refund_detail_container;
+    private RecyclerView refundListRecycle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,10 +120,16 @@ public class FeeOnDateActivity extends AppCompatActivity {
         paymentitemListView.setHasFixedSize(true);
         paymentitemListView.setNestedScrollingEnabled(false);
 
+        refundListRecycle = (RecyclerView) findViewById(R.id.refundListRecycle);
+        refundListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        refundListRecycle.setHasFixedSize(true);
+        refundListRecycle.setNestedScrollingEnabled(false);
+
         fee_report_title = (TextView) findViewById(R.id.fee_report_title);
         total_omzet = (TextView) findViewById(R.id.total_omzet);
         total_fee = (TextView) findViewById(R.id.total_fee);
         total_transaction = (TextView) findViewById(R.id.total_transaction);
+        refund_detail_container = (LinearLayout) findViewById(R.id.refund_detail_container);
 
         int warehouse_id = Integer.parseInt(paramCatalog.getParamByName("warehouse_id").getValue());
         Map<String, String> params = new HashMap<String, String>();
@@ -142,6 +151,7 @@ public class FeeOnDateActivity extends AppCompatActivity {
                                 final Map<Integer, Integer> invoice_ids = new HashMap<Integer, Integer>();;
                                 ArrayList<FeeOn> listFee = new ArrayList<FeeOn>();
                                 ArrayList<Payment> paymentList = new ArrayList<Payment>();
+                                ArrayList<Payment> refundList = new ArrayList<Payment>();
                                 final Map<Integer, JSONObject> items_datas = new HashMap<Integer, JSONObject>();;
                                 if (success == 1) {
                                     JSONObject data = jObj.getJSONObject("data");
@@ -177,6 +187,22 @@ public class FeeOnDateActivity extends AppCompatActivity {
                                             } catch (Exception e){}
                                         }
                                     }
+
+                                    if (summary_data.has("refunds")) {
+                                        JSONObject refunds = summary_data.getJSONObject("refunds");
+                                        if (refunds.length() > 0) {
+                                            Iterator<String> rkeys = refunds.keys();
+                                            int no = 1;
+                                            while(rkeys.hasNext()) {
+                                                String key = rkeys.next();
+                                                try {
+                                                    Payment pym = new Payment(no, key, refunds.getDouble(key));
+                                                    refundList.add(pym);
+                                                    no = no + 1;
+                                                } catch (Exception e){}
+                                            }
+                                        }
+                                    }
                                 }
 
                                 AdapterListFeeOn adapter = new AdapterListFeeOn(getApplicationContext(), listFee);
@@ -194,6 +220,13 @@ public class FeeOnDateActivity extends AppCompatActivity {
 
                                 AdapterListPaymentOn pAdap = new AdapterListPaymentOn(paymentList);
                                 paymentitemListView.setAdapter(pAdap);
+
+                                if (refundList.size() > 0) {
+                                    AdapterListPaymentOn rfAdap = new AdapterListPaymentOn(refundList);
+                                    refundListRecycle.setAdapter(rfAdap);
+
+                                    refund_detail_container.setVisibility(View.VISIBLE);
+                                }
                             } else {
                                 Toast.makeText(getApplicationContext(), "Failed!, No product data in ",
                                         Toast.LENGTH_LONG).show();

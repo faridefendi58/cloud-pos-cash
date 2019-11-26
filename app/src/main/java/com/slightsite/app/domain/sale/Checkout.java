@@ -28,6 +28,10 @@ public class Checkout implements Serializable {
     private String wallet_tokopedia = "0";
     private String wallet_gofood = "0";
     private String wallet_grabfood = "0";
+    private Boolean use_gofood = false;
+    private Boolean use_grabfood = false;
+    private String total_gofood_invoice = "0";
+    private String total_grabfood_invoice = "0";
 
     public Checkout() {}
 
@@ -262,9 +266,15 @@ public class Checkout implements Serializable {
             nominal = nominal.split("\\.")[0];
         }
         this.wallet_gofood = nominal;
+        this.use_gofood = true;
+        this.use_grabfood = false;
         if (!cash_receive.equals("0")) {
             cash_receive = "0";
         }
+    }
+
+    public String getWalletGoFood() {
+        return wallet_gofood;
     }
 
     public void setWalletGrabFood(String nominal) {
@@ -272,8 +282,44 @@ public class Checkout implements Serializable {
             nominal = nominal.split("\\.")[0];
         }
         this.wallet_grabfood = nominal;
+
+        this.use_grabfood = true;
+        this.use_gofood = false;
         if (!cash_receive.equals("0")) {
             cash_receive = "0";
         }
+    }
+
+    public String getWalletGrabFood() {
+        return wallet_grabfood;
+    }
+
+    public Boolean getUseGoFood() {
+        return use_gofood;
+    }
+    public Boolean getUseGrabFood() {
+        return use_grabfood;
+    }
+
+    public void setTotalGoFoodInvoice(String nominal) {
+        if (nominal.contains(".")) {
+            nominal = nominal.split("\\.")[0];
+        }
+        this.total_gofood_invoice = nominal;
+    }
+
+    public String getTotalGoFoodInvoice() {
+        return total_gofood_invoice;
+    }
+
+    public void setTotalGrabFoodInvoice(String nominal) {
+        if (nominal.contains(".")) {
+            nominal = nominal.split("\\.")[0];
+        }
+        this.total_grabfood_invoice = nominal;
+    }
+
+    public String getTotalGrabFoodInvoice() {
+        return total_grabfood_invoice;
     }
 }

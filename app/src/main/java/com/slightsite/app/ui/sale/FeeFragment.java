@@ -206,13 +206,13 @@ public class FeeFragment extends UpdatableFragment {
 
         paymentitemListView = (RecyclerView) root.findViewById(R.id.paymentListRecycle);
         paymentitemListView.setLayoutManager(new LinearLayoutManager(main.getApplicationContext()));
-        paymentitemListView.setHasFixedSize(true);
-        paymentitemListView.setNestedScrollingEnabled(false);
+        //paymentitemListView.setHasFixedSize(true);
+        //paymentitemListView.setNestedScrollingEnabled(false);
 
         refundListRecycle = (RecyclerView) root.findViewById(R.id.refundListRecycle);
         refundListRecycle.setLayoutManager(new LinearLayoutManager(main.getApplicationContext()));
-        refundListRecycle.setHasFixedSize(true);
-        refundListRecycle.setNestedScrollingEnabled(false);
+        //refundListRecycle.setHasFixedSize(true);
+        //refundListRecycle.setNestedScrollingEnabled(false);
 
         int warehouse_id = Integer.parseInt(paramCatalog.getParamByName("warehouse_id").getValue());
         Map<String, String> params = new HashMap<String, String>();
@@ -309,6 +309,8 @@ public class FeeFragment extends UpdatableFragment {
                                     if (refundList.size() > 0) {
                                         AdapterListPaymentOn rfAdap = new AdapterListPaymentOn(refundList);
                                         refundListRecycle.setAdapter(rfAdap);
+
+                                        refund_detail_container.setVisibility(View.VISIBLE);
                                     }
                                 } else {
                                     fee_information_container.setVisibility(View.GONE);

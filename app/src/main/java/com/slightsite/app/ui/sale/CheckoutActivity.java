@@ -297,8 +297,9 @@ public class CheckoutActivity extends AppCompatActivity {
                             return;
                         }
                         if (checkout_data.getShipping().getMethod() == 3
-                                || checkout_data.getShipping().getMethod() == 4
-                                || checkout_data.getShipping().getMethod() == 5) {
+                                //|| checkout_data.getShipping().getMethod() == 4
+                                //|| checkout_data.getShipping().getMethod() == 5
+                        ) {
                             idx_state = idx_state + 1;
                         }
                     } else if (array_state[idx_state] == State.PAYMENT) {
@@ -354,8 +355,9 @@ public class CheckoutActivity extends AppCompatActivity {
                 if (idx_state < 1) {finish();return;};
                 idx_state--;
                 if (checkout_data.getShipping().getMethod() == 3
-                        || checkout_data.getShipping().getMethod() == 4
-                        || checkout_data.getShipping().getMethod() == 5) { //special for tokopedia, gofood, grab food
+                        //|| checkout_data.getShipping().getMethod() == 4
+                        //|| checkout_data.getShipping().getMethod() == 5
+                ) { //special for tokopedia, gofood, grab food
                     idx_state = 0;
                 }
                 displayFragment(array_state[idx_state]);
@@ -725,6 +727,8 @@ public class CheckoutActivity extends AppCompatActivity {
         ArrayList arrPaymentList = new ArrayList();
         Map<String, String> arrPayment = new HashMap<String, String>();
         ArrayList arrShippingList = new ArrayList();
+        Map<String, String> arrMerchant = new HashMap<String, String>();
+        ArrayList arrMerchantList = new ArrayList();
         try {
             Customer cust = saleLedger.getCustomerBySaleId(saleId);
             mObj.put("items_belanja", arrItems);
@@ -767,6 +771,23 @@ public class CheckoutActivity extends AppCompatActivity {
 
             arrShippingList.add(shipping.toMap());
             mObj.put("shipping", arrShippingList);
+
+            if (getCheckoutData().getUseGoFood()) {
+                arrMerchant.put("name", "GoFood");
+                arrMerchant.put("total_invoice", getCheckoutData().getTotalGoFoodInvoice());
+                arrMerchant.put("total_wallet_tendered", getCheckoutData().getWalletGoFood());
+                arrMerchant.put("total_cash_tendered", getCheckoutData().getCashReceive());
+            }
+
+            if (getCheckoutData().getUseGrabFood()) {
+                arrMerchant.put("name", "GrabFood");
+                arrMerchant.put("total_invoice", getCheckoutData().getTotalGrabFoodInvoice());
+                arrMerchant.put("total_wallet_tendered", getCheckoutData().getWalletGrabFood());
+                arrMerchant.put("total_cash_tendered", getCheckoutData().getCashReceive());
+            }
+            if (arrMerchant.size() > 0) {
+                mObj.put("merchant", arrMerchant);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
