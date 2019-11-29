@@ -305,8 +305,8 @@
     <string name="payment_bri">Transfer Bank BRI</string>
     <string name="payment_edc">Mesin EDC</string>
     <string name="payment_wallet_tokopedia">Wallet Tokopedia</string>
-    <string name="payment_wallet_gofood">Wallet GoFood</string>
-    <string name="payment_wallet_grab_food">Wallet Grab Food</string>
+    <string name="payment_wallet_gofood">GoPay</string>
+    <string name="payment_wallet_grab_food">GrabPay</string>
 
     <string name="button_add_to_cart">Tambah</string>
     <string name="button_syncron">Sinkronkan</string>

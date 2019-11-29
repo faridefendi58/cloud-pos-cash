@@ -58,6 +58,7 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
         public LinearLayout bank_icons_container;
         public ImageView is_verified_payment;
         public LinearLayout lyt_parent;
+        public LinearLayout lyt_content;
 
         public OriginalViewHolder(View v) {
             super(v);
@@ -73,6 +74,7 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
             bank_icons_container = (LinearLayout) v.findViewById(R.id.bank_icons_container);
             is_verified_payment = (ImageView) v.findViewById(R.id.is_verified_payment);
             lyt_parent = (LinearLayout) v.findViewById(R.id.lyt_parent);
+            lyt_content = (LinearLayout) v.findViewById(R.id.lyt_content);
 
             bank_transfer_icons.setLayoutManager(new LinearLayoutManager(ctx, LinearLayoutManager.HORIZONTAL, false));
             bank_transfer_icons.setHasFixedSize(true);
@@ -141,6 +143,15 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
                             }
                         }
                     });
+
+                    view.bank_icons_container.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (fragment != null) {
+                                fragment.verifyBankTransfer(items.get(pos).get("sale_id"), jArray, items.get(pos).get("payment_method"));
+                            }
+                        }
+                    });
                 }
             }
 
@@ -158,7 +169,7 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
                 } catch (Exception e){e.printStackTrace();}
             }
 
-            view.lyt_parent.setOnClickListener(new View.OnClickListener() {
+            view.lyt_content.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (mOnItemClickListener != null) {
