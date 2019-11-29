@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingHorizontal="@dimen/spacing_middle">
+            android:paddingLeft="@dimen/spacing_middle">
 
             <TextView
                 android:id="@+id/invoice_number"
@@ -52,7 +52,7 @@
                         android:id="@+id/is_verified_payment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_check_green_24dp"
+                        android:src="@drawable/ic_check_circle_green_24dp"
                         android:visibility="gone"/>
             </LinearLayout>
 

@@ -116,6 +116,7 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
             view.customer_phone.setText(items.get(position).get("customer_phone"));
             view.customer_address.setText(items.get(position).get("customer_address"));
             view.shipping_method.setText(items.get(position).get("shipping_method"));
+            Boolean has_bank_payment = false;
             if (items.get(position).containsKey("payment_icons")) {
                 String str_p_icons = items.get(position).get("payment_icons");
                 JSONArray jsonArray = new JSONArray();
@@ -126,6 +127,7 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
                 }
 
                 if (jsonArray.length() > 0) {
+                    has_bank_payment = true;
                     AdapterListBank bankAdapter = new AdapterListBank(ctx, jsonArray);
                     view.bank_transfer_icons.setAdapter(bankAdapter);
 
@@ -147,6 +149,11 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
                     int is_verified = Integer.parseInt(items.get(position).get("is_verified_payment"));
                     if (is_verified > 0) {
                         view.is_verified_payment.setVisibility(View.VISIBLE);
+                    } else {
+                        if (has_bank_payment) {
+                            view.is_verified_payment.setImageDrawable(ctx.getDrawable(R.drawable.ic_error_red_24dp));
+                            view.is_verified_payment.setVisibility(View.VISIBLE);
+                        }
                     }
                 } catch (Exception e){e.printStackTrace();}
             }
