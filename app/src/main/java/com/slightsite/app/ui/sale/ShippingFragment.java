@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.otaliastudios.autocomplete.Autocomplete;
 import com.slightsite.app.R;
+import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.customer.CustomerCatalog;
 import com.slightsite.app.domain.customer.CustomerService;
@@ -569,7 +570,14 @@ public class ShippingFragment extends Fragment {
                 shipping_warehouse.setText(current_warehouse_name);
             }
         } else if (i > 1) {
-            shipping_date.setVisibility(View.VISIBLE);
+            if (i == 4 || i == 5) {
+                shipping_date.setVisibility(View.GONE);
+                String cur_time = DateTimeStrategy.getCurrentTime();
+                ship.setDate(DateTimeStrategy.parseDate(cur_time, "dd-MM-yyyy"));
+                ship.setPickupDate(DateTimeStrategy.parseDate(cur_time, "dd MMM yyyy HH:mm"));
+            } else {
+                shipping_date.setVisibility(View.VISIBLE);
+            }
             shipping_address.setVisibility(View.VISIBLE);
             shipping_name_container.setVisibility(View.VISIBLE);
             shipping_warehouse.setVisibility(View.GONE);

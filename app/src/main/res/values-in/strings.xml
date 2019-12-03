@@ -183,6 +183,7 @@
     <string name="permission_rationale">"Izin kontak diperlukan untuk menyediakan penyelesaian email."</string>
     <string name="error_empty_customer_data">Mohon lengkapi kolom Nama, Telepon, dan Alamat</string>
     <string name="error_empty_payment_data">Mohon lengkapi data pembayaran</string>
+    <string name="error_not_enough_payment">Jumlah yang Anda bayarkan masih kurang dari total tagihan.</string>
     <string name="login_header_information">Isilah form ini dengan akun login anda,
         atau buat akun baru.</string>
     <string name="login_information">Siap naik kelas dengan teknologi?, Ayo Mulai Sekarang!</string>
@@ -296,7 +297,7 @@
     <string name="label_reason_asam">Asam</string>
     <string name="label_reason_menghitam">Menghitam</string>
     <string name="label_month">Bulan</string>
-    <string name="label_gograb_pay">GoPay / Grab Pay</string>
+    <string name="label_gograb_pay">GoPay / OVO</string>
     <string name="label_total_invoice">Total Tagihan</string>
 
     <string name="payment_cash">Tunai</string>
@@ -306,7 +307,7 @@
     <string name="payment_edc">Mesin EDC</string>
     <string name="payment_wallet_tokopedia">Wallet Tokopedia</string>
     <string name="payment_wallet_gofood">GoPay</string>
-    <string name="payment_wallet_grab_food">GrabPay</string>
+    <string name="payment_wallet_grab_food">OVO</string>
 
     <string name="button_add_to_cart">Tambah</string>
     <string name="button_syncron">Sinkronkan</string>

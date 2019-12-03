@@ -32,6 +32,8 @@ public class Checkout implements Serializable {
     private Boolean use_grabfood = false;
     private String total_gofood_invoice = "0";
     private String total_grabfood_invoice = "0";
+    private String gofood_discount = "0";
+    private String grabfood_discount = "0";
 
     public Checkout() {}
 
@@ -321,5 +323,27 @@ public class Checkout implements Serializable {
 
     public String getTotalGrabFoodInvoice() {
         return total_grabfood_invoice;
+    }
+
+    public void setGoFoodDiscount(String nominal) {
+        if (nominal.contains(".")) {
+            nominal = nominal.split("\\.")[0];
+        }
+        this.gofood_discount = nominal;
+    }
+
+    public String getGofoodDiscount() {
+        return gofood_discount;
+    }
+
+    public void setGrabFoodDiscount(String nominal) {
+        if (nominal.contains(".")) {
+            nominal = nominal.split("\\.")[0];
+        }
+        this.grabfood_discount = nominal;
+    }
+
+    public String getGrabfoodDiscount() {
+        return grabfood_discount;
     }
 }

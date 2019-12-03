@@ -342,6 +342,34 @@ public class CheckoutActivity extends AppCompatActivity {
                             vibe.vibrate(200);
                             return;
                         }
+                        try {
+                            Boolean use_gofood = checkout_data.getUseGoFood();
+                            Boolean use_grabfood = checkout_data.getUseGrabFood();
+                            int total_tagihan_gograb = 0;
+                            if (use_gofood) {
+                                int tot_gofood_inv = Integer.parseInt(checkout_data.getTotalGoFoodInvoice());
+                                int tot_gofood_discount = Integer.parseInt(checkout_data.getGofoodDiscount());
+                                total_tagihan_gograb = tot_gofood_inv - tot_gofood_discount;
+
+                            }
+                            if (use_grabfood) {
+                                int tot_grabfood_inv = Integer.parseInt(checkout_data.getTotalGrabFoodInvoice());
+                                int tot_grabfood_discount = Integer.parseInt(checkout_data.getGrabfoodDiscount());
+                                total_tagihan_gograb = tot_grabfood_inv - tot_grabfood_discount;
+
+                            }
+                            if (use_gofood || use_grabfood) {
+                                if (checkout_data.getTotalPaymentReceived() < total_tagihan_gograb) {
+                                    Toast.makeText(getBaseContext(),
+                                            getResources().getString(R.string.error_not_enough_payment), Toast.LENGTH_LONG)
+                                            .show();
+
+                                    vibe.vibrate(200);
+                                    return;
+                                }
+                                Log.e("CUK", "checkout_data.getTotalPaymentReceived() :" + checkout_data.getTotalPaymentReceived());
+                            }
+                        } catch (Exception e){e.printStackTrace();}
                     }
                 }
                 idx_state++;
