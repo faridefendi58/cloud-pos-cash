@@ -301,6 +301,11 @@
     <string name="label_month">Month</string>
     <string name="label_gograb_pay">GoPay / OVO</string>
     <string name="label_total_invoice">Total Invoice</string>
+    <string name="label_total_price">Total Price</string>
+    <string name="label_gofood_discount">GoFood Discount</string>
+    <string name="label_grabfood_discount">GrabFood Discount</string>
+    <string name="label_gofood_fee">GoFood Fee</string>
+    <string name="label_grabfood_fee">GrabFood Fee</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>

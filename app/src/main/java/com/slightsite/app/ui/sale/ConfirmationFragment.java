@@ -61,7 +61,12 @@ public class ConfirmationFragment extends Fragment {
     private TextView totalPayment;
     private TextView changeDue;
     private TextView change_due_label;
+    private TextView gograbfood_discount;
+    private TextView gograbfood_total_price;
+    private TextView gograbfood_discount_label;
     private LinearLayout change_due_container;
+    private LinearLayout gograbfood_discount_container;
+    private LinearLayout main_discount_container;
     private Payment payment;
 
     /** shipping detail */
@@ -138,6 +143,11 @@ public class ConfirmationFragment extends Fragment {
         changeDue  = (TextView) root.findViewById(R.id.changeDue);
         change_due_label  = (TextView) root.findViewById(R.id.change_due_label);
         change_due_container  = (LinearLayout) root.findViewById(R.id.change_due_container);
+        gograbfood_discount_container  = (LinearLayout) root.findViewById(R.id.gograbfood_discount_container);
+        main_discount_container  = (LinearLayout) root.findViewById(R.id.main_discount_container);
+        gograbfood_discount = (TextView) root.findViewById(R.id.gograbfood_discount);
+        gograbfood_total_price = (TextView) root.findViewById(R.id.gograbfood_total_price);
+        gograbfood_discount_label = (TextView) root.findViewById(R.id.gograbfood_discount_label);
 
         shipping_method = (TextView) root.findViewById(R.id.shipping_method);
         shipping_date = (TextView) root.findViewById(R.id.shipping_date);
@@ -206,7 +216,7 @@ public class ConfirmationFragment extends Fragment {
                     change_due_label.setText(getResources().getString(R.string.label_dept));
                     change_due_label.setTypeface(Typeface.DEFAULT_BOLD);
                     change_due_label.setTextColor(getResources().getColor(R.color.red_300));
-                    Double change_due2 = -1*change_due;
+                    Double change_due2 = -1 * change_due;
                     changeDue.setText(CurrencyController.getInstance().moneyFormat(change_due2));
                     changeDue.setTypeface(Typeface.DEFAULT_BOLD);
                     changeDue.setTextColor(getResources().getColor(R.color.red_300));
@@ -215,6 +225,35 @@ public class ConfirmationFragment extends Fragment {
                     if (change_due == 0) {
                         change_due_container.setVisibility(View.GONE);
                     }
+                }
+
+                if (c_data.getUseGoFood() || c_data.getUseGrabFood()) {
+                    gograbfood_discount_container.setVisibility(View.VISIBLE);
+                    gograbfood_discount.setText(CurrencyController.getInstance().moneyFormat(change_due));
+                    if (c_data.getUseGoFood()) {
+                        if (change_due <= 0) {
+                            gograbfood_discount_label.setText(getActivity().getResources().getString(R.string.label_gofood_discount));
+                        } else {
+                            gograbfood_discount_label.setText(getActivity().getResources().getString(R.string.label_gofood_fee));
+                        }
+                        try {
+                            Double _total_price = Double.parseDouble(c_data.getTotalGoFoodInvoice()) - Double.parseDouble(c_data.getGofoodDiscount());
+                            gograbfood_total_price.setText(CurrencyController.getInstance().moneyFormat(_total_price));
+                        } catch (Exception e){}
+                        main_discount_container.setVisibility(View.GONE);
+                    } else if (c_data.getUseGrabFood()) {
+                        if (change_due <= 0) {
+                            gograbfood_discount_label.setText(getActivity().getResources().getString(R.string.label_grabfood_discount));
+                        } else {
+                            gograbfood_discount_label.setText(getActivity().getResources().getString(R.string.label_grabfood_fee));
+                        }
+                        try {
+                            Double _total_price = Double.parseDouble(c_data.getTotalGrabFoodInvoice()) - Double.parseDouble(c_data.getGrabfoodDiscount());
+                            gograbfood_total_price.setText(CurrencyController.getInstance().moneyFormat(_total_price));
+                        } catch (Exception e){}
+                        main_discount_container.setVisibility(View.GONE);
+                    }
+                    change_due_container.setVisibility(View.GONE);
                 }
             } else {
                 change_due_label.setText(getResources().getString(R.string.label_dept));

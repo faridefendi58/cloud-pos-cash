@@ -299,6 +299,11 @@
     <string name="label_month">Bulan</string>
     <string name="label_gograb_pay">GoPay / OVO</string>
     <string name="label_total_invoice">Total Tagihan</string>
+    <string name="label_total_price">Total Harga</string>
+    <string name="label_gofood_discount">Diskon GoFood</string>
+    <string name="label_grabfood_discount">Diskon GrabFood</string>
+    <string name="label_gofood_fee">Fee GoFood</string>
+    <string name="label_grabfood_fee">Fee GrabFood</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Bank Mandiri</string>

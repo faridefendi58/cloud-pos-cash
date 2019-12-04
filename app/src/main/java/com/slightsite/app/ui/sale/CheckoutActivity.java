@@ -359,6 +359,9 @@ public class CheckoutActivity extends AppCompatActivity {
 
                             }
                             if (use_gofood || use_grabfood) {
+                                Log.e("CUK", "total_tagihan_gograb : "+ total_tagihan_gograb);
+                                Log.e("CUK", "checkout_data.getTotalPaymentReceived() :" + checkout_data.getTotalPaymentReceived());
+                                Log.e("CUK", "checkout_data.getCashReceive() :" + checkout_data.getCashReceive());
                                 if (checkout_data.getTotalPaymentReceived() < total_tagihan_gograb) {
                                     Toast.makeText(getBaseContext(),
                                             getResources().getString(R.string.error_not_enough_payment), Toast.LENGTH_LONG)
@@ -367,7 +370,6 @@ public class CheckoutActivity extends AppCompatActivity {
                                     vibe.vibrate(200);
                                     return;
                                 }
-                                Log.e("CUK", "checkout_data.getTotalPaymentReceived() :" + checkout_data.getTotalPaymentReceived());
                             }
                         } catch (Exception e){e.printStackTrace();}
                     }

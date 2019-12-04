@@ -213,11 +213,11 @@ public class Checkout implements Serializable {
         }
 
         if (wallet_gofood != null && wallet_gofood != "0") {
-            payment_received = Double.parseDouble(wallet_gofood);
+            payment_received = payment_received + Double.parseDouble(wallet_gofood);
         }
 
         if (wallet_grabfood != null && wallet_grabfood != "0") {
-            payment_received = Double.parseDouble(wallet_grabfood);
+            payment_received = payment_received + Double.parseDouble(wallet_grabfood);
         }
 
         return payment_received;
