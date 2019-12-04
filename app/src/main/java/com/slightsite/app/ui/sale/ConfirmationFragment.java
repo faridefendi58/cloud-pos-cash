@@ -211,6 +211,11 @@ public class ConfirmationFragment extends Fragment {
             if (c_data.getTotalPaymentReceived() > 0) {
                 totalPayment.setText(CurrencyController.getInstance().moneyFormat(c_data.getTotalPaymentReceived()));
                 Double change_due = c_data.getTotalPaymentReceived() - (register.getTotal() - c_data.getDiscount());
+                try {
+                    c_data.setChangeDue(change_due);
+                    ((CheckoutActivity)getActivity()).setCheckoutData(c_data);
+                } catch (Exception e){e.printStackTrace();}
+
                 changeDue.setText(CurrencyController.getInstance().moneyFormat(change_due));
                 if (change_due < 0) {
                     change_due_label.setText(getResources().getString(R.string.label_dept));

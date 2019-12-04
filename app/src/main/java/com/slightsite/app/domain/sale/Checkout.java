@@ -34,6 +34,7 @@ public class Checkout implements Serializable {
     private String total_grabfood_invoice = "0";
     private String gofood_discount = "0";
     private String grabfood_discount = "0";
+    private Double change_due = 0.0;
 
     public Checkout() {}
 
@@ -345,5 +346,13 @@ public class Checkout implements Serializable {
 
     public String getGrabfoodDiscount() {
         return grabfood_discount;
+    }
+
+    public void setChangeDue(Double change_due) {
+        this.change_due = change_due;
+    }
+
+    public Double getChangeDue() {
+        return change_due;
     }
 }

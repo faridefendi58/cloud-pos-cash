@@ -133,6 +133,8 @@ public class CheckoutActivity extends AppCompatActivity {
     private String admin_id;
     private ArrayList<Integer> allowed_warehouses = new ArrayList<Integer>();
 
+    private Double change_due = 0.0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -247,7 +249,13 @@ public class CheckoutActivity extends AppCompatActivity {
                             status = getResources().getString(R.string.message_unpaid);
                             lunas = false;
                         }
+                        if (checkout.getUseGoFood() || checkout.getUseGrabFood()) {
+                            status = getResources().getString(R.string.message_paid);
+                            lunas = true;
+                        }
                     } catch (Exception e){e.printStackTrace();}
+
+                    change_due = checkout.getChangeDue();
 
                     final int saleId = register.getCurrentSale().getId();
                     register.endSale(DateTimeStrategy.getCurrentTime());
@@ -359,9 +367,6 @@ public class CheckoutActivity extends AppCompatActivity {
 
                             }
                             if (use_gofood || use_grabfood) {
-                                Log.e("CUK", "total_tagihan_gograb : "+ total_tagihan_gograb);
-                                Log.e("CUK", "checkout_data.getTotalPaymentReceived() :" + checkout_data.getTotalPaymentReceived());
-                                Log.e("CUK", "checkout_data.getCashReceive() :" + checkout_data.getCashReceive());
                                 if (checkout_data.getTotalPaymentReceived() < total_tagihan_gograb) {
                                     Toast.makeText(getBaseContext(),
                                             getResources().getString(R.string.error_not_enough_payment), Toast.LENGTH_LONG)
@@ -528,6 +533,10 @@ public class CheckoutActivity extends AppCompatActivity {
             return new Checkout();
         }
         return checkout_data;
+    }
+
+    public void setCheckoutData(Checkout _checkout) {
+        this.checkout_data = _checkout;
     }
 
     public static void hideKeyboard(Activity activity) {
@@ -771,18 +780,24 @@ public class CheckoutActivity extends AppCompatActivity {
 
             Double total_tendered = 0.0;
             if (paymentList != null && paymentList.size() > 0) {
+                Boolean has_change_due = false;
                 for (Payment py : paymentList) {
                     Map<String, String> arrPayment2 = new HashMap<String, String>();
                     arrPayment2.put("type", py.getPaymentChannel());
                     arrPayment2.put("amount_tendered", ""+ py.getAmount());
-                    //arrPayment2.put("change_due", "0");
+                    if (!has_change_due) {
+                        arrPayment2.put("change_due", ""+ change_due);
+                        has_change_due = true;
+                    } else {
+                        arrPayment2.put("change_due", "0");
+                    }
                     arrPaymentList.add(arrPayment2);
                     total_tendered = total_tendered + py.getAmount();
                 }
             } else {
                 arrPayment.put("type", "cash_receive");
                 arrPayment.put("amount_tendered", "0");
-                //arrPayment.put("change_due", "0");
+                arrPayment.put("change_due", "0");
                 arrPaymentList.add(arrPayment);
             }
             mObj.put("payment", arrPaymentList);
