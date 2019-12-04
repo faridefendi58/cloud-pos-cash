@@ -146,6 +146,12 @@ public class SaleDetailActivity extends Activity{
 	private LinearLayout retur_button_container;
 	private LinearLayout retur_information;
 	private LinearLayout finished_date_container;
+	private LinearLayout main_discount_container;
+	private LinearLayout gograbfood_discount_container;
+	private LinearLayout main_total_price_container;
+	private TextView gograbfood_discount_label;
+	private TextView gograbfood_total_price;
+	private TextView gograbfood_discount;
 
 	private PaymentCatalog paymentCatalog;
 	private List<Payment> paymentList;
@@ -322,6 +328,13 @@ public class SaleDetailActivity extends Activity{
 		retur_button_container = (LinearLayout) findViewById(R.id.retur_button_container);
 		retur_information = (LinearLayout) findViewById(R.id.retur_information);
 		finished_date_container = (LinearLayout) findViewById(R.id.finished_date_container);
+		main_discount_container = (LinearLayout) findViewById(R.id.main_discount_container);
+		gograbfood_discount_container = (LinearLayout) findViewById(R.id.gograbfood_discount_container);
+		main_total_price_container = (LinearLayout) findViewById(R.id.main_total_price_container);
+
+		gograbfood_discount_label = (TextView) findViewById(R.id.gograbfood_discount_label);
+		gograbfood_total_price = (TextView) findViewById(R.id.gograbfood_total_price);
+		gograbfood_discount = (TextView) findViewById(R.id.gograbfood_discount);
 
 		lineitemListRecycle = (RecyclerView) findViewById(R.id.lineitemListRecycle);
 		lineitemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -495,6 +508,7 @@ public class SaleDetailActivity extends Activity{
 
 		payment_subtotal.setText(CurrencyController.getInstance().moneyFormat(sale.getTotal()) + "");
 		payment_discount.setText(CurrencyController.getInstance().moneyFormat(sale.getDiscount()) + "");
+
 		try {
 			Double tot_order = sale.getTotal() - sale.getDiscount();
 			payment_grand_total.setText(CurrencyController.getInstance().moneyFormat(tot_order) + "");
@@ -929,6 +943,8 @@ public class SaleDetailActivity extends Activity{
 	}
 
 	private int tot_inv_qty = 0;
+	private JSONObject merchant_data = new JSONObject();
+
 	private void getDetailFromServer() {
 		Map<String, String> params = new HashMap<String, String>();
 
@@ -1014,6 +1030,38 @@ public class SaleDetailActivity extends Activity{
 										} else {
 											finish_button_container.setVisibility(View.VISIBLE);
 										}
+									}
+								}
+
+								if (server_invoice_data.has("merchant")) {
+									merchant_data = server_invoice_data.getJSONObject("merchant");
+									Log.e("CUK", "sale total : "+ sale.getTotal());
+									Log.e("CUK", "merchant_data : "+ merchant_data.toString());
+									if (shipping.getMethod() == 4 || shipping.getMethod() == 5) {
+										try {
+											main_discount_container.setVisibility(View.GONE);
+											main_total_price_container.setVisibility(View.GONE);
+											gograbfood_discount_container.setVisibility(View.VISIBLE);
+											Double selisih = 0.0;
+											if (merchant_data.has("total_invoice")) {
+												Double tot_pr = merchant_data.getDouble("total_invoice");
+												selisih = tot_pr - sale.getTotal();
+
+												gograbfood_total_price.setText(CurrencyController.getInstance().moneyFormat(tot_pr));
+												gograbfood_discount.setText(CurrencyController.getInstance().moneyFormat(selisih));
+											}
+											if (shipping.getMethod() == 4) {
+												gograbfood_discount_label.setText(getResources().getString(R.string.label_gofood_discount));
+												if (selisih > 0) {
+													gograbfood_discount_label.setText(getResources().getString(R.string.label_gofood_fee));
+												}
+											} else if (shipping.getMethod() == 5) {
+												gograbfood_discount_label.setText(getResources().getString(R.string.label_grabfood_discount));
+												if (selisih > 0) {
+													gograbfood_discount_label.setText(getResources().getString(R.string.label_grabfood_fee));
+												}
+											}
+										} catch (Exception e){e.printStackTrace();}
 									}
 								}
 							}

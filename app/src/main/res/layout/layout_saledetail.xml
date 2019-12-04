@@ -582,6 +582,7 @@
                                 android:background="@color/grey_10" />
 
                             <LinearLayout
+                                    android:id="@+id/main_discount_container"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:baselineAligned="false"
@@ -606,12 +607,87 @@
 
                             </LinearLayout>
 
+                            <!-- special for gograbfood -->
+                            <LinearLayout
+                                    android:id="@+id/gograbfood_discount_container"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="gone">
+
+                                <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="1dp"
+                                        android:background="@color/grey_10" />
+
+                                <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal"
+                                        android:padding="@dimen/spacing_middle">
+
+                                    <TextView
+                                            android:id="@+id/gograbfood_discount_label"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="@string/label_gofood_discount"
+                                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                            android:textColor="@color/grey_90"
+                                            app:fontFamily="sans-serif-medium" />
+
+                                    <TextView
+                                            android:id="@+id/gograbfood_discount"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="0"
+                                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                            android:textColor="@color/grey_90"
+                                            app:fontFamily="sans-serif-black" />
+
+                                </LinearLayout>
+
+                                <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="1dp"
+                                        android:background="@color/grey_10" />
+
+                                <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal"
+                                        android:padding="@dimen/spacing_middle">
+
+                                    <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="@string/label_total_price"
+                                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                            android:textColor="@color/grey_90"
+                                            app:fontFamily="sans-serif-medium" />
+
+                                    <TextView
+                                            android:id="@+id/gograbfood_total_price"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="0"
+                                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                            android:textColor="@color/grey_90"
+                                            app:fontFamily="sans-serif-black" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+                            <!-- endof special for gograbfood -->
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="1dp"
                                 android:background="@color/grey_10" />
 
                             <LinearLayout
+                                    android:id="@+id/main_total_price_container"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:baselineAligned="false"
