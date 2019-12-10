@@ -135,11 +135,12 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                     final int pos = position;
                     final JSONArray jArray = jsonArray;
+                    final ImageView _ic = view.is_verified_payment;
                     bankAdapter.setOnItemClickListener(new AdapterListBank.OnItemClickListener() {
                         @Override
                         public void onItemClick(View view, String obj, int position) {
                             if (fragment != null) {
-                                fragment.verifyBankTransfer(items.get(pos).get("sale_id"), jArray, items.get(pos).get("payment_method"));
+                                fragment.verifyBankTransfer(items.get(pos).get("sale_id"), jArray, items.get(pos).get("payment_method"), _ic);
                             }
                         }
                     });
@@ -148,7 +149,7 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
                         @Override
                         public void onClick(View view) {
                             if (fragment != null) {
-                                fragment.verifyBankTransfer(items.get(pos).get("sale_id"), jArray, items.get(pos).get("payment_method"));
+                                fragment.verifyBankTransfer(items.get(pos).get("sale_id"), jArray, items.get(pos).get("payment_method"), _ic);
                             }
                         }
                     });

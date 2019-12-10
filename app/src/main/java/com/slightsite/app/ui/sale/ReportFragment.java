@@ -36,6 +36,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -1221,7 +1222,7 @@ public class ReportFragment extends UpdatableFragment {
 	private Button verify_submit_button;
 	private Button cancel_verify_button;
 
-	public void verifyBankTransfer(String sale_id, JSONArray jsonArray, String payment_method) {
+	public void verifyBankTransfer(String sale_id, JSONArray jsonArray, String payment_method, ImageView imageView) {
 	    JSONArray methods = new JSONArray();
 	    List<String> channels = new ArrayList<String>();
         try {
@@ -1274,12 +1275,12 @@ public class ReportFragment extends UpdatableFragment {
             AdapterListPaymentSimple btAdapter = new AdapterListPaymentSimple(paymentList);
             bank_transfer_recycle.setAdapter(btAdapter);
 
-            triggerVerifyDialogButton(sheetView, sale_id);
+            triggerVerifyDialogButton(sheetView, sale_id, imageView);
             verifySheetDialog.show();
         }
     }
 
-    private void triggerVerifyDialogButton(View view, final String sale_id) {
+    private void triggerVerifyDialogButton(View view, final String sale_id, final ImageView imageView) {
         verify_submit_button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1302,6 +1303,8 @@ public class ReportFragment extends UpdatableFragment {
                                         int success = jObj.getInt("success");
                                         // Check for error node in json
                                         if (success == 1) {
+											imageView.setImageDrawable(getContext().getDrawable(R.drawable.ic_check_circle_green_24dp));
+
                                         	String message = jObj.getString("message");
 											Toast.makeText(getContext(), message,
 													Toast.LENGTH_LONG).show();
