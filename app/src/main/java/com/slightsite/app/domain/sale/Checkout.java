@@ -269,8 +269,10 @@ public class Checkout implements Serializable {
             nominal = nominal.split("\\.")[0];
         }
         this.wallet_gofood = nominal;
-        this.use_gofood = true;
-        this.use_grabfood = false;
+        if (nominal != "0") {
+            this.use_gofood = true;
+            this.use_grabfood = false;
+        }
         if (!cash_receive.equals("0")) {
             cash_receive = "0";
         }
@@ -286,8 +288,10 @@ public class Checkout implements Serializable {
         }
         this.wallet_grabfood = nominal;
 
-        this.use_grabfood = true;
-        this.use_gofood = false;
+        if (nominal != "0") {
+            this.use_grabfood = true;
+            this.use_gofood = false;
+        }
         if (!cash_receive.equals("0")) {
             cash_receive = "0";
         }
@@ -300,8 +304,17 @@ public class Checkout implements Serializable {
     public Boolean getUseGoFood() {
         return use_gofood;
     }
+
+    public void setUseGoFood(Boolean _use) {
+        this.use_gofood = _use;
+    }
+
     public Boolean getUseGrabFood() {
         return use_grabfood;
+    }
+
+    public void setUseGrabFood(Boolean _use) {
+        this.use_grabfood = _use;
     }
 
     public void setTotalGoFoodInvoice(String nominal) {

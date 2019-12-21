@@ -61,6 +61,10 @@ public class DateTimeStrategy {
 			time += " 00:00:00";
 		}
 		String inputPattern = "yyyy-MM-dd HH:mm:ss";
+		String[] separated = time.split("-");
+		if (separated[0].length() == 2) {
+			inputPattern = "dd-MM-yyyy HH:mm:ss";
+		}
 		SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
 		SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
 

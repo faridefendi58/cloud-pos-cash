@@ -65,6 +65,8 @@ public class PaymentFragment extends Fragment {
     private TextView total_order;
     private EditText total_discount;
     private TextView grand_total;
+    private TextView billing_info_message;
+    private TextView label_gograb_pay;
     private ImageButton bt_toggle_mandiri;
     private ImageButton bt_toggle_bca;
     private ImageButton bt_toggle_bri;
@@ -125,6 +127,8 @@ public class PaymentFragment extends Fragment {
         total_order  = (TextView) root.findViewById(R.id.total_order);
         total_discount  = (EditText) root.findViewById(R.id.total_discount);
         grand_total  = (TextView) root.findViewById(R.id.grand_total);
+        billing_info_message  = (TextView) root.findViewById(R.id.billing_info_message);
+        label_gograb_pay  = (TextView) root.findViewById(R.id.label_gograb_pay);
         bt_toggle_mandiri = (ImageButton) root.findViewById(R.id.bt_toggle_mandiri);
         bt_toggle_bca = (ImageButton) root.findViewById(R.id.bt_toggle_bca);
         bt_toggle_bri = (ImageButton) root.findViewById(R.id.bt_toggle_bri);
@@ -470,6 +474,14 @@ public class PaymentFragment extends Fragment {
             }
 
             if (c_data.getUseGoFood() || c_data.getUseGrabFood()) {
+                if (c_data.getUseGoFood()) {
+                    billing_info_message.setText(getResources().getString(R.string.message_gofood_billing_info));
+                    label_gograb_pay.setText(getResources().getString(R.string.label_gopay));
+                }
+                if (c_data.getUseGrabFood()) {
+                    billing_info_message.setText(getResources().getString(R.string.message_grabfood_billing_info));
+                    label_gograb_pay.setText(getResources().getString(R.string.label_grabpay));
+                }
                 normal_billing_info_container.setVisibility(View.GONE);
                 gofood_billing_info_container.setVisibility(View.VISIBLE);
                 payment_gograbfood_container.setVisibility(View.VISIBLE);

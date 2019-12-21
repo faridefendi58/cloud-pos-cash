@@ -365,6 +365,7 @@ public class ReportFragment extends UpdatableFragment {
 					Log.e(getTag(), "shipping : "+ shipping.toMap().toString());
 					salemap.put("shipping_method", shipping.toMap().get("method_name"));
 					if (shipping.toMap().containsKey("pickup_date") && !shipping.toMap().get("pickup_date").equals("null")) {
+						Log.e("CUK", "delivered_plan_at : "+ shipping.toMap().get("pickup_date"));
 						salemap.put("delivered_plan_at", shipping.toMap().get("pickup_date"));
 					}
 				} else {
@@ -1149,7 +1150,11 @@ public class ReportFragment extends UpdatableFragment {
 				if (shipping != null) {
 					salemap.put("shipping_method", shipping.toMap().get("method_name"));
 					if (shipping.toMap().containsKey("pickup_date") && !shipping.toMap().get("pickup_date").equals("null")) {
-						salemap.put("delivered_plan_at", shipping.toMap().get("pickup_date"));
+						String pic_date = shipping.toMap().get("pickup_date");
+						if (pic_date.contains("-")) {
+							pic_date = DateTimeStrategy.parseDate(shipping.toMap().get("pickup_date"), "dd MMM yyyy HH:ss");
+						}
+						salemap.put("delivered_plan_at", pic_date);
 					}
 				} else {
 					salemap.put("shipping_method", "-");

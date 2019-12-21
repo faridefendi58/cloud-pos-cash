@@ -458,6 +458,8 @@ public class ShippingFragment extends Fragment {
                 c_data.setWalletTokopedia("0");
                 c_data.setWalletGoFood("0");
                 c_data.setWalletGrabFood("0");
+                c_data.setUseGoFood(false);
+                c_data.setUseGrabFood(false);
                 ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
                 setupShippingForm(i);
                 ((EditText) v).setText(ship_methods[i]);

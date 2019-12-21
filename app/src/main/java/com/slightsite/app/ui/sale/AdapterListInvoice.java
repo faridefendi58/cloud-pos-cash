@@ -97,6 +97,7 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
             final OriginalViewHolder view = (OriginalViewHolder) holder;
 
             view.invoice_number.setText(items.get(position).get("server_invoice_number"));
+            Log.e("XXX", "items.get(position).get(\"delivered_plan_at\") : "+ items.get(position).get("delivered_plan_at"));
             view.pickup_date.setText(items.get(position).get("delivered_plan_at"));
             view.status.setText(items.get(position).get("status"));
             try {
