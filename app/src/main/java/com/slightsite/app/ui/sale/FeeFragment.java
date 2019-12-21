@@ -244,11 +244,13 @@ public class FeeFragment extends UpdatableFragment {
                                                 item_data.getInt("total_transaction"),
                                                 Double.parseDouble(item_data.getString("total_fee")),
                                                 Double.parseDouble(item_data.getString("total_revenue")));
+                                        _fee.setTotalRefund(Double.parseDouble(item_data.getString("total_refund")));
                                         listFee.add(_fee);
                                     }
 
                                     JSONObject summary_data = data.getJSONObject("summary");
-                                    total_omzet.setText(CurrencyController.getInstance().moneyFormat(summary_data.getDouble("total_revenue")));
+                                    //total_omzet.setText(CurrencyController.getInstance().moneyFormat(summary_data.getDouble("total_revenue")));
+                                    Double total_revenue = summary_data.getDouble("total_revenue");
                                     total_fee.setText(CurrencyController.getInstance().moneyFormat(summary_data.getDouble("total_fee")));
                                     total_transaction.setText(CurrencyController.getInstance().moneyFormat(summary_data.getDouble("total_transaction")));
                                     fee_report_title.setText(getResources().getString(R.string.title_fee_report)+" "+ selected_month);
@@ -283,10 +285,15 @@ public class FeeFragment extends UpdatableFragment {
                                                     Payment pym_minus = new Payment(no, "refund_"+key, refunds.getDouble(key));
                                                     paymentList.add(pym_minus);
                                                     no = no + 1;
+                                                    // calculate net total revenue
+                                                    total_revenue = total_revenue - refunds.getDouble(key);
                                                 } catch (Exception e){}
                                             }
                                         }
                                     }
+
+                                    // omzet = revenue - refunds
+                                    total_omzet.setText(CurrencyController.getInstance().moneyFormat(total_revenue));
                                 }
 
                                 if (listFee.size() > 0) {

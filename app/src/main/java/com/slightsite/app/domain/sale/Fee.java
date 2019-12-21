@@ -12,6 +12,7 @@ public class Fee implements Serializable {
     private int total_invoice;
     private Double total_fee;
     private Double total_revenue;
+    private Double total_refund = 0.0;
 
     public static final int UNDEFINED = -1;
 
@@ -20,6 +21,10 @@ public class Fee implements Serializable {
         this.total_invoice = total_invoice;
         this.total_fee = total_fee;
         this.total_revenue = total_revenue;
+    }
+
+    public void setTotalRefund(Double total_refund) {
+        this.total_refund = total_refund;
     }
 
     /**
@@ -32,6 +37,9 @@ public class Fee implements Serializable {
         map.put("total_invoice", total_invoice+"");
         map.put("total_fee", CurrencyController.getInstance().moneyFormat(total_fee));
         map.put("total_revenue", CurrencyController.getInstance().moneyFormat(total_revenue));
+        map.put("total_refund", CurrencyController.getInstance().moneyFormat(total_refund));
+        Double total_net_revenue = total_revenue - total_refund;
+        map.put("total_net_revenue", CurrencyController.getInstance().moneyFormat(total_net_revenue));
 
         return map;
 

@@ -73,7 +73,8 @@ public class AdapterListFeeOn extends RecyclerView.Adapter<RecyclerView.ViewHold
                 view.date.setText(fee_to_map.get("invoice_number"));
                 view.total_invoice.setText(fee_to_map.get("date"));
                 view.total_fee.setText(fee_to_map.get("total_fee"));
-                view.total_revenue.setText(fee_to_map.get("total_revenue"));
+                //view.total_revenue.setText(fee_to_map.get("total_revenue"));
+                view.total_revenue.setText(fee_to_map.get("total_net_revenue"));
             } catch (Exception e){}
 
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {

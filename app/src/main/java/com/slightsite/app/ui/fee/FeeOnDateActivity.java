@@ -163,6 +163,7 @@ public class FeeOnDateActivity extends AppCompatActivity {
                                                 item_data.getString("invoice_number"),
                                                 Double.parseDouble(item_data.getString("total_fee")),
                                                 Double.parseDouble(item_data.getString("total_revenue")));
+                                        _fee.setTotalRefund(Double.parseDouble(item_data.getString("total_refund")));
                                         listFee.add(_fee);
                                         invoice_ids.put(n, item_data.getInt("invoice_id"));
                                         items_datas.put(n, item_data);
@@ -170,7 +171,8 @@ public class FeeOnDateActivity extends AppCompatActivity {
 
                                     JSONObject summary_data = data.getJSONObject("summary");
                                     fee_report_title.setText(getResources().getString(R.string.transaction)+" "+ DateTimeStrategy.parseDate(date_fee, "dd MMM yyyy"));
-                                    total_omzet.setText(CurrencyController.getInstance().moneyFormat(summary_data.getDouble("total_revenue")));
+                                    Double total_revenue = summary_data.getDouble("total_revenue");
+                                    //total_omzet.setText(CurrencyController.getInstance().moneyFormat(summary_data.getDouble("total_revenue")));
                                     total_fee.setText(CurrencyController.getInstance().moneyFormat(summary_data.getDouble("total_fee")));
                                     total_transaction.setText(CurrencyController.getInstance().moneyFormat(summary_data.getDouble("total_transaction")) +"");
 
@@ -202,10 +204,15 @@ public class FeeOnDateActivity extends AppCompatActivity {
                                                     Payment pym_minus = new Payment(no, "refund_"+key, refunds.getDouble(key));
                                                     paymentList.add(pym_minus);
                                                     no = no + 1;
+                                                    // calculate net total revenue
+                                                    total_revenue = total_revenue - refunds.getDouble(key);
                                                 } catch (Exception e){}
                                             }
                                         }
                                     }
+
+                                    // omzet = revenue - refunds
+                                    total_omzet.setText(CurrencyController.getInstance().moneyFormat(total_revenue));
                                 }
 
                                 AdapterListFeeOn adapter = new AdapterListFeeOn(getApplicationContext(), listFee);
