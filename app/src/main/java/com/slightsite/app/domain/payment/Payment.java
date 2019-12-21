@@ -75,7 +75,15 @@ public class Payment implements Serializable {
         map.put("formated_amount", formated_amount);
         String formated_payment_channel = payment_channel;
         if (payment_channel != null) {
-            formated_payment_channel = getPaymentTypes().get(payment_channel);
+            if (payment_channel.contains("refund_")) {
+                String[] split = payment_channel.split("refund_");
+                if (split.length > 0) {
+                    formated_payment_channel = "Refund "+ getPaymentTypes().get(split[1]);
+                    map.put("formated_amount", "- "+ formated_amount);
+                }
+            } else {
+                formated_payment_channel = getPaymentTypes().get(payment_channel);
+            }
         }
         map.put("formated_payment_channel", formated_payment_channel);
 

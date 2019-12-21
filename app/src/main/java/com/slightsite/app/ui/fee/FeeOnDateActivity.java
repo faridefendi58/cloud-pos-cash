@@ -198,6 +198,9 @@ public class FeeOnDateActivity extends AppCompatActivity {
                                                 try {
                                                     Payment pym = new Payment(no, key, refunds.getDouble(key));
                                                     refundList.add(pym);
+                                                    // merge refund data on normal payment
+                                                    Payment pym_minus = new Payment(no, "refund_"+key, refunds.getDouble(key));
+                                                    paymentList.add(pym_minus);
                                                     no = no + 1;
                                                 } catch (Exception e){}
                                             }
@@ -222,10 +225,11 @@ public class FeeOnDateActivity extends AppCompatActivity {
                                 paymentitemListView.setAdapter(pAdap);
 
                                 if (refundList.size() > 0) {
-                                    AdapterListPaymentOn rfAdap = new AdapterListPaymentOn(refundList);
+                                    // Deactive refund section due to combined in payment section
+                                    /*AdapterListPaymentOn rfAdap = new AdapterListPaymentOn(refundList);
                                     refundListRecycle.setAdapter(rfAdap);
 
-                                    refund_detail_container.setVisibility(View.VISIBLE);
+                                    refund_detail_container.setVisibility(View.VISIBLE);*/
                                 }
                             } else {
                                 Toast.makeText(getApplicationContext(), "Failed!, No product data in ",
