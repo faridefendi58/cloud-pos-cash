@@ -474,6 +474,14 @@ public class SaleDetailActivity extends Activity{
 					}
 				} catch (Exception e){e.printStackTrace();}
 			}
+			if (shipping.getMethod() == 4 || shipping.getMethod() == 5) {
+				if (shipping.getName() == null || shipping.getName().equals("null")) {
+					shipping.setName(customer.getName());
+				}
+				if (shipping.getPhone() == null || shipping.getPhone().equals("null")) {
+					shipping.setPhone(customer.getPhone());
+				}
+			}
 			Log.e(getClass().getSimpleName(), "shipping : "+ shipping.toMap());
 			shipping_method.setText(ship_methods[shipping.getMethod()]);
 			if (shipping.getDate().equals(null) || shipping.getDate().length() == 0) {
@@ -533,6 +541,7 @@ public class SaleDetailActivity extends Activity{
 
 			if (getTotalPaymentBySaleId < tot_order) {
 				Double debt = tot_order - getTotalPaymentBySaleId;
+
 				tot_debt = debt;
 				payment_debt.setText(CurrencyController.getInstance().moneyFormat(debt) + "");
 				payment_debt_container.setVisibility(View.VISIBLE);
@@ -1035,8 +1044,6 @@ public class SaleDetailActivity extends Activity{
 
 								if (server_invoice_data.has("merchant")) {
 									merchant_data = server_invoice_data.getJSONObject("merchant");
-									Log.e("CUK", "sale total : "+ sale.getTotal());
-									Log.e("CUK", "merchant_data : "+ merchant_data.toString());
 									if (shipping.getMethod() == 4 || shipping.getMethod() == 5) {
 										try {
 											main_discount_container.setVisibility(View.GONE);
@@ -1046,6 +1053,9 @@ public class SaleDetailActivity extends Activity{
 											if (merchant_data.has("total_invoice")) {
 												Double tot_pr = merchant_data.getDouble("total_invoice");
 												selisih = tot_pr - sale.getTotal();
+												if (sale.getDiscount() > 0) {
+													tot_pr = tot_pr - sale.getDiscount();
+												}
 
 												gograbfood_total_price.setText(CurrencyController.getInstance().moneyFormat(tot_pr));
 												gograbfood_discount.setText(CurrencyController.getInstance().moneyFormat(selisih));
@@ -1061,6 +1071,15 @@ public class SaleDetailActivity extends Activity{
 													gograbfood_discount_label.setText(getResources().getString(R.string.label_grabfood_fee));
 												}
 											}
+											if (sale.getDiscount() > 0) {
+												main_discount_container.setVisibility(View.VISIBLE);
+												payment_discount.setText("- "+ CurrencyController.getInstance().moneyFormat(sale.getDiscount()));
+											} else {
+												main_discount_container.setVisibility(View.GONE);
+											}
+											// no debt information
+											payment_debt_container.setVisibility(View.GONE);
+											spacer_debt.setVisibility(View.GONE);
 										} catch (Exception e){e.printStackTrace();}
 									}
 								}

@@ -234,7 +234,11 @@ public class ConfirmationFragment extends Fragment {
 
                 if (c_data.getUseGoFood() || c_data.getUseGrabFood()) {
                     gograbfood_discount_container.setVisibility(View.VISIBLE);
-                    gograbfood_discount.setText(CurrencyController.getInstance().moneyFormat(change_due));
+                    Double fee_ojol = change_due - c_data.getDiscount();
+                    if (change_due < 0) {
+                        fee_ojol = change_due;
+                    }
+                    gograbfood_discount.setText(CurrencyController.getInstance().moneyFormat(fee_ojol));
                     if (c_data.getUseGoFood()) {
                         if (change_due <= 0) {
                             gograbfood_discount_label.setText(getActivity().getResources().getString(R.string.label_gofood_discount));
@@ -245,7 +249,12 @@ public class ConfirmationFragment extends Fragment {
                             Double _total_price = Double.parseDouble(c_data.getTotalGoFoodInvoice()) - Double.parseDouble(c_data.getGofoodDiscount());
                             gograbfood_total_price.setText(CurrencyController.getInstance().moneyFormat(_total_price));
                         } catch (Exception e){}
-                        main_discount_container.setVisibility(View.GONE);
+                        if (c_data.getDiscount() > 0) {
+                            main_discount_container.setVisibility(View.VISIBLE);
+                            total_discount.setText("- "+ CurrencyController.getInstance().moneyFormat(c_data.getDiscount()));
+                        } else {
+                            main_discount_container.setVisibility(View.GONE);
+                        }
                     } else if (c_data.getUseGrabFood()) {
                         if (change_due <= 0) {
                             gograbfood_discount_label.setText(getActivity().getResources().getString(R.string.label_grabfood_discount));
@@ -256,7 +265,12 @@ public class ConfirmationFragment extends Fragment {
                             Double _total_price = Double.parseDouble(c_data.getTotalGrabFoodInvoice()) - Double.parseDouble(c_data.getGrabfoodDiscount());
                             gograbfood_total_price.setText(CurrencyController.getInstance().moneyFormat(_total_price));
                         } catch (Exception e){}
-                        main_discount_container.setVisibility(View.GONE);
+                        if (c_data.getDiscount() > 0) {
+                            main_discount_container.setVisibility(View.VISIBLE);
+                            total_discount.setText("- "+ CurrencyController.getInstance().moneyFormat(c_data.getDiscount()));
+                        } else {
+                            main_discount_container.setVisibility(View.GONE);
+                        }
                     }
                     change_due_container.setVisibility(View.GONE);
                 }

@@ -179,6 +179,7 @@
     <string name="error_old_password">The old password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="error_empty_customer_data">Please fill the Name, Phone, and Address</string>
+    <string name="error_empty_customer_name">Please fill the Customer Name</string>
     <string name="error_empty_payment_data">Please complete the payment data</string>
     <string name="error_not_enough_payment">Your payment is still less than total invoice, Please check your payment data.</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
@@ -317,7 +318,7 @@
     <string name="payment_edc">EDC Payment</string>
     <string name="payment_wallet_tokopedia">Wallet Tokopedia</string>
     <string name="payment_wallet_gofood">GoPay</string>
-    <string name="payment_wallet_grab_food">OVO</string>
+    <string name="payment_wallet_grab_food">GrabPay (OVO)</string>
 
     <string name="button_add_to_cart">Add To Cart</string>
     <string name="button_syncron">Syncronize Now</string>

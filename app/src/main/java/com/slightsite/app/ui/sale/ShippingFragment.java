@@ -416,9 +416,8 @@ public class ShippingFragment extends Fragment {
 
     private void showShippingMethodDialog(final View v) {
         if (cust.getName().length() == 0){
-            //Log.e(getTag(), "customer masih null");
             Boolean has_new_cust_data = false;
-            // check once again wheter user fill the new customer data
+            // check once again whether user fill the new customer data
             if (customer_name_autocomplete.getText().length() > 0
                     && customer_phone_autocomplete.getText().length() >0 && address.getText().length() > 0) {
                 cust.setName(customer_name_autocomplete.getText().toString());
@@ -577,11 +576,13 @@ public class ShippingFragment extends Fragment {
                 String cur_time = DateTimeStrategy.getCurrentTime();
                 ship.setDate(DateTimeStrategy.parseDate(cur_time, "dd-MM-yyyy"));
                 ship.setPickupDate(DateTimeStrategy.parseDate(cur_time, "dd MMM yyyy HH:mm"));
+                ship.setAddress(cust.getAddress());
+                shipping_name_container.setVisibility(View.GONE);
             } else {
                 shipping_date.setVisibility(View.VISIBLE);
+                shipping_name_container.setVisibility(View.VISIBLE);
             }
             shipping_address.setVisibility(View.VISIBLE);
-            shipping_name_container.setVisibility(View.VISIBLE);
             shipping_warehouse.setVisibility(View.GONE);
         }
     }

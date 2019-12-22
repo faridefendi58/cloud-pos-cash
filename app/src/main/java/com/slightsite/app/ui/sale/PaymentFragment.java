@@ -359,6 +359,7 @@ public class PaymentFragment extends Fragment {
                                 if (cleanString.length()>0 && !cleanString.equals("0")) {
                                     String gt_formatted = CurrencyController.getInstance().moneyFormat(Double.parseDouble(cleanString));
                                     gograbfood_grand_total.setText(gt_formatted);
+                                    nominal_gograbfood.setText(gt_formatted);
                                 }
                             } catch (Exception e){}
                         }
@@ -375,9 +376,11 @@ public class PaymentFragment extends Fragment {
 
                             if (ggt.length() > 0 && !ggt.equals("0")) {
                                 try {
+                                    c_data.setDiscount(Integer.parseInt(cleanString));
                                     Double gt = Double.parseDouble(ggt) - Double.parseDouble(cleanString);
                                     String gt_formatted = CurrencyController.getInstance().moneyFormat(gt);
                                     gograbfood_grand_total.setText(gt_formatted);
+                                    nominal_gograbfood.setText(gt_formatted);
                                 } catch (Exception e){}
                             }
                         }

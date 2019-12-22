@@ -818,6 +818,9 @@ public class CheckoutActivity extends AppCompatActivity {
             mObj.put("shipping", arrShippingList);
 
             if (getCheckoutData().getUseGoFood()) {
+                // force to be paid inv for gofood
+                mObj.put("transaction_type", 1);
+
                 arrMerchant.put("name", "GoFood");
                 arrMerchant.put("total_invoice", getCheckoutData().getTotalGoFoodInvoice());
                 arrMerchant.put("total_wallet_tendered", getCheckoutData().getWalletGoFood());
@@ -825,6 +828,9 @@ public class CheckoutActivity extends AppCompatActivity {
             }
 
             if (getCheckoutData().getUseGrabFood()) {
+                // force to be paid inv for gofood
+                mObj.put("transaction_type", 1);
+
                 arrMerchant.put("name", "GrabFood");
                 arrMerchant.put("total_invoice", getCheckoutData().getTotalGrabFoodInvoice());
                 arrMerchant.put("total_wallet_tendered", getCheckoutData().getWalletGrabFood());
