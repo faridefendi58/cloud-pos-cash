@@ -770,7 +770,7 @@ public class PrintPreviewActivity extends Activity {
         //res += "<tr><td colspan=\"2\" style=\"text-align:right;\">PPN :</td><td style=\"text-align:right;\">"+ ppn +"</td>";
         int discount = sale.getDiscount();
         res += "<tr class=\"ft-16\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_discount) +" :</td>" +
-                "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(discount) +"</td>";
+                "<td style=\"text-align:right;\">- "+ CurrencyController.getInstance().moneyFormat(discount) +"</td>";
 
         int grand_total = sub_total + ppn - discount;
 

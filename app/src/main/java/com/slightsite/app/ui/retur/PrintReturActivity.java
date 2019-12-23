@@ -140,6 +140,7 @@ public class PrintReturActivity extends Activity {
     private String formated_receipt;
 
     private int screen_width = 0;
+    private Boolean just_print = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -151,6 +152,10 @@ public class PrintReturActivity extends Activity {
                 Log.e(getClass().getSimpleName(), "retur items : "+ retur.getItems().toString());
                 customer = retur.getCustomer();
                 Log.e(getClass().getSimpleName(), "customer : "+ customer.toMap().toString());
+            }
+
+            if (getIntent().hasExtra("just_print")) {
+                just_print = getIntent().getBooleanExtra("just_print", false);
             }
 
             warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
@@ -402,8 +407,9 @@ public class PrintReturActivity extends Activity {
 
         if (sale.getCreatedBy() > 0) {
             res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_created_by) + "</td><td colspan=\"3\"> : " + sale.getCreatedByName() + "</td></tr>";
-            if (sale.getPaidBy() > 0) {
-                //res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + sale.getDeliveredByName() + "</td></tr>";
+            if (sale.getRefundedBy() > 0) {
+                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + sale.getRefundedByName() + "</td></tr>";
+            } else {
                 res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
             }
         } else {
@@ -456,7 +462,7 @@ public class PrintReturActivity extends Activity {
             if (list_tukar_barang.size() > 0) {
                 res += "<tr><td colspan=\"4\">&nbsp;</td></tr>";
             }
-            res += "<tr><td colspan=\"4\"><b>Pengembalian Uang</b></td></tr>";
+            res += "<tr><td colspan=\"4\"><b>Pengembalian Barang</b></td></tr>";
             res += "<tr><td colspan=\"4\"><hr/></td></tr>";
             for (Map<String, String> entry2 : list) {
                 int qty = Integer.parseInt(entry2.get("quantity"));
@@ -480,7 +486,7 @@ public class PrintReturActivity extends Activity {
 
         int grand_total = sub_total;
 
-        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.total_refund) +" :</td>" +
+        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.total) +" :</td>" +
                 "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(grand_total) +"</td>";
 
         List<Map<String, String >> list_change = retur.getItemsChange();
@@ -503,7 +509,7 @@ public class PrintReturActivity extends Activity {
                 res += "<td style=\"text-align:right;\">-" + CurrencyController.getInstance().moneyFormat(ctot) + "</td></tr>";
             }
             res += "<tr><td colspan=\"4\"><hr/></td></tr>";
-            res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">Total Harga :</td>" +
+            res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">Total :</td>" +
                     "<td style=\"text-align:right;\">-" + CurrencyController.getInstance().moneyFormat(tot_ctot) + "</td>";
             int sisa = grand_total - tot_ctot;
             res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">Sisa Pengembalian :</td>" +
@@ -677,6 +683,12 @@ public class PrintReturActivity extends Activity {
                                         print_button_container.setVisibility(View.GONE);
                                         finish_and_print_button.setText(getResources().getString(R.string.button_finish_retur_and_print));
                                         finish_and_print_button.setVisibility(View.VISIBLE);
+
+                                        if (just_print) {
+                                            print_button_container.setVisibility(View.VISIBLE);
+                                            finish_and_print_button.setText(getResources().getString(R.string.print_invoice));
+                                            finish_and_print_button.setVisibility(View.GONE);
+                                        }
                                     }
                                 } else {
                                     counter = counter + 1;

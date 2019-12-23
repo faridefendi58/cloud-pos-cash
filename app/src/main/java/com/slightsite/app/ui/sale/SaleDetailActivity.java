@@ -72,6 +72,7 @@ import com.slightsite.app.domain.params.Params;
 import com.slightsite.app.domain.payment.Payment;
 import com.slightsite.app.domain.payment.PaymentCatalog;
 import com.slightsite.app.domain.payment.PaymentService;
+import com.slightsite.app.domain.retur.Retur;
 import com.slightsite.app.domain.sale.PaymentItem;
 import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.domain.sale.Sale;
@@ -92,6 +93,7 @@ import com.slightsite.app.ui.printer.PrintPreviewActivity;
 import com.slightsite.app.ui.printer.PrinterActivity;
 import com.slightsite.app.ui.retur.AdapterListConfirmRetur;
 import com.slightsite.app.ui.retur.AdapterListReturReport;
+import com.slightsite.app.ui.retur.PrintReturActivity;
 import com.slightsite.app.ui.retur.ReturActivity;
 
 import org.json.JSONArray;
@@ -1472,6 +1474,11 @@ public class SaleDetailActivity extends Activity{
 	private TextView retur_invoice_number;
 	private TextView retur_proceed_by;
 	private TextView refunded_at;
+	// for print preview
+    private ArrayList arrRefundList = new ArrayList();
+    private ArrayList arrPaymentList = new ArrayList();
+    private ArrayList arrChangeItemList = new ArrayList();
+    private ArrayList<String> retur_reason = new ArrayList<String>();
 
 	private void buildReturInformation() {
 		returItemListRecycle = (RecyclerView) findViewById(R.id.returItemListRecycle);
@@ -1507,6 +1514,16 @@ public class SaleDetailActivity extends Activity{
 			retur_proceed_by.setText(obj_retur.getString("refunded_by_name"));
 			refunded_at = (TextView) findViewById(R.id.refunded_at);
 			refunded_at.setText(DateTimeStrategy.parseDate(obj_retur.getString("refunded_at"), "dd MMM yyyy HH:s") + "");
+			if (obj_retur.has("reasons")) {
+                JSONArray reasonJSONArray = obj_retur.getJSONArray("reasons");
+                if (reasonJSONArray.length() > 0) {
+                    for (int i = 0; i < reasonJSONArray.length(); i++) {
+                        try {
+                            retur_reason.add(reasonJSONArray.getString(i));
+                        } catch (Exception e){}
+                    }
+                }
+            }
 		} catch (Exception e){e.printStackTrace();}
 
 		returitemList.clear();
@@ -1515,6 +1532,7 @@ public class SaleDetailActivity extends Activity{
 				try {
 					JSONObject obj_retur_item = returJSONArray.getJSONObject(i);
 					Product product = productCatalog.getProductByBarcode(obj_retur_item.getString("id"));
+
 					if (obj_retur_item.has("returned_qty") && obj_retur_item.getInt("returned_qty") > 0) {
 						LineItem lineItem = new LineItem(product, obj_retur_item.getInt("returned_qty"), tot_inv_qty);
 						returitemList.add(lineItem);
@@ -1523,6 +1541,20 @@ public class SaleDetailActivity extends Activity{
 						LineItem lineItem2 = new LineItem(product, obj_retur_item.getInt("refunded_qty"), tot_inv_qty);
 						refunditemList.add(lineItem2);
 					}
+					// for print preview
+                    Map<String, String> arrRefundList2 = new HashMap<String, String>();
+                    arrRefundList2.put("title", product.getName());
+                    arrRefundList2.put("product_id", product.getBarcode()+"");
+                    arrRefundList2.put("quantity", obj_retur_item.getInt("refunded_qty")+"");
+                    arrRefundList2.put("price", product.getUnitPriceByQuantity(product.getId(), tot_inv_qty)+"");
+
+                    if (obj_retur_item.has("returned_qty") && obj_retur_item.getInt("returned_qty") > 0) {
+                        arrRefundList2.put("change_item", obj_retur_item.getString("returned_qty"));
+                    } else {
+                        arrRefundList2.put("change_item", "0");
+                    }
+
+                    arrRefundList.add(arrRefundList2);
 				} catch (JSONException e) {}
 			}
 			if (returitemList.size() <= 0) {
@@ -1551,6 +1583,16 @@ public class SaleDetailActivity extends Activity{
 					if ((product != null) && obj_change_item.has("quantity") && obj_change_item.getInt("quantity") > 0) {
 						LineItem lineItem = new LineItem(product, obj_change_item.getInt("quantity"), obj_change_item.getInt("quantity_total"));
 						changeitemList.add(lineItem);
+
+						// for print preview intent data
+                        Map<String, String> arrChangeItemList2 = new HashMap<String, String>();
+                        arrChangeItemList2.put("id", product.getId()+"");
+                        arrChangeItemList2.put("product_id", product.getBarcode()+"");
+                        arrChangeItemList2.put("title", product.getName());
+                        arrChangeItemList2.put("quantity", lineItem.getQuantity()+"");
+                        arrChangeItemList2.put("price", lineItem.getPriceAtSale()+"");
+                        arrChangeItemList2.put("quantity_total", obj_change_item.getInt("quantity_total")+"");
+                        arrChangeItemList.add(arrChangeItemList2);
 					}
 				} catch (JSONException e) {}
 			}
@@ -1590,6 +1632,11 @@ public class SaleDetailActivity extends Activity{
 						);
 
 						pyitemList.add(payment);
+                        Map<String, String> arrPayment2 = new HashMap<String, String>();
+                        arrPayment2.put("type", obj_payment_item.getString("type"));
+                        arrPayment2.put("amount_tendered", ""+ obj_payment_item.getDouble("amount"));
+                        // for print preview
+                        arrPaymentList.add(arrPayment2);
 					} catch (Exception e){}
 				}
 			}
@@ -1604,4 +1651,29 @@ public class SaleDetailActivity extends Activity{
 
 		retur_information.setVisibility(View.VISIBLE);
 	}
+
+	public void printReturInvoice(View view) {
+        if (obj_retur != null) {
+            try {
+                Retur retur = new Retur(obj_retur.getInt("id"));
+                retur.setItems(arrRefundList);
+                retur.setPayment(arrPaymentList);
+                retur.setCustomer(customer);
+                retur.setItemsChange(arrChangeItemList);
+                if (retur_reason.size() > 0) {
+                    retur.setItemsReason(retur_reason);
+                }
+                /*if (retur_notes.getText().toString().length() > 0) {
+                    retur.setNotes(retur_notes.getText().toString());
+                }*/
+
+                Intent intent = new Intent(SaleDetailActivity.this,
+                        PrintReturActivity.class);
+                intent.putExtra("retur_intent", retur);
+                intent.putExtra("just_print", true);
+                finish();
+                startActivity(intent);
+            } catch (Exception e){e.printStackTrace();}
+        }
+    }
 }
