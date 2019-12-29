@@ -257,6 +257,31 @@ public class ReturActivity extends AppCompatActivity {
         } else {
             stock_retur_stacks.remove(product_id);
         }
+        try {
+            if (payment_items != null && payment_items.size() > 0) {
+                payment_items.clear();
+            }
+            if (cash_receive != null && cash_receive.getText().length() > 0) {
+                cash_receive.setText("");
+            }
+            if (nominal_bca != null && nominal_bca.getText().length() > 0) {
+                nominal_bca.setText("");
+            }
+            if (nominal_mandiri != null && nominal_mandiri.getText().length() > 0) {
+                nominal_mandiri.setText("");
+            }
+            if (nominal_bri != null && nominal_bri.getText().length() > 0) {
+                nominal_bri.setText("");
+            }
+            if (product_change_stacks != null && product_change_stacks.size() > 0) {
+                product_change_stacks.clear();
+                // reset refund must pay
+
+            }
+            if (otheritemList != null && otheritemList.size() > 0) {
+                buildChangeOtherItemList();
+            }
+        } catch (Exception e){e.printStackTrace();}
     }
 
     public Map<Integer, Integer> getReturStockStacks() {
@@ -344,6 +369,11 @@ public class ReturActivity extends AppCompatActivity {
             triggerBottomDialogButton(sheetView);
         } else {
             // no item to be retured
+            if (!has_retur_reason) {
+                Toast.makeText(getBaseContext(),
+                        getResources().getString(R.string.error_empty_retur_reason), Toast.LENGTH_LONG)
+                        .show();
+            }
         }
     }
 
@@ -560,7 +590,7 @@ public class ReturActivity extends AppCompatActivity {
     }
 
     private void buildChangeOtherItemList() {
-        Log.e(getClass().getSimpleName(), "total_inv_qty : "+ total_inv_qty);
+        Log.e(getClass().getSimpleName(), "cuk : total_inv_qty : "+ total_inv_qty);
         otheritemList.clear();
         try {
             List<Product> products = productCatalog.getAllProduct();
@@ -572,7 +602,7 @@ public class ReturActivity extends AppCompatActivity {
             }
         } catch (Exception e){e.printStackTrace();}
 
-        Log.e(getClass().getSimpleName(), "refund_must_pay : "+ refund_must_pay);
+        Log.e(getClass().getSimpleName(), "cuk : refund_must_pay : "+ refund_must_pay);
         if (otheritemList.size() > 0) {
             AdapterListProductChange pAdap = new AdapterListProductChange(ReturActivity.this, otheritemList, register);
             pAdap.setSheetView(sheetView);

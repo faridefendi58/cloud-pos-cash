@@ -234,7 +234,7 @@ public class ConfirmationFragment extends Fragment {
 
                 if (c_data.getUseGoFood() || c_data.getUseGrabFood()) {
                     gograbfood_discount_container.setVisibility(View.VISIBLE);
-                    Double fee_ojol = change_due - c_data.getDiscount();
+                    Double fee_ojol = change_due; // - c_data.getDiscount();
                     if (change_due < 0) {
                         fee_ojol = change_due;
                     }

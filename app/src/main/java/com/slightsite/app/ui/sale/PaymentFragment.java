@@ -47,8 +47,11 @@ public class PaymentFragment extends Fragment {
     private LinearLayout normal_billing_info_container;
     private LinearLayout gofood_billing_info_container;
     private LinearLayout payment_gograbfood_container;
+    private LinearLayout cash_container;
+    private LinearLayout switch_cash_container;
     private SwitchCompat switch_tranfer;
     private SwitchCompat switch_edc;
+    private SwitchCompat switch_cash;
 
     private View root;
     private EditText cash_receive;
@@ -59,8 +62,11 @@ public class PaymentFragment extends Fragment {
     private EditText edc_card_number;
     private EditText edc_nominal;
     private EditText gograbfood_total;
+    private TextView label_gograbfood_total;
     private EditText gograbfood_discount;
+    private TextView label_gograb_discount;
     private TextView gograbfood_grand_total;
+    private TextView label_gograb_grand_total;
     private EditText nominal_gograbfood;
     private TextView total_order;
     private EditText total_discount;
@@ -111,8 +117,11 @@ public class PaymentFragment extends Fragment {
         normal_billing_info_container = (LinearLayout) root.findViewById(R.id.normal_billing_info_container);
         gofood_billing_info_container = (LinearLayout) root.findViewById(R.id.gofood_billing_info_container);
         payment_gograbfood_container = (LinearLayout) root.findViewById(R.id.payment_gograbfood_container);
+        cash_container = (LinearLayout) root.findViewById(R.id.cash_container);
+        switch_cash_container = (LinearLayout) root.findViewById(R.id.switch_cash_container);
         switch_tranfer = (SwitchCompat) root.findViewById(R.id.switch_tranfer);
         switch_edc = (SwitchCompat) root.findViewById(R.id.switch_edc);
+        switch_cash = (SwitchCompat) root.findViewById(R.id.switch_cash);
         cash_receive = (EditText) root.findViewById(R.id.cash_receive);
         ed_nominal_mandiri = (EditText) root.findViewById(R.id.nominal_mandiri);
         ed_nominal_bca = (EditText) root.findViewById(R.id.nominal_bca);
@@ -121,8 +130,11 @@ public class PaymentFragment extends Fragment {
         edc_card_number  = (EditText) root.findViewById(R.id.edc_card_number);
         edc_nominal  = (EditText) root.findViewById(R.id.edc_nominal);
         gograbfood_total  = (EditText) root.findViewById(R.id.gograbfood_total);
+        label_gograbfood_total  = (TextView) root.findViewById(R.id.label_gograbfood_total);
         gograbfood_discount  = (EditText) root.findViewById(R.id.gograbfood_discount);
+        label_gograb_discount  = (TextView) root.findViewById(R.id.label_gograb_discount);
         gograbfood_grand_total  = (TextView) root.findViewById(R.id.gograbfood_grand_total);
+        label_gograb_grand_total  = (TextView) root.findViewById(R.id.label_gograb_grand_total);
         nominal_gograbfood  = (EditText) root.findViewById(R.id.nominal_gograbfood);
         total_order  = (TextView) root.findViewById(R.id.total_order);
         total_discount  = (EditText) root.findViewById(R.id.total_discount);
@@ -272,6 +284,18 @@ public class PaymentFragment extends Fragment {
                     total_discount.setSelection(formatted.length());
                     total_discount.addTextChangedListener(this);
                 }
+            }
+        });
+
+        switch_cash.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    cash_container.setVisibility(View.VISIBLE);
+                } else {
+                    cash_container.setVisibility(View.GONE);
+                }
+                ((CheckoutActivity) getActivity()).hideKeyboard(getActivity());
+                c_data.setUseCash(isChecked);
             }
         });
     }
@@ -493,9 +517,13 @@ public class PaymentFragment extends Fragment {
                 if (c_data.getUseGoFood()) {
                     gograbfood = c_data.getWalletGoFood();
                     total_gograbfood = c_data.getTotalGoFoodInvoice();
+                    label_gograb_grand_total.setText(getResources().getString(R.string.total)+ " GoFood");
+                    label_gograbfood_total.setText(getResources().getString(R.string.label_sub_total)+ " GoFood");
                 } else if (c_data.getUseGrabFood()) {
                     gograbfood = c_data.getWalletGrabFood();
                     total_gograbfood = c_data.getTotalGrabFoodInvoice();
+                    label_gograb_grand_total.setText(getResources().getString(R.string.total)+ " GrabFood");
+                    label_gograbfood_total.setText(getResources().getString(R.string.label_sub_total)+ " GrabFood");
                 }
 
                 //nominal_gograbfood.setHint(gograbfood);
@@ -503,8 +531,22 @@ public class PaymentFragment extends Fragment {
                     gograbfood_total.setText(total_gograbfood);
                 }
 
+                if (c_data.getDiscount() > 0) {
+                    String _disc = CurrencyController.getInstance().moneyFormat(c_data.getDiscount());
+                    gograbfood_discount.setText(_disc);
+                }
+
                 // hide bank and edc payment
                 bank_edc_container.setVisibility(View.GONE);
+                label_gograb_discount.setText(getResources().getString(R.string.label_merchant_discount));
+                // hide cash payment and add switch button
+                switch_cash_container.setVisibility(View.VISIBLE);
+                cash_container.setVisibility(View.GONE);
+                Log.e("CUK", "c_data.getCashReceive() : "+ c_data.getCashReceive());
+                if (c_data.getUseCash()) {
+                    cash_container.setVisibility(View.VISIBLE);
+                    switch_cash.setChecked(true);
+                }
             } else {
                 bank_edc_container.setVisibility(View.VISIBLE);
             }

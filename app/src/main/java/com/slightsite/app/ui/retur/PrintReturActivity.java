@@ -237,7 +237,7 @@ public class PrintReturActivity extends Activity {
 
         Log.e(getClass().getSimpleName(), "screen_width : "+ screen_width);
         if (screen_width > 900) {
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(640, LinearLayout.LayoutParams.WRAP_CONTENT);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(760, LinearLayout.LayoutParams.WRAP_CONTENT);
             print_webview.setLayoutParams(params);
         }
 

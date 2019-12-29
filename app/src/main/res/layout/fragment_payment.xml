@@ -213,6 +213,7 @@
                         android:padding="@dimen/spacing_large">
 
                     <TextView
+                            android:id="@+id/label_gograbfood_total"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.5"
@@ -253,6 +254,7 @@
                         android:padding="@dimen/spacing_large">
 
                     <TextView
+                            android:id="@+id/label_gograb_discount"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.5"
@@ -292,6 +294,7 @@
                         android:padding="@dimen/spacing_large">
 
                     <TextView
+                            android:id="@+id/label_gograb_grand_total"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.5"
@@ -416,6 +419,47 @@
                 <!-- end of go / grab food -->
 
                 <LinearLayout
+                        android:id="@+id/switch_cash_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:paddingHorizontal="@dimen/spacing_large"
+                        android:clickable="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                    <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingVertical="@dimen/spacing_large"
+                            android:text="@string/payment_cash"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textColor="@color/grey_40"
+                            android:textStyle="bold"
+                            android:textAllCaps="true"
+                            app:fontFamily="sans-serif-medium" />
+
+                    <View
+                            android:layout_width="@dimen/spacing_middle"
+                            android:layout_height="wrap_content" />
+
+                    <android.support.v7.widget.SwitchCompat
+                            android:id="@+id/switch_cash"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="false"
+                            app:thumbTint="@color/switch_color_primary" />
+
+                    <View
+                            android:layout_width="@dimen/spacing_middle"
+                            android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                        android:id="@+id/cash_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"

@@ -185,6 +185,7 @@
     <string name="error_empty_customer_name">Mohon isi nama pelanggan</string>
     <string name="error_empty_payment_data">Mohon lengkapi data pembayaran</string>
     <string name="error_not_enough_payment">Jumlah yang Anda bayarkan masih kurang dari total tagihan.</string>
+    <string name="error_empty_retur_reason">Pilih minimal 1 alasan retur</string>
     <string name="login_header_information">Isilah form ini dengan akun login anda,
         atau buat akun baru.</string>
     <string name="login_information">Siap naik kelas dengan teknologi?, Ayo Mulai Sekarang!</string>
@@ -308,6 +309,7 @@
     <string name="label_grabfood_discount">Diskon GrabFood</string>
     <string name="label_gofood_fee">Fee GoFood</string>
     <string name="label_grabfood_fee">Fee GrabFood</string>
+    <string name="label_merchant_discount">Diskon Merchant</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Bank Mandiri</string>

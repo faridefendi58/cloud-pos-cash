@@ -34,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Tools {
@@ -339,10 +340,17 @@ public class Tools {
         list.put("-", "Semua");
         list.put("lunas", "Lunas");
         list.put("belum_lunas", "Belum Lunas");
-        list.put("hutang_tempo", "Hutang Tempo");
         list.put("selesai", "Selesai");
+        list.put("hutang_tempo", "Hutang Tempo");
+        list.put("verified", "Sudah Diverifikasi");
+        list.put("unverified", "Belum Diverifikasi");
 
         return list;
+    }
+
+    public static String[] getInvoiceStatusItems() {
+        String[] items = new String[]{"-", "lunas", "belum_lunas", "selesai", "hutang_tempo", "verified", "unverified"};
+        return items;
     }
 }
 

@@ -22,6 +22,7 @@ public class Checkout implements Serializable {
     private String card_number = "0";
     private Boolean use_transfer_bank = false;
     private Boolean use_edc = false;
+    private Boolean use_cash = false;
     private List<PaymentItem> payment_items;
     private Shipping shipping;
     private int discount;
@@ -367,5 +368,13 @@ public class Checkout implements Serializable {
 
     public Double getChangeDue() {
         return change_due;
+    }
+
+    public void setUseCash(Boolean usecash) {
+        this.use_cash = usecash;
+    }
+
+    public Boolean getUseCash() {
+        return use_cash;
     }
 }

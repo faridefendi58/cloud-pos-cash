@@ -206,6 +206,8 @@ public class ReportFragment extends UpdatableFragment {
 	 */
 	private void initUI() {
 		currentTime = Calendar.getInstance();
+		currentTime.set(Calendar.DAY_OF_MONTH, 1);
+
 		datePicker = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
 			@Override
 			public void onDateSet(DatePicker view, int y, int m, int d) {
@@ -827,15 +829,26 @@ public class ReportFragment extends UpdatableFragment {
 		}
 
 		inv_status_map = Tools.getInvoiceStatusList();
+		String[] inv_status_strings = Tools.getInvoiceStatusItems();
 
 		inv_status_items.clear();
 		inv_status_items_keys.clear();
 		inv_status_map_keys.clear();
 		//filter_result.clear();
+		/*Log.e("CUK", "inv_status_map : "+ inv_status_map.toString());
 		for (Map.Entry<String, String> entry : inv_status_map.entrySet()) {
 			inv_status_items.add(entry.getValue());
 			inv_status_items_keys.add(entry.getKey());
 			inv_status_map_keys.put(entry.getValue(), entry.getKey());
+		}*/
+
+		int jml = inv_status_strings.length;
+		for (int i=0; i < jml; i++)
+		{
+			inv_status_items_keys.add(inv_status_strings[i]);
+			String _val = inv_status_map.get(inv_status_strings[i]);
+			inv_status_items.add(_val);
+			inv_status_map_keys.put(_val, inv_status_strings[i]);
 		}
 
 		ArrayAdapter<String> stAdapter = new ArrayAdapter<String>(
@@ -976,6 +989,7 @@ public class ReportFragment extends UpdatableFragment {
 
 	private void dialogDatePickerLight(final View v, final String fiter_name) {
 		final Calendar cur_calender = Calendar.getInstance();
+		cur_calender.set(Calendar.DAY_OF_MONTH, 1);
 
 		DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
 				new DatePickerDialog.OnDateSetListener() {

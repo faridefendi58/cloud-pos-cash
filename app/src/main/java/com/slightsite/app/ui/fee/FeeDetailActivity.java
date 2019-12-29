@@ -163,7 +163,7 @@ public class FeeDetailActivity extends AppCompatActivity {
 
         Log.e(getClass().getSimpleName(), "screen_width : "+ screen_width);
         if (screen_width > 900) {
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(640, LinearLayout.LayoutParams.WRAP_CONTENT);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(760, LinearLayout.LayoutParams.WRAP_CONTENT);
             print_webview.setLayoutParams(params);
         }
 
@@ -184,6 +184,7 @@ public class FeeDetailActivity extends AppCompatActivity {
     private Boolean should_be_finished = false;
     private List<Map<String, String>> lineitemList;
     private Retur retur;
+    private JSONObject merchant_data = new JSONObject();
 
     public void buildDataFromServer() {
         Map<String, String> params = new HashMap<String, String>();
@@ -277,6 +278,16 @@ public class FeeDetailActivity extends AppCompatActivity {
                                     if (server_invoice_data.has("status") && server_invoice_data.has("delivered")) {
                                         int delivered = server_invoice_data.getInt("delivered");
                                         is_delivered = delivered;
+                                    }
+
+                                    if (server_invoice_data.has("discount")) {
+                                        sale.setDiscount(server_invoice_data.getInt("discount"));
+                                    }
+
+                                    if (server_invoice_data.has("merchant")) {
+                                        try {
+                                            merchant_data = server_invoice_data.getJSONObject("merchant");
+                                        } catch (Exception e){}
                                     }
 
                                     if (server_invoice_data.has("refund") && server_invoice_data.getString("refund") != null) {
@@ -525,8 +536,12 @@ public class FeeDetailActivity extends AppCompatActivity {
                 "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(sub_total) +"</td>";
         //res += "<tr><td colspan=\"2\" style=\"text-align:right;\">PPN :</td><td style=\"text-align:right;\">"+ ppn +"</td>";
         int discount = sale.getDiscount();
+        String minus_sign = "-";
+        if (discount <= 0) {
+            minus_sign = "";
+        }
         res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_discount) +" :</td>" +
-                "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(discount) +"</td>";
+                "<td style=\"text-align:right;\">"+ minus_sign +" "+ CurrencyController.getInstance().moneyFormat(discount) +"</td>";
 
         int grand_total = sub_total + ppn - discount;
 
@@ -534,6 +549,35 @@ public class FeeDetailActivity extends AppCompatActivity {
         int change_due = grand_total - cash;
         res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_grand_total) +" :</td>" +
                 "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(grand_total) +"</td>";
+
+        // check is use go/grab food
+        Boolean hide_change_due = false;
+        if (merchant_data.length() > 0) {
+            int fee_merchant = 0;
+            try {
+                if (merchant_data.has("total_invoice")) {
+                    String str_total_invoice = merchant_data.getString("total_invoice");
+                    if (str_total_invoice.contains(".")) {
+                        str_total_invoice = str_total_invoice.split("\\.")[0];
+                    }
+                    fee_merchant = Integer.parseInt(str_total_invoice) - grand_total - discount;
+                    Log.e("CUK", "str_total_invoice : "+ str_total_invoice);
+                    Log.e("CUK", "grand_total : "+ grand_total);
+                    Log.e("CUK", "discount : "+ discount);
+                    if (fee_merchant > 0) {
+                        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\"> Fee " + merchant_data.getString("name") + " :</td>" +
+                                "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(fee_merchant) + "</td>";
+                        change_due = change_due - fee_merchant;
+                        if (change_due <= 0) {
+                            hide_change_due = true;
+                        }
+                    } else {
+                        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\"> Diskon " + merchant_data.getString("name") + " :</td>" +
+                                "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(fee_merchant) + "</td>";
+                    }
+                }
+            } catch (Exception e){}
+        }
 
         if (paymentList != null && !paymentList.isEmpty()) {
             int payment_total = 0;
@@ -563,14 +607,16 @@ public class FeeDetailActivity extends AppCompatActivity {
                     "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(cash) +"</td>";
         }
 
-        if (change_due > 0) {
-            res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_change_due) +" :</td>" +
-                    "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(change_due) +"</td>";
-        } else {
-            int debt = -1 * change_due;
-            if (debt < 0) {
-                res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\"><b>" + getResources().getString(R.string.label_dept) + " :</b></td>" +
-                        "<td style=\"text-align:right;\"><b>" + CurrencyController.getInstance().moneyFormat(debt) + "</b></td>";
+        if (!hide_change_due) {
+            if (change_due > 0) {
+                res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_change_due) +" :</td>" +
+                        "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(change_due) +"</td>";
+            } else {
+                int debt = -1 * change_due;
+                if (debt < 0) {
+                    res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\"><b>" + getResources().getString(R.string.label_dept) + " :</b></td>" +
+                            "<td style=\"text-align:right;\"><b>" + CurrencyController.getInstance().moneyFormat(debt) + "</b></td>";
+                }
             }
         }
 
@@ -667,7 +713,7 @@ public class FeeDetailActivity extends AppCompatActivity {
                     if (list_change.size() > 0) {
                         if (sub_total_r == 0) {
                             res += "<tr><td colspan=\"4\">&nbsp;</td></tr>";
-                            res += "<tr><td colspan=\"4\" style=\"text-align:left;\"><b>Penukaran Dengan Item Lain</b></td></tr>";
+                            res += "<tr><td colspan=\"4\" style=\"text-align:left;\"><b>Ganti Item Lain</b></td></tr>";
                             res += "<tr><td colspan=\"4\"><hr/></td></tr>";
                         }
                         int tot_ctot = 0;
