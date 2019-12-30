@@ -492,7 +492,7 @@ public class PrintReturActivity extends Activity {
         List<Map<String, String >> list_change = retur.getItemsChange();
         if (list_change.size() > 0) {
             res += "<tr><td colspan=\"4\">&nbsp;</td></tr>";
-            res += "<tr><td colspan=\"4\" style=\"text-align:left;\"><b>Penukaran Dengan Item Lain</b></td></tr>";
+            res += "<tr><td colspan=\"4\" style=\"text-align:left;\"><b>Ganti Item Lain</b></td></tr>";
             res += "<tr><td colspan=\"4\"><hr/></td></tr>";
             int tot_ctot = 0;
             for (Map<String, String> c_entry : list_change) {

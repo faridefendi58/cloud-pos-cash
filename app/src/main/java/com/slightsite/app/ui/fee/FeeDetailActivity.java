@@ -517,6 +517,10 @@ public class FeeDetailActivity extends AppCompatActivity {
 
         res += "<tr><td colspan=\"4\"><hr/></td></tr></table>";
         res += "<table width=\"100%\" style=\"margin-bottom:25px;\">";
+        // tambahan per 23 dec 19
+        res += "<tr><td colspan=\"4\"><b>Omzet Penjualan</b></td></tr>";
+        res += "<tr><td colspan=\"4\"><hr/></td></tr>";
+        // endof tambahan per 23 dec 19
 
         int sub_total = 0;
         int ppn = 0;
@@ -533,7 +537,7 @@ public class FeeDetailActivity extends AppCompatActivity {
         res += "<tr><td colspan=\"4\"><hr/></td></tr>";
 
         res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_sub_total) +" :</td>" +
-                "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(sub_total) +"</td>";
+                "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(sub_total) +"</td></tr>";
         //res += "<tr><td colspan=\"2\" style=\"text-align:right;\">PPN :</td><td style=\"text-align:right;\">"+ ppn +"</td>";
         int discount = sale.getDiscount();
         String minus_sign = "-";
@@ -541,17 +545,19 @@ public class FeeDetailActivity extends AppCompatActivity {
             minus_sign = "";
         }
         res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_discount) +" :</td>" +
-                "<td style=\"text-align:right;\">"+ minus_sign +" "+ CurrencyController.getInstance().moneyFormat(discount) +"</td>";
+                "<td style=\"text-align:right;\">"+ minus_sign +" "+ CurrencyController.getInstance().moneyFormat(discount) +"</td></tr>";
 
         int grand_total = sub_total + ppn - discount;
 
         int cash = grand_total;
         int change_due = grand_total - cash;
         res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_grand_total) +" :</td>" +
-                "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(grand_total) +"</td>";
+                "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(grand_total) +"</td></tr>";
 
         // check is use go/grab food
+        String discount_ojol_notes = "";
         Boolean hide_change_due = false;
+        Integer disc_ojol = 0;
         if (merchant_data.length() > 0) {
             int fee_merchant = 0;
             try {
@@ -566,14 +572,19 @@ public class FeeDetailActivity extends AppCompatActivity {
                     Log.e("CUK", "discount : "+ discount);
                     if (fee_merchant > 0) {
                         res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\"> Fee " + merchant_data.getString("name") + " :</td>" +
-                                "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(fee_merchant) + "</td>";
+                                "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(fee_merchant) + "</td></tr>";
                         change_due = change_due - fee_merchant;
                         if (change_due <= 0) {
                             hide_change_due = true;
                         }
                     } else {
-                        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\"> Diskon " + merchant_data.getString("name") + " :</td>" +
-                                "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(fee_merchant) + "</td>";
+                        // bermasalah saat fee minus, kasih info diskon dalam bentuk text saja
+                        /*res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\"> Diskon " + merchant_data.getString("name") + " :</td>" +
+                                    "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(fee_merchant) + "</td>";*/
+                        if (fee_merchant < 0) {
+                            disc_ojol = -1 * fee_merchant;
+                            discount_ojol_notes += merchant_data.getString("name") + " " + CurrencyController.getInstance().moneyFormat(disc_ojol);
+                        }
                     }
                 }
             } catch (Exception e){}
@@ -596,29 +607,108 @@ public class FeeDetailActivity extends AppCompatActivity {
 
                 if (amnt > 0) {
                     try {
-                        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">" + getResources().getString(getPaymentChannel(py.getPaymentChannel())) + " :</td>" +
-                                "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(amnt) + "</td>";
+                        if (discount_ojol_notes.length() > 0) {
+                            Integer amnt2 = amnt + disc_ojol;
+                            res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">" + getResources().getString(getPaymentChannel(py.getPaymentChannel())) + " :</td>" +
+                                    "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(amnt2) + "</td></tr>";
+                            res += "<tr class=\"ft-16\"><td colspan=\"4\" style=\"text-align:right;\">(Customer "+ CurrencyController.getInstance().moneyFormat(amnt) +" + " + discount_ojol_notes + ")</td></tr>";
+                        } else {
+                            res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">" + getResources().getString(getPaymentChannel(py.getPaymentChannel())) + " :</td>" +
+                                    "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(amnt) + "</td></tr>";
+                        }
                     } catch (Exception e){e.printStackTrace();}
                 }
             }
             change_due = payment_total - grand_total;
         } else {
             res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.payment_cash) +" :</td>" +
-                    "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(cash) +"</td>";
+                    "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(cash) +"</td></tr>";
         }
 
         if (!hide_change_due) {
             if (change_due > 0) {
                 res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_change_due) +" :</td>" +
-                        "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(change_due) +"</td>";
+                        "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(change_due) +"</td></tr>";
             } else {
                 int debt = -1 * change_due;
                 if (debt < 0) {
                     res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\"><b>" + getResources().getString(R.string.label_dept) + " :</b></td>" +
-                            "<td style=\"text-align:right;\"><b>" + CurrencyController.getInstance().moneyFormat(debt) + "</b></td>";
+                            "<td style=\"text-align:right;\"><b>" + CurrencyController.getInstance().moneyFormat(debt) + "</b></td></tr>";
                 }
             }
         }
+
+        // tambahan per 23 dec 19
+        if (retur != null) {
+            List<Map<String, String >> rlist1 = retur.getItems();
+            int sub_total_r1 = 0;
+            Map<String,Integer> list_tukar_barang1 = new HashMap<>();
+            for (Map<String, String> entry : rlist1) {
+                int qty = Integer.parseInt(entry.get("quantity"));
+                int change_qty = Integer.parseInt(entry.get("change_item"));
+                int refund_qty = qty - change_qty;
+                String str_price = entry.get("price");
+                if (str_price.contains(".")) {
+                    str_price = str_price.substring(0, str_price.indexOf("."));
+                }
+                int prc = Integer.parseInt(str_price);
+                int tot = prc * refund_qty;
+                if (change_qty > 0) {
+                    list_tukar_barang1.put(entry.get("title"), change_qty);
+                }
+
+                sub_total_r1 = sub_total_r1 + tot;
+            }
+
+            Double _tot_refund = 0.0;
+            if (sub_total_r1 > 0) {
+                res += "<tr><td colspan=\"4\"><hr/></td></tr>";
+                res += "<tr><td colspan=\"4\"><b>Retur Penjualan</b></td></tr>";
+                res += "<tr><td colspan=\"4\"><hr/></td></tr>";
+                for (Map<String, String> entry2 : rlist1) {
+                    int qty = Integer.parseInt(entry2.get("quantity"));
+                    int change_qty = Integer.parseInt(entry2.get("change_item"));
+                    int refund_qty = qty - change_qty;
+                    String str_price = entry2.get("price");
+                    if (str_price.contains(".")) {
+                        str_price = str_price.substring(0, str_price.indexOf("."));
+                    }
+                    Double sub_ret_tot = refund_qty * Double.parseDouble(str_price);
+                    _tot_refund = _tot_refund - sub_ret_tot;
+                    if (refund_qty > 0) {
+                        res += "<tr class=\"ft-17\"><td colspan=\"4\">" + entry2.get("title") + "</td></tr>";
+                        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"padding-left:10px;\">" + refund_qty + " x -" + CurrencyController.getInstance().moneyFormat(Double.parseDouble(str_price)) + "</td>";
+                        res += "<td style=\"text-align:right;\">-" + CurrencyController.getInstance().moneyFormat(sub_ret_tot) + "</td></tr>";
+                    }
+                }
+            }
+
+            List<Map<String, String >> list_change1 = retur.getItemsChange();
+            if (list_change1.size() > 0) {
+                for (Map<String, String> c_entry : list_change1) {
+                    res += "<tr class=\"ft-17\"><td colspan=\"4\">"+ c_entry.get("title") +"</td></tr>";
+                    int cqty1 = Integer.parseInt(c_entry.get("quantity"));
+                    String str_price = c_entry.get("price");
+                    if (str_price.contains(".")) {
+                        str_price = str_price.substring(0, str_price.indexOf("."));
+                    }
+
+                    Double sub_change_item_tot = cqty1 * Double.parseDouble(str_price);
+                    _tot_refund = _tot_refund + sub_change_item_tot;
+                    res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"padding-left:10px;\">" + c_entry.get("quantity") + " x "+ CurrencyController.getInstance().moneyFormat(Double.parseDouble(str_price)) +"</td>";
+                    res += "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(sub_change_item_tot) + "</td></tr>";
+                }
+            }
+
+            res += "<tr><td colspan=\"4\"><hr/></td></tr>";
+            res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">Total Refund :</td>" +
+                    "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(_tot_refund) +"</td></tr>";
+            //res += "<tr><td colspan=\"4\"><hr/></td></tr>";
+            Double _tot_omzet = grand_total + _tot_refund;
+            res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\"><b>Total Omzet :</b></td>" +
+                    "<td style=\"text-align:right;\"><b>"+ CurrencyController.getInstance().moneyFormat(_tot_omzet) +"</b></td></tr>";
+        }
+        // endof tambahan per 23 dec 19
 
         if (fee_data != null) {
             res += "<tr><td colspan=\"4\"><hr/></td></tr>";

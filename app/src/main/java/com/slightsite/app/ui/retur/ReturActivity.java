@@ -258,27 +258,20 @@ public class ReturActivity extends AppCompatActivity {
             stock_retur_stacks.remove(product_id);
         }
         try {
-            if (payment_items != null && payment_items.size() > 0) {
-                payment_items.clear();
-            }
-            if (cash_receive != null && cash_receive.getText().length() > 0) {
-                cash_receive.setText("");
-            }
-            if (nominal_bca != null && nominal_bca.getText().length() > 0) {
-                nominal_bca.setText("");
-            }
-            if (nominal_mandiri != null && nominal_mandiri.getText().length() > 0) {
-                nominal_mandiri.setText("");
-            }
-            if (nominal_bri != null && nominal_bri.getText().length() > 0) {
-                nominal_bri.setText("");
-            }
+            clearPaymentData();
             if (product_change_stacks != null && product_change_stacks.size() > 0) {
                 product_change_stacks.clear();
                 // reset refund must pay
+                Double tot_price = 0.0;
+                try {
+                    if (product_retur_stacks.size() > 0) {
+                        for (Map.Entry<Integer, Integer> entry : product_retur_stacks.entrySet()) {
+                            tot_price = tot_price + product_price_stacks.get(entry.getKey()) * entry.getValue();
+                        }
+                    }
+                } catch (Exception e){e.printStackTrace();}
 
-            }
-            if (otheritemList != null && otheritemList.size() > 0) {
+                refund_must_pay = tot_price;
                 buildChangeOtherItemList();
             }
         } catch (Exception e){e.printStackTrace();}
@@ -606,7 +599,16 @@ public class ReturActivity extends AppCompatActivity {
         if (otheritemList.size() > 0) {
             AdapterListProductChange pAdap = new AdapterListProductChange(ReturActivity.this, otheritemList, register);
             pAdap.setSheetView(sheetView);
-            pAdap.setDepositLimit(refund_must_pay);
+            /*String _debt_must_pay = ((TextView) sheetView.findViewById(R.id.debt_must_pay)).getText().toString();
+            if (_debt_must_pay.length() > 0 && _debt_must_pay.contains(".")) {
+                _debt_must_pay = _debt_must_pay.replaceAll("[.]", "");
+            }
+            double parsed = Double.parseDouble(_debt_must_pay);
+            if (refund_must_pay != parsed) {
+                pAdap.setDepositLimit(parsed);
+            } else {*/
+                pAdap.setDepositLimit(refund_must_pay);
+            //}
             changeOtherItemListRecycle.setAdapter(pAdap);
         }
     }
@@ -629,6 +631,7 @@ public class ReturActivity extends AppCompatActivity {
             product_change_stacks.remove(product_id);
             product_change_lineitem_stacks.remove(product_id);
         }
+        clearPaymentData();
         Log.e(getClass().getSimpleName(), "product_change_stacks : "+ product_change_stacks.toString());
     }
 
@@ -656,5 +659,23 @@ public class ReturActivity extends AppCompatActivity {
         }
 
         return false;
+    }
+
+    private void clearPaymentData() {
+        if (payment_items != null && payment_items.size() > 0) {
+            payment_items.clear();
+        }
+        if (cash_receive != null && cash_receive.getText().length() > 0) {
+            cash_receive.setText("");
+        }
+        if (nominal_bca != null && nominal_bca.getText().length() > 0) {
+            nominal_bca.setText("");
+        }
+        if (nominal_mandiri != null && nominal_mandiri.getText().length() > 0) {
+            nominal_mandiri.setText("");
+        }
+        if (nominal_bri != null && nominal_bri.getText().length() > 0) {
+            nominal_bri.setText("");
+        }
     }
 }
