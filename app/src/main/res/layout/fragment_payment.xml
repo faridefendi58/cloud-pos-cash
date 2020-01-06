@@ -434,7 +434,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:paddingVertical="@dimen/spacing_large"
-                            android:text="@string/payment_cash"
+                            android:text="@string/label_activate_cash"
                             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                             android:textColor="@color/grey_40"
                             android:textStyle="bold"

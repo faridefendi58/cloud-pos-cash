@@ -243,7 +243,7 @@
     <string name="label_print_header">Header :</string>
     <string name="label_print_footer">Footer :</string>
 
-    <string name="label_change_due">Uang Kembali</string>
+    <string name="label_change_due">Uang Kembali (Tunai)</string>
     <string name="label_dept">Hutang</string>
     <string name="label_date">Tanggal</string>
     <string name="label_date_created">Tgl. Buat</string>
@@ -310,6 +310,9 @@
     <string name="label_gofood_fee">Fee GoFood</string>
     <string name="label_grabfood_fee">Fee GrabFood</string>
     <string name="label_merchant_discount">Diskon Merchant</string>
+    <string name="label_activate_cash">Aktifkan Pembayaran Tunai</string>
+    <string name="label_gojek">Gojek</string>
+    <string name="label_grab">Grab</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Bank Mandiri</string>
@@ -346,7 +349,7 @@
     <string name="shipping_method_gojek_grab">GoSend / Grab Express</string>
     <string name="shipping_method_tokopedia">Tokopedia</string>
     <string name="shipping_method_gofood">GoFood</string>
-    <string name="shipping_method_grab_food">Grab Food</string>
+    <string name="shipping_method_grab_food">GrabFood</string>
 
     <string name="hint_email">Contoh: john@gmail.com</string>
     <string name="hint_retur_notes">Tambahkan catatan jika diperlukan.</string>

@@ -583,7 +583,13 @@ public class FeeDetailActivity extends AppCompatActivity {
                                     "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(fee_merchant) + "</td>";*/
                         if (fee_merchant < 0) {
                             disc_ojol = -1 * fee_merchant;
-                            discount_ojol_notes += merchant_data.getString("name") + " " + CurrencyController.getInstance().moneyFormat(disc_ojol);
+                            String merc_name = merchant_data.getString("name");
+                            if (merchant_data.getString("name") == "GrabFood") {
+                                merc_name = getResources().getString(R.string.label_grab);
+                            } else {
+                                merc_name = getResources().getString(R.string.label_gojek);
+                            }
+                            discount_ojol_notes += merc_name + " " + CurrencyController.getInstance().moneyFormat(disc_ojol);
                         }
                     }
                 }
@@ -705,8 +711,12 @@ public class FeeDetailActivity extends AppCompatActivity {
                     "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(_tot_refund) +"</td></tr>";
             //res += "<tr><td colspan=\"4\"><hr/></td></tr>";
             Double _tot_omzet = grand_total + _tot_refund;
+            res += "<tr><td colspan=\"4\"><hr/></td></tr>";
             res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\"><b>Total Omzet :</b></td>" +
                     "<td style=\"text-align:right;\"><b>"+ CurrencyController.getInstance().moneyFormat(_tot_omzet) +"</b></td></tr>";
+            res += "<tr class=\"ft-17\"><td>&nbsp;</td>" +
+                    "<td colspan=\"3\">&nbsp;</td></tr>";
+            res += "<tr><td colspan=\"4\">&nbsp;</td></tr>";
         }
         // endof tambahan per 23 dec 19
 
@@ -838,8 +848,8 @@ public class FeeDetailActivity extends AppCompatActivity {
 
                 if (sub_total_fee > 0) {
                     res += "<tr><td colspan=\"4\"><hr/></td></tr>";
-                    res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_total_fee) +" :</td>" +
-                            "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(sub_total_fee) +"</td>";
+                    res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\"><b>"+ getResources().getString(R.string.label_total_fee) +" :</b></td>" +
+                            "<td style=\"text-align:right;\"><b>"+ CurrencyController.getInstance().moneyFormat(sub_total_fee) +"</b></td>";
                 }
             }
         }
@@ -861,6 +871,22 @@ public class FeeDetailActivity extends AppCompatActivity {
         result.put("wallet_tokopedia", R.string.payment_wallet_tokopedia);
         result.put("wallet_gofood", R.string.payment_wallet_gofood);
         result.put("wallet_grabfood", R.string.payment_wallet_grab_food);
+
+        return result.get(channel);
+    }
+
+    public Integer getPaymentInstitution(String channel) {
+        Map<String, Integer> result = new HashMap<>();
+
+        result.put("cash_receive", R.string.payment_cash);
+        result.put("nominal_mandiri", R.string.payment_mandiri);
+        result.put("nominal_bca", R.string.payment_bca);
+        result.put("nominal_bri", R.string.payment_bri);
+        result.put("nominal_edc", R.string.payment_edc);
+        result.put("nominal_wallet_tokopedia", R.string.payment_wallet_tokopedia);
+        result.put("wallet_tokopedia", R.string.payment_wallet_tokopedia);
+        result.put("wallet_gofood", R.string.label_gojek);
+        result.put("wallet_grabfood", R.string.label_grab);
 
         return result.get(channel);
     }
