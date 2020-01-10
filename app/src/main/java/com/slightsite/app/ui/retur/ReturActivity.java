@@ -438,6 +438,11 @@ public class ReturActivity extends AppCompatActivity {
                             "Pembayaran masih kurang " + (refund_must_pay - tot_payment),
                             Toast.LENGTH_SHORT).show();
                     payment_items.clear();
+                } else if (tot_payment > refund_must_pay) {
+                    Toast.makeText(getApplicationContext(),
+                            "Pembayaran maksimal " + CurrencyController.getInstance().moneyFormat(refund_must_pay),
+                            Toast.LENGTH_SHORT).show();
+                    payment_items.clear();
                 } else {
                     // ready to submit
                     try {

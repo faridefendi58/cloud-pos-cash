@@ -374,6 +374,31 @@ public class CheckoutActivity extends AppCompatActivity {
 
                                     vibe.vibrate(200);
                                     return;
+                                } else if (checkout_data.getTotalPaymentReceived() > total_tagihan_gograb) {
+                                    if (!checkout_data.getUseCash()) {
+                                        Toast.makeText(getBaseContext(),
+                                                getResources().getString(R.string.error_payment_should_be_exact), Toast.LENGTH_LONG)
+                                                .show();
+
+                                        vibe.vibrate(200);
+                                        return;
+                                    }
+                                }
+                            }
+                        } catch (Exception e){e.printStackTrace();}
+                        // check exact payment
+                        try {
+                            Double _tot_inv = register.getCurrentSale().getTotal() - register.getCurrentSale().getDiscount();
+                            Log.e("CUK", "_tot_inv"+ _tot_inv);
+                            if (checkout_data.getUseEdc()) {
+                                // do something
+                                if (checkout_data.getTotalPaymentReceived() > _tot_inv) {
+                                    Toast.makeText(getBaseContext(),
+                                            getResources().getString(R.string.error_payment_should_be_exact), Toast.LENGTH_LONG)
+                                            .show();
+
+                                    vibe.vibrate(200);
+                                    return;
                                 }
                             }
                         } catch (Exception e){e.printStackTrace();}
