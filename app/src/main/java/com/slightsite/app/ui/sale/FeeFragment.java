@@ -268,6 +268,11 @@ public class FeeFragment extends UpdatableFragment {
                                                 no = no + 1;
                                             } catch (Exception e){}
                                         }
+
+                                        if (summary_data.has("change_due") && summary_data.getInt("change_due") > 0) {
+                                            Payment pym = new Payment(paymentList.size() + 1, "change_due", summary_data.getDouble("change_due"));
+                                            paymentList.add(pym);
+                                        }
                                     }
 
                                     if (summary_data.has("refunds")) {

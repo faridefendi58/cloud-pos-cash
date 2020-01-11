@@ -81,6 +81,9 @@ public class Payment implements Serializable {
                     formated_payment_channel = "Refund "+ getPaymentTypes().get(split[1]);
                     map.put("formated_amount", "- "+ formated_amount);
                 }
+            } else if (payment_channel == "change_due") {
+                formated_payment_channel = "Uang Kembali (Tunai)";
+                map.put("formated_amount", "- "+ formated_amount);
             } else {
                 formated_payment_channel = getPaymentTypes().get(payment_channel);
             }

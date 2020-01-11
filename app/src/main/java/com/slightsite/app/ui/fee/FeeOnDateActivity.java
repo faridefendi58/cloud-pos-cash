@@ -180,6 +180,7 @@ public class FeeOnDateActivity extends AppCompatActivity {
                                     if (payments.length() > 0) {
                                         Iterator<String> pkeys = payments.keys();
                                         int no = 1;
+                                        Double change_due = 0.0;
                                         while(pkeys.hasNext()) {
                                             String key = pkeys.next();
                                             try {
@@ -187,6 +188,11 @@ public class FeeOnDateActivity extends AppCompatActivity {
                                                 paymentList.add(pym);
                                                 no = no + 1;
                                             } catch (Exception e){}
+                                        }
+
+                                        if (summary_data.has("change_due") && summary_data.getInt("change_due") > 0) {
+                                            Payment pym = new Payment(paymentList.size() + 1, "change_due", summary_data.getDouble("change_due"));
+                                            paymentList.add(pym);
                                         }
                                     }
 
