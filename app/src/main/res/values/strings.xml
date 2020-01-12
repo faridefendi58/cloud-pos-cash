@@ -366,4 +366,9 @@
     <string name="heading_retur_detail">Retur Detail</string>
     <string name="heading_refund_detail">Refund Detail</string>
     <string name="heading_retur_reason">Retur Reason</string>
+    <string name="heading_sale_detail">Sales Detail</string>
+    <string name="heading_sale_total">Sales Total</string>
+    <string name="heading_sale_min_order10">Min. Order 10</string>
+    <string name="heading_sale_min_order5">Min. Order 5</string>
+    <string name="heading_sale_eceran">Retail</string>
 </resources>

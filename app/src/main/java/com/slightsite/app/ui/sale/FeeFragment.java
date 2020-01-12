@@ -40,6 +40,7 @@ import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.payment.Payment;
 import com.slightsite.app.domain.sale.Fee;
+import com.slightsite.app.domain.sale.ItemCounter;
 import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
@@ -47,6 +48,7 @@ import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.component.UpdatableFragment;
 import com.slightsite.app.ui.fee.AdapterListPaymentOn;
+import com.slightsite.app.ui.fee.AdapterListSaleCounter;
 import com.slightsite.app.ui.fee.FeeOnDateActivity;
 
 import org.json.JSONArray;
@@ -76,8 +78,15 @@ public class FeeFragment extends UpdatableFragment {
     private RecyclerView feeListRecycle;
     private RecyclerView paymentitemListView;
     private RecyclerView refundListRecycle;
+    private RecyclerView saleItemListRecycle;
+    private RecyclerView minOrder10ItemListRecycle;
+    private RecyclerView minOrder5ItemListRecycle;
+    private RecyclerView eceranItemListRecycle;
     private LinearLayout fee_information_container;
     private LinearLayout refund_detail_container;
+    private LinearLayout grosirListContainer;
+    private LinearLayout semiGrosirListContainer;
+    private LinearLayout eceranListContainer;
     private RelativeLayout no_data_container;
     private Button button_fee_research;
     private Button button_fee_reset_to_default;
@@ -145,6 +154,9 @@ public class FeeFragment extends UpdatableFragment {
         total_transaction = (TextView) root.findViewById(R.id.total_transaction);
         fee_information_container = (LinearLayout) root.findViewById(R.id.fee_information_container);
         refund_detail_container = (LinearLayout) root.findViewById(R.id.refund_detail_container);
+        grosirListContainer = (LinearLayout) root.findViewById(R.id.grosirListContainer);
+        semiGrosirListContainer = (LinearLayout) root.findViewById(R.id.semiGrosirListContainer);
+        eceranListContainer = (LinearLayout) root.findViewById(R.id.eceranListContainer);
         no_data_container = (RelativeLayout) root.findViewById(R.id.no_fee_data_container);
         button_fee_research = (Button) root.findViewById(R.id.button_fee_research);
         button_fee_reset_to_default = (Button) root.findViewById(R.id.button_fee_reset_to_default);
@@ -214,8 +226,20 @@ public class FeeFragment extends UpdatableFragment {
         //refundListRecycle.setHasFixedSize(true);
         //refundListRecycle.setNestedScrollingEnabled(false);
 
+        saleItemListRecycle = (RecyclerView) root.findViewById(R.id.saleItemListRecycle);
+        saleItemListRecycle.setLayoutManager(new LinearLayoutManager(main.getApplicationContext()));
+
+        minOrder10ItemListRecycle = (RecyclerView) root.findViewById(R.id.minOrder10ItemListRecycle);
+        minOrder10ItemListRecycle.setLayoutManager(new LinearLayoutManager(main.getApplicationContext()));
+
+        minOrder5ItemListRecycle = (RecyclerView) root.findViewById(R.id.minOrder5ItemListRecycle);
+        minOrder5ItemListRecycle.setLayoutManager(new LinearLayoutManager(main.getApplicationContext()));
+
+        eceranItemListRecycle = (RecyclerView) root.findViewById(R.id.eceranItemListRecycle);
+        eceranItemListRecycle.setLayoutManager(new LinearLayoutManager(main.getApplicationContext()));
+
         int warehouse_id = Integer.parseInt(paramCatalog.getParamByName("warehouse_id").getValue());
-        Map<String, String> params = new HashMap<String, String>();
+        final Map<String, String> params = new HashMap<String, String>();
         params.put("warehouse_id", warehouse_id + "");
         params.put("created_at_from", date_from);
         params.put("created_at_to", date_to);
@@ -328,6 +352,7 @@ public class FeeFragment extends UpdatableFragment {
 
                                         refund_detail_container.setVisibility(View.VISIBLE);*/
                                     }
+                                    buildTheItemSummary(params);
                                 } else {
                                     fee_information_container.setVisibility(View.GONE);
                                     no_data_container.setVisibility(View.VISIBLE);
@@ -509,5 +534,102 @@ public class FeeFragment extends UpdatableFragment {
 
             }
         });
+    }
+
+    private void buildTheItemSummary(Map<String, String> params) {
+        String url = Server.URL + "transaction/list-sale-counter?api-key=" + Server.API_KEY;
+        _string_request(Request.Method.GET, url, params, false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            Log.e(getClass().getSimpleName(), "result : " + result);
+                            if (result.contains("success")) {
+                                JSONObject jObj = new JSONObject(result);
+                                int success = jObj.getInt("success");
+                                // Check for error node in json
+                                ArrayList<ItemCounter> listSaleEceran = new ArrayList<ItemCounter>();
+                                ArrayList<ItemCounter> listSaleSemiGrosir = new ArrayList<ItemCounter>();
+                                ArrayList<ItemCounter> listSaleGrosir = new ArrayList<ItemCounter>();
+                                ArrayList<ItemCounter> listSaleSummary = new ArrayList<ItemCounter>();
+                                if (success == 1) {
+                                    JSONObject data = jObj.getJSONObject("data");
+                                    JSONObject items_data = data.getJSONObject("items");
+                                    if (items_data.has("eceran")) {
+                                        JSONObject eceran = items_data.getJSONObject("eceran");
+                                        if (eceran.length() > 0) {
+                                            Iterator<String> rkeys = eceran.keys();
+                                            while(rkeys.hasNext()) {
+                                                String key = rkeys.next();
+                                                try {
+                                                    ItemCounter _item_counter = new ItemCounter(key, eceran.getInt(key));
+                                                    listSaleEceran.add(_item_counter);
+                                                } catch (Exception e){}
+                                            }
+
+                                            eceranListContainer.setVisibility(View.VISIBLE);
+                                            AdapterListSaleCounter smAdap = new AdapterListSaleCounter(listSaleEceran);
+                                            eceranItemListRecycle.setAdapter(smAdap);
+                                        } else {
+                                            eceranListContainer.setVisibility(View.GONE);
+                                        }
+                                    }
+
+                                    if (items_data.has("semi_grosir")) {
+                                        JSONObject semi_grosir = items_data.getJSONObject("semi_grosir");
+                                        if (semi_grosir.length() > 0) {
+                                            Iterator<String> rkeys = semi_grosir.keys();
+                                            while(rkeys.hasNext()) {
+                                                String key = rkeys.next();
+                                                try {
+                                                    ItemCounter _item_counter = new ItemCounter(key, semi_grosir.getInt(key));
+                                                    listSaleSemiGrosir.add(_item_counter);
+                                                } catch (Exception e){}
+                                            }
+                                            semiGrosirListContainer.setVisibility(View.VISIBLE);
+                                            AdapterListSaleCounter smAdap = new AdapterListSaleCounter(listSaleSemiGrosir);
+                                            minOrder5ItemListRecycle.setAdapter(smAdap);
+                                        } else {
+                                            semiGrosirListContainer.setVisibility(View.GONE);
+                                        }
+                                    }
+
+                                    if (items_data.has("grosir")) {
+                                        JSONObject grosir = items_data.getJSONObject("grosir");
+                                        if (grosir.length() > 0) {
+                                            Iterator<String> rkeys = grosir.keys();
+                                            while(rkeys.hasNext()) {
+                                                String key = rkeys.next();
+                                                try {
+                                                    ItemCounter _item_counter = new ItemCounter(key, grosir.getInt(key));
+                                                    listSaleGrosir.add(_item_counter);
+                                                } catch (Exception e){}
+                                            }
+                                            grosirListContainer.setVisibility(View.VISIBLE);
+                                            AdapterListSaleCounter smAdap = new AdapterListSaleCounter(listSaleGrosir);
+                                            minOrder10ItemListRecycle.setAdapter(smAdap);
+                                        } else {
+                                            grosirListContainer.setVisibility(View.GONE);
+                                        }
+                                    }
+
+                                    JSONObject summary_data = data.getJSONObject("summary");
+                                    if (summary_data.length() > 0) {
+                                        Iterator<String> rkeys = summary_data.keys();
+                                        while(rkeys.hasNext()) {
+                                            String key = rkeys.next();
+                                            try {
+                                                ItemCounter _item_counter = new ItemCounter(key, summary_data.getInt(key));
+                                                listSaleSummary.add(_item_counter);
+                                            } catch (Exception e){}
+                                        }
+                                    }
+                                    AdapterListSaleCounter smAdap = new AdapterListSaleCounter(listSaleSummary);
+                                    saleItemListRecycle.setAdapter(smAdap);
+                                }
+                            }
+                        } catch (Exception e){e.printStackTrace();}
+                    }
+                });
     }
 }

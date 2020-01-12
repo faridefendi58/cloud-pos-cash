@@ -364,4 +364,9 @@
     <string name="heading_retur_detail">Rincian Retur</string>
     <string name="heading_refund_detail">Rincian Refund</string>
     <string name="heading_retur_reason">Alasan Retur</string>
+    <string name="heading_sale_detail">Rincian Penjualan</string>
+    <string name="heading_sale_total">Total Penjualan</string>
+    <string name="heading_sale_min_order10">Min. Order 10</string>
+    <string name="heading_sale_min_order5">Min. Order 5</string>
+    <string name="heading_sale_eceran">Eceran</string>
 </resources>
