@@ -182,6 +182,14 @@
                     </LinearLayout>
 
                 </LinearLayout>
+
+                <!-- start of sale item detail -->
+                <include
+                        android:id="@+id/sale_item_detail_container"
+                        layout="@layout/_fee_sale_detail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_middle"/>
                 <!-- End of Footer fee report -->
 
             </LinearLayout>

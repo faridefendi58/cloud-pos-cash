@@ -148,6 +148,11 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey_20"/>
+
         <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -164,6 +169,42 @@
 
         <android.support.v7.widget.RecyclerView
                 android:id="@+id/saleItemListRecycle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/spacing_middle"
+                android:scrollbars="vertical"
+                android:scrollingCache="true" />
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/saleReturItemContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey_20"/>
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="@string/heading_sale_retur"
+                android:textSize="@dimen/spacing_large"
+                android:padding="@dimen/spacing_middle"/>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="@dimen/spacing_middle"
+                android:background="@color/grey_20"/>
+
+        <android.support.v7.widget.RecyclerView
+                android:id="@+id/saleReturItemListRecycle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/spacing_middle"

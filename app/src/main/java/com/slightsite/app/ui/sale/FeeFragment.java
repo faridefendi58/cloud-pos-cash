@@ -82,11 +82,13 @@ public class FeeFragment extends UpdatableFragment {
     private RecyclerView minOrder10ItemListRecycle;
     private RecyclerView minOrder5ItemListRecycle;
     private RecyclerView eceranItemListRecycle;
+    private RecyclerView saleReturItemListRecycle;
     private LinearLayout fee_information_container;
     private LinearLayout refund_detail_container;
     private LinearLayout grosirListContainer;
     private LinearLayout semiGrosirListContainer;
     private LinearLayout eceranListContainer;
+    private LinearLayout saleReturItemContainer;
     private RelativeLayout no_data_container;
     private Button button_fee_research;
     private Button button_fee_reset_to_default;
@@ -157,6 +159,7 @@ public class FeeFragment extends UpdatableFragment {
         grosirListContainer = (LinearLayout) root.findViewById(R.id.grosirListContainer);
         semiGrosirListContainer = (LinearLayout) root.findViewById(R.id.semiGrosirListContainer);
         eceranListContainer = (LinearLayout) root.findViewById(R.id.eceranListContainer);
+        saleReturItemContainer = (LinearLayout) root.findViewById(R.id.saleReturItemContainer);
         no_data_container = (RelativeLayout) root.findViewById(R.id.no_fee_data_container);
         button_fee_research = (Button) root.findViewById(R.id.button_fee_research);
         button_fee_reset_to_default = (Button) root.findViewById(R.id.button_fee_reset_to_default);
@@ -237,6 +240,9 @@ public class FeeFragment extends UpdatableFragment {
 
         eceranItemListRecycle = (RecyclerView) root.findViewById(R.id.eceranItemListRecycle);
         eceranItemListRecycle.setLayoutManager(new LinearLayoutManager(main.getApplicationContext()));
+
+        saleReturItemListRecycle = (RecyclerView) root.findViewById(R.id.saleReturItemListRecycle);
+        saleReturItemListRecycle.setLayoutManager(new LinearLayoutManager(main.getApplicationContext()));
 
         int warehouse_id = Integer.parseInt(paramCatalog.getParamByName("warehouse_id").getValue());
         final Map<String, String> params = new HashMap<String, String>();
@@ -552,6 +558,7 @@ public class FeeFragment extends UpdatableFragment {
                                 ArrayList<ItemCounter> listSaleSemiGrosir = new ArrayList<ItemCounter>();
                                 ArrayList<ItemCounter> listSaleGrosir = new ArrayList<ItemCounter>();
                                 ArrayList<ItemCounter> listSaleSummary = new ArrayList<ItemCounter>();
+                                ArrayList<ItemCounter> listSaleReturSummary = new ArrayList<ItemCounter>();
                                 if (success == 1) {
                                     JSONObject data = jObj.getJSONObject("data");
                                     JSONObject items_data = data.getJSONObject("items");
@@ -626,6 +633,42 @@ public class FeeFragment extends UpdatableFragment {
                                     }
                                     AdapterListSaleCounter smAdap = new AdapterListSaleCounter(listSaleSummary);
                                     saleItemListRecycle.setAdapter(smAdap);
+
+
+                                    if (data.has("returs")) {
+                                        Boolean is_json_valid = Tools.isJSONObject(data.getString("returs"));
+                                        if (is_json_valid) { // check is json object
+                                            JSONObject returs_data = data.getJSONObject("returs");
+                                            if (returs_data.length() > 0) {
+                                                Iterator<String> rkeys = returs_data.keys();
+                                                while (rkeys.hasNext()) {
+                                                    String key = rkeys.next();
+                                                    try {
+                                                        JSONObject returs_product = returs_data.getJSONObject(key);
+                                                        if (returs_product.length() > 0) {
+                                                            Iterator<String> rkeys2 = returs_product.keys();
+                                                            while (rkeys2.hasNext()) {
+                                                                String key2 = rkeys2.next();
+                                                                if (returs_product.getInt(key2) < 0) {
+                                                                    ItemCounter _item_counter2 = new ItemCounter(key2, returs_product.getInt(key2));
+                                                                    listSaleReturSummary.add(_item_counter2);
+                                                                }
+                                                            }
+                                                        }
+                                                    } catch (Exception e) {}
+                                                }
+                                                if (listSaleReturSummary.size() > 0) {
+                                                    AdapterListSaleCounter rtAdap = new AdapterListSaleCounter(listSaleReturSummary);
+                                                    saleReturItemListRecycle.setAdapter(rtAdap);
+                                                    saleReturItemContainer.setVisibility(View.VISIBLE);
+                                                } else {
+                                                    saleReturItemContainer.setVisibility(View.GONE);
+                                                }
+                                            }
+                                        } else {
+                                            saleReturItemContainer.setVisibility(View.GONE);
+                                        }
+                                    }
                                 }
                             }
                         } catch (Exception e){e.printStackTrace();}

@@ -31,6 +31,7 @@ import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.payment.Payment;
 import com.slightsite.app.domain.sale.Fee;
 import com.slightsite.app.domain.sale.FeeOn;
+import com.slightsite.app.domain.sale.ItemCounter;
 import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
@@ -58,6 +59,17 @@ public class FeeOnDateActivity extends AppCompatActivity {
     private LinearLayout refund_detail_container;
     private RecyclerView refundListRecycle;
 
+    private RecyclerView saleItemListRecycle;
+    private RecyclerView minOrder10ItemListRecycle;
+    private RecyclerView minOrder5ItemListRecycle;
+    private RecyclerView eceranItemListRecycle;
+    private RecyclerView saleReturItemListRecycle;
+
+    private LinearLayout grosirListContainer;
+    private LinearLayout semiGrosirListContainer;
+    private LinearLayout eceranListContainer;
+    private LinearLayout saleReturItemContainer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +88,7 @@ public class FeeOnDateActivity extends AppCompatActivity {
         }
 
         initToolbar();
+        initView();
         buildListFee();
     }
 
@@ -102,6 +115,28 @@ public class FeeOnDateActivity extends AppCompatActivity {
             finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void initView() {
+        grosirListContainer = (LinearLayout) findViewById(R.id.grosirListContainer);
+        semiGrosirListContainer = (LinearLayout) findViewById(R.id.semiGrosirListContainer);
+        eceranListContainer = (LinearLayout) findViewById(R.id.eceranListContainer);
+        saleReturItemContainer = (LinearLayout) findViewById(R.id.saleReturItemContainer);
+
+        saleItemListRecycle = (RecyclerView) findViewById(R.id.saleItemListRecycle);
+        saleItemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
+        minOrder10ItemListRecycle = (RecyclerView) findViewById(R.id.minOrder10ItemListRecycle);
+        minOrder10ItemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
+        minOrder5ItemListRecycle = (RecyclerView) findViewById(R.id.minOrder5ItemListRecycle);
+        minOrder5ItemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
+        eceranItemListRecycle = (RecyclerView) findViewById(R.id.eceranItemListRecycle);
+        eceranItemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
+        saleReturItemListRecycle = (RecyclerView) findViewById(R.id.saleReturItemListRecycle);
+        saleReturItemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
     }
 
     private TextView fee_report_title;
@@ -132,7 +167,7 @@ public class FeeOnDateActivity extends AppCompatActivity {
         refund_detail_container = (LinearLayout) findViewById(R.id.refund_detail_container);
 
         int warehouse_id = Integer.parseInt(paramCatalog.getParamByName("warehouse_id").getValue());
-        Map<String, String> params = new HashMap<String, String>();
+        final Map<String, String> params = new HashMap<String, String>();
         params.put("warehouse_id", warehouse_id + "");
         params.put("created_at", date_fee);
         params.put("group_by", "invoice_id");
@@ -244,6 +279,12 @@ public class FeeOnDateActivity extends AppCompatActivity {
 
                                     refund_detail_container.setVisibility(View.VISIBLE);*/
                                 }
+
+                                // build sales counter summary
+                                Map<String, String> params2 = new HashMap<String, String>();
+                                params2.put("created_at_from", params.get("created_at"));
+                                params2.put("warehouse_id", params.get("warehouse_id"));
+                                buildTheItemSummary(params2);
                             } else {
                                 Toast.makeText(getApplicationContext(), "Failed!, No product data in ",
                                         Toast.LENGTH_LONG).show();
@@ -303,5 +344,139 @@ public class FeeOnDateActivity extends AppCompatActivity {
 
     public interface VolleyCallback {
         void onSuccess(String result);
+    }
+
+    private void buildTheItemSummary(Map<String, String> params) {
+        String url = Server.URL + "transaction/list-sale-counter?api-key=" + Server.API_KEY;
+        _string_request(Request.Method.GET, url, params, false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            Log.e(getClass().getSimpleName(), "result : " + result);
+                            if (result.contains("success")) {
+                                JSONObject jObj = new JSONObject(result);
+                                int success = jObj.getInt("success");
+                                // Check for error node in json
+                                ArrayList<ItemCounter> listSaleEceran = new ArrayList<ItemCounter>();
+                                ArrayList<ItemCounter> listSaleSemiGrosir = new ArrayList<ItemCounter>();
+                                ArrayList<ItemCounter> listSaleGrosir = new ArrayList<ItemCounter>();
+                                ArrayList<ItemCounter> listSaleSummary = new ArrayList<ItemCounter>();
+                                ArrayList<ItemCounter> listSaleReturSummary = new ArrayList<ItemCounter>();
+                                if (success == 1) {
+                                    JSONObject data = jObj.getJSONObject("data");
+                                    JSONObject items_data = data.getJSONObject("items");
+                                    if (items_data.has("eceran")) {
+                                        JSONObject eceran = items_data.getJSONObject("eceran");
+                                        if (eceran.length() > 0) {
+                                            Iterator<String> rkeys = eceran.keys();
+                                            while(rkeys.hasNext()) {
+                                                String key = rkeys.next();
+                                                try {
+                                                    ItemCounter _item_counter = new ItemCounter(key, eceran.getInt(key));
+                                                    listSaleEceran.add(_item_counter);
+                                                } catch (Exception e){}
+                                            }
+
+                                            eceranListContainer.setVisibility(View.VISIBLE);
+                                            AdapterListSaleCounter smAdap = new AdapterListSaleCounter(listSaleEceran);
+                                            eceranItemListRecycle.setAdapter(smAdap);
+                                        } else {
+                                            eceranListContainer.setVisibility(View.GONE);
+                                        }
+                                    }
+
+                                    if (items_data.has("semi_grosir")) {
+                                        JSONObject semi_grosir = items_data.getJSONObject("semi_grosir");
+                                        if (semi_grosir.length() > 0) {
+                                            Iterator<String> rkeys = semi_grosir.keys();
+                                            while(rkeys.hasNext()) {
+                                                String key = rkeys.next();
+                                                try {
+                                                    ItemCounter _item_counter = new ItemCounter(key, semi_grosir.getInt(key));
+                                                    listSaleSemiGrosir.add(_item_counter);
+                                                } catch (Exception e){}
+                                            }
+                                            semiGrosirListContainer.setVisibility(View.VISIBLE);
+                                            AdapterListSaleCounter smAdap = new AdapterListSaleCounter(listSaleSemiGrosir);
+                                            minOrder5ItemListRecycle.setAdapter(smAdap);
+                                        } else {
+                                            semiGrosirListContainer.setVisibility(View.GONE);
+                                        }
+                                    }
+
+                                    if (items_data.has("grosir")) {
+                                        JSONObject grosir = items_data.getJSONObject("grosir");
+                                        if (grosir.length() > 0) {
+                                            Iterator<String> rkeys = grosir.keys();
+                                            while(rkeys.hasNext()) {
+                                                String key = rkeys.next();
+                                                try {
+                                                    ItemCounter _item_counter = new ItemCounter(key, grosir.getInt(key));
+                                                    listSaleGrosir.add(_item_counter);
+                                                } catch (Exception e){}
+                                            }
+                                            grosirListContainer.setVisibility(View.VISIBLE);
+                                            AdapterListSaleCounter smAdap = new AdapterListSaleCounter(listSaleGrosir);
+                                            minOrder10ItemListRecycle.setAdapter(smAdap);
+                                        } else {
+                                            grosirListContainer.setVisibility(View.GONE);
+                                        }
+                                    }
+
+                                    JSONObject summary_data = data.getJSONObject("summary");
+                                    if (summary_data.length() > 0) {
+                                        Iterator<String> rkeys = summary_data.keys();
+                                        while(rkeys.hasNext()) {
+                                            String key = rkeys.next();
+                                            try {
+                                                ItemCounter _item_counter = new ItemCounter(key, summary_data.getInt(key));
+                                                listSaleSummary.add(_item_counter);
+                                            } catch (Exception e){}
+                                        }
+                                    }
+                                    AdapterListSaleCounter smAdap = new AdapterListSaleCounter(listSaleSummary);
+                                    saleItemListRecycle.setAdapter(smAdap);
+
+
+                                    if (data.has("returs")) {
+                                        Boolean is_json_valid = Tools.isJSONObject(data.getString("returs"));
+                                        if (is_json_valid) { // check is json object
+                                            JSONObject returs_data = data.getJSONObject("returs");
+                                            if (returs_data.length() > 0) {
+                                                Iterator<String> rkeys = returs_data.keys();
+                                                while (rkeys.hasNext()) {
+                                                    String key = rkeys.next();
+                                                    try {
+                                                        JSONObject returs_product = returs_data.getJSONObject(key);
+                                                        if (returs_product.length() > 0) {
+                                                            Iterator<String> rkeys2 = returs_product.keys();
+                                                            while (rkeys2.hasNext()) {
+                                                                String key2 = rkeys2.next();
+                                                                if (returs_product.getInt(key2) < 0) {
+                                                                    ItemCounter _item_counter2 = new ItemCounter(key2, returs_product.getInt(key2));
+                                                                    listSaleReturSummary.add(_item_counter2);
+                                                                }
+                                                            }
+                                                        }
+                                                    } catch (Exception e) {}
+                                                }
+                                                if (listSaleReturSummary.size() > 0) {
+                                                    AdapterListSaleCounter rtAdap = new AdapterListSaleCounter(listSaleReturSummary);
+                                                    saleReturItemListRecycle.setAdapter(rtAdap);
+                                                    saleReturItemContainer.setVisibility(View.VISIBLE);
+                                                } else {
+                                                    saleReturItemContainer.setVisibility(View.GONE);
+                                                }
+                                            }
+                                        } else {
+                                            saleReturItemContainer.setVisibility(View.GONE);
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (Exception e){e.printStackTrace();}
+                    }
+                });
     }
 }

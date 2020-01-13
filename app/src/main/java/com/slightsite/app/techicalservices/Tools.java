@@ -30,6 +30,10 @@ import android.widget.Toast;
 
 import com.slightsite.app.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -351,6 +355,15 @@ public class Tools {
     public static String[] getInvoiceStatusItems() {
         String[] items = new String[]{"-", "lunas", "belum_lunas", "selesai", "hutang_tempo", "verified", "unverified"};
         return items;
+    }
+
+    public static boolean isJSONObject(String test) {
+        try {
+            new JSONObject(test);
+        } catch (JSONException ex) {
+            return false;
+        }
+        return true;
     }
 }
 
