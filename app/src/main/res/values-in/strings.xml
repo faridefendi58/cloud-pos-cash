@@ -187,6 +187,7 @@
     <string name="error_not_enough_payment">Jumlah yang Anda bayarkan masih kurang dari total tagihan.</string>
     <string name="error_empty_retur_reason">Pilih minimal 1 alasan retur</string>
     <string name="error_payment_should_be_exact">Jumlah yang dibayarkan harus sesuai dengan jumlah tagihan</string>
+    <string name="error_payment_gograb_should_be_exact">Nominal GoPay atau OVO yang dibayarkan harus lebih dari sama dengan jumlah tagihan</string>
     <string name="login_header_information">Isilah form ini dengan akun login anda,
         atau buat akun baru.</string>
     <string name="login_information">Siap naik kelas dengan teknologi?, Ayo Mulai Sekarang!</string>

@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.util.ArrayMap;
 import android.support.v7.widget.SwitchCompat;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -314,11 +315,16 @@ public class PaymentFragment extends Fragment {
                     String cleanString = s.toString().replaceAll("[.]", "");
                     if (cleanString.length() >= 3) {
                         etv.removeTextChangedListener(this);
+                        String formatted = "";
+                        if (setType.equals("card_number")) {
+                            formatted = Tools.cardFormat(cleanString);
+                            current_val = formatted;
+                        } else {
+                            double parsed = Double.parseDouble(cleanString);
+                            formatted = CurrencyController.getInstance().moneyFormat(parsed);
 
-                        double parsed = Double.parseDouble(cleanString);
-                        String formatted = CurrencyController.getInstance().moneyFormat(parsed);
-
-                        current_val = formatted;
+                            current_val = formatted;
+                        }
                         etv.setText(formatted);
                         etv.setSelection(formatted.length());
                         etv.addTextChangedListener(this);

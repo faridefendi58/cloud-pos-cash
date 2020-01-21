@@ -781,8 +781,8 @@ public class PrintPreviewActivity extends Activity {
 
         // check is use go/grab food
         Boolean hide_change_due = false;
+        int fee_merchant = 0;
         if (merchant_data.length() > 0) {
-            int fee_merchant = 0;
             try {
                 if (merchant_data.has("total_invoice")) {
                     String str_total_invoice = merchant_data.getString("total_invoice");
@@ -790,9 +790,6 @@ public class PrintPreviewActivity extends Activity {
                         str_total_invoice = str_total_invoice.split("\\.")[0];
                     }
                     fee_merchant = Integer.parseInt(str_total_invoice) - grand_total - discount;
-                    Log.e("CUK", "str_total_invoice : "+ str_total_invoice);
-                    Log.e("CUK", "grand_total : "+ grand_total);
-                    Log.e("CUK", "discount : "+ discount);
                     if (fee_merchant > 0) {
                         res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\"> Fee " + merchant_data.getString("name") + " :</td>" +
                                 "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(fee_merchant) + "</td>";
@@ -810,8 +807,13 @@ public class PrintPreviewActivity extends Activity {
 
         if (paymentList != null && !paymentList.isEmpty()) {
             int payment_total = 0;
+            Double has_cash = 0.0;
             for (int j = 0; j < paymentList.size(); ++j) {
                 Payment py = paymentList.get(j);
+                Log.e("CUK", "py.getPaymentChannel() : "+ py.getPaymentChannel());
+                if (py.getPaymentChannel() .equals("cash_receive")) {
+                    has_cash = has_cash + py.getAmount();
+                }
                 int amnt = 0;
                 String amnt_str = String.format("%.0f", py.getAmount());
                 try {
@@ -833,6 +835,10 @@ public class PrintPreviewActivity extends Activity {
                         "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(amnt) +"</td>";*/
             }
             change_due = payment_total - grand_total;
+            if (hide_change_due && has_cash > 0) {
+                hide_change_due = false;
+                change_due = payment_total - (grand_total + fee_merchant);
+            }
         } else {
             res += "<tr class=\"ft-16\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.payment_cash) +" :</td>" +
                     "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(cash) +"</td>";

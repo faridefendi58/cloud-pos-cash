@@ -358,7 +358,6 @@ public class FeeFragment extends UpdatableFragment {
 
                                         refund_detail_container.setVisibility(View.VISIBLE);*/
                                     }
-                                    buildTheItemSummary(params);
                                 } else {
                                     fee_information_container.setVisibility(View.GONE);
                                     no_data_container.setVisibility(View.VISIBLE);

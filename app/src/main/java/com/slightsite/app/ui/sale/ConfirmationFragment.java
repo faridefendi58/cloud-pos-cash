@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
@@ -234,20 +235,34 @@ public class ConfirmationFragment extends Fragment {
 
                 if (c_data.getUseGoFood() || c_data.getUseGrabFood()) {
                     gograbfood_discount_container.setVisibility(View.VISIBLE);
-                    Double fee_ojol = change_due; // - c_data.getDiscount();
+                    Double fee_ojol = change_due;
+
                     if (change_due < 0) {
                         fee_ojol = change_due;
                     }
+
+                    if (c_data.getUseCash()) {
+                        fee_ojol = change_due - Double.parseDouble(c_data.getCashReceive());
+                    }
+
                     gograbfood_discount.setText(CurrencyController.getInstance().moneyFormat(fee_ojol));
+                    Double _total_price = 0.0;
+                    Double _ojol_tot = 0.0;
                     if (c_data.getUseGoFood()) {
-                        if (change_due <= 0) {
+                        if (fee_ojol < 0) {
                             gograbfood_discount_label.setText(getActivity().getResources().getString(R.string.label_gofood_discount));
-                        } else {
+                        } else if (fee_ojol > 0){
                             gograbfood_discount_label.setText(getActivity().getResources().getString(R.string.label_gofood_fee));
                         }
                         try {
-                            Double _total_price = Double.parseDouble(c_data.getTotalGoFoodInvoice()) - Double.parseDouble(c_data.getGofoodDiscount());
+                            _total_price = Double.parseDouble(c_data.getTotalGoFoodInvoice()) - Double.parseDouble(c_data.getGofoodDiscount());
                             gograbfood_total_price.setText(CurrencyController.getInstance().moneyFormat(_total_price));
+                            // check has cash
+                            if (c_data.getUseCash()) {
+                                Double change_due2 = c_data.getTotalPaymentReceived() - _total_price;
+                                changeDue.setText(CurrencyController.getInstance().moneyFormat(change_due2));
+                            }
+                            _ojol_tot = Double.parseDouble(c_data.getWalletGoFood());
                         } catch (Exception e){}
                         if (c_data.getDiscount() > 0) {
                             main_discount_container.setVisibility(View.VISIBLE);
@@ -256,14 +271,20 @@ public class ConfirmationFragment extends Fragment {
                             main_discount_container.setVisibility(View.GONE);
                         }
                     } else if (c_data.getUseGrabFood()) {
-                        if (change_due <= 0) {
+                        if (fee_ojol < 0) {
                             gograbfood_discount_label.setText(getActivity().getResources().getString(R.string.label_grabfood_discount));
-                        } else {
+                        } else if (fee_ojol > 0) {
                             gograbfood_discount_label.setText(getActivity().getResources().getString(R.string.label_grabfood_fee));
                         }
                         try {
-                            Double _total_price = Double.parseDouble(c_data.getTotalGrabFoodInvoice()) - Double.parseDouble(c_data.getGrabfoodDiscount());
+                            _total_price = Double.parseDouble(c_data.getTotalGrabFoodInvoice()) - Double.parseDouble(c_data.getGrabfoodDiscount());
                             gograbfood_total_price.setText(CurrencyController.getInstance().moneyFormat(_total_price));
+                            // check has cash
+                            if (c_data.getUseCash()) {
+                                Double change_due2 = c_data.getTotalPaymentReceived() - _total_price;
+                                changeDue.setText(CurrencyController.getInstance().moneyFormat(change_due2));
+                            }
+                            _ojol_tot = Double.parseDouble(c_data.getWalletGrabFood());
                         } catch (Exception e){}
                         if (c_data.getDiscount() > 0) {
                             main_discount_container.setVisibility(View.VISIBLE);
@@ -272,7 +293,9 @@ public class ConfirmationFragment extends Fragment {
                             main_discount_container.setVisibility(View.GONE);
                         }
                     }
-                    change_due_container.setVisibility(View.GONE);
+                    if (!c_data.getUseCash()) {
+                        change_due_container.setVisibility(View.GONE);
+                    }
                 }
             } else {
                 change_due_label.setText(getResources().getString(R.string.label_dept));

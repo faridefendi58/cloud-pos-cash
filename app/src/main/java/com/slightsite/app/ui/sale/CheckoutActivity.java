@@ -354,17 +354,24 @@ public class CheckoutActivity extends AppCompatActivity {
                             Boolean use_gofood = checkout_data.getUseGoFood();
                             Boolean use_grabfood = checkout_data.getUseGrabFood();
                             int total_tagihan_gograb = 0;
+                            Boolean is_gograb_enough = true;
                             if (use_gofood) {
                                 int tot_gofood_inv = Integer.parseInt(checkout_data.getTotalGoFoodInvoice());
                                 int tot_gofood_discount = Integer.parseInt(checkout_data.getGofoodDiscount());
                                 total_tagihan_gograb = tot_gofood_inv - tot_gofood_discount;
-
+                                int _terbayar = Integer.parseInt(checkout_data.getWalletGoFood());
+                                if (_terbayar < total_tagihan_gograb) {
+                                    is_gograb_enough = false;
+                                }
                             }
                             if (use_grabfood) {
                                 int tot_grabfood_inv = Integer.parseInt(checkout_data.getTotalGrabFoodInvoice());
                                 int tot_grabfood_discount = Integer.parseInt(checkout_data.getGrabfoodDiscount());
                                 total_tagihan_gograb = tot_grabfood_inv - tot_grabfood_discount;
-
+                                int _terbayar = Integer.parseInt(checkout_data.getWalletGrabFood());
+                                if (_terbayar < total_tagihan_gograb) {
+                                    is_gograb_enough = false;
+                                }
                             }
                             if (use_gofood || use_grabfood) {
                                 if (checkout_data.getTotalPaymentReceived() < total_tagihan_gograb) {
@@ -383,6 +390,15 @@ public class CheckoutActivity extends AppCompatActivity {
                                         vibe.vibrate(200);
                                         return;
                                     }
+                                }
+                                // check gograb pay should be more than tot inv
+                                if (checkout_data.getUseCash() && !is_gograb_enough) {
+                                    Toast.makeText(getBaseContext(),
+                                            getResources().getString(R.string.error_payment_gograb_should_be_exact), Toast.LENGTH_LONG)
+                                            .show();
+
+                                    vibe.vibrate(200);
+                                    return;
                                 }
                             }
                         } catch (Exception e){e.printStackTrace();}

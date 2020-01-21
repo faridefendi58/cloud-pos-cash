@@ -21,6 +21,8 @@ import android.support.annotation.ColorRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.View;
@@ -34,6 +36,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -364,6 +368,30 @@ public class Tools {
             return false;
         }
         return true;
+    }
+
+    public static String cardFormat(String s)
+    {
+        s = s.replaceAll("[-]","");
+
+        /*char space = ' ';
+        Log.e("CUK", s.length()+"");
+        if (s.length() > 0 && (s.length() % 5) == 0) {
+            char c = s.charAt(s.length() - 1);
+            String[] _split = TextUtils.split(s, String.valueOf(space));
+            Log.e("CUK", _split.toString());
+            String s2 = TextUtils.join("-", _split);
+            return s2;
+        }*/
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            if (i % 4 == 0 && i != 0) {
+                result.append("-");
+            }
+            result.append(s.charAt(i));
+        }
+
+        return result.toString();
     }
 }
 

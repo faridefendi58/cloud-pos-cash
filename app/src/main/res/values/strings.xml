@@ -184,6 +184,7 @@
     <string name="error_not_enough_payment">Your payment is still less than total invoice, Please check your payment data.</string>
     <string name="error_empty_retur_reason">Please choose at least a reason for the retur</string>
     <string name="error_payment_should_be_exact">Your payment should be same as total invoice</string>
+    <string name="error_payment_gograb_should_be_exact">Your GoPay or OVO payment should be more than or equal than total invoice</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
