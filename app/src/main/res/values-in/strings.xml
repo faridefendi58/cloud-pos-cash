@@ -371,4 +371,7 @@
     <string name="heading_sale_min_order5">Min. Order 5</string>
     <string name="heading_sale_eceran">Eceran</string>
     <string name="heading_sale_retur">Retur Penjualan</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>

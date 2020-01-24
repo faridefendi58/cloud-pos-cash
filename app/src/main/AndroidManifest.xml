@@ -3,7 +3,6 @@
         package="com.slightsite.app"
         android:versionCode="1"
         android:versionName="1.0">
-
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -22,13 +21,12 @@
             android:fullBackupOnly="true"
             android:icon="@drawable/ic_launcher"
             android:label="@string/app_name"
-            android:usesCleartextTraffic="true"
-            android:theme="@style/AppTheme">
-
+            android:theme="@style/AppTheme"
+            android:usesCleartextTraffic="true">
         <activity
                 android:name=".ui.MainActivity"
                 android:label="@string/app_name"
-                android:screenOrientation="portrait"/>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.SplashScreenActivity"
                 android:launchMode="singleTop"
@@ -72,7 +70,7 @@
         <activity
                 android:name=".ui.sale.CheckoutActivity"
                 android:label="@string/payment"
-                android:theme="@style/AppCompatTheme"></activity>
+                android:theme="@style/AppCompatTheme" />
         <activity
                 android:name=".ui.printer.PrintPreviewActivity"
                 android:screenOrientation="portrait" />
@@ -86,13 +84,11 @@
         <activity
                 android:name=".ui.fee.FeeOnDateActivity"
                 android:screenOrientation="portrait"
-                android:theme="@style/AppCompatTheme">
-        </activity>
+                android:theme="@style/AppCompatTheme"></activity>
         <activity
                 android:name=".ui.fee.FeeDetailActivity"
                 android:screenOrientation="portrait"
-                android:theme="@style/AppCompatTheme">
-        </activity>
+                android:theme="@style/AppCompatTheme"></activity>
     </application>
 
 </manifest>
