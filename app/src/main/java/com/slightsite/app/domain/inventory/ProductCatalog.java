@@ -42,6 +42,15 @@ public class ProductCatalog {
 		return id != -1;
 	}
 
+	public boolean addProduct3(String name, String barcode, double salePrice, int priority, String image, int avoid_stock) {
+		Product product = new Product(name, barcode, salePrice);
+		product.setPriority(priority);
+		product.setImage(image);
+		product.setIsAvoidStock(avoid_stock);
+		int id = inventoryDao.addProduct(product);
+		return id != -1;
+	}
+
 	/**
 	 * Edits product.
 	 * @param product the product to be edited.

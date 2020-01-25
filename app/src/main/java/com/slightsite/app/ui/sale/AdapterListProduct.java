@@ -126,6 +126,9 @@ public class AdapterListProduct extends BaseAdapter{
                 }
             }
         }
+        if (p.getIsAvoidStock() > 0) {
+            holder.stock_counter.setText(context.getResources().getString(R.string.available));
+        }
 
         stacks = fragment.getStacks();
         if (stacks.containsKey(p.getId())) {

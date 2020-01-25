@@ -245,6 +245,7 @@ public class InventoryFragment extends UpdatableFragment {
 		inventoryList = new ArrayList<Map<String, String>>();
 		for(Product product : list) {
 			inventoryList.add(product.toMap());
+			Log.e(getTag(), "product.toMap() : "+ product.toMap().toString());
 		}
 
 		if (inventoryList.size() == 0) {
@@ -598,7 +599,7 @@ public class InventoryFragment extends UpdatableFragment {
 						String wh_choosen = warehouses[i];
 						String wh_choosen_id = warehouse_ids.get(wh_choosen);
 						try {
-							((MainActivity)getActivity()).changeOutletExecution(wh_choosen_id, wh_choosen);
+							((MainActivity)getActivity()).changeOutletExecution(wh_choosen_id, wh_choosen, true);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

@@ -26,6 +26,7 @@ public class Product {
 	private String image;
 	private String status = "ACTIVE";
 	private Bitmap image_bitmap;
+	private int avoid_stock = 0;
 	
 	/**
 	 * Static value for UNDEFINED ID.
@@ -135,6 +136,7 @@ public class Product {
 		} else {
 			map.put("image", null);
 		}
+		map.put("avoid_stock", avoid_stock +"");
 		return map;
 		
 	}
@@ -198,5 +200,13 @@ public class Product {
 		image_bitmap.compress(Bitmap.CompressFormat.PNG, 0, outputStream);
 		
 		return outputStream.toByteArray();
+	}
+
+	public void setIsAvoidStock(int _avoid_stock) {
+		this.avoid_stock = _avoid_stock;
+	}
+
+	public int getIsAvoidStock() {
+		return avoid_stock;
 	}
 }

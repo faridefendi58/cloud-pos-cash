@@ -385,12 +385,23 @@ public class ProductServerActivity extends Activity {
                                             try {
                                                 if (config.has("image")) {
                                                     String image = config.getString("image");
-                                                    productCatalog.addProduct2(
-                                                            data_n.getString("title"),
-                                                            data_n.getString("id"),
-                                                            Double.parseDouble(data_n.getString("price")),
-                                                            data_n.getInt("priority"),
-                                                            image);
+                                                    if (config.has("avoid_stock")) {
+                                                        int avoid_stock = config.getInt("avoid_stock");
+                                                        productCatalog.addProduct3(
+                                                                data_n.getString("title"),
+                                                                data_n.getString("id"),
+                                                                Double.parseDouble(data_n.getString("price")),
+                                                                data_n.getInt("priority"),
+                                                                image,
+                                                                avoid_stock);
+                                                    } else {
+                                                        productCatalog.addProduct2(
+                                                                data_n.getString("title"),
+                                                                data_n.getString("id"),
+                                                                Double.parseDouble(data_n.getString("price")),
+                                                                data_n.getInt("priority"),
+                                                                image);
+                                                    }
                                                 } else {
                                                     productCatalog.addProduct(
                                                             data_n.getString("title"),
@@ -411,6 +422,10 @@ public class ProductServerActivity extends Activity {
                                                 }
                                                 //Log.e(getClass().getSimpleName(), "Priority : "+ data_n.getString("priority"));
                                                 pd.setPriority(data_n.getInt("priority"));
+                                                if (config.has("avoid_stock")) {
+                                                    int avoid_stock = config.getInt("avoid_stock");
+                                                    pd.setIsAvoidStock(avoid_stock);
+                                                }
                                                 productCatalog.editProduct(pd);
                                             } catch (Exception e) {}
                                         }

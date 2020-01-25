@@ -49,6 +49,10 @@ public class InventoryDaoAndroid implements InventoryDao {
 				content.put("image_bitmap", product.getBitmapAsByteArray());
 			}
 		}
+
+		if (product.getIsAvoidStock() > 0) {
+			content.put("avoid_stock", product.getIsAvoidStock());
+		}
         content.put("status", "ACTIVE");
         
         int id = database.insert(DatabaseContents.TABLE_PRODUCT_CATALOG.toString(), content);
@@ -81,6 +85,9 @@ public class InventoryDaoAndroid implements InventoryDao {
         	if (content.getAsByteArray("image_bitmap") != null) {
 				Bitmap bitmap = BitmapFactory.decodeByteArray(content.getAsByteArray("image_bitmap"), 0, content.getAsByteArray("image_bitmap").length);
 				product.setImageBitmap(bitmap);
+			}
+        	if (content.getAsInteger("avoid_stock") > 0) {
+        		product.setIsAvoidStock(content.getAsInteger("avoid_stock"));
 			}
 
         	list.add(product);
@@ -166,7 +173,10 @@ public class InventoryDaoAndroid implements InventoryDao {
         	content.put("image_bitmap", product.getBitmapAsByteArray());
 		}
 
-        //Log.e(getClass().getSimpleName(), "Before update : "+ content.toString());
+		if (product.getIsAvoidStock() > 0) {
+			content.put("avoid_stock", product.getIsAvoidStock());
+		}
+
 		return database.update(DatabaseContents.TABLE_PRODUCT_CATALOG.toString(), content);
 	}
 	
