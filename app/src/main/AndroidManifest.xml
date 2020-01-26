@@ -89,6 +89,10 @@
                 android:name=".ui.fee.FeeDetailActivity"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppCompatTheme"></activity>
+        <activity
+                android:name=".ui.purchase.PurchaseOrderActivity"
+                android:label="@string/title_stock_purchase"
+                android:theme="@style/AppCompatTheme" />
     </application>
 
 </manifest>
