@@ -2,6 +2,8 @@ package com.slightsite.app.ui.purchase;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,8 @@ import android.widget.TextView;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.purchase.PurchaseLineItem;
+import com.slightsite.app.techicalservices.Tools;
+import com.slightsite.app.ui.MainActivity;
 
 import java.util.List;
 
@@ -57,20 +61,19 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
             final AdapterListPurchaseConfirm.OriginalViewHolder view = (AdapterListPurchaseConfirm.OriginalViewHolder) holder;
             AdapterListPurchaseConfirm.OriginalViewHolder vwh = (AdapterListPurchaseConfirm.OriginalViewHolder) holder;
 
-            final PurchaseLineItem p = items.get(position);
-            view.title.setText(p.getProduct().getName());
+            PurchaseLineItem pl = items.get(position);
+            view.title.setText(pl.getProduct().getName());
             int qty = 1;
             double prc = 0.0;
             double sub_total = 0.0;
             try {
-                qty = p.getQuantity();
-                prc = p.getPriceAtSale();
+                qty = pl.getQuantity();
+                prc = pl.getPriceAtSale();
             } catch (Exception e) {
                 e.printStackTrace();
             }
             view.quantity.setText(qty+"");
-            sub_total = prc * qty;
-            view.price.setText(CurrencyController.getInstance().moneyFormat(sub_total));
+            view.price.setText(CurrencyController.getInstance().moneyFormat(prc));
 
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -85,6 +88,9 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
             if (position == last_item_position) {
                 view.line_separator.setVisibility(View.GONE);
             }
+
+            setTextChangeListener(view.price, "price", position);
+            setTextChangeListener(view.quantity, "quantity", position);
         }
     }
 
@@ -99,5 +105,63 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
         this.mOnItemClickListener = mItemClickListener;
+    }
+
+    private void setTextChangeListener(final EditText etv, final String setType, final int position) {
+        etv.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            private String current_val;
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(!s.toString().equals(current_val)){
+                    String cleanString = s.toString().replaceAll("[.]", "");
+                    if (cleanString.length() >= 3) {
+                        etv.removeTextChangedListener(this);
+                        String formatted = "";
+                        if (setType.equals("quantity")) {
+                            current_val = Integer.parseInt(cleanString)+"";
+                        } else {
+                            double parsed = Double.parseDouble(cleanString);
+                            formatted = CurrencyController.getInstance().moneyFormat(parsed);
+
+                            current_val = formatted;
+                        }
+                        etv.setText(formatted);
+                        etv.setSelection(formatted.length());
+                        etv.addTextChangedListener(this);
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                try {
+                    String cleanString = s.toString().replaceAll("[.]", "");
+                    if (setType == "price") {
+                        if (cleanString.length() >= 3) {
+                            double parsed = Double.parseDouble(cleanString);
+                            String formatted = CurrencyController.getInstance().moneyFormat(parsed);
+                            current_val = formatted;
+                        } else {
+                            current_val = s.toString();
+                        }
+                        if (cleanString.length() > 0) {
+                            ((PurchaseOrderActivity) context).updatePurchaseData(position, "price", cleanString);
+                        }
+                    } else if (setType == "quantity") {
+                        current_val = s.toString();
+                        if (current_val.length() > 0) {
+                            ((PurchaseOrderActivity) context).updatePurchaseData(position, "quantity", current_val);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

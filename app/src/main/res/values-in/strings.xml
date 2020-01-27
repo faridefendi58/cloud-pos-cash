@@ -117,7 +117,8 @@
     <string name="title_fee_detail">Rincian Fee</string>
     <string name="title_verify_payment">Verifikasi Pembayaran</string>
     <string name="title_stock_purchase">Penambahan Stok</string>
-    <string name="title_stock_in_out">Stock Masuk/Keluar</string>
+    <string name="title_stock_in_out">Stok Masuk/Keluar</string>
+    <string name="title_stock_in_out_history">Riwayat Stok Masuk/Keluar</string>
 
     <string name="dashboard_income">Pendapatan</string>
     <string name="dashboard_transaction">Transaksi</string>

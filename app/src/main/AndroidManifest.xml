@@ -93,6 +93,10 @@
                 android:name=".ui.purchase.PurchaseOrderActivity"
                 android:label="@string/title_stock_purchase"
                 android:theme="@style/AppCompatTheme" />
+        <activity
+                android:name=".ui.purchase.PurchaseHistoryActivity"
+                android:label="@string/title_stock_in_out_history"
+                android:theme="@style/AppCompatTheme" />
     </application>
 
 </manifest>

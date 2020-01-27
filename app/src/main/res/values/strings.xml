@@ -116,6 +116,7 @@
     <string name="title_verify_payment">Verify Payment</string>
     <string name="title_stock_purchase">Stock Purchase</string>
     <string name="title_stock_in_out">Stock In/Out</string>
+    <string name="title_stock_in_out_history">Stock In/Out History</string>
 
     <string name="dashboard_income">Income</string>
     <string name="dashboard_transaction">Transaction</string>
