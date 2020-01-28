@@ -419,7 +419,7 @@ public class PurchaseFragment extends UpdatableFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_delete, menu);
+        inflater.inflate(R.menu.menu_purchase, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -428,6 +428,10 @@ public class PurchaseFragment extends UpdatableFragment {
         switch (item.getItemId()) {
             case R.id.nav_delete :
                 showConfirmClearDialog();
+            case R.id.nav_history:
+                Intent intent = new Intent(getContext(), PurchaseHistoryActivity.class);
+                getActivity().finish();
+                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
         }

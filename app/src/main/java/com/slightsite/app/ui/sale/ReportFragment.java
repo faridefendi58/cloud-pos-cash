@@ -675,7 +675,9 @@ public class ReportFragment extends UpdatableFragment {
 
 									String total_formated = CurrencyController.getInstance().moneyFormat(total);
 									totalBox.setText(total_formated);
-									showList2(list_of_transactions);
+									try {
+										showList2(list_of_transactions);
+									} catch (Exception e){e.printStackTrace();}
 
 									Log.e(getTag(), "data.length on setTransactionList : "+ data.length());
 									if (data.length() <= 0) {
@@ -1188,25 +1190,27 @@ public class ReportFragment extends UpdatableFragment {
 			saleList2.add(salemap);
 		}
 
-		AdapterListInvoice invAdapter = new AdapterListInvoice(getActivity().getBaseContext() , saleList2);
-        invAdapter.setFragment(ReportFragment.this);
-		lineitemListRecycle2.setAdapter(invAdapter);
+		try {
+			AdapterListInvoice invAdapter = new AdapterListInvoice(getActivity().getBaseContext(), saleList2);
+			invAdapter.setFragment(ReportFragment.this);
+			lineitemListRecycle2.setAdapter(invAdapter);
 
-		invAdapter.setOnItemClickListener(new AdapterListInvoice.OnItemClickListener() {
-			@Override
-			public void onItemClick(View view, Map<String, String> _item, int position) {
-				String id = _item.get("id");
-				Intent newActivity = new Intent(getActivity().getBaseContext(), SaleDetailActivity.class);
-				newActivity.putExtra("id", id);
-				Sale selected_sale = list_of_transactions2.get(position);
-				newActivity.putExtra("sale_intent", selected_sale);
-				newActivity.putExtra("customer_intent", list_of_customers2.get(selected_sale.getCustomerId()));
-				newActivity.putExtra("shipping_intent", list_of_shippings2.get(selected_sale.getId()));
-				newActivity.putExtra("payment_intent", list_of_payments3.get(selected_sale.getId()).toString());
-				newActivity.putExtra("line_items_intent", list_of_line_items3.get(selected_sale.getId()).toString());
-				startActivity(newActivity);
-			}
-		});
+			invAdapter.setOnItemClickListener(new AdapterListInvoice.OnItemClickListener() {
+				@Override
+				public void onItemClick(View view, Map<String, String> _item, int position) {
+					String id = _item.get("id");
+					Intent newActivity = new Intent(getActivity().getBaseContext(), SaleDetailActivity.class);
+					newActivity.putExtra("id", id);
+					Sale selected_sale = list_of_transactions2.get(position);
+					newActivity.putExtra("sale_intent", selected_sale);
+					newActivity.putExtra("customer_intent", list_of_customers2.get(selected_sale.getCustomerId()));
+					newActivity.putExtra("shipping_intent", list_of_shippings2.get(selected_sale.getId()));
+					newActivity.putExtra("payment_intent", list_of_payments3.get(selected_sale.getId()).toString());
+					newActivity.putExtra("line_items_intent", list_of_line_items3.get(selected_sale.getId()).toString());
+					startActivity(newActivity);
+				}
+			});
+		} catch (Exception e){e.printStackTrace();}
 	}
 
 	private String showPaymentIcons(int sale_id, Map<Integer, JSONArray> pyms) {

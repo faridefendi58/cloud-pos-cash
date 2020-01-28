@@ -100,6 +100,7 @@ public class InventoryFragment extends UpdatableFragment {
 	private View fragment_view;
 	private List<Warehouses> warehousesList;
 	private Map<Integer, String> allowed_warehouses = new HashMap<Integer, String>();
+	private Menu menu;
 
 	/**
 	 * Construct a new InventoryFragment.
@@ -339,6 +340,13 @@ public class InventoryFragment extends UpdatableFragment {
 	public void updateCart() {
 		Double tot_cart = register.getTotal();
 		if (tot_cart > 0) {
+			// show hide clear menu
+			try {
+				if (menu != null) {
+					menu.findItem(R.id.nav_delete).setVisible(true);
+				}
+			} catch (Exception e){e.printStackTrace();}
+
 			Integer tot_item_cart = register.getCurrentSale().getAllLineItem().size();
 			String cart_total_txt = getResources().getString(R.string.label_sub_total)+" " +
 					"" + CurrencyController.getInstance().moneyFormat(tot_cart) +" " +
@@ -364,6 +372,13 @@ public class InventoryFragment extends UpdatableFragment {
 				show_animation = false;
 			}
 		} else {
+			// show hide clear menu
+			try {
+				if (menu != null) {
+					menu.findItem(R.id.nav_delete).setVisible(false);
+				}
+			} catch (Exception e){e.printStackTrace();}
+
 			TranslateAnimation animate = new TranslateAnimation(
 					0,                 // fromXDelta
 					0,                 // toXDelta
@@ -468,6 +483,9 @@ public class InventoryFragment extends UpdatableFragment {
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.menu_delete, menu);
+		this.menu = menu;
+		MenuItem item = menu.findItem(R.id.nav_delete);
+		item.setVisible(false);
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 

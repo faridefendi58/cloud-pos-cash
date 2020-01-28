@@ -65,6 +65,20 @@
                     android:layout_margin="@dimen/spacing_middle">
 
 
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingVertical="@dimen/spacing_middle">
+
+                    <android.support.v7.widget.RecyclerView
+                            android:id="@+id/purchaseHistoryListView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scrollbars="vertical"
+                            android:scrollingCache="true" />
+
+                </LinearLayout>
 
             </LinearLayout>
 

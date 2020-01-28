@@ -124,7 +124,9 @@ public class FeeFragment extends UpdatableFragment {
 
     @Override
     public void update() {
-        buildListFee();
+        try {
+            buildListFee();
+        } catch (Exception e){e.printStackTrace();}
     }
 
     @Override

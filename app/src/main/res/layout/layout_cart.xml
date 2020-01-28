@@ -8,26 +8,30 @@
     android:background="@drawable/cart"
     android:orientation="vertical">
 
-    <!--<android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:elevation="0dp">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+    <LinearLayout
+            android:id="@+id/fragment_title_container"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/grey_10"
-            app:contentInsetStartWithNavigation="0dp"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:theme="@style/Toolbar.Light" />
+            android:layout_height="wrap_content"
+            android:padding="@dimen/spacing_middle"
+            android:background="@color/yellow_100"
+            android:orientation="horizontal">
 
-    </android.support.design.widget.AppBarLayout>-->
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tab_shopping_cart"
+                android:textStyle="bold"
+                android:textSize="@dimen/spacing_large"
+                android:paddingLeft="@dimen/spacing_middle"/>
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+            android:layout_below="@+id/fragment_title_container"
+            android:layout_marginTop="@dimen/spacing_large"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.v4.widget.NestedScrollView
@@ -43,6 +47,21 @@
                 android:layout_height="match_parent"
                 android:paddingTop="@dimen/spacing_middle"
                 android:orientation="vertical">
+
+                <LinearLayout
+                        android:id="@+id/no_data_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                    <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="0.7"
+                            android:src="@drawable/empty_cart" />
+
+                </LinearLayout>
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/sale_List"

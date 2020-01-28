@@ -389,4 +389,10 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="available">Available</string>
+
+    <string name="tab_product_order">Product Order</string>
+    <string name="tab_shopping_cart">Shopping Cart</string>
+    <string name="tab_order_list">Order List</string>
+    <string name="tab_sales_report">Sales Report</string>
+    <string name="tab_stock">Stock</string>
 </resources>

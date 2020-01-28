@@ -5,14 +5,14 @@
         android:layout_height="match_parent"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:orientation="vertical"
-        android:padding="5dp">
+        android:orientation="vertical">
 
     <LinearLayout
             android:id="@+id/search_bar_wrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
         <Button
                 android:id="@+id/scanButton"
@@ -70,11 +70,30 @@
     </LinearLayout>
 
     <LinearLayout
+            android:id="@+id/fragment_title_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/spacing_middle"
+            android:background="@color/yellow_100"
+            android:orientation="horizontal">
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tab_stock"
+                android:textStyle="bold"
+                android:textSize="@dimen/spacing_large"
+                android:paddingLeft="@dimen/spacing_middle" />
+
+    </LinearLayout>
+
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_below="@+id/search_bar_wrapper"
-            android:layout_marginTop="@dimen/spacing_xxlarge">
+            android:padding="@dimen/spacing_middle"
+            android:layout_marginTop="@dimen/spacing_xlarge">
 
         <LinearLayout
                 android:id="@+id/no_product_container"

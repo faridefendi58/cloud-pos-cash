@@ -72,6 +72,8 @@ public class SaleFragment extends UpdatableFragment {
 	private LinearLayout total_container;
 	private ViewPager viewPager;
 	private MainActivity main;
+	private LinearLayout no_data_container;
+	private Menu menu;
 
 	/**
 	 * Construct a new SaleFragment.
@@ -103,6 +105,8 @@ public class SaleFragment extends UpdatableFragment {
 		total_container = (LinearLayout) view.findViewById(R.id.total_container);
 		lyt_next_to_payment = (MaterialRippleLayout) view.findViewById(R.id.lyt_next_to_payment);
 		lyt_previous = (MaterialRippleLayout) view.findViewById(R.id.lyt_previous);
+
+		no_data_container = (LinearLayout) view.findViewById(R.id.no_data_container);
 
 		/*clearButton = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.clearButton);
 		endButton = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.endButton);
@@ -146,6 +150,13 @@ public class SaleFragment extends UpdatableFragment {
 		saleList = new ArrayList<Map<String, String>>();
 		for(LineItem line : list) {
 			saleList.add(line.toMap());
+		}
+
+		if (saleList.size() > 0) {
+			no_data_container.setVisibility(View.GONE);
+		} else {
+			no_data_container.setVisibility(View.VISIBLE);
+
 		}
 
 		//set data and list adapter
@@ -212,23 +223,11 @@ public class SaleFragment extends UpdatableFragment {
 	public void update() {
 		if(register.hasSale()){
 			showList(register.getCurrentSale().getAllLineItem());
-
 			totalPrice.setText(CurrencyController.getInstance().moneyFormat(register.getTotal()) + "");
-		}
-		else{
+		} else{
 			showList(new ArrayList<LineItem>());
 			totalPrice.setText("0.00");
 			total_container.setVisibility(View.GONE);
-			/*try {
-				if (viewPager.getCurrentItem() != 0) {
-					Log.e(getClass().getSimpleName(), "Current item : "+ viewPager.getCurrentItem());
-					//viewPager.setCurrentItem(0);
-				}
-				LinearLayout bottom_cart_container = ( LinearLayout) viewPager.findViewById(R.id.bottom_cart_container);
-				bottom_cart_container.setVisibility(View.GONE);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}*/
 		}
 	}
 	
@@ -292,6 +291,14 @@ public class SaleFragment extends UpdatableFragment {
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.menu_delete, menu);
+		this.menu = menu;
+		MenuItem item = menu.findItem(R.id.nav_delete);
+		if (register.hasSale()) {
+			item.setVisible(true);
+		} else {
+			item.setVisible(false);
+		}
+
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 

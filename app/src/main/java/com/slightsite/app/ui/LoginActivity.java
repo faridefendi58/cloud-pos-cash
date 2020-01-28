@@ -173,6 +173,14 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         setContentView(R.layout.activity_login);
 
         try {
+            SharedPreferences sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
+
+            /*SharedPreferences.Editor editor = sharedpreferences.edit();
+            editor.putBoolean(LoginActivity.session_status, false);
+            editor.putString(LoginActivity.TAG_ID, null);
+            editor.putString(LoginActivity.TAG_EMAIL, null);
+            editor.commit();*/
+
             paramCatalog = ParamService.getInstance().getParamCatalog();
             warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
             if (warehouse_names.size() == 0) {

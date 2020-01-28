@@ -189,6 +189,8 @@ public class PurchaseOrderActivity extends AppCompatActivity {
         if (warehouse_id > 0) {
             mObj.put("warehouse_id", warehouse_id);
         }
+        // force completed
+        mObj.put("force_complete", "1");
 
         String _url = Server.URL + "purchase/create-v2?api-key=" + Server.API_KEY;
         if (is_purchase_order) {
