@@ -374,6 +374,10 @@ public class FeeFragment extends UpdatableFragment {
                         }
                     }
                 });
+
+        try {
+            buildTheItemSummary(params);
+        } catch (Exception e){e.printStackTrace();}
     }
 
     private void _string_request(int method, String url, final Map params, final Boolean show_dialog, final VolleyCallback callback) {
@@ -550,7 +554,7 @@ public class FeeFragment extends UpdatableFragment {
                     @Override
                     public void onSuccess(String result) {
                         try {
-                            Log.e(getClass().getSimpleName(), "result : " + result);
+                            Log.e("list sale counter", "result : " + result);
                             if (result.contains("success")) {
                                 JSONObject jObj = new JSONObject(result);
                                 int success = jObj.getInt("success");

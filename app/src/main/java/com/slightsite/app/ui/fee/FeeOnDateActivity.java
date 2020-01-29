@@ -283,6 +283,7 @@ public class FeeOnDateActivity extends AppCompatActivity {
                                 // build sales counter summary
                                 Map<String, String> params2 = new HashMap<String, String>();
                                 params2.put("created_at_from", params.get("created_at"));
+                                params2.put("created_at_to", params.get("created_at"));
                                 params2.put("warehouse_id", params.get("warehouse_id"));
                                 buildTheItemSummary(params2);
                             } else {
