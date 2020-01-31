@@ -35,6 +35,7 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -91,6 +92,10 @@ public class PurchaseFragment extends UpdatableFragment {
     private View fragment_view;
     private List<Warehouses> warehousesList;
     private Map<Integer, String> allowed_warehouses = new HashMap<Integer, String>();
+    private Menu menu_purchase;
+    private RadioGroup radioTransactionType;
+    private Boolean is_purchase_order = true;
+    private Boolean is_inventory_issue = false;
 
     /**
      * Construct a new PurchaseFragment.
@@ -126,6 +131,7 @@ public class PurchaseFragment extends UpdatableFragment {
         lyt_next = (MaterialRippleLayout) view.findViewById(R.id.lyt_next);
         no_product_container = (LinearLayout) view.findViewById(R.id.no_product_container);
         wh_options = (EditText) view.findViewById(R.id.wh_options);
+        radioTransactionType = (RadioGroup) view.findViewById(R.id.radioTransactionType);
 
         main = (MainActivity) getActivity();
         viewPager = main.getViewPager();
@@ -188,6 +194,9 @@ public class PurchaseFragment extends UpdatableFragment {
 
                 Intent newActivity = new Intent(main.getApplicationContext(), PurchaseOrderActivity.class);
                 newActivity.putExtra("purchase_data", jsonPurchase);
+                if (is_inventory_issue) {
+                    newActivity.putExtra("is_inventory_issue", true);
+                }
                 startActivity(newActivity);
             }
         });
@@ -204,6 +213,26 @@ public class PurchaseFragment extends UpdatableFragment {
                 }
             }
         });
+
+        radioTransactionType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                View radioButton = radioTransactionType.findViewById(checkedId);
+                int index = radioTransactionType.indexOfChild(radioButton);
+                switch (index) {
+                    case 0: // first button
+                        setIsPurchaseOrder();
+                        break;
+                    case 1: // secondbutton
+                        setIsInventoryIssue();
+                        break;
+                }
+                try {
+                    showList(productCatalog.getAllStockedProduct());
+                } catch (Exception e){e.printStackTrace();}
+            }
+        });
     }
 
     /**
@@ -214,8 +243,9 @@ public class PurchaseFragment extends UpdatableFragment {
 
         inventoryList = new ArrayList<Map<String, String>>();
         for(Product product : list) {
-            inventoryList.add(product.toMap());
-            Log.e(getTag(), "product.toMap() : "+ product.toMap().toString());
+            if (product.getIsAvoidStock() <= 0) {
+                inventoryList.add(product.toMap());
+            }
         }
 
         if (inventoryList.size() == 0) {
@@ -227,7 +257,10 @@ public class PurchaseFragment extends UpdatableFragment {
         // clearing the stack on update
         this.stacks = new HashMap<Integer, Integer>();
 
-        AdapterListProductPurchase pAdap = new AdapterListProductPurchase(main, list, R.layout.listview_inventory, PurchaseFragment.this);
+        AdapterListProductPurchase pAdap = new AdapterListProductPurchase(main, list, R.layout.listview_purchase, PurchaseFragment.this);
+        if (is_inventory_issue) {
+            pAdap.setIsInventoryIssue(is_inventory_issue);
+        }
         pAdap.notifyDataSetChanged();
         inventoryListView.setAdapter(pAdap);
     }
@@ -250,13 +283,10 @@ public class PurchaseFragment extends UpdatableFragment {
             searchBox.setText("");
         }
         else if (search.equals("")) {
-            showList(productCatalog.getAllProduct());
+            showList(productCatalog.getAllStockedProduct());
         } else {
             List<Product> result = productCatalog.searchProduct(search);
             showList(result);
-            if (result.isEmpty()) {
-
-            }
         }
     }
 
@@ -309,6 +339,12 @@ public class PurchaseFragment extends UpdatableFragment {
     public void updateCart() {
         List<PurchaseLineItem> purchaseItems = main.getPurchaseItems();
         if (purchaseItems.size() > 0) {
+            try {
+                if (menu_purchase != null) {
+                    menu_purchase.findItem(R.id.nav_delete).setVisible(true);
+                }
+            } catch (Exception e){e.printStackTrace();}
+
             Integer tot_item_cart = purchaseItems.size();
             String cart_total_txt = tot_item_cart + " " + getResources().getString(R.string.label_items);
             cart_total.setText(cart_total_txt);
@@ -331,6 +367,12 @@ public class PurchaseFragment extends UpdatableFragment {
                 show_animation = false;
             }
         } else {
+            try {
+                if (menu_purchase != null) {
+                    menu_purchase.findItem(R.id.nav_delete).setVisible(false);
+                }
+            } catch (Exception e){e.printStackTrace();}
+
             TranslateAnimation animate = new TranslateAnimation(
                     0,                 // fromXDelta
                     0,                 // toXDelta
@@ -383,10 +425,10 @@ public class PurchaseFragment extends UpdatableFragment {
                 }
             } catch (Exception e) { e.printStackTrace();}
         } else {
-            if (purchaseStacks.containsKey(p.getId())) {
+            if (!purchaseStacks.containsKey(p.getId())) {
                 main.addPurchaseItem(p, 1);
             } else {
-                main.addPurchaseItem(p, quantity);
+                main.updatePurchaseItem(p, quantity);
             }
 
             stacks.put(p.getId(), quantity);
@@ -420,6 +462,7 @@ public class PurchaseFragment extends UpdatableFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_purchase, menu);
+        menu_purchase = menu;
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -428,6 +471,7 @@ public class PurchaseFragment extends UpdatableFragment {
         switch (item.getItemId()) {
             case R.id.nav_delete :
                 showConfirmClearDialog();
+                return false;
             case R.id.nav_history:
                 Intent intent = new Intent(getContext(), PurchaseHistoryActivity.class);
                 getActivity().finish();
@@ -481,11 +525,6 @@ public class PurchaseFragment extends UpdatableFragment {
         dialog.show();
     }
 
-    public void changeWHPopup() {
-        ChangeWarehouseDialogFragment newFragment = new ChangeWarehouseDialogFragment(PurchaseFragment.this);
-        newFragment.show(getFragmentManager(), "");
-    }
-
     private String[] warehouses = new String[]{};
     private HashMap<String, String> warehouse_ids = new HashMap<String, String>();
 
@@ -493,8 +532,6 @@ public class PurchaseFragment extends UpdatableFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         int selected_wh = -1;
         String current_warehouse_name = ((MainActivity)getActivity()).getCurrentWarehouseName();
-        Log.e(getTag(), "showOutletOptionsDialog current_warehouse_name : "+ current_warehouse_name);
-        Log.e(getTag(), "showOutletOptionsDialog allowed_warehouses : "+ allowed_warehouses.toString());
         try {
             if (allowed_warehouses.size() > 0) {
                 ArrayList<String> stringArrayList = new ArrayList<String>();
@@ -557,5 +594,15 @@ public class PurchaseFragment extends UpdatableFragment {
             });
             builder.show();
         } catch (Exception e){e.printStackTrace();}
+    }
+
+    private void setIsPurchaseOrder() {
+        this.is_purchase_order = true;
+        this.is_inventory_issue = false;
+    }
+
+    private void setIsInventoryIssue() {
+        this.is_inventory_issue = true;
+        this.is_purchase_order = false;
     }
 }

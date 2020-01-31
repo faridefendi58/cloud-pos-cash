@@ -78,6 +78,7 @@
                             android:tint="@color/greenUcok" />
 
                     <TextView
+                            android:id="@+id/heading_stock_in_out_items"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -167,34 +168,6 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
                             android:padding="@dimen/spacing_middle">
-
-                        <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="@dimen/spacing_middle"
-                                android:text="@string/heading_stock_in_out_type"
-                                android:textStyle="bold"/>
-
-                        <RadioGroup
-                                android:id="@+id/radioTransactionType"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="@dimen/spacing_middle">
-
-                            <RadioButton
-                                    android:id="@+id/typeStockIn"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/label_stock_in"
-                                    android:checked="true" />
-
-                            <RadioButton
-                                    android:id="@+id/typeStockOut"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/label_stock_out" />
-
-                        </RadioGroup>
 
                         <EditText
                                 android:id="@+id/purchase_notes"

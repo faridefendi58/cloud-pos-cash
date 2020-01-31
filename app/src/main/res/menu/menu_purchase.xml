@@ -1,20 +1,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        tools:context="com.slightsite.app.ui.profile.ProfileActivity"
+        tools:context="com.slightsite.app.ui.MainActivity"
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
             android:id="@+id/nav_delete"
             android:icon="@drawable/ic_delete_forever_white_24dp"
-            android:title="@string/title_dashboard"
+            android:title="@string/clear"
             app:showAsAction="ifRoom"
-            android:showAsAction="always"/>
+            android:showAsAction="always"
+            android:visible="false"/>
 
     <item
             android:id="@+id/nav_history"
             android:icon="@drawable/ic_history_white_24dp"
-            android:title="@string/title_dashboard"
-            app:showAsAction="ifRoom"
-            android:showAsAction="always"/>
+            android:title="@string/title_stock_in_out_history"
+            />
 
 </menu>

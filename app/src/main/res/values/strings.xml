@@ -117,6 +117,8 @@
     <string name="title_stock_purchase">Stock Purchase</string>
     <string name="title_stock_in_out">Stock In/Out</string>
     <string name="title_stock_in_out_history">Stock In/Out History</string>
+    <string name="title_stock_in">Stock In</string>
+    <string name="title_stock_out">Stock Out</string>
 
     <string name="dashboard_income">Income</string>
     <string name="dashboard_transaction">Transaction</string>
@@ -353,6 +355,7 @@
     <string name="button_mark_as_verified">Verifying</string>
     <string name="button_proceed_stock_in">Proceed Stock In</string>
     <string name="button_proceed_stock_out">Proceed Stock Out</string>
+    <string name="button_substract">Substract</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
 
@@ -383,7 +386,9 @@
     <string name="heading_sale_eceran">Retail</string>
     <string name="heading_sale_retur">Sales Retur</string>
     <string name="heading_stock_in_out_items">Stock In/Out Items</string>
-    <string name="heading_stock_in_out_notes">Stock In/Out Notes</string>
+    <string name="heading_stock_in_items">Stock In Items</string>
+    <string name="heading_stock_out_items">Stock Out Items</string>
+    <string name="heading_stock_in_out_notes">Notes</string>
     <string name="heading_stock_in_out_type">Stock Transaction Type</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

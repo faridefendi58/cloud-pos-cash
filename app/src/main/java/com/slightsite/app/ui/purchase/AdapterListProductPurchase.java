@@ -2,12 +2,15 @@ package com.slightsite.app.ui.purchase;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -30,6 +33,7 @@ public class AdapterListProductPurchase extends BaseAdapter {
     private MainActivity activity;
     private PurchaseFragment fragment;
     private Map<Integer, Integer> stacks = new HashMap<Integer, Integer>();
+    private Boolean is_inventory_issue = false;
 
     private static LayoutInflater inflater = null;
 
@@ -67,14 +71,12 @@ public class AdapterListProductPurchase extends BaseAdapter {
     {
         TextView name;
         TextView stock_counter;
-        TextView quantity;
+        EditText quantity;
         ImageView product_image;
-        View optionView;
         LinearLayout add_qty_container;
         View rowView;
         Button addCartButton;
-        TextView substract_qty;
-        TextView add_qty;
+        TextView remove_item;
     }
 
     @Override
@@ -86,14 +88,15 @@ public class AdapterListProductPurchase extends BaseAdapter {
         rowView = inflater.inflate(this.resource, null);
         holder.name = (TextView) rowView.findViewById(R.id.name);
         holder.stock_counter = (TextView) rowView.findViewById(R.id.stock_counter);
-        holder.quantity = (TextView) rowView.findViewById(R.id.quantity);
+        holder.quantity = (EditText) rowView.findViewById(R.id.purchase_quantity);
         holder.product_image = (ImageView) rowView.findViewById(R.id.product_image);
-        holder.optionView = (View) rowView.findViewById(R.id.optionView);
         holder.add_qty_container = (LinearLayout) rowView.findViewById(R.id.add_qty_container);
         holder.rowView = rowView;
         holder.addCartButton = (Button) rowView.findViewById(R.id.addCartButton);
-        holder.substract_qty = (TextView) rowView.findViewById(R.id.substract_qty);
-        holder.add_qty = (TextView) rowView.findViewById(R.id.add_qty);
+        holder.remove_item = (TextView) rowView.findViewById(R.id.remove_item);
+
+        holder.quantity.setFocusableInTouchMode(true);
+        holder.quantity.setFocusable(true);
 
         final Product p = items.get(position);
         Map<String, String> pmap = p.toMap();
@@ -117,62 +120,20 @@ public class AdapterListProductPurchase extends BaseAdapter {
             holder.stock_counter.setText(context.getResources().getString(R.string.available));
         }
 
+        if (is_inventory_issue) {
+            holder.addCartButton.setText(context.getResources().getString(R.string.button_substract));
+            holder.addCartButton.setBackgroundColor(context.getResources().getColor(R.color.red_400));
+        }
         stacks = fragment.getStacks();
         if (stacks.containsKey(p.getId())) {
-            holder.optionView.setVisibility(View.GONE);
             holder.quantity.setText(""+ stacks.get(p.getId()));
             holder.add_qty_container.setVisibility(View.VISIBLE);
             holder.addCartButton.setVisibility(View.GONE);
         } else {
-            holder.optionView.setVisibility(View.GONE);
             holder.quantity.setText("0");
             holder.add_qty_container.setVisibility(View.GONE);
             holder.addCartButton.setVisibility(View.VISIBLE);
         }
-
-        rowView.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                holder.addCartButton.setVisibility(View.GONE);
-                if (!stacks.containsKey(p.getId())) {
-                    holder.add_qty_container.setVisibility(View.VISIBLE);
-                    holder.optionView.setVisibility(View.GONE);
-
-                    int tot_qty = Integer.parseInt(holder.quantity.getText().toString()) + 1;
-                    if (tot_qty <= 0) {
-                        tot_qty = 1;
-                    }
-                    holder.quantity.setText(""+ tot_qty);
-
-                    try {
-                        fragment.addToCart(p);
-                    } catch (Exception e) {e.printStackTrace();}
-                } else {
-                    holder.optionView.setVisibility(View.GONE);
-                    int tot_qty = stacks.get(p.getId());
-                    holder.quantity.setText(""+ tot_qty);
-                }
-            }
-        });
-
-        holder.optionView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(activity instanceof MainActivity){
-                    activity.optionOnClickHandler2(p.getId());
-                }
-            }
-        });
-
-        holder.product_image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(activity instanceof MainActivity){
-                    activity.optionOnClickHandler2(p.getId());
-                }
-            }
-        });
 
         holder.addCartButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -181,62 +142,71 @@ public class AdapterListProductPurchase extends BaseAdapter {
                     holder.add_qty_container.setVisibility(View.VISIBLE);
                     holder.addCartButton.setVisibility(View.GONE);
 
-                    int tot_qty = Integer.parseInt(holder.quantity.getText().toString()) + 1;
-                    if (tot_qty <= 0) {
-                        tot_qty = 1;
-                    }
-                    holder.quantity.setText(""+ tot_qty);
-
-                    try {
-                        fragment.addToCart(p);
-                    } catch (Exception e) {e.printStackTrace();}
+                    holder.quantity.setText("1");
                 } else {
                     holder.addCartButton.setVisibility(View.VISIBLE);
-                    holder.optionView.setVisibility(View.GONE);
                     int tot_qty = stacks.get(p.getId()) + 1;
                     holder.quantity.setText(""+ tot_qty);
                 }
             }
         });
 
-        holder.add_qty.setOnClickListener(new View.OnClickListener() {
+        holder.remove_item.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                int the_qty = Integer.parseInt(holder.quantity.getText().toString()) + 1;
-                holder.quantity.setText(""+ the_qty);
+            public void onClick(View view) {
                 try {
-                    if (the_qty == 1) {
-                        fragment.addToCart(p);
-                    } else {
-                        fragment.addSubstractTheCart(p, the_qty);
+                    fragment.addSubstractTheCart(p, 0);
+                    holder.add_qty_container.setVisibility(View.GONE);
+                    holder.addCartButton.setVisibility(View.VISIBLE);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        holder.quantity.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            private String current_val;
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                try {
+                    if (charSequence.length() > 0 && !charSequence.toString().equals(current_val)) {
+                        current_val = charSequence.toString();
+                        holder.quantity.removeTextChangedListener(this);
+                        int _qty = Integer.parseInt(charSequence.toString());
+                        if (_qty <= 0) {
+                            holder.add_qty_container.setVisibility(View.GONE);
+                            holder.addCartButton.setVisibility(View.VISIBLE);
+                        }
+                        holder.quantity.setText(_qty+"");
+                        Log.e("CUK", "_qty onTextChanged : "+ _qty);
+                        //holder.quantity.setSelection(charSequence.length());
+                        holder.quantity.addTextChangedListener(this);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        });
 
-        holder.substract_qty.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                int current_qty = Integer.parseInt(holder.quantity.getText().toString());
-                int the_qty = 0;
-                if (current_qty > 1) {
-                    the_qty = current_qty - 1;
-                }
-                holder.quantity.setText(""+ the_qty);
-                if (the_qty == 0) {
-                    holder.addCartButton.setVisibility(View.VISIBLE);
-                    //holder.add_qty_container.setVisibility(View.GONE);
-                }
-                try {
-                    fragment.addSubstractTheCart(p, the_qty);
-                } catch (Exception e) {
-                    e.printStackTrace();
+            public void afterTextChanged(Editable editable) {
+                if (editable.toString().length() > 0) {
+                    int _qty = Integer.parseInt(editable.toString());
+                    Log.e("CUK", "_qty afterTextChanged : "+ _qty);
+                    fragment.addSubstractTheCart(p, _qty);
                 }
             }
         });
 
         return rowView;
+    }
+
+    public void setIsInventoryIssue(Boolean is_inventory_issue) {
+        this.is_inventory_issue = is_inventory_issue;
     }
 }

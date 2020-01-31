@@ -22,6 +22,7 @@
         <item name="android:windowDisablePreview">true</item>
         <item name="android:actionModeBackground">@color/greenUcok</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="android:dropDownListViewStyle">@style/PopupMenuListView</item>
     </style>
 
     <style name="menu_labels_style">
@@ -89,6 +90,11 @@
     <style name="DialogAnimation">
         <item name="android:windowEnterAnimation">@anim/slide_up</item>
         <item name="android:windowExitAnimation">@anim/slide_down</item>
+    </style>
+
+    <style name="PopupMenuListView" parent="@style/Widget.AppCompat.ListView.DropDown">
+        <item name="android:divider">@color/grey_400</item>
+        <item name="android:dividerHeight">1dp</item>
     </style>
 
 </resources>

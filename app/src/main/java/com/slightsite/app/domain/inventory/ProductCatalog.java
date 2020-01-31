@@ -121,4 +121,12 @@ public class ProductCatalog {
 	}
 
 	public void suspendAllProduct() {inventoryDao.suspendAllProduct();}
+
+	/**
+	 * List of non avoid stock products
+	 * @return
+	 */
+	public List<Product> getAllStockedProduct() {
+		return inventoryDao.getAllStockedProduct();
+	}
 }

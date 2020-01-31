@@ -173,19 +173,24 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         setContentView(R.layout.activity_login);
 
         try {
-            SharedPreferences sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
-
-            /*SharedPreferences.Editor editor = sharedpreferences.edit();
-            editor.putBoolean(LoginActivity.session_status, false);
-            editor.putString(LoginActivity.TAG_ID, null);
-            editor.putString(LoginActivity.TAG_EMAIL, null);
-            editor.commit();*/
-
             paramCatalog = ParamService.getInstance().getParamCatalog();
             warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
             if (warehouse_names.size() == 0) {
+                // get the warehouse list
                 getWarehouseList();
             }
+
+            Params whParam = paramCatalog.getParamByName("warehouse_id");
+            if (whParam == null) {
+                // delete all session
+                SharedPreferences sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putBoolean(LoginActivity.session_status, false);
+                editor.putString(LoginActivity.TAG_ID, null);
+                editor.putString(LoginActivity.TAG_EMAIL, null);
+                editor.commit();
+            }
+
             adminInWarehouseCatalog = AdminInWarehouseService.getInstance().getAdminInWarehouseCatalog();
             current_lang = LanguageController.getInstance().getLanguage();
             //build the roles

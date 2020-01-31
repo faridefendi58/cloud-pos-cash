@@ -34,17 +34,6 @@
                         android:textColor="@color/grey_90"
                         app:fontFamily="sans-serif-black" />
 
-                <EditText
-                        android:id="@+id/quantity"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingHorizontal="@dimen/spacing_mlarge"
-                        android:text="1"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:background="@drawable/edit_text_round_bg_outline"
-                        android:inputType="number"
-                        android:textColor="@color/grey_40" />
-
             </LinearLayout>
 
             <EditText
@@ -55,7 +44,29 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:background="@drawable/edit_text_round_bg_outline"
                     android:inputType="number"
-                    android:textColor="@color/grey_90" />
+                    android:textColor="@color/grey_90"
+                    android:visibility="gone"/>
+
+            <EditText
+                    android:id="@+id/quantity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/spacing_mlarge"
+                    android:text="1"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:background="@drawable/edit_text_round_bg_outline"
+                    android:inputType="number"
+                    android:focusableInTouchMode="true"
+                    android:textColor="@color/grey_40" />
+
+            <TextView
+                    android:id="@+id/satuan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/spacing_middle"
+                    android:text="pcs"
+                    android:textFontWeight="bold"
+                    android:textColor="@color/grey_40"/>
 
         </LinearLayout>
 

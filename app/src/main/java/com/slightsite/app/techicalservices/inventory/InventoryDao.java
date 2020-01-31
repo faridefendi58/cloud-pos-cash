@@ -149,4 +149,6 @@ public interface InventoryDao {
 	void clearProductDiscount();
 
 	void suspendAllProduct();
+
+	List<Product> getAllStockedProduct();
 }

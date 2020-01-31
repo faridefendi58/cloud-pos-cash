@@ -441,4 +441,9 @@ public class InventoryDaoAndroid implements InventoryDao {
 
 		return false;
 	}
+
+	@Override
+	public List<Product> getAllStockedProduct() {
+		return getAllProduct(" WHERE status = 'ACTIVE' AND avoid_stock = 0");
+	}
 }

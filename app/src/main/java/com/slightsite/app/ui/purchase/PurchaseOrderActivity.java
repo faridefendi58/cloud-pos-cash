@@ -66,10 +66,10 @@ public class PurchaseOrderActivity extends AppCompatActivity {
 
     private RecyclerView purchaseListView;
     private Button btn_proceed;
-    private RadioGroup radioTransactionType;
     private Boolean is_purchase_order = true;
     private Boolean is_inventory_issue = false;
     private EditText purchase_notes;
+    private TextView heading_stock_in_out_items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +83,10 @@ public class PurchaseOrderActivity extends AppCompatActivity {
             Gson gson = new Gson();
             Type type = new TypeToken<List<PurchaseLineItem>>(){}.getType();
             purchase_data = gson.fromJson(str_purchase_data, type);
+        }
+
+        if (intent.hasExtra("is_inventory_issue")) {
+            setIsInventoryIssue();
         }
 
         try {
@@ -104,14 +108,22 @@ public class PurchaseOrderActivity extends AppCompatActivity {
         toolbar.setNavigationIcon(R.drawable.ic_close);
         toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.colorWhite), PorterDuff.Mode.SRC_ATOP);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(getResources().getString(R.string.title_stock_purchase));
+        if (is_purchase_order) {
+            getSupportActionBar().setTitle(getResources().getString(R.string.title_stock_in));
+        } else {
+            getSupportActionBar().setTitle(getResources().getString(R.string.title_stock_out));
+        }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#019e47")));
         getSupportActionBar().setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#e2e3e5")));
 
         TextView toolbar_title = (TextView) findViewById(R.id.toolbar_title);
-        toolbar_title.setText(getResources().getString(R.string.title_stock_in_out));
+        if (is_purchase_order) {
+            toolbar_title.setText(getResources().getString(R.string.title_stock_in));
+        } else {
+            toolbar_title.setText(getResources().getString(R.string.title_stock_out));
+        }
     }
 
     @Override
@@ -129,34 +141,21 @@ public class PurchaseOrderActivity extends AppCompatActivity {
         purchaseListView.setNestedScrollingEnabled(false);
 
         purchase_notes = (EditText) findViewById(R.id.purchase_notes);
-
+        heading_stock_in_out_items = (TextView) findViewById(R.id.heading_stock_in_out_items);
         btn_proceed = (Button) findViewById(R.id.btn_proceed);
-        radioTransactionType = (RadioGroup) findViewById(R.id.radioTransactionType);
+        if (is_purchase_order) {
+            heading_stock_in_out_items.setText(getResources().getString(R.string.heading_stock_in_items));
+            btn_proceed.setText(getResources().getString(R.string.button_proceed_stock_in));
+        } else {
+            heading_stock_in_out_items.setText(getResources().getString(R.string.heading_stock_out_items));
+            btn_proceed.setText(getResources().getString(R.string.button_proceed_stock_out));
+        }
     }
 
     private void initAction() {
         AdapterListPurchaseConfirm pAdap = new AdapterListPurchaseConfirm(PurchaseOrderActivity.this, purchase_data);
         pAdap.notifyDataSetChanged();
         purchaseListView.setAdapter(pAdap);
-
-        radioTransactionType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                View radioButton = radioTransactionType.findViewById(checkedId);
-                int index = radioTransactionType.indexOfChild(radioButton);
-                switch (index) {
-                    case 0: // first button
-                        btn_proceed.setText(getResources().getString(R.string.button_proceed_stock_in));
-                        setIsPurchaseOrder();
-                        break;
-                    case 1: // secondbutton
-                        btn_proceed.setText(getResources().getString(R.string.button_proceed_stock_out));
-                        setIsInventoryIssue();
-                        break;
-                }
-            }
-        });
     }
 
     private void setIsPurchaseOrder() {
