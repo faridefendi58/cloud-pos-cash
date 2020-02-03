@@ -369,6 +369,8 @@
     <string name="hint_email">E.g: john@gmail.com</string>
     <string name="hint_retur_notes">Add some notes if needed.</string>
     <string name="hint_notes">Add some notes if needed.</string>
+    <string name="hint_warehouse_from">Warehouse From :</string>
+    <string name="hint_warehouse_destination">Warehouse Destination :</string>
 
     <string name="heading_billing_information">Billing Information</string>
     <string name="heading_payment_method">Payment Method</string>

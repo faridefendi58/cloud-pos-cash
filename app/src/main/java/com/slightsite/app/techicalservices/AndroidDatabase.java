@@ -43,6 +43,7 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 				+ "images TEXT(256),"
 				+ "image_bitmap BLOB,"
 				+ "avoid_stock INTEGER DEFAULT 0,"
+				+ "unit TEXT(32) DEFAULT 'pcs',"
 				+ "status TEXT(10)"
 				+ ");");
 		Log.d("CREATE DATABASE", "Create " + DatabaseContents.TABLE_PRODUCT_CATALOG + " Successfully.");

@@ -275,6 +275,7 @@ public class ChangeWarehouseDialogFragment extends DialogFragment {
                                         }
                                         if (pd == null) {
                                             try {
+                                                String _unit = data_n.getString("unit");
                                                 if (config.has("image")) {
                                                     String image = config.getString("image");
                                                     productCatalog.addProduct2(
@@ -282,12 +283,14 @@ public class ChangeWarehouseDialogFragment extends DialogFragment {
                                                             data_n.getString("id"),
                                                             Double.parseDouble(data_n.getString("price")),
                                                             data_n.getInt("priority"),
-                                                            image);
+                                                            image,
+                                                            _unit);
                                                 } else {
-                                                    productCatalog.addProduct(
+                                                    productCatalog.addProduct1(
                                                             data_n.getString("title"),
                                                             data_n.getString("id"),
-                                                            Double.parseDouble(data_n.getString("price")));
+                                                            Double.parseDouble(data_n.getString("price")),
+                                                            _unit);
                                                 }
                                             } catch (Exception e) {
                                                 Log.e(getTag(), e.getMessage());
@@ -297,11 +300,10 @@ public class ChangeWarehouseDialogFragment extends DialogFragment {
                                                 pd.setName(data_n.getString("title"));
                                                 pd.setBarcode(data_n.getString("id"));
                                                 pd.setUnitPrice(Double.parseDouble(data_n.getString("price")));
-                                                //Log.e(getClass().getSimpleName(), "config.has(\"image\") :"+ config.has("image"));
                                                 if (config.has("image")) {
                                                     pd.setImage(config.getString("image"));
                                                 }
-                                                //Log.e(getClass().getSimpleName(), "Priority : "+ data_n.getString("priority"));
+                                                pd.setUnit(data_n.getString("unit"));
                                                 pd.setPriority(data_n.getInt("priority"));
                                                 pd.setStatus("ACTIVE");
 

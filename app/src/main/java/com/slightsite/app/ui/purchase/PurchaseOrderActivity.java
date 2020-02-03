@@ -1,7 +1,9 @@
 package com.slightsite.app.ui.purchase;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -34,6 +36,9 @@ import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.params.Params;
 import com.slightsite.app.domain.purchase.PurchaseLineItem;
+import com.slightsite.app.domain.warehouse.WarehouseCatalog;
+import com.slightsite.app.domain.warehouse.WarehouseService;
+import com.slightsite.app.domain.warehouse.Warehouses;
 import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.URLBuilder;
 import com.slightsite.app.ui.LoginActivity;
@@ -43,6 +48,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -55,6 +61,7 @@ public class PurchaseOrderActivity extends AppCompatActivity {
     private List<PurchaseLineItem> purchase_data = new ArrayList<PurchaseLineItem>();
     private SharedPreferences sharedpreferences;
     private ParamCatalog paramCatalog;
+    private WarehouseCatalog warehouseCatalog;
     private int warehouse_id;
     private String admin_id;
     ProgressDialog pDialog;
@@ -70,6 +77,10 @@ public class PurchaseOrderActivity extends AppCompatActivity {
     private Boolean is_inventory_issue = false;
     private EditText purchase_notes;
     private TextView heading_stock_in_out_items;
+    private EditText wh_options;
+    private List<Warehouses> warehousesList;
+    private int selected_wh_id;
+    private String selected_wh_name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,12 +101,14 @@ public class PurchaseOrderActivity extends AppCompatActivity {
         }
 
         try {
+            warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
             sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
             paramCatalog = ParamService.getInstance().getParamCatalog();
             Params whParam = paramCatalog.getParamByName("warehouse_id");
             if (whParam != null) {
                 warehouse_id = Integer.parseInt(whParam.getValue());
             }
+            warehousesList = warehouseCatalog.getAllWarehouses();
         } catch (Exception e){e.printStackTrace();}
 
         initToolbar();
@@ -142,6 +155,8 @@ public class PurchaseOrderActivity extends AppCompatActivity {
 
         purchase_notes = (EditText) findViewById(R.id.purchase_notes);
         heading_stock_in_out_items = (TextView) findViewById(R.id.heading_stock_in_out_items);
+        wh_options = (EditText) findViewById(R.id.wh_options);
+
         btn_proceed = (Button) findViewById(R.id.btn_proceed);
         if (is_purchase_order) {
             heading_stock_in_out_items.setText(getResources().getString(R.string.heading_stock_in_items));
@@ -156,6 +171,19 @@ public class PurchaseOrderActivity extends AppCompatActivity {
         AdapterListPurchaseConfirm pAdap = new AdapterListPurchaseConfirm(PurchaseOrderActivity.this, purchase_data);
         pAdap.notifyDataSetChanged();
         purchaseListView.setAdapter(pAdap);
+
+        if (is_purchase_order) {
+            wh_options.setText(getResources().getString(R.string.hint_warehouse_from));
+        } else if (is_inventory_issue) {
+            wh_options.setText(getResources().getString(R.string.hint_warehouse_destination));
+        }
+
+        wh_options.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showOutletOptionsDialog(v);
+            }
+        });
     }
 
     private void setIsPurchaseOrder() {
@@ -188,15 +216,24 @@ public class PurchaseOrderActivity extends AppCompatActivity {
         if (warehouse_id > 0) {
             mObj.put("warehouse_id", warehouse_id);
         }
+
+        if (selected_wh_id > 0) {
+            if (is_purchase_order) {
+                mObj.put("warehouse_from", selected_wh_id);
+                mObj.put("warehouse_to", warehouse_id);
+            } else if (is_inventory_issue) {
+                mObj.put("warehouse_from", warehouse_id);
+                mObj.put("warehouse_to", selected_wh_id);
+            }
+        }
         // force completed
         mObj.put("force_complete", "1");
 
-        String _url = Server.URL + "purchase/create-v2?api-key=" + Server.API_KEY;
+        String _url = "";
         if (is_purchase_order) {
-            mObj.put("type", "purchase_order");
+            _url = Server.URL + "transfer/create-receipt?api-key=" + Server.API_KEY;
         } else if (is_inventory_issue) {
-            mObj.put("type", "inventory_issue");
-            _url = Server.URL + "purchase/create-v2?api-key=" + Server.API_KEY;
+            _url = Server.URL + "inventory/create-v2?api-key=" + Server.API_KEY;
         }
         // build the items
         ArrayList arrItems = new ArrayList();
@@ -333,5 +370,37 @@ public class PurchaseOrderActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), e.getMessage());
         }
+    }
+
+    private String[] warehouses = new String[]{};
+    private HashMap<String, Integer> warehouse_ids = new HashMap<String, Integer>();
+
+    public void showOutletOptionsDialog(final View v) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(PurchaseOrderActivity.this);
+        int selected_wh = warehouse_id;
+        try {
+            if (warehousesList.size() > 0) {
+                ArrayList<String> stringArrayList = new ArrayList<String>();
+                for (Warehouses wh : warehousesList) {
+                    if (wh.getId() != warehouse_id) {
+                        stringArrayList.add(wh.getTitle());
+                        warehouse_ids.put(wh.getTitle(), wh.getId());
+                    }
+                }
+                warehouses = stringArrayList.toArray(new String[stringArrayList.size()]);
+            }
+
+            builder.setSingleChoiceItems(warehouses, selected_wh, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                    ((EditText) v).setText(warehouses[i]);
+                    // starting to do updating the data
+                    selected_wh_name = warehouses[i];
+                    selected_wh_id = warehouse_ids.get(selected_wh_name);
+                }
+            });
+            builder.show();
+        } catch (Exception e){e.printStackTrace();}
     }
 }

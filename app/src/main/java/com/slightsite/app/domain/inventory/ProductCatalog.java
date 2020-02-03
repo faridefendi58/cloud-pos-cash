@@ -34,19 +34,28 @@ public class ProductCatalog {
 		return id != -1;
 	}
 
-	public boolean addProduct2(String name, String barcode, double salePrice, int priority, String image) {
+	public boolean addProduct1(String name, String barcode, double salePrice, String unit) {
 		Product product = new Product(name, barcode, salePrice);
-		product.setPriority(priority);
-		product.setImage(image);
+		product.setUnit(unit);
 		int id = inventoryDao.addProduct(product);
 		return id != -1;
 	}
 
-	public boolean addProduct3(String name, String barcode, double salePrice, int priority, String image, int avoid_stock) {
+	public boolean addProduct2(String name, String barcode, double salePrice, int priority, String image, String unit) {
+		Product product = new Product(name, barcode, salePrice);
+		product.setPriority(priority);
+		product.setImage(image);
+		product.setUnit(unit);
+		int id = inventoryDao.addProduct(product);
+		return id != -1;
+	}
+
+	public boolean addProduct3(String name, String barcode, double salePrice, int priority, String image, int avoid_stock, String unit) {
 		Product product = new Product(name, barcode, salePrice);
 		product.setPriority(priority);
 		product.setImage(image);
 		product.setIsAvoidStock(avoid_stock);
+		product.setUnit(unit);
 		int id = inventoryDao.addProduct(product);
 		return id != -1;
 	}

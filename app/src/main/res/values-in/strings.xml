@@ -367,6 +367,8 @@
     <string name="hint_email">Contoh: john@gmail.com</string>
     <string name="hint_retur_notes">Tambahkan catatan jika diperlukan.</string>
     <string name="hint_notes">Tambahkan catatan jika diperlukan.</string>
+    <string name="hint_warehouse_from">Warehouse Asal :</string>
+    <string name="hint_warehouse_destination">Warehouse Tujuan :</string>
 
     <string name="heading_billing_information">Informasi Tagihan</string>
     <string name="heading_payment_method">Cara Pembayaran</string>

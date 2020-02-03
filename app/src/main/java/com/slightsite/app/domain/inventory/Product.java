@@ -27,6 +27,7 @@ public class Product {
 	private String status = "ACTIVE";
 	private Bitmap image_bitmap;
 	private int avoid_stock = 0;
+	private String unit = "pcs";
 	
 	/**
 	 * Static value for UNDEFINED ID.
@@ -137,6 +138,7 @@ public class Product {
 			map.put("image", null);
 		}
 		map.put("avoid_stock", avoid_stock +"");
+		map.put("unit", unit);
 		return map;
 		
 	}
@@ -208,5 +210,13 @@ public class Product {
 
 	public int getIsAvoidStock() {
 		return avoid_stock;
+	}
+
+	public void setUnit(String _unit) {
+		this.unit = _unit;
+	}
+
+	public String getUnit() {
+		return unit;
 	}
 }

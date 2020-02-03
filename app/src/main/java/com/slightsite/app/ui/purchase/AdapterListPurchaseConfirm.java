@@ -34,6 +34,7 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
         public TextView title;
         public EditText price;
         public EditText quantity;
+        public TextView unit;
         public View lyt_parent;
         public View line_separator;
 
@@ -42,6 +43,7 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
             title = (TextView) v.findViewById(R.id.title);
             price = (EditText) v.findViewById(R.id.price);
             quantity = (EditText) v.findViewById(R.id.quantity);
+            unit = (TextView) v.findViewById(R.id.unit);
             lyt_parent = (View) v.findViewById(R.id.lyt_parent);
             line_separator = (View) v.findViewById(R.id.line_separator);
         }
@@ -74,6 +76,7 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
             }
             view.quantity.setText(qty+"");
             view.price.setText(CurrencyController.getInstance().moneyFormat(prc));
+            view.unit.setText(pl.getProduct().getUnit());
 
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -53,6 +53,11 @@ public class InventoryDaoAndroid implements InventoryDao {
 		if (product.getIsAvoidStock() > 0) {
 			content.put("avoid_stock", product.getIsAvoidStock());
 		}
+
+		if (product.getUnit() != null) {
+			content.put("unit", product.getUnit());
+		}
+
         content.put("status", "ACTIVE");
         
         int id = database.insert(DatabaseContents.TABLE_PRODUCT_CATALOG.toString(), content);

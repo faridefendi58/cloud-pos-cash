@@ -383,6 +383,8 @@ public class ProductServerActivity extends Activity {
                                         } catch (Exception e) {}
                                         if (pd == null) {
                                             try {
+                                                String _unit = data_n.getString("unit");
+                                                Log.e("NGINGAS", "_unit : "+ _unit);
                                                 if (config.has("image")) {
                                                     String image = config.getString("image");
                                                     if (config.has("avoid_stock")) {
@@ -393,20 +395,23 @@ public class ProductServerActivity extends Activity {
                                                                 Double.parseDouble(data_n.getString("price")),
                                                                 data_n.getInt("priority"),
                                                                 image,
-                                                                avoid_stock);
+                                                                avoid_stock,
+                                                                _unit);
                                                     } else {
                                                         productCatalog.addProduct2(
                                                                 data_n.getString("title"),
                                                                 data_n.getString("id"),
                                                                 Double.parseDouble(data_n.getString("price")),
                                                                 data_n.getInt("priority"),
-                                                                image);
+                                                                image,
+                                                                _unit);
                                                     }
                                                 } else {
-                                                    productCatalog.addProduct(
+                                                    productCatalog.addProduct1(
                                                             data_n.getString("title"),
                                                             data_n.getString("id"),
-                                                            Double.parseDouble(data_n.getString("price")));
+                                                            Double.parseDouble(data_n.getString("price")),
+                                                            _unit);
                                                 }
                                             } catch (Exception e) {
                                                 Log.e(TAG, e.getMessage());
@@ -416,11 +421,9 @@ public class ProductServerActivity extends Activity {
                                                 pd.setName(data_n.getString("title"));
                                                 pd.setBarcode(data_n.getString("id"));
                                                 pd.setUnitPrice(Double.parseDouble(data_n.getString("price")));
-                                                //Log.e(getClass().getSimpleName(), "config.has(\"image\") :"+ config.has("image"));
                                                 if (config.has("image")) {
                                                     pd.setImage(config.getString("image"));
                                                 }
-                                                //Log.e(getClass().getSimpleName(), "Priority : "+ data_n.getString("priority"));
                                                 pd.setPriority(data_n.getInt("priority"));
                                                 if (config.has("avoid_stock")) {
                                                     int avoid_stock = config.getInt("avoid_stock");

@@ -169,6 +169,32 @@
                             android:orientation="vertical"
                             android:padding="@dimen/spacing_middle">
 
+                        <LinearLayout
+                                android:id="@+id/wh_container"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginVertical="@dimen/spacing_middle"
+                                android:orientation="horizontal">
+
+                            <EditText
+                                    android:id="@+id/wh_options"
+                                    style="@style/EditText.Flat.Grey"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/edit_text_round_bg_outline_black"
+                                    android:drawableEnd="@drawable/ic_expand_arrow"
+                                    android:drawableRight="@drawable/ic_expand_arrow"
+                                    android:editable="false"
+                                    android:focusable="false"
+                                    android:minHeight="@dimen/spacing_xmlarge"
+                                    android:paddingLeft="@dimen/spacing_middle"
+                                    android:paddingRight="@dimen/spacing_middle"
+                                    android:text="@string/label_choose_warehouse"
+                                    android:hint="@string/label_choose_warehouse" />
+
+                        </LinearLayout>
+
                         <EditText
                                 android:id="@+id/purchase_notes"
                                 android:layout_width="match_parent"
