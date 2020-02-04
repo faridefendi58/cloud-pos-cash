@@ -23,7 +23,7 @@ public class Demo {
 	 * @param context The current stage of the application.
 	 */
 	public static void testProduct(Context context) {
-        InputStream instream = context.getResources().openRawResource(R.raw.products);
+        /*InputStream instream = context.getResources().openRawResource(R.raw.products);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(instream));
 		String line;
 		try {
@@ -35,7 +35,7 @@ public class Demo {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 }

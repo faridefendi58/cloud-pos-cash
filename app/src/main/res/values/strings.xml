@@ -390,7 +390,7 @@
     <string name="heading_stock_in_out_items">Stock In/Out Items</string>
     <string name="heading_stock_in_items">Stock In Items</string>
     <string name="heading_stock_out_items">Stock Out Items</string>
-    <string name="heading_stock_in_out_notes">Notes</string>
+    <string name="heading_stock_in_out_notes">Stock In/Out Information</string>
     <string name="heading_stock_in_out_type">Stock Transaction Type</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

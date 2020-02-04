@@ -74,6 +74,9 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            view.quantity.setSelectAllOnFocus(true);
+
             view.quantity.setText(qty+"");
             view.price.setText(CurrencyController.getInstance().moneyFormat(prc));
             view.unit.setText(pl.getProduct().getUnit());
@@ -133,8 +136,8 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
 
                             current_val = formatted;
                         }
-                        etv.setText(formatted);
-                        etv.setSelection(formatted.length());
+                        etv.setText(current_val);
+                        etv.setSelection(current_val.length());
                         etv.addTextChangedListener(this);
                     }
                 }

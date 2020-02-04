@@ -95,8 +95,7 @@ public class AdapterListProductPurchase extends BaseAdapter {
         holder.addCartButton = (Button) rowView.findViewById(R.id.addCartButton);
         holder.remove_item = (TextView) rowView.findViewById(R.id.remove_item);
 
-        holder.quantity.setFocusableInTouchMode(true);
-        holder.quantity.setFocusable(true);
+        holder.quantity.setSelectAllOnFocus(true);
 
         final Product p = items.get(position);
         Map<String, String> pmap = p.toMap();

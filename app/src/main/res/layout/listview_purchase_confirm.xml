@@ -56,7 +56,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:background="@drawable/edit_text_round_bg_outline"
                     android:inputType="number"
-                    android:focusableInTouchMode="true"
+                    android:maxLength="5"
                     android:textColor="@color/grey_40" />
 
             <TextView

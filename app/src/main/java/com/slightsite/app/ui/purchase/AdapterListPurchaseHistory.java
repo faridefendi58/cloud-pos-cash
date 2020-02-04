@@ -2,6 +2,7 @@ package com.slightsite.app.ui.purchase;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,10 +57,18 @@ public class AdapterListPurchaseHistory extends RecyclerView.Adapter<RecyclerVie
             AdapterListPurchaseHistory.OriginalViewHolder vwh = (AdapterListPurchaseHistory.OriginalViewHolder) holder;
 
             PurchaseItem pi = items.get(position);
-            view.issue_number.setText(pi.getIssueNumber());
+            view.issue_number.setText(pi.getTitle());
             view.created_at.setText(pi.getCreatedAt());
             view.status.setText(pi.getStatus());
             view.notes.setText(pi.getNotes());
+
+            if (pi.getType().equals("transfer_issue")) {
+                view.issue_number.setTextColor(context.getResources().getColor(R.color.red_500));
+            } else if (pi.getType().equals("transfer_receipt")) {
+                view.issue_number.setTextColor(context.getResources().getColor(R.color.greenUcok));
+            } else if (pi.getType().equals("inventory_issue")) {
+                view.issue_number.setTextColor(context.getResources().getColor(R.color.red_500));
+            }
 
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -158,7 +158,7 @@ public class PurchaseFragment extends UpdatableFragment {
         });
 
 
-        inventoryListView.setOnItemClickListener(new OnItemClickListener() {
+        /*inventoryListView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> myAdapter, final View myView, int position, long mylng) {
                 LinearLayout add_qty_container = (LinearLayout) myView.findViewById(R.id.add_qty_container);
 
@@ -174,7 +174,7 @@ public class PurchaseFragment extends UpdatableFragment {
                     quantity.setText(""+ 1);
                 }
             }
-        });
+        });*/
 
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override

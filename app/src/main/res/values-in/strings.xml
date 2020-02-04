@@ -388,7 +388,7 @@
     <string name="heading_stock_in_out_items">Item Stock Masuk/Keluar</string>
     <string name="heading_stock_in_items">Item Stok Masuk</string>
     <string name="heading_stock_out_items">Item Stok Keluar</string>
-    <string name="heading_stock_in_out_notes">Catatan</string>
+    <string name="heading_stock_in_out_notes">Informasi Stok Masuk/Keluar</string>
     <string name="heading_stock_in_out_type">Jenis Transaksi Stock</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

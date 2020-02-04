@@ -97,6 +97,9 @@
                 android:name=".ui.purchase.PurchaseHistoryActivity"
                 android:label="@string/title_stock_in_out_history"
                 android:theme="@style/AppCompatTheme" />
+        <activity
+                android:name=".ui.purchase.PurchaseDetailActivity"
+                android:screenOrientation="portrait" />
     </application>
 
 </manifest>

@@ -109,6 +109,17 @@ public class PurchaseOrderActivity extends AppCompatActivity {
                 warehouse_id = Integer.parseInt(whParam.getValue());
             }
             warehousesList = warehouseCatalog.getAllWarehouses();
+            // add wh list
+            Warehouses termoking_canter = new Warehouses(11, "Termoking Canter", "Virtual", "0000", 1);
+            warehousesList.add(termoking_canter);
+            Warehouses termoking_hdl = new Warehouses(12, "Termoking HDL", "Virtual", "0000", 1);
+            warehousesList.add(termoking_hdl);
+            Warehouses termoking_dyna = new Warehouses(13, "Termoking Dyna", "Virtual", "0000", 1);
+            warehousesList.add(termoking_dyna);
+            Warehouses prod_jakarta = new Warehouses(14, "Produksi Jakarta", "Virtual", "0000", 1);
+            warehousesList.add(prod_jakarta);
+            Warehouses prod_jogja = new Warehouses(15, "Produksi Jogja", "Virtual", "0000", 1);
+            warehousesList.add(prod_jogja);
         } catch (Exception e){e.printStackTrace();}
 
         initToolbar();
@@ -233,7 +244,11 @@ public class PurchaseOrderActivity extends AppCompatActivity {
         if (is_purchase_order) {
             _url = Server.URL + "transfer/create-receipt?api-key=" + Server.API_KEY;
         } else if (is_inventory_issue) {
-            _url = Server.URL + "inventory/create-v2?api-key=" + Server.API_KEY;
+            if (selected_wh_id > 0) {
+                _url = Server.URL + "inventory/create-v2?api-key=" + Server.API_KEY;
+            } else {
+                _url = Server.URL + "transfer/create-v2?api-key=" + Server.API_KEY;
+            }
         }
         // build the items
         ArrayList arrItems = new ArrayList();

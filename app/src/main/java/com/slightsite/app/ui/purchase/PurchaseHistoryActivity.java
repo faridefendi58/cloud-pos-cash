@@ -135,7 +135,8 @@ public class PurchaseHistoryActivity extends AppCompatActivity {
             admin_id = adminParam.getValue();
         }
         params.put("admin_id", admin_id);
-        String url = Server.URL + "purchase/list?api-key=" + Server.API_KEY;
+        params.put("limit", "30");
+        String url = Server.URL + "transfer/history?api-key=" + Server.API_KEY;
         _string_request(Request.Method.GET, url, params, false,
                 new VolleyCallback() {
                     @Override
@@ -146,20 +147,33 @@ public class PurchaseHistoryActivity extends AppCompatActivity {
                                 JSONObject jObj = new JSONObject(result);
                                 int success = jObj.getInt("success");
                                 if (success == 1) {
-                                    JSONArray detail_data = jObj.getJSONArray("detail");
+                                    JSONArray detail_data = jObj.getJSONArray("data");
                                     for(int n = 0; n < detail_data.length(); n++) {
                                         JSONObject detail_obj = detail_data.getJSONObject(n);
-                                        PurchaseItem pi = new PurchaseItem(detail_obj.getInt("id"));
+                                        PurchaseItem pi = new PurchaseItem(detail_obj.getInt("rel_id"));
                                         pi.setCreatedAt(detail_obj.getString("created_at"));
-                                        pi.setIssueNumber(detail_obj.getString("po_number"));
-                                        pi.setNotes(detail_obj.getString("notes"));
-                                        pi.setStatus(detail_obj.getString("status"));
+                                        //pi.setIssueNumber(detail_obj.getString("po_number"));
+                                        pi.setTitle(detail_obj.getString("title"));
+                                        pi.setType(detail_obj.getString("type"));
+                                        pi.setNotes(detail_obj.getString("description"));
+                                        //pi.setStatus(detail_obj.getString("status"));
+                                        pi.setCreatedBy(detail_obj.getString("created_by_name"));
                                         history_data.add(pi);
                                     }
 
                                     AdapterListPurchaseHistory pAdap = new AdapterListPurchaseHistory(PurchaseHistoryActivity.this, history_data);
                                     pAdap.notifyDataSetChanged();
                                     purchaseHistoryListView.setAdapter(pAdap);
+
+                                    pAdap.setOnItemClickListener(new AdapterListPurchaseHistory.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(View view, PurchaseItem obj, int position) {
+                                            Intent intent = new Intent(PurchaseHistoryActivity.this, PurchaseDetailActivity.class);
+                                            intent.putExtra("issue_id", obj.getIssueId()+"");
+                                            //finish();
+                                            startActivity(intent);
+                                        }
+                                    });
                                 }
                             } else {
                                 Toast.makeText(getApplicationContext(), "Failed!, No product data in ",
