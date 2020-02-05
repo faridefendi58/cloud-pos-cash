@@ -2,10 +2,13 @@ package com.slightsite.app.ui.purchase;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -20,6 +23,7 @@ import com.slightsite.app.domain.inventory.Product;
 import com.slightsite.app.techicalservices.DownloadImageTask;
 import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.ui.MainActivity;
+import com.slightsite.app.ui.sale.EditFragmentDialog;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +40,8 @@ public class AdapterListProductPurchase extends BaseAdapter {
     private Boolean is_inventory_issue = false;
 
     private static LayoutInflater inflater = null;
+    private LinearLayout bottom_cart_container;
+    private Boolean is_dialog_opened = false;
 
     public AdapterListProductPurchase(MainActivity activity, List<Product> items, int resource, PurchaseFragment fragment) {
         // TODO Auto-generated constructor stub
@@ -163,6 +169,14 @@ public class AdapterListProductPurchase extends BaseAdapter {
             }
         });
 
+        holder.quantity.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                showEditPopup(holder, p);
+                return false;
+            }
+        });
+
         holder.quantity.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -183,8 +197,7 @@ public class AdapterListProductPurchase extends BaseAdapter {
                             holder.addCartButton.setVisibility(View.VISIBLE);
                         }
                         holder.quantity.setText(_qty+"");
-                        Log.e("CUK", "_qty onTextChanged : "+ _qty);
-                        //holder.quantity.setSelection(charSequence.length());
+                        holder.quantity.setFocusable(true);
                         holder.quantity.addTextChangedListener(this);
                     }
                 } catch (Exception e) {
@@ -196,7 +209,6 @@ public class AdapterListProductPurchase extends BaseAdapter {
             public void afterTextChanged(Editable editable) {
                 if (editable.toString().length() > 0) {
                     int _qty = Integer.parseInt(editable.toString());
-                    Log.e("CUK", "_qty afterTextChanged : "+ _qty);
                     fragment.addSubstractTheCart(p, _qty);
                 }
             }
@@ -207,5 +219,27 @@ public class AdapterListProductPurchase extends BaseAdapter {
 
     public void setIsInventoryIssue(Boolean is_inventory_issue) {
         this.is_inventory_issue = is_inventory_issue;
+    }
+
+    public void setBottomCartContainer(LinearLayout bottom_cart_container) {
+        this.bottom_cart_container = bottom_cart_container;
+    }
+
+    public void showEditPopup(Holder holder, Product p){
+        if (!is_dialog_opened) {
+            Bundle bundle = new Bundle();
+            bundle.putString("title", holder.name.getText().toString());
+            bundle.putString("quantity", holder.quantity.getText().toString());
+
+            EditPurchaseDialog newFragment = new EditPurchaseDialog(fragment, p);
+            newFragment.setArguments(bundle);
+            newFragment.show(fragment.getFragmentManager(), "");
+
+            this.is_dialog_opened = true;
+        }
+    }
+
+    public void setIsClosedDialog() {
+        this.is_dialog_opened = false;
     }
 }

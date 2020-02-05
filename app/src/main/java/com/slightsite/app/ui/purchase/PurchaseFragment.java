@@ -58,7 +58,6 @@ import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.component.UpdatableFragment;
 import com.slightsite.app.ui.inventory.AddProductDialogFragment;
-import com.slightsite.app.ui.sale.ChangeWarehouseDialogFragment;
 
 /**
  * UI for Inventory, shows list of Product in the ProductCatalog.
@@ -157,25 +156,6 @@ public class PurchaseFragment extends UpdatableFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count){}
         });
 
-
-        /*inventoryListView.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> myAdapter, final View myView, int position, long mylng) {
-                LinearLayout add_qty_container = (LinearLayout) myView.findViewById(R.id.add_qty_container);
-
-                int id = Integer.parseInt(inventoryList.get(position).get("id").toString());
-                if (!add_qty_container.isShown()) {
-                    //register.addItem(productCatalog.getProductById(id), 1);
-                    //viewPager.setCurrentItem(4);
-                    main.addPurchaseItem(productCatalog.getProductById(id), 1);
-
-                    add_qty_container.setVisibility(View.VISIBLE);
-                    myView.findViewById(R.id.optionView).setVisibility(View.GONE);
-                    TextView quantity = myView.findViewById(R.id.quantity);
-                    quantity.setText(""+ 1);
-                }
-            }
-        });*/
-
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -261,7 +241,9 @@ public class PurchaseFragment extends UpdatableFragment {
         if (is_inventory_issue) {
             pAdap.setIsInventoryIssue(is_inventory_issue);
         }
+        pAdap.setBottomCartContainer(bottom_cart_container);
         pAdap.notifyDataSetChanged();
+        pAdap.setIsClosedDialog();
         inventoryListView.setAdapter(pAdap);
     }
 
@@ -311,15 +293,6 @@ public class PurchaseFragment extends UpdatableFragment {
         Demo.testProduct(getActivity());
         Toast.makeText(getActivity().getBaseContext(), res.getString(R.string.success),
                 Toast.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Show popup.
-     * @param anchorView
-     */
-    public void showPopup(View anchorView) {
-        AddProductDialogFragment newFragment = new AddProductDialogFragment(PurchaseFragment.this);
-        newFragment.show(getFragmentManager(), "");
     }
 
     @Override

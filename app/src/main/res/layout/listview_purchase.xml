@@ -76,15 +76,6 @@
                             android:layout_weight="1"
                             android:gravity="right">
 
-                        <View
-                                android:id="@+id/optionView"
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:background="@drawable/ic_edit_blue_24dp"
-                                android:layout_gravity="right"
-                                android:visibility="gone"
-                                />
-
                         <Button
                                 android:id="@+id/addCartButton"
                                 android:layout_width="wrap_content"
@@ -118,7 +109,6 @@
                                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                                     android:background="@drawable/edit_text_round_bg_outline"
                                     android:inputType="number"
-                                    android:focusableInTouchMode="true"
                                     android:maxLength="@android:integer/config_shortAnimTime"
                                     android:textColor="@color/grey_40" />
 
