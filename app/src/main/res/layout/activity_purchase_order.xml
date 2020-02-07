@@ -190,8 +190,8 @@
                                     android:minHeight="@dimen/spacing_xmlarge"
                                     android:paddingLeft="@dimen/spacing_middle"
                                     android:paddingRight="@dimen/spacing_middle"
-                                    android:text="@string/label_choose_warehouse"
-                                    android:hint="@string/label_choose_warehouse" />
+                                    android:text="@string/origin"
+                                    android:hint="@string/origin" />
 
                         </LinearLayout>
 

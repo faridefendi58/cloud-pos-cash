@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,7 +38,7 @@ public class AdapterListProductPurchase extends BaseAdapter {
     private MainActivity activity;
     private PurchaseFragment fragment;
     private Map<Integer, Integer> stacks = new HashMap<Integer, Integer>();
-    private Boolean is_inventory_issue = false;
+    private Boolean is_stock_out = false;
 
     private static LayoutInflater inflater = null;
     private LinearLayout bottom_cart_container;
@@ -125,7 +126,7 @@ public class AdapterListProductPurchase extends BaseAdapter {
             holder.stock_counter.setText(context.getResources().getString(R.string.available));
         }
 
-        if (is_inventory_issue) {
+        if (is_stock_out) {
             holder.addCartButton.setText(context.getResources().getString(R.string.button_substract));
             holder.addCartButton.setBackgroundColor(context.getResources().getColor(R.color.red_400));
         }
@@ -217,14 +218,15 @@ public class AdapterListProductPurchase extends BaseAdapter {
         return rowView;
     }
 
-    public void setIsInventoryIssue(Boolean is_inventory_issue) {
-        this.is_inventory_issue = is_inventory_issue;
+    public void setIsStockOut(Boolean is_stock_out) {
+        this.is_stock_out = is_stock_out;
     }
 
     public void setBottomCartContainer(LinearLayout bottom_cart_container) {
         this.bottom_cart_container = bottom_cart_container;
     }
 
+    private EditText hold_qty;
     public void showEditPopup(Holder holder, Product p){
         if (!is_dialog_opened) {
             Bundle bundle = new Bundle();
@@ -236,10 +238,25 @@ public class AdapterListProductPurchase extends BaseAdapter {
             newFragment.show(fragment.getFragmentManager(), "");
 
             this.is_dialog_opened = true;
+            /*try {
+                hold_qty = holder.quantity;
+                InputMethodManager inputMethodManager =
+                        (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInputFromWindow(
+                        holder.quantity.getApplicationWindowToken(),
+                        InputMethodManager.SHOW_FORCED, 0);
+            } catch (Exception e){e.printStackTrace();}*/
         }
     }
 
     public void setIsClosedDialog() {
         this.is_dialog_opened = false;
+        /*try {
+            if (hold_qty != null) {
+                InputMethodManager inputMethodManager =
+                        (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(hold_qty.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        } catch (Exception e){e.printStackTrace();}*/
     }
 }

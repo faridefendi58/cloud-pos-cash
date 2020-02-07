@@ -27,20 +27,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.TranslateAnimation;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.balysv.materialripple.MaterialRippleLayout;
-import com.github.clans.fab.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentIntegratorSupportV4;
@@ -57,7 +52,6 @@ import com.slightsite.app.techicalservices.Demo;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.component.UpdatableFragment;
-import com.slightsite.app.ui.inventory.AddProductDialogFragment;
 
 /**
  * UI for Inventory, shows list of Product in the ProductCatalog.
@@ -93,8 +87,8 @@ public class PurchaseFragment extends UpdatableFragment {
     private Map<Integer, String> allowed_warehouses = new HashMap<Integer, String>();
     private Menu menu_purchase;
     private RadioGroup radioTransactionType;
-    private Boolean is_purchase_order = true;
-    private Boolean is_inventory_issue = false;
+    private Boolean is_stock_in = true;
+    private Boolean is_stock_out = false;
 
     /**
      * Construct a new PurchaseFragment.
@@ -174,8 +168,8 @@ public class PurchaseFragment extends UpdatableFragment {
 
                 Intent newActivity = new Intent(main.getApplicationContext(), PurchaseOrderActivity.class);
                 newActivity.putExtra("purchase_data", jsonPurchase);
-                if (is_inventory_issue) {
-                    newActivity.putExtra("is_inventory_issue", true);
+                if (is_stock_out) {
+                    newActivity.putExtra("is_stock_out", true);
                 }
                 startActivity(newActivity);
             }
@@ -202,10 +196,10 @@ public class PurchaseFragment extends UpdatableFragment {
                 int index = radioTransactionType.indexOfChild(radioButton);
                 switch (index) {
                     case 0: // first button
-                        setIsPurchaseOrder();
+                        setIsStockIn();
                         break;
                     case 1: // secondbutton
-                        setIsInventoryIssue();
+                        setIsStockOut();
                         break;
                 }
                 try {
@@ -238,8 +232,8 @@ public class PurchaseFragment extends UpdatableFragment {
         this.stacks = new HashMap<Integer, Integer>();
 
         AdapterListProductPurchase pAdap = new AdapterListProductPurchase(main, list, R.layout.listview_purchase, PurchaseFragment.this);
-        if (is_inventory_issue) {
-            pAdap.setIsInventoryIssue(is_inventory_issue);
+        if (is_stock_out) {
+            pAdap.setIsStockOut(is_stock_out);
         }
         pAdap.setBottomCartContainer(bottom_cart_container);
         pAdap.notifyDataSetChanged();
@@ -569,13 +563,13 @@ public class PurchaseFragment extends UpdatableFragment {
         } catch (Exception e){e.printStackTrace();}
     }
 
-    private void setIsPurchaseOrder() {
-        this.is_purchase_order = true;
-        this.is_inventory_issue = false;
+    private void setIsStockIn() {
+        this.is_stock_in = true;
+        this.is_stock_out = false;
     }
 
-    private void setIsInventoryIssue() {
-        this.is_inventory_issue = true;
-        this.is_purchase_order = false;
+    private void setIsStockOut() {
+        this.is_stock_out = true;
+        this.is_stock_in = false;
     }
 }

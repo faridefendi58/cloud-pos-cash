@@ -29,6 +29,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.AppController;
@@ -43,6 +45,7 @@ import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.URLBuilder;
 import com.slightsite.app.ui.LoginActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -73,13 +76,15 @@ public class PurchaseOrderActivity extends AppCompatActivity {
 
     private RecyclerView purchaseListView;
     private Button btn_proceed;
-    private Boolean is_purchase_order = true;
-    private Boolean is_inventory_issue = false;
+    private Boolean is_stock_in = true;
+    private Boolean is_stock_out = false;
     private EditText purchase_notes;
     private TextView heading_stock_in_out_items;
     private EditText wh_options;
     private List<Warehouses> warehousesList;
-    private int selected_wh_id;
+    private List<Warehouses> warehousesListIn = new ArrayList<Warehouses>();
+    private List<Warehouses> warehousesListOut = new ArrayList<Warehouses>();
+    private int selected_wh_id = -1;
     private String selected_wh_name;
 
     @Override
@@ -96,8 +101,8 @@ public class PurchaseOrderActivity extends AppCompatActivity {
             purchase_data = gson.fromJson(str_purchase_data, type);
         }
 
-        if (intent.hasExtra("is_inventory_issue")) {
-            setIsInventoryIssue();
+        if (intent.hasExtra("is_stock_out")) {
+            setIsStockOut();
         }
 
         try {
@@ -109,17 +114,7 @@ public class PurchaseOrderActivity extends AppCompatActivity {
                 warehouse_id = Integer.parseInt(whParam.getValue());
             }
             warehousesList = warehouseCatalog.getAllWarehouses();
-            // add wh list
-            Warehouses termoking_canter = new Warehouses(11, "Termoking Canter", "Virtual", "0000", 1);
-            warehousesList.add(termoking_canter);
-            Warehouses termoking_hdl = new Warehouses(12, "Termoking HDL", "Virtual", "0000", 1);
-            warehousesList.add(termoking_hdl);
-            Warehouses termoking_dyna = new Warehouses(13, "Termoking Dyna", "Virtual", "0000", 1);
-            warehousesList.add(termoking_dyna);
-            Warehouses prod_jakarta = new Warehouses(14, "Produksi Jakarta", "Virtual", "0000", 1);
-            warehousesList.add(prod_jakarta);
-            Warehouses prod_jogja = new Warehouses(15, "Produksi Jogja", "Virtual", "0000", 1);
-            warehousesList.add(prod_jogja);
+            getAvailableWH();
         } catch (Exception e){e.printStackTrace();}
 
         initToolbar();
@@ -132,7 +127,7 @@ public class PurchaseOrderActivity extends AppCompatActivity {
         toolbar.setNavigationIcon(R.drawable.ic_close);
         toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.colorWhite), PorterDuff.Mode.SRC_ATOP);
         setSupportActionBar(toolbar);
-        if (is_purchase_order) {
+        if (is_stock_in) {
             getSupportActionBar().setTitle(getResources().getString(R.string.title_stock_in));
         } else {
             getSupportActionBar().setTitle(getResources().getString(R.string.title_stock_out));
@@ -143,7 +138,7 @@ public class PurchaseOrderActivity extends AppCompatActivity {
         getSupportActionBar().setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#e2e3e5")));
 
         TextView toolbar_title = (TextView) findViewById(R.id.toolbar_title);
-        if (is_purchase_order) {
+        if (is_stock_in) {
             toolbar_title.setText(getResources().getString(R.string.title_stock_in));
         } else {
             toolbar_title.setText(getResources().getString(R.string.title_stock_out));
@@ -169,12 +164,16 @@ public class PurchaseOrderActivity extends AppCompatActivity {
         wh_options = (EditText) findViewById(R.id.wh_options);
 
         btn_proceed = (Button) findViewById(R.id.btn_proceed);
-        if (is_purchase_order) {
+        if (is_stock_in) {
             heading_stock_in_out_items.setText(getResources().getString(R.string.heading_stock_in_items));
             btn_proceed.setText(getResources().getString(R.string.button_proceed_stock_in));
+            wh_options.setHint(getResources().getString(R.string.origin));
+            wh_options.setText(getResources().getString(R.string.origin));
         } else {
             heading_stock_in_out_items.setText(getResources().getString(R.string.heading_stock_out_items));
             btn_proceed.setText(getResources().getString(R.string.button_proceed_stock_out));
+            wh_options.setHint(getResources().getString(R.string.destination));
+            wh_options.setText(getResources().getString(R.string.destination));
         }
     }
 
@@ -183,28 +182,29 @@ public class PurchaseOrderActivity extends AppCompatActivity {
         pAdap.notifyDataSetChanged();
         purchaseListView.setAdapter(pAdap);
 
-        if (is_purchase_order) {
+        if (is_stock_in) {
             wh_options.setText(getResources().getString(R.string.hint_warehouse_from));
-        } else if (is_inventory_issue) {
+        } else if (is_stock_out) {
             wh_options.setText(getResources().getString(R.string.hint_warehouse_destination));
         }
 
         wh_options.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showOutletOptionsDialog(v);
+                //showOutletOptionsDialog(v);
+                showStockOptions(wh_options);
             }
         });
     }
 
-    private void setIsPurchaseOrder() {
-        this.is_purchase_order = true;
-        this.is_inventory_issue = false;
+    private void setIsStockIn() {
+        this.is_stock_in = true;
+        this.is_stock_out = false;
     }
 
-    private void setIsInventoryIssue() {
-        this.is_inventory_issue = true;
-        this.is_purchase_order = false;
+    private void setIsStockOut() {
+        this.is_stock_out = true;
+        this.is_stock_in = false;
     }
 
     public void updatePurchaseData(int i, String attr, String val) {
@@ -229,10 +229,10 @@ public class PurchaseOrderActivity extends AppCompatActivity {
         }
 
         if (selected_wh_id > 0) {
-            if (is_purchase_order) {
+            if (is_stock_in) {
                 mObj.put("warehouse_from", selected_wh_id);
                 mObj.put("warehouse_to", warehouse_id);
-            } else if (is_inventory_issue) {
+            } else if (is_stock_out) {
                 mObj.put("warehouse_from", warehouse_id);
                 mObj.put("warehouse_to", selected_wh_id);
             }
@@ -241,9 +241,9 @@ public class PurchaseOrderActivity extends AppCompatActivity {
         mObj.put("force_complete", "1");
 
         String _url = "";
-        if (is_purchase_order) {
+        if (is_stock_in) {
             _url = Server.URL + "transfer/create-receipt?api-key=" + Server.API_KEY;
-        } else if (is_inventory_issue) {
+        } else if (is_stock_out) {
             if (selected_wh_id > 0) {
                 _url = Server.URL + "inventory/create-v2?api-key=" + Server.API_KEY;
             } else {
@@ -391,21 +391,36 @@ public class PurchaseOrderActivity extends AppCompatActivity {
     private HashMap<String, Integer> warehouse_ids = new HashMap<String, Integer>();
 
     public void showOutletOptionsDialog(final View v) {
+        warehouse_ids.clear();
         AlertDialog.Builder builder = new AlertDialog.Builder(PurchaseOrderActivity.this);
-        int selected_wh = warehouse_id;
         try {
-            if (warehousesList.size() > 0) {
+            if (is_stock_in) {
                 ArrayList<String> stringArrayList = new ArrayList<String>();
-                for (Warehouses wh : warehousesList) {
-                    if (wh.getId() != warehouse_id) {
-                        stringArrayList.add(wh.getTitle());
-                        warehouse_ids.put(wh.getTitle(), wh.getId());
+                if (warehousesListIn.size() > 0) {
+                    for (Warehouses wh : warehousesListIn) {
+                        if (wh.getId() != warehouse_id) {
+                            stringArrayList.add(wh.getTitle());
+                            warehouse_ids.put(wh.getTitle(), wh.getId());
+                        }
                     }
+                    warehouses = stringArrayList.toArray(new String[stringArrayList.size()]);
                 }
-                warehouses = stringArrayList.toArray(new String[stringArrayList.size()]);
+            } else if (is_stock_out) {
+                warehouse_ids.put(getResources().getString(R.string.origin), 0);
+                ArrayList<String> stringArrayList = new ArrayList<String>();
+                stringArrayList.add(getResources().getString(R.string.reject));
+                if (warehousesListOut.size() > 0) {
+                    for (Warehouses wh : warehousesListOut) {
+                        if (wh.getId() != warehouse_id) {
+                            stringArrayList.add(wh.getTitle());
+                            warehouse_ids.put(wh.getTitle(), wh.getId());
+                        }
+                    }
+                    warehouses = stringArrayList.toArray(new String[stringArrayList.size()]);
+                }
             }
 
-            builder.setSingleChoiceItems(warehouses, selected_wh, new DialogInterface.OnClickListener() {
+            builder.setSingleChoiceItems(warehouses, 0, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     dialogInterface.dismiss();
@@ -417,5 +432,111 @@ public class PurchaseOrderActivity extends AppCompatActivity {
             });
             builder.show();
         } catch (Exception e){e.printStackTrace();}
+    }
+
+    private HashMap<String, List<Warehouses>> grouped_warehouse_list_in = new HashMap<String, List<Warehouses>>();
+    private HashMap<String, List<Warehouses>> grouped_warehouse_list_out = new HashMap<String, List<Warehouses>>();
+
+    private void getAvailableWH() {
+        Map<String, String> params = new HashMap<String, String>();
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        Params adminParam = paramCatalog.getParamByName("admin_id");
+        if (adminParam != null) {
+            admin_id = adminParam.getValue();
+        }
+
+        params.put("admin_id", admin_id);
+        params.put("warehouse_id", warehouse_id+"");
+
+        String _url = Server.URL + "warehouse/list-transfer?api-key=" + Server.API_KEY;
+
+        _string_request(
+                Request.Method.GET,
+                _url,
+                params,
+                false,
+                new VolleyCallback(){
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONObject data = jObj.getJSONObject("data");
+                                JSONArray data_in = data.getJSONArray("in");
+                                if (data_in.length() > 0) {
+                                    for (int i = 0; i < data_in.length(); i++) {
+                                        JSONObject data_n = data_in.getJSONObject(i);
+                                        Warehouses wh = new Warehouses(data_n.getInt("warehouse_rel_id"), data_n.getString("title"), data_n.getString("address"), data_n.getString("phone"), data_n.getInt("active"));
+                                        warehousesListIn.add(wh);
+                                        JSONObject configs = data_n.getJSONObject("configs");
+                                        if (configs.has("category")) {
+                                            String category = configs.getString("category");
+                                            if (grouped_warehouse_list_in.containsKey(category)) {
+                                                List<Warehouses> the_list = grouped_warehouse_list_in.get(category);
+                                                the_list.add(wh);
+                                            } else {
+                                                List<Warehouses> the_list = new ArrayList<Warehouses>();
+                                                the_list.add(wh);
+                                                grouped_warehouse_list_in.put(category, the_list);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                JSONArray data_out = data.getJSONArray("out");
+                                if (data_out.length() > 0) {
+                                    for (int i = 0; i < data_out.length(); i++) {
+                                        JSONObject data_n = data_out.getJSONObject(i);
+                                        Warehouses wh = new Warehouses(data_n.getInt("warehouse_rel_id"), data_n.getString("title"), data_n.getString("address"), data_n.getString("phone"), data_n.getInt("active"));
+                                        warehousesListOut.add(wh);
+                                        JSONObject configs = data_n.getJSONObject("configs");
+                                        if (configs.has("category")) {
+                                            String category = configs.getString("category");
+                                            if (grouped_warehouse_list_out.containsKey(category)) {
+                                                List<Warehouses> the_list = grouped_warehouse_list_out.get(category);
+                                                the_list.add(wh);
+                                            } else {
+                                                List<Warehouses> the_list = new ArrayList<Warehouses>();
+                                                the_list.add(wh);
+                                                grouped_warehouse_list_out.put(category, the_list);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    public void showStockOptions(EditText editText){
+        Bundle bundle = new Bundle();
+        if (is_stock_in) {
+            bundle.putString("title", getResources().getString(R.string.origin));
+        } else {
+            bundle.putString("title", getResources().getString(R.string.destination));
+        }
+
+        StockOptionsDialog newFragment = new StockOptionsDialog(PurchaseOrderActivity.this, editText);
+        newFragment.setArguments(bundle);
+        if (is_stock_in) {
+            newFragment.setListData(grouped_warehouse_list_in);
+            newFragment.setIsStockIn();
+            newFragment.setSelectedWarehouseId(selected_wh_id);
+        } else {
+            newFragment.setListData(grouped_warehouse_list_out);
+            newFragment.setIsStockOut();
+            newFragment.setSelectedWarehouseId(selected_wh_id);
+        }
+        newFragment.show(getSupportFragmentManager(), "");
+    }
+
+    public void setSelectedWH(int warehouse_id, String warehouse_name) {
+        this.selected_wh_id = warehouse_id;
+        this.selected_wh_name = warehouse_name;
     }
 }

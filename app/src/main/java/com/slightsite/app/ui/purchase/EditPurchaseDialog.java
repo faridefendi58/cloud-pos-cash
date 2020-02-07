@@ -50,10 +50,6 @@ public class EditPurchaseDialog extends DialogFragment {
         quantityBox.setText(qty+"");
         quantityBox.setSelectAllOnFocus(true);
         quantityBox.setFocusable(true);
-        try {
-            InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(quantityBox, InputMethodManager.SHOW_IMPLICIT);
-        } catch (Exception e){e.printStackTrace();}
 
         cancelButton.setOnClickListener(new View.OnClickListener(){
             @Override
