@@ -356,6 +356,7 @@
     <string name="button_proceed_stock_in">Proceed Stock In</string>
     <string name="button_proceed_stock_out">Proceed Stock Out</string>
     <string name="button_substract">Substract</string>
+    <string name="button_done">Done</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
 

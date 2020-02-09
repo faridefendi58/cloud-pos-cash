@@ -354,6 +354,7 @@
     <string name="button_proceed_stock_in">Proses Stok Masuk</string>
     <string name="button_proceed_stock_out">Proses Stok Keluar</string>
     <string name="button_substract">Kurang</string>
+    <string name="button_done">Selesai</string>
 
     <string name="confirm_edit">Anda yakin ingin mengubah data ini?</string>
 

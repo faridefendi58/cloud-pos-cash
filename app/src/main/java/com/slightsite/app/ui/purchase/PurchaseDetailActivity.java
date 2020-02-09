@@ -3,21 +3,18 @@ package com.slightsite.app.ui.purchase;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,12 +25,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.AppController;
-import com.slightsite.app.domain.CurrencyController;
-import com.slightsite.app.domain.DateTimeStrategy;
-import com.slightsite.app.domain.params.ParamService;
-import com.slightsite.app.domain.sale.SaleLedger;
-import com.slightsite.app.domain.warehouse.WarehouseService;
-import com.slightsite.app.techicalservices.NoDaoSetException;
+import com.slightsite.app.domain.inventory.Product;
+import com.slightsite.app.domain.purchase.PurchaseLineItem;
 import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.ui.LoginActivity;
 
@@ -41,8 +34,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import static com.slightsite.app.ui.LoginActivity.TAG_ID;
@@ -62,6 +57,8 @@ public class PurchaseDetailActivity extends Activity {
     private TextView issue_number;
     private TextView created_at;
     private TextView created_by;
+    private RecyclerView itemListRecycle;
+    private List<PurchaseLineItem> purchase_data = new ArrayList<PurchaseLineItem>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,7 +69,9 @@ public class PurchaseDetailActivity extends Activity {
             this.issue_id = getIntent().getStringExtra("issue_id");
             try {
                 getDetailFromServer();
-            } catch (Exception e) { e.printStackTrace(); }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         initUI(savedInstanceState);
@@ -101,6 +100,11 @@ public class PurchaseDetailActivity extends Activity {
         created_at = (TextView) findViewById(R.id.created_at);
         created_by = (TextView) findViewById(R.id.created_by);
         initiateActionBar();
+
+        itemListRecycle = (RecyclerView) findViewById(R.id.itemListRecycle);
+        itemListRecycle.setLayoutManager(new LinearLayoutManager(getBaseContext()));
+        itemListRecycle.setHasFixedSize(true);
+        itemListRecycle.setNestedScrollingEnabled(false);
     }
 
     @Override
@@ -119,7 +123,7 @@ public class PurchaseDetailActivity extends Activity {
 
         String admin_id = sharedpreferences.getString(TAG_ID, null);
         params.put("admin_id", admin_id);
-        params.put("issue_id", issue_id+"");
+        params.put("id", issue_id + "");
 
         String url = Server.URL + "transfer/history-detail?api-key=" + Server.API_KEY;
         _string_request(
@@ -131,7 +135,7 @@ public class PurchaseDetailActivity extends Activity {
                         try {
                             JSONObject jObj = new JSONObject(result);
                             success = jObj.getInt(TAG_SUCCESS);
-                            Log.e(getClass().getSimpleName(), "jObj : "+ jObj.toString());
+                            Log.e(getClass().getSimpleName(), "jObj : " + jObj.toString());
                             // Check for error node in json
                             if (success == 1) {
                                 JSONObject server_data = jObj.getJSONObject("data");
@@ -139,12 +143,15 @@ public class PurchaseDetailActivity extends Activity {
                                     if (server_data.has("tr_number")) {
                                         issue_number.setText(server_data.getString("tr_number"));
                                         issue_formated_number = server_data.getString("tr_number");
-                                    } else if(server_data.has("ti_number")) {
+                                    } else if (server_data.has("ti_number")) {
                                         issue_number.setText(server_data.getString("ti_number"));
                                         issue_formated_number = server_data.getString("ti_number");
-                                    } else if(server_data.has("ii_number")) {
+                                    } else if (server_data.has("ii_number")) {
                                         issue_number.setText(server_data.getString("ii_number"));
                                         issue_formated_number = server_data.getString("ii_number");
+                                    } else if (server_data.has("issue_number")) {
+                                        issue_number.setText(server_data.getString("issue_number"));
+                                        issue_formated_number = server_data.getString("issue_number");
                                     }
 
                                     if (server_data.has("created_at")) {
@@ -157,6 +164,25 @@ public class PurchaseDetailActivity extends Activity {
 
                                     if (issue_formated_number.length() > 0) {
                                         actionBar.setTitle(issue_formated_number);
+                                    }
+
+                                    JSONObject configs = server_data.getJSONObject("configs");
+                                    if (configs.has("items")) {
+                                        JSONArray items = configs.getJSONArray("items");
+                                        if (items.length() > 0) {
+                                            for (int i = 0; i < items.length(); i++) {
+                                                JSONObject data_n = items.getJSONObject(i);
+                                                Product product = new Product(data_n.getInt("barcode"), data_n.getString("title"), data_n.getString("barcode"), 0.0);
+                                                PurchaseLineItem lineItem = new PurchaseLineItem(product, data_n.getInt("quantity"), data_n.getInt("quantity"));
+                                                purchase_data.add(lineItem);
+                                            }
+                                        }
+                                    }
+
+                                    if (purchase_data.size() > 0) {
+                                        AdapterListPurchaseConfirm pAdap = new AdapterListPurchaseConfirm(PurchaseDetailActivity.this, purchase_data);
+                                        pAdap.notifyDataSetChanged();
+                                        itemListRecycle.setAdapter(pAdap);
                                     }
                                 }
                             }
@@ -177,8 +203,7 @@ public class PurchaseDetailActivity extends Activity {
 
         if (method == Request.Method.GET) { //get method doesnt support getParams
             Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
-            while(iterator.hasNext())
-            {
+            while (iterator.hasNext()) {
                 Map.Entry<String, String> pair = iterator.next();
                 String pair_value = pair.getValue();
                 if (pair_value.contains(" "))
@@ -187,7 +212,7 @@ public class PurchaseDetailActivity extends Activity {
             }
         }
 
-        StringRequest strReq = new StringRequest(method, url, new Response.Listener < String > () {
+        StringRequest strReq = new StringRequest(method, url, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String Response) {
@@ -203,8 +228,7 @@ public class PurchaseDetailActivity extends Activity {
                     hideDialog();
                 }
             }
-        })
-        {
+        }) {
             // set headers
             @Override
             protected Map<String, String> getParams() {

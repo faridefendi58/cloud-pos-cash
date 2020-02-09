@@ -167,13 +167,9 @@ public class PurchaseOrderActivity extends AppCompatActivity {
         if (is_stock_in) {
             heading_stock_in_out_items.setText(getResources().getString(R.string.heading_stock_in_items));
             btn_proceed.setText(getResources().getString(R.string.button_proceed_stock_in));
-            wh_options.setHint(getResources().getString(R.string.origin));
-            wh_options.setText(getResources().getString(R.string.origin));
         } else {
             heading_stock_in_out_items.setText(getResources().getString(R.string.heading_stock_out_items));
             btn_proceed.setText(getResources().getString(R.string.button_proceed_stock_out));
-            wh_options.setHint(getResources().getString(R.string.destination));
-            wh_options.setText(getResources().getString(R.string.destination));
         }
     }
 
@@ -183,9 +179,9 @@ public class PurchaseOrderActivity extends AppCompatActivity {
         purchaseListView.setAdapter(pAdap);
 
         if (is_stock_in) {
-            wh_options.setText(getResources().getString(R.string.hint_warehouse_from));
+            wh_options.setText(getResources().getString(R.string.origin));
         } else if (is_stock_out) {
-            wh_options.setText(getResources().getString(R.string.hint_warehouse_destination));
+            wh_options.setText(getResources().getString(R.string.destination));
         }
 
         wh_options.setOnClickListener(new View.OnClickListener() {
@@ -242,12 +238,15 @@ public class PurchaseOrderActivity extends AppCompatActivity {
 
         String _url = "";
         if (is_stock_in) {
-            _url = Server.URL + "transfer/create-receipt?api-key=" + Server.API_KEY;
+            //_url = Server.URL + "transfer/create-receipt?api-key=" + Server.API_KEY;
+            _url = Server.URL + "transfer/incoming?api-key=" + Server.API_KEY;
         } else if (is_stock_out) {
             if (selected_wh_id > 0) {
-                _url = Server.URL + "inventory/create-v2?api-key=" + Server.API_KEY;
+                //_url = Server.URL + "inventory/create-v2?api-key=" + Server.API_KEY;
+                _url = Server.URL + "transfer/outgoing?api-key=" + Server.API_KEY;
             } else {
-                _url = Server.URL + "transfer/create-v2?api-key=" + Server.API_KEY;
+                //_url = Server.URL + "transfer/create-v2?api-key=" + Server.API_KEY;
+                _url = Server.URL + "inventory/create-v2?api-key=" + Server.API_KEY;
             }
         }
         // build the items
@@ -259,6 +258,7 @@ public class PurchaseOrderActivity extends AppCompatActivity {
                 mItem.put("id", purchase_data.get(i).getProduct().getId()+"");
                 mItem.put("barcode", purchase_data.get(i).getProduct().getBarcode());
                 mItem.put("name", purchase_data.get(i).getProduct().getName());
+                mItem.put("title", purchase_data.get(i).getProduct().getName());
                 mItem.put("quantity", purchase_data.get(i).getQuantity()+"");
                 mItem.put("unit_price", purchase_data.get(i).getPriceAtSale()+"");
                 arrItems.add(mItem);

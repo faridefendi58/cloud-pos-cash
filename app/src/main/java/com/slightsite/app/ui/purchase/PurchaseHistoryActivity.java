@@ -150,13 +150,13 @@ public class PurchaseHistoryActivity extends AppCompatActivity {
                                     JSONArray detail_data = jObj.getJSONArray("data");
                                     for(int n = 0; n < detail_data.length(); n++) {
                                         JSONObject detail_obj = detail_data.getJSONObject(n);
-                                        PurchaseItem pi = new PurchaseItem(detail_obj.getInt("rel_id"));
+                                        PurchaseItem pi = new PurchaseItem(detail_obj.getInt("id"));
                                         pi.setCreatedAt(detail_obj.getString("created_at"));
                                         //pi.setIssueNumber(detail_obj.getString("po_number"));
                                         pi.setTitle(detail_obj.getString("title"));
                                         pi.setType(detail_obj.getString("type"));
                                         pi.setNotes(detail_obj.getString("description"));
-                                        //pi.setStatus(detail_obj.getString("status"));
+                                        pi.setStatus(detail_obj.getString("status"));
                                         pi.setCreatedBy(detail_obj.getString("created_by_name"));
                                         history_data.add(pi);
                                     }

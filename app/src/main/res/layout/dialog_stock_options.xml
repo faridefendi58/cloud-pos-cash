@@ -139,9 +139,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@color/greenUcok"
+                    android:background="@color/btnInfo"
                     android:textColor="@color/colorWhite"
-                    android:text="@string/action_submit" />
+                    android:text="@string/button_done" />
         </LinearLayout>
 
     </LinearLayout>
