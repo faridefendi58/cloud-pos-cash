@@ -78,6 +78,9 @@
     <string name="dialog_change_warehouse">Anda yakin ingin merubah konfigurasi Warehouse/Outlet yang ada saat ini?</string>
     <string name="dialog_no_payment">Anda yakin ingin melakukan transaksi penjualan tanpa ada pembayaran?</string>
     <string name="dialog_mark_as_complete">Anda yakin ingin menandai tagihan ini sebagai tagihan yang sudah selesai?</string>
+    <string name="dialog_cancel_data">Anda yakin ingin MEMBATALKAN data ini?</string>
+    <string name="dialog_remove_data">Anda yakin ingin MENGHAPUS data ini?</string>
+    <string name="dialog_confirm_data">Anda yakin ingin semua data sudah benar?</string>
     <string name="hint_empty_sale">Data penjualan kosong.</string>
     <string name="quit">Keluar</string>
     <string name="no">Tidak</string>
@@ -323,6 +326,15 @@
     <string name="label_grab">Grab</string>
     <string name="label_stock_in">Stok Masuk</string>
     <string name="label_stock_out">Stok Keluar</string>
+    <string name="label_stock_in_number">Nomor Masuk</string>
+    <string name="label_stock_out_number">Nomor Keluar</string>
+    <string name="label_date_in">Tanggal Masuk</string>
+    <string name="label_date_out">Tanggal Keluar</string>
+    <string name="label_received_by">Diterima Oleh</string>
+    <string name="label_sent_by">Dikirim Oleh</string>
+    <string name="label_stock_origin">Asal Barang</string>
+    <string name="label_stock_destination">Tujuan Barang</string>
+    <string name="label_notes">Catatan</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Bank Mandiri</string>
@@ -355,6 +367,10 @@
     <string name="button_proceed_stock_out">Proses Stok Keluar</string>
     <string name="button_substract">Kurang</string>
     <string name="button_done">Selesai</string>
+    <string name="button_confirm">Konfirmasi</string>
+    <string name="button_update">Update</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_remove">Hapus</string>
 
     <string name="confirm_edit">Anda yakin ingin mengubah data ini?</string>
 

@@ -78,6 +78,9 @@
     <string name="dialog_change_warehouse">Are you sure you want to CHANGE the Warehouse/Branch configuration?</string>
     <string name="dialog_no_payment">Are you sure you want to make a transaction without any payment?</string>
     <string name="dialog_mark_as_complete">Are you sure you want to Mark this invoice as Complete?</string>
+    <string name="dialog_cancel_data">Are you sure you want to CANCEL this data?</string>
+    <string name="dialog_remove_data">Are you sure you want to REMOVE this data?</string>
+    <string name="dialog_confirm_data">Are you sure you want all these data is correct?</string>
     <string name="hint_empty_sale">Sale is empty.</string>
     <string name="quit">Quit</string>
     <string name="no">No</string>
@@ -325,6 +328,15 @@
     <string name="label_grab">Grab</string>
     <string name="label_stock_in">Stock In</string>
     <string name="label_stock_out">Stock Out</string>
+    <string name="label_stock_in_number">Stock In Number</string>
+    <string name="label_stock_out_number">Stock Out Number</string>
+    <string name="label_date_in">Date In</string>
+    <string name="label_date_out">Date Out</string>
+    <string name="label_received_by">Received By</string>
+    <string name="label_sent_by">Sent By</string>
+    <string name="label_stock_origin">Stock Origin</string>
+    <string name="label_stock_destination">Stock Destination</string>
+    <string name="label_notes">Notes</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>
@@ -357,6 +369,10 @@
     <string name="button_proceed_stock_out">Proceed Stock Out</string>
     <string name="button_substract">Substract</string>
     <string name="button_done">Done</string>
+    <string name="button_confirm">Confirm</string>
+    <string name="button_update">Update</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_remove">Remove</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
 

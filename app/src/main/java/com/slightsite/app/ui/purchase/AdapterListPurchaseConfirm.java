@@ -24,6 +24,7 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
     private Context context;
     private List<PurchaseLineItem> items;
     private OnItemClickListener mOnItemClickListener;
+    private Boolean is_detail = false;
 
     public AdapterListPurchaseConfirm(Context _context, List<PurchaseLineItem> items) {
         this.context = _context;
@@ -156,12 +157,20 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
                             current_val = s.toString();
                         }
                         if (cleanString.length() > 0) {
-                            ((PurchaseOrderActivity) context).updatePurchaseData(position, "price", cleanString);
+                            if (!is_detail) {
+                                ((PurchaseOrderActivity) context).updatePurchaseData(position, "price", cleanString);
+                            } else {
+                                ((PurchaseDetailActivity) context).updatePurchaseData(position, "price", cleanString);
+                            }
                         }
                     } else if (setType == "quantity") {
                         current_val = s.toString();
                         if (current_val.length() > 0) {
-                            ((PurchaseOrderActivity) context).updatePurchaseData(position, "quantity", current_val);
+                            if (!is_detail) {
+                                ((PurchaseOrderActivity) context).updatePurchaseData(position, "quantity", current_val);
+                            } else {
+                                ((PurchaseDetailActivity) context).updatePurchaseData(position, "quantity", current_val);
+                            }
                         }
                     }
                 } catch (Exception e) {
@@ -169,5 +178,9 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
                 }
             }
         });
+    }
+
+    public void setIsDetail() {
+        this.is_detail = true;
     }
 }

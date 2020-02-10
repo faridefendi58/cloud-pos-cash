@@ -50,9 +50,10 @@
                                     android:orientation="horizontal" >
 
                                 <TextView
+                                        android:id="@+id/label_stock_in_out_number"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Issue Number"
+                                        android:text="@string/label_stock_in"
                                         android:padding="@dimen/spacing_middle"
                                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
                                         android:textColor="@color/grey_90"
@@ -82,23 +83,27 @@
                                     android:orientation="horizontal" >
 
                                 <TextView
+                                        android:id="@+id/label_date_in_out"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="@string/label_date_created"
+                                        android:text="@string/label_date_in"
                                         android:padding="@dimen/spacing_middle"
                                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
                                         android:textColor="@color/grey_90"
                                         app:fontFamily="sans-serif-medium" />
 
-                                <TextView
+                                <AutoCompleteTextView
                                         android:id="@+id/created_at"
+                                        style="@style/EditText.Flat.Grey"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:gravity="right"
-                                        android:padding="@dimen/spacing_middle"
-                                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                                        android:textColor="@color/grey_90"
-                                        app:fontFamily="sans-serif-medium" />
+                                        android:background="@drawable/edit_text_round_bg_outline"
+                                        android:editable="false"
+                                        android:hint="@string/label_stock_in"
+                                        android:focusable="false"
+                                        android:maxLines="1"
+                                        android:singleLine="true"/>
                             </LinearLayout>
 
                             <View
@@ -112,9 +117,10 @@
                                     android:orientation="horizontal">
 
                                 <TextView
+                                        android:id="@+id/label_received_by"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="@string/label_created_by"
+                                        android:text="@string/label_received_by"
                                         android:padding="@dimen/spacing_middle"
                                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
                                         android:textColor="@color/grey_90"
@@ -131,6 +137,39 @@
                                         app:fontFamily="sans-serif-medium" />
 
                             </LinearLayout>
+
+                            <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="@color/grey_10" />
+
+                            <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                <TextView
+                                        android:id="@+id/label_origin_destination"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/label_stock_origin"
+                                        android:padding="@dimen/spacing_middle"
+                                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                        android:textColor="@color/grey_90"
+                                        app:fontFamily="sans-serif-medium" />
+
+                                <TextView
+                                        android:id="@+id/origin_destination"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="right"
+                                        android:padding="@dimen/spacing_middle"
+                                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                        android:textColor="@color/grey_90"
+                                        app:fontFamily="sans-serif-medium" />
+
+                            </LinearLayout>
+
                         </LinearLayout>
                     </android.support.v7.widget.CardView>
 
@@ -184,6 +223,63 @@
                         </LinearLayout>
                     </android.support.v7.widget.CardView>
 
+                    <LinearLayout
+                            android:id="@+id/notes_header_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="@dimen/spacing_middle"
+                            android:visibility="gone">
+
+                        <ImageView
+                                android:layout_width="@dimen/spacing_middle"
+                                android:layout_height="@dimen/spacing_middle"
+                                android:layout_margin="@dimen/spacing_medium"
+                                android:src="@drawable/shape_circle"
+                                android:tint="@color/yellowDarkUcok" />
+
+                        <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/label_notes"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                android:textColor="@color/grey_40"
+                                android:textAllCaps="true"
+                                android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <!-- start of item card -->
+                    <android.support.v7.widget.CardView
+                            android:id="@+id/notes_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_middle"
+                            app:cardBackgroundColor="@android:color/white"
+                            app:cardCornerRadius="1dp"
+                            app:cardElevation="3dp"
+                            app:cardUseCompatPadding="true"
+                            android:visibility="gone">
+
+                        <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                            <TextView
+                                    android:id="@+id/label_notes"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="-"
+                                    android:padding="@dimen/spacing_middle"
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                    android:textColor="@color/grey_90"
+                                    app:fontFamily="sans-serif-medium" />
+
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
+
                 </LinearLayout>
 
             </LinearLayout>
@@ -200,16 +296,55 @@
                 android:visibility="gone">
 
             <Button
-                    android:id="@+id/btn_complete"
+                    android:id="@+id/btn_cancel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:textColor="@android:color/white"
+                    android:background="@color/yellowDarkUcok"
+                    android:text="@string/button_cancel"
+                    android:textSize="14sp"
+                    android:clickable="true"
+                    android:onClick="cancelIssue"
+                    android:visibility="gone"/>
+
+            <Button
+                    android:id="@+id/btn_confirm"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:textColor="@android:color/white"
+                    android:background="@color/btnInfo"
+                    android:text="@string/button_confirm"
+                    android:textSize="14sp"
+                    android:clickable="true"
+                    android:onClick="confirmIssue"
+                    android:visibility="gone"/>
+
+            <Button
+                    android:id="@+id/btn_update"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:textColor="@android:color/white"
+                    android:background="@color/greenUcok"
+                    android:text="@string/button_update"
+                    android:textSize="14sp"
+                    android:clickable="true"
+                    android:onClick="updateIssue"
+                    android:visibility="gone"/>
+            <Button
+                    android:id="@+id/btn_remove"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:textColor="@android:color/white"
-                    android:background="@color/btnInfo"
-                    android:text="@string/button_mark_as_complete"
+                    android:background="@color/red_500"
+                    android:text="@string/button_remove"
                     android:textSize="14sp"
                     android:clickable="true"
-                    android:onClick="markAsComplete"/>
+                    android:onClick="removeIssue"
+                    android:visibility="gone"/>
 
         </LinearLayout>
 

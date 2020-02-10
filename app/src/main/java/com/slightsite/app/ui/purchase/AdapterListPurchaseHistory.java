@@ -1,12 +1,15 @@
 package com.slightsite.app.ui.purchase;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
@@ -30,7 +33,8 @@ public class AdapterListPurchaseHistory extends RecyclerView.Adapter<RecyclerVie
         public TextView created_at;
         public TextView status;
         public TextView notes;
-        public View lyt_parent;
+        public LinearLayout lyt_parent;
+        public LinearLayout lyt_content;
 
         public OriginalViewHolder(View v) {
             super(v);
@@ -38,7 +42,8 @@ public class AdapterListPurchaseHistory extends RecyclerView.Adapter<RecyclerVie
             created_at = (TextView) v.findViewById(R.id.created_at);
             status = (TextView) v.findViewById(R.id.status);
             notes = (TextView) v.findViewById(R.id.notes);
-            lyt_parent = (View) v.findViewById(R.id.lyt_parent);
+            lyt_parent = (LinearLayout) v.findViewById(R.id.lyt_parent);
+            lyt_content = (LinearLayout) v.findViewById(R.id.lyt_content);
         }
     }
 
@@ -59,7 +64,8 @@ public class AdapterListPurchaseHistory extends RecyclerView.Adapter<RecyclerVie
             PurchaseItem pi = items.get(position);
             view.issue_number.setText(pi.getTitle());
             view.created_at.setText(pi.getCreatedAt());
-            view.status.setText(pi.getStatus());
+            //view.status.setText(pi.getStatus());
+            view.status.setVisibility(View.GONE);
             view.notes.setText(pi.getNotes());
 
             if (pi.getType().equals("transfer_issue")) {
@@ -68,9 +74,26 @@ public class AdapterListPurchaseHistory extends RecyclerView.Adapter<RecyclerVie
                 view.issue_number.setTextColor(context.getResources().getColor(R.color.greenUcok));
             } else if (pi.getType().equals("inventory_issue")) {
                 view.issue_number.setTextColor(context.getResources().getColor(R.color.red_500));
+            } else if (pi.getType().equals("stock_in")) {
+                if (pi.getStatus().equals("-1") || pi.getStatus().equals("-2")) {
+                    view.issue_number.setTextColor(context.getResources().getColor(R.color.red_500));
+                } else {
+                    view.issue_number.setTextColor(context.getResources().getColor(R.color.greenUcok));
+                }
+            } else if (pi.getType().equals("stock_out")) {
+                view.issue_number.setTextColor(context.getResources().getColor(R.color.yellowDarkUcok));
             }
 
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mOnItemClickListener != null) {
+                        mOnItemClickListener.onItemClick(view, items.get(position), position);
+                    }
+                }
+            });
+
+            view.lyt_content.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (mOnItemClickListener != null) {
