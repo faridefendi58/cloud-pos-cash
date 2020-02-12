@@ -8,13 +8,20 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +33,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.AppController;
 import com.slightsite.app.domain.CurrencyController;
+import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.params.Params;
@@ -38,7 +46,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -63,6 +74,16 @@ public class PurchaseHistoryActivity extends AppCompatActivity {
     private ParamCatalog paramCatalog;
     private Integer warehouse_id;
     private List<PurchaseItem> history_data = new ArrayList<PurchaseItem>();
+
+    private BottomSheetDialog bottomSheetDialog;
+    private Button finish_submit_button;
+    private Button button_reset_to_default;
+    private Map<String, String> filter_result = new HashMap<String, String>();
+    private Spinner month_spinner;
+    private Spinner year_spinner;
+    private String[] years;
+    private int sel_month = -1;
+    private int sel_year = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,12 +117,21 @@ public class PurchaseHistoryActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_filter, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             Intent intent = new Intent(PurchaseHistoryActivity.this, MainActivity.class);
                 intent.putExtra("refreshStock", "1");
                 finish();
                 startActivity(intent);
+        } else if (item.getItemId() == R.id.nav_filter) {
+            filterDialog();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -125,10 +155,48 @@ public class PurchaseHistoryActivity extends AppCompatActivity {
         buildListHistory();
     }
 
+    private String date_from;
+    private String date_to;
+    private String selected_month;
+
     private void buildListHistory() {
+        history_data.clear();
+
         final Map<String, String> params = new HashMap<String, String>();
         params.put("warehouse_id", warehouse_id + "");
         params.put("all_status", "1");
+
+        try {
+            String ym = DateTimeStrategy.parseDate(DateTimeStrategy.getCurrentTime(), "yyyy-MM");
+            int last_day = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH);
+            if (filter_result.size() == 0) {
+                selected_month = DateTimeStrategy.parseDate(DateTimeStrategy.getCurrentTime(), "MMM yyyy");
+                date_from = ym + "-01";
+            } else {
+                if (filter_result.containsKey("filter_month")) {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                    Date convertedDate = dateFormat.parse(filter_result.get("filter_month"));
+                    Calendar c = Calendar.getInstance();
+
+                    // convert format
+                    Date d = dateFormat.parse(filter_result.get("filter_month"));
+                    dateFormat.applyPattern("yyyy-MM-dd");
+                    ym = DateTimeStrategy.parseDate(dateFormat.format(d), "yyyy-MM");
+                    date_from = ym + "-01";
+                    params.put("date_start", date_from);
+                    c.setTime(convertedDate);
+                    last_day = c.getActualMaximum(Calendar.DAY_OF_MONTH);
+                    selected_month = DateTimeStrategy.parseDate(dateFormat.format(d), "MMM yyyy");
+                }
+            }
+            if (last_day < 10) {
+                date_to = ym + "-0" + last_day;
+            } else {
+                date_to = ym + "-" + last_day;
+            }
+            params.put("date_end", date_to);
+        } catch (Exception e){}
+
         String admin_id = sharedpreferences.getString(TAG_ID, null);
         Params adminParam = paramCatalog.getParamByName("admin_id");
         if (adminParam != null) {
@@ -176,7 +244,7 @@ public class PurchaseHistoryActivity extends AppCompatActivity {
                                     });
                                 }
                             } else {
-                                Toast.makeText(getApplicationContext(), "Failed!, No product data in ",
+                                Toast.makeText(getApplicationContext(), "Sorry!, No data found.",
                                         Toast.LENGTH_LONG).show();
                             }
 
@@ -254,5 +322,113 @@ public class PurchaseHistoryActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), e.getMessage());
         }
+    }
+
+    private void filterDialog() {
+        bottomSheetDialog = new BottomSheetDialog(PurchaseHistoryActivity.this);
+        View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_filter_purchase, null);
+        bottomSheetDialog.setContentView(sheetView);
+
+        if (filter_result.containsKey("filter_month")) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            // convert format
+            try {
+                Date d = dateFormat.parse(filter_result.get("filter_month"));
+                dateFormat.applyPattern("yyyy-MM-dd");
+            } catch (Exception e){e.printStackTrace();}
+        }
+
+        month_spinner = (Spinner) sheetView.findViewById(R.id.month_spinner);
+        year_spinner = (Spinner) sheetView.findViewById(R.id.year_spinner);
+        String[] months = new String[]{"Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"};
+        ArrayAdapter<String> monthAdapter = new ArrayAdapter<String>(PurchaseHistoryActivity.this, android.R.layout.simple_spinner_dropdown_item, months);
+        month_spinner.setAdapter(monthAdapter);
+
+        Calendar cur_calender = Calendar.getInstance();
+        List<String> arr_years = new ArrayList<String>();
+        for (int y=cur_calender.get(Calendar.YEAR)-3; y<cur_calender.get(Calendar.YEAR)+1; y++) {
+            arr_years.add(y+"");
+        }
+        years = new String[arr_years.size()];
+        years = arr_years.toArray(years);
+        ArrayAdapter<String> yearAdapter = new ArrayAdapter<String>(PurchaseHistoryActivity.this, android.R.layout.simple_spinner_dropdown_item, years);
+        year_spinner.setAdapter(yearAdapter);
+
+        finish_submit_button = (Button) sheetView.findViewById(R.id.finish_submit_button);
+        button_reset_to_default = (Button) sheetView.findViewById(R.id.reset_default_button);
+
+        bottomSheetDialog.show();
+
+        triggerBottomDialogButton(sheetView);
+    }
+
+    private void triggerBottomDialogButton(View view) {
+
+        finish_submit_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                buildListHistory();
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+        button_reset_to_default.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                filter_result.clear();
+                sel_month = -1;
+                sel_year = -1;
+                buildListHistory();
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+        if (sel_month < 1) {
+            month_spinner.setSelection(Calendar.getInstance().get(Calendar.MONTH));
+        } else {
+            month_spinner.setSelection(sel_month);
+        }
+
+        if (sel_year < 1) {
+            year_spinner.setSelection(years.length - 1);
+        } else {
+            year_spinner.setSelection(sel_year);
+        }
+        month_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                sel_month = i;
+                int j = i+1;
+                String month = j+"";
+                if (j<10) {
+                    month = "0"+ j;
+                }
+                String date = "01-" + month + "-"+ year_spinner.getSelectedItem().toString();
+                filter_result.put("filter_month", date);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        year_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                sel_year = i;
+                int pos = month_spinner.getSelectedItemPosition() + 1;
+                String month = pos+"";
+                if (pos<10) {
+                    month = "0"+ pos;
+                }
+                String date = "01-" + month + "-"+ years[i];
+                filter_result.put("filter_month", date);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 }
