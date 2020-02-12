@@ -314,6 +314,24 @@ public class PurchaseDetailActivity extends Activity {
                                                     issue_formated_number = detail_data.getString("ti_number");
                                                 }
                                             }
+                                        }  else if (server_data.getString("type").equals("inventory_issue")) {
+                                            label_stock_in_out_number.setText(getResources().getString(R.string.label_stock_out_number));
+                                            label_date_in_out.setText(getResources().getString(R.string.label_date_out));
+                                            label_received_by.setText(getResources().getString(R.string.label_processed_by));
+                                            LinearLayout origin_destination_container = (LinearLayout) findViewById(R.id.origin_destination_container);
+                                            origin_destination_container.setVisibility(View.GONE);
+                                            if (server_data.has("title")) {
+                                                actionBar.setTitle(server_data.getString("title"));
+                                            } else {
+                                                actionBar.setTitle(getResources().getString(R.string.label_stock_out));
+                                            }
+                                            if (server_data.has("detail")) {
+                                                detail_data = server_data.getJSONObject("detail");
+                                                if (detail_data.has("ii_number")) {
+                                                    issue_number.setText(detail_data.getString("ii_number"));
+                                                    issue_formated_number = detail_data.getString("ii_number");
+                                                }
+                                            }
                                         }
                                     }
                                     if (server_data.has("tr_number")) {

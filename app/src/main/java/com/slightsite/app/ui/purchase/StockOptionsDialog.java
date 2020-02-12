@@ -238,7 +238,9 @@ public class StockOptionsDialog extends DialogFragment {
                         } else {
                             if (selected_warehouse_id >= 0) {
                                 RadioButton radioBtn1 = (RadioButton) view.findViewById(selected_warehouse_id);
-                                radioBtn1.setChecked(false);
+                                if (radioBtn1 != null) {
+                                    radioBtn1.setChecked(false);
+                                }
                             }
                         }
                     }
