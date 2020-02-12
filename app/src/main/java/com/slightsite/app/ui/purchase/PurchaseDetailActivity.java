@@ -81,6 +81,7 @@ public class PurchaseDetailActivity extends Activity {
     private TextView issue_number;
     private TextView label_date_in_out;
     private AutoCompleteTextView created_at;
+    private TextView created_at_txt;
     private TextView label_received_by;
     private TextView created_by;
     private TextView label_origin_destination;
@@ -98,6 +99,17 @@ public class PurchaseDetailActivity extends Activity {
     private String purchase_date;
     private Boolean do_update_data = false;
     private JSONObject server_data = new JSONObject();
+    // related data
+    private CardView related_data_container;
+    private TextView label_stock_in_out_number_rel;
+    private TextView issue_number_rel;
+    private TextView label_date_in_out_rel;
+    private TextView created_at_rel;
+    private TextView label_received_by_rel;
+    private TextView created_by_rel;
+    private TextView label_origin_destination_rel;
+    private TextView origin_destination_rel;
+    private TextView verified_by_rel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -148,6 +160,7 @@ public class PurchaseDetailActivity extends Activity {
         issue_number = (TextView) findViewById(R.id.issue_number);
         label_date_in_out = (TextView) findViewById(R.id.label_date_in_out);
         created_at = (AutoCompleteTextView) findViewById(R.id.created_at);
+        created_at_txt = (TextView) findViewById(R.id.created_at_txt);
         label_received_by = (TextView) findViewById(R.id.label_received_by);
         created_by = (TextView) findViewById(R.id.created_by);
         label_origin_destination = (TextView) findViewById(R.id.label_origin_destination);
@@ -160,6 +173,19 @@ public class PurchaseDetailActivity extends Activity {
         notes_header_container = (LinearLayout) findViewById(R.id.notes_header_container);
         notes_container = (CardView) findViewById(R.id.notes_container);
         label_notes = (TextView) findViewById(R.id.label_notes);
+
+        // related data
+        related_data_container = (CardView) findViewById(R.id.related_data_container);
+        label_stock_in_out_number_rel = (TextView) findViewById(R.id.label_stock_in_out_number_rel);
+        issue_number_rel = (TextView) findViewById(R.id.issue_number_rel);
+        label_date_in_out_rel = (TextView) findViewById(R.id.label_date_in_out_rel);
+        created_at_rel = (TextView) findViewById(R.id.created_at_rel);
+        label_received_by_rel = (TextView) findViewById(R.id.label_received_by_rel);
+        created_by_rel = (TextView) findViewById(R.id.created_by_rel);
+        label_origin_destination_rel = (TextView) findViewById(R.id.label_origin_destination_rel);
+        origin_destination_rel = (TextView) findViewById(R.id.origin_destination_rel);
+        verified_by_rel = (TextView) findViewById(R.id.verified_by_rel);
+        // endof related data
 
         initiateActionBar();
 
@@ -213,15 +239,20 @@ public class PurchaseDetailActivity extends Activity {
                                         if (server_data.has("group_master") && server_data.getInt("group_master") == 0) {
                                             btn_confirm.setVisibility(View.VISIBLE);
                                         }
-                                    } else if (server_data.getInt("status") == 0) {
+                                    } else if (server_data.getInt("status") == 1) {
                                         status = "Complete";
+                                        created_at.setVisibility(View.GONE);
+                                        created_at_txt.setVisibility(View.VISIBLE);
                                     } else if (server_data.getInt("status") == -1) {
                                         status = "Need Check";
                                     } else if (server_data.getInt("status") == -2) {
                                         status = "Canceled";
                                         complete_button_container.setVisibility(View.VISIBLE);
                                         btn_remove.setVisibility(View.VISIBLE);
+                                        created_at.setVisibility(View.GONE);
+                                        created_at_txt.setVisibility(View.VISIBLE);
                                     }
+                                    JSONObject detail_data = new JSONObject();
                                     if (server_data.has("type")) {
                                         if (server_data.getString("type").equals("stock_in")) {
                                             label_stock_in_out_number.setText(getResources().getString(R.string.label_stock_in_number));
@@ -241,6 +272,48 @@ public class PurchaseDetailActivity extends Activity {
                                                 origin_destination.setText(server_data.getString("warehouse_to_name"));
                                             }
                                             actionBar.setTitle(getResources().getString(R.string.label_stock_out)+" ("+ status +")");
+                                        } else if (server_data.getString("type").equals("transfer_receipt")) {
+                                            label_stock_in_out_number.setText(getResources().getString(R.string.label_stock_in_number));
+                                            label_date_in_out.setText(getResources().getString(R.string.label_date_in));
+                                            label_received_by.setText(getResources().getString(R.string.label_received_by));
+                                            label_origin_destination.setText(getResources().getString(R.string.label_stock_origin));
+                                            if (server_data.has("warehouse_to_name")) {
+                                                label_origin_destination.setText("");
+                                                origin_destination.setText(server_data.getString("warehouse_to_name"));
+                                            }
+                                            if (server_data.has("title")) {
+                                                actionBar.setTitle(server_data.getString("title"));
+                                            } else {
+                                                actionBar.setTitle(getResources().getString(R.string.label_stock_in));
+                                            }
+                                            if (server_data.has("detail")) {
+                                                detail_data = server_data.getJSONObject("detail");
+                                                if (detail_data.has("tr_number")) {
+                                                    issue_number.setText(detail_data.getString("tr_number"));
+                                                    issue_formated_number = detail_data.getString("tr_number");
+                                                }
+                                            }
+                                        } else if (server_data.getString("type").equals("transfer_issue")) {
+                                            label_stock_in_out_number.setText(getResources().getString(R.string.label_stock_out_number));
+                                            label_date_in_out.setText(getResources().getString(R.string.label_date_out));
+                                            label_received_by.setText(getResources().getString(R.string.label_sent_by));
+                                            label_origin_destination.setText(getResources().getString(R.string.label_stock_destination));
+                                            if (server_data.has("warehouse_from_name")) {
+                                                label_origin_destination.setText("");
+                                                origin_destination.setText(server_data.getString("warehouse_from_name"));
+                                            }
+                                            if (server_data.has("title")) {
+                                                actionBar.setTitle(server_data.getString("title"));
+                                            } else {
+                                                actionBar.setTitle(getResources().getString(R.string.label_stock_out));
+                                            }
+                                            if (server_data.has("detail")) {
+                                                detail_data = server_data.getJSONObject("detail");
+                                                if (detail_data.has("ti_number")) {
+                                                    issue_number.setText(detail_data.getString("ti_number"));
+                                                    issue_formated_number = detail_data.getString("ti_number");
+                                                }
+                                            }
                                         }
                                     }
                                     if (server_data.has("tr_number")) {
@@ -261,6 +334,7 @@ public class PurchaseDetailActivity extends Activity {
                                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  hh:mm:ss");
                                         String _created_at = DateTimeStrategy.parseDate(server_data.getString("created_at"), "yyyy-MM-dd");
                                         created_at.setText(_created_at);
+                                        created_at_txt.setText(_created_at);
                                     }
 
                                     if (server_data.has("created_by_name")) {
@@ -282,6 +356,7 @@ public class PurchaseDetailActivity extends Activity {
 
                                     if (configs.has("effective_date")) {
                                         created_at.setText(configs.getString("effective_date"));
+                                        created_at_txt.setText(configs.getString("effective_date"));
                                     }
 
                                     if (configs.has("notes")) {
@@ -293,8 +368,63 @@ public class PurchaseDetailActivity extends Activity {
                                     if (purchase_data.size() > 0) {
                                         AdapterListPurchaseConfirm pAdap = new AdapterListPurchaseConfirm(PurchaseDetailActivity.this, purchase_data);
                                         pAdap.setIsDetail();
+                                        if (server_data.getInt("status") == 1 || server_data.getInt("status") == -2) {
+                                            pAdap.setIsEditable(false);
+                                        }
                                         pAdap.notifyDataSetChanged();
                                         itemListRecycle.setAdapter(pAdap);
+                                    }
+
+                                    if (server_data.has("related")) {
+                                        JSONObject related_data = server_data.getJSONObject("related");
+                                        if (related_data != null) {
+                                            related_data_container.setVisibility(View.VISIBLE);
+                                            if (related_data.getString("type").equals("transfer_issue")) {
+                                                label_stock_in_out_number_rel.setText(getResources().getString(R.string.label_stock_out_number));
+                                                if (related_data.has("issue_number")) {
+                                                    issue_number_rel.setText(related_data.getString("issue_number"));
+                                                }
+                                                label_date_in_out_rel.setText(getResources().getString(R.string.label_date_out));
+                                                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  hh:mm:ss");
+                                                String _created_at = DateTimeStrategy.parseDate(related_data.getString("created_at"), "yyyy-MM-dd");
+                                                created_at_rel.setText(_created_at);
+                                                if (related_data.has("configs")) {
+                                                    JSONObject configs_rel = related_data.getJSONObject("configs");
+                                                    if (configs_rel.has("effective_date")) {
+                                                        created_at_rel.setText(configs_rel.getString("effective_date"));
+                                                    }
+                                                }
+                                                label_received_by_rel.setText(getResources().getString(R.string.label_sent_by));
+                                                created_by_rel.setText(related_data.getString("created_by_name"));
+                                                label_origin_destination_rel.setText(getResources().getString(R.string.label_stock_origin));
+                                                origin_destination_rel.setText(related_data.getString("warehouse_from_name"));
+                                                if (related_data.has("verified_by_name")) {
+                                                    verified_by_rel.setText(related_data.getString("verified_by_name"));
+                                                }
+                                            } else if (related_data.getString("type").equals("transfer_receipt")) {
+                                                label_stock_in_out_number_rel.setText(getResources().getString(R.string.label_stock_in_number));
+                                                if (related_data.has("issue_number")) {
+                                                    issue_number_rel.setText(related_data.getString("issue_number"));
+                                                }
+                                                label_date_in_out_rel.setText(getResources().getString(R.string.label_date_in));
+                                                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  hh:mm:ss");
+                                                String _created_at = DateTimeStrategy.parseDate(related_data.getString("created_at"), "yyyy-MM-dd");
+                                                created_at_rel.setText(_created_at);
+                                                if (related_data.has("configs")) {
+                                                    JSONObject configs_rel = related_data.getJSONObject("configs");
+                                                    if (configs_rel.has("effective_date")) {
+                                                        created_at_rel.setText(configs_rel.getString("effective_date"));
+                                                    }
+                                                }
+                                                label_received_by_rel.setText(getResources().getString(R.string.label_received_by));
+                                                created_by_rel.setText(related_data.getString("created_by_name"));
+                                                label_origin_destination_rel.setText(getResources().getString(R.string.label_stock_destination));
+                                                origin_destination_rel.setText(related_data.getString("warehouse_to_name"));
+                                                if (related_data.has("verified_by_name")) {
+                                                    verified_by_rel.setText(related_data.getString("verified_by_name"));
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -518,6 +648,10 @@ public class PurchaseDetailActivity extends Activity {
                                     if (success == 1) {
                                         String message = jObj.getString(TAG_MESSAGE);
                                         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                                        Intent newActivity = new Intent(PurchaseDetailActivity.this,
+                                                PurchaseHistoryActivity.class);
+                                        finish();
+                                        startActivity(newActivity);
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -581,6 +715,10 @@ public class PurchaseDetailActivity extends Activity {
                                         if (success == 1) {
                                             String message = jObj.getString(TAG_MESSAGE);
                                             Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                                            Intent newActivity = new Intent(PurchaseDetailActivity.this,
+                                                    PurchaseHistoryActivity.class);
+                                            finish();
+                                            startActivity(newActivity);
                                         }
                                     } catch (JSONException e) {
                                         e.printStackTrace();

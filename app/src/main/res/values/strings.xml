@@ -337,6 +337,7 @@
     <string name="label_stock_origin">Stock Origin</string>
     <string name="label_stock_destination">Stock Destination</string>
     <string name="label_notes">Notes</string>
+    <string name="label_verified_by">Verified By</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>

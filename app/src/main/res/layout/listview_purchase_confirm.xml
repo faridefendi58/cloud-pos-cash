@@ -60,6 +60,15 @@
                     android:textColor="@color/grey_40" />
 
             <TextView
+                    android:id="@+id/quantity_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/spacing_mlarge"
+                    android:text="1"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:visibility="gone"/>
+
+            <TextView
                     android:id="@+id/unit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

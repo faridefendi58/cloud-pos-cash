@@ -388,25 +388,27 @@ public class ReportFragment extends UpdatableFragment {
 			saleList.add(salemap);
 		}
 
-		AdapterListInvoice invAdapter = new AdapterListInvoice(getActivity().getBaseContext() , saleList);
-        invAdapter.setFragment(ReportFragment.this);
-		lineitemListRecycle.setAdapter(invAdapter);
+		if (getActivity() != null) {
+			AdapterListInvoice invAdapter = new AdapterListInvoice(getActivity().getBaseContext(), saleList);
+			invAdapter.setFragment(ReportFragment.this);
+			lineitemListRecycle.setAdapter(invAdapter);
 
-		invAdapter.setOnItemClickListener(new AdapterListInvoice.OnItemClickListener() {
-			@Override
-			public void onItemClick(View view, Map<String, String> _item, int position) {
-				String id = _item.get("id");
-				Intent newActivity = new Intent(getActivity().getBaseContext(), SaleDetailActivity.class);
-				newActivity.putExtra("id", id);
-				Sale selected_sale = list_of_transactions.get(position);
-				newActivity.putExtra("sale_intent", selected_sale);
-				newActivity.putExtra("customer_intent", list_of_customers.get(selected_sale.getCustomerId()));
-				newActivity.putExtra("shipping_intent", list_of_shippings.get(selected_sale.getId()));
-				newActivity.putExtra("payment_intent", list_of_payments2.get(selected_sale.getId()).toString());
-				newActivity.putExtra("line_items_intent", list_of_line_items2.get(selected_sale.getId()).toString());
-				startActivity(newActivity);
-			}
-		});
+			invAdapter.setOnItemClickListener(new AdapterListInvoice.OnItemClickListener() {
+				@Override
+				public void onItemClick(View view, Map<String, String> _item, int position) {
+					String id = _item.get("id");
+					Intent newActivity = new Intent(getActivity().getBaseContext(), SaleDetailActivity.class);
+					newActivity.putExtra("id", id);
+					Sale selected_sale = list_of_transactions.get(position);
+					newActivity.putExtra("sale_intent", selected_sale);
+					newActivity.putExtra("customer_intent", list_of_customers.get(selected_sale.getCustomerId()));
+					newActivity.putExtra("shipping_intent", list_of_shippings.get(selected_sale.getId()));
+					newActivity.putExtra("payment_intent", list_of_payments2.get(selected_sale.getId()).toString());
+					newActivity.putExtra("line_items_intent", list_of_line_items2.get(selected_sale.getId()).toString());
+					startActivity(newActivity);
+				}
+			});
+		}
 
 		if (has_been_filtered && saleList.size() <= 0) {
 			no_data_container.setVisibility(View.VISIBLE);

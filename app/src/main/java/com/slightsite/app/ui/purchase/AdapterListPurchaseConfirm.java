@@ -25,6 +25,7 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
     private List<PurchaseLineItem> items;
     private OnItemClickListener mOnItemClickListener;
     private Boolean is_detail = false;
+    private Boolean is_editable = true;
 
     public AdapterListPurchaseConfirm(Context _context, List<PurchaseLineItem> items) {
         this.context = _context;
@@ -35,6 +36,7 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
         public TextView title;
         public EditText price;
         public EditText quantity;
+        public TextView quantity_txt;
         public TextView unit;
         public View lyt_parent;
         public View line_separator;
@@ -44,6 +46,7 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
             title = (TextView) v.findViewById(R.id.title);
             price = (EditText) v.findViewById(R.id.price);
             quantity = (EditText) v.findViewById(R.id.quantity);
+            quantity_txt = (TextView) v.findViewById(R.id.quantity_txt);
             unit = (TextView) v.findViewById(R.id.unit);
             lyt_parent = (View) v.findViewById(R.id.lyt_parent);
             line_separator = (View) v.findViewById(R.id.line_separator);
@@ -76,9 +79,14 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
                 e.printStackTrace();
             }
 
-            view.quantity.setSelectAllOnFocus(true);
-
-            view.quantity.setText(qty+"");
+            if (is_editable) {
+                view.quantity.setSelectAllOnFocus(true);
+                view.quantity.setText(qty + "");
+            } else {
+                view.quantity.setVisibility(View.GONE);
+                view.quantity_txt.setText(qty +"");
+                view.quantity_txt.setVisibility(View.VISIBLE);
+            }
             view.price.setText(CurrencyController.getInstance().moneyFormat(prc));
             view.unit.setText(pl.getProduct().getUnit());
 
@@ -96,8 +104,10 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
                 view.line_separator.setVisibility(View.GONE);
             }
 
-            setTextChangeListener(view.price, "price", position);
-            setTextChangeListener(view.quantity, "quantity", position);
+            if (is_editable) {
+                setTextChangeListener(view.price, "price", position);
+                setTextChangeListener(view.quantity, "quantity", position);
+            }
         }
     }
 
@@ -182,5 +192,9 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
 
     public void setIsDetail() {
         this.is_detail = true;
+    }
+
+    public void setIsEditable(Boolean _is_editable) {
+        this.is_editable = _is_editable;
     }
 }

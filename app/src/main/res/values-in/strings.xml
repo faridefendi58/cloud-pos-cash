@@ -335,6 +335,7 @@
     <string name="label_stock_origin">Asal Barang</string>
     <string name="label_stock_destination">Tujuan Barang</string>
     <string name="label_notes">Catatan</string>
+    <string name="label_verified_by">Verifikasi Oleh</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Bank Mandiri</string>
