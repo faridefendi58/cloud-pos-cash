@@ -398,5 +398,26 @@ public class Tools {
 
         return result.toString();
     }
+
+    public static Map<String, String> getPurchaseStatusList() {
+        Map<String, String> list = new HashMap<String, String>();
+        list.put("-", "Semua");
+        list.put("0", "Need Confirmation");
+        list.put("1", "Verified");
+        list.put("-1", "Need Checked");
+        list.put("-2", "Canceled");
+
+        return list;
+    }
+
+    public static Map<String, String> getPurchaseTypeList() {
+        Map<String, String> list = new HashMap<String, String>();
+        list.put("-", "Semua");
+        list.put("transfer_issue", "Stok Keluar");
+        list.put("transfer_receipt", "Stok Masuk");
+        list.put("inventory_issue", "Stok Keluar (Non Penjualan)");
+
+        return list;
+    }
 }
 

@@ -39,6 +39,7 @@ import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.params.Params;
 import com.slightsite.app.domain.purchase.PurchaseItem;
 import com.slightsite.app.techicalservices.Server;
+import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.ui.LoginActivity;
 import com.slightsite.app.ui.MainActivity;
 
@@ -84,6 +85,15 @@ public class PurchaseHistoryActivity extends AppCompatActivity {
     private String[] years;
     private int sel_month = -1;
     private int sel_year = -1;
+    private Spinner filter_status;
+    private ArrayList<String> status_items = new ArrayList<String>();
+    private Map<String, String> purchase_status_map = new HashMap<String, String>();
+    private Map<String, String> purchase_status_map_inv = new HashMap<String, String>();
+
+    private Spinner filter_type;
+    private ArrayList<String> type_items = new ArrayList<String>();
+    private Map<String, String> purchase_type_map = new HashMap<String, String>();
+    private Map<String, String> purchase_type_map_inv = new HashMap<String, String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,6 +161,17 @@ public class PurchaseHistoryActivity extends AppCompatActivity {
             if (whParam != null) {
                 warehouse_id = Integer.parseInt(whParam.getValue());
             }
+            purchase_status_map = Tools.getPurchaseStatusList();
+            for (Map.Entry<String, String> entry : purchase_status_map.entrySet()) {
+                status_items.add(entry.getValue());
+                purchase_status_map_inv.put(entry.getValue(), entry.getKey());
+            }
+
+            purchase_type_map = Tools.getPurchaseTypeList();
+            for (Map.Entry<String, String> entry : purchase_type_map.entrySet()) {
+                type_items.add(entry.getValue());
+                purchase_type_map_inv.put(entry.getValue(), entry.getKey());
+            }
         } catch (Exception e){e.printStackTrace();}
         buildListHistory();
     }
@@ -164,7 +185,7 @@ public class PurchaseHistoryActivity extends AppCompatActivity {
 
         final Map<String, String> params = new HashMap<String, String>();
         params.put("warehouse_id", warehouse_id + "");
-        params.put("all_status", "1");
+        //params.put("all_status", "1");
 
         try {
             String ym = DateTimeStrategy.parseDate(DateTimeStrategy.getCurrentTime(), "yyyy-MM");
@@ -195,6 +216,17 @@ public class PurchaseHistoryActivity extends AppCompatActivity {
                 date_to = ym + "-" + last_day;
             }
             params.put("date_end", date_to);
+            if (filter_result.containsKey("status")) {
+                if (!filter_result.get("status").equals("-")) {
+                    params.put("status", filter_result.get("status"));
+                }
+            }
+
+            if (filter_result.containsKey("type")) {
+                if (!filter_result.get("type").equals("-")) {
+                    params.put("type", filter_result.get("type"));
+                }
+            }
         } catch (Exception e){}
 
         String admin_id = sharedpreferences.getString(TAG_ID, null);
@@ -354,6 +386,44 @@ public class PurchaseHistoryActivity extends AppCompatActivity {
         ArrayAdapter<String> yearAdapter = new ArrayAdapter<String>(PurchaseHistoryActivity.this, android.R.layout.simple_spinner_dropdown_item, years);
         year_spinner.setAdapter(yearAdapter);
 
+        filter_status = (Spinner) sheetView.findViewById(R.id.filter_status);
+        ArrayAdapter<String> stAdapter = new ArrayAdapter<String>(
+                PurchaseHistoryActivity.this,
+                R.layout.spinner_item, status_items);
+        stAdapter.notifyDataSetChanged();
+        filter_status.setAdapter(stAdapter);
+
+        if (filter_result.containsKey("status")) {
+            int selected_status_id = 2;
+            if (purchase_status_map_inv.containsKey(filter_result.get("status"))) {
+                selected_status_id = status_items.indexOf(filter_result.get("status"));
+            }
+
+            filter_status.setSelection(selected_status_id);
+        } else {
+            int selected_status_id = status_items.indexOf("Semua");;
+            filter_status.setSelection(selected_status_id);
+        }
+
+        filter_type = (Spinner) sheetView.findViewById(R.id.filter_type);
+        ArrayAdapter<String> tpAdapter = new ArrayAdapter<String>(
+                PurchaseHistoryActivity.this,
+                R.layout.spinner_item, type_items);
+        tpAdapter.notifyDataSetChanged();
+        filter_type.setAdapter(tpAdapter);
+
+        if (filter_result.containsKey("type")) {
+            int selected_type_id = 2;
+            if (purchase_status_map_inv.containsKey(filter_result.get("type"))) {
+                selected_type_id = type_items.indexOf(filter_result.get("type"));
+            }
+
+            filter_type.setSelection(selected_type_id);
+        } else {
+            int selected_type_id = type_items.indexOf("Semua");;
+            filter_type.setSelection(selected_type_id);
+        }
+
         finish_submit_button = (Button) sheetView.findViewById(R.id.finish_submit_button);
         button_reset_to_default = (Button) sheetView.findViewById(R.id.reset_default_button);
 
@@ -423,6 +493,32 @@ public class PurchaseHistoryActivity extends AppCompatActivity {
                 }
                 String date = "01-" + month + "-"+ years[i];
                 filter_result.put("filter_month", date);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        filter_status.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String status = purchase_status_map_inv.get(status_items.get(i));
+                filter_result.put("status", status);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        filter_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String _type = purchase_type_map_inv.get(type_items.get(i));
+                filter_result.put("type", _type);
             }
 
             @Override
