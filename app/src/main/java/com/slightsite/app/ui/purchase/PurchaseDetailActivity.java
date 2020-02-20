@@ -259,6 +259,9 @@ public class PurchaseDetailActivity extends Activity {
                                             label_stock_in_out_number.setText(getResources().getString(R.string.label_stock_in_number));
                                             label_date_in_out.setText(getResources().getString(R.string.label_date_in));
                                             label_received_by.setText(getResources().getString(R.string.label_received_by));
+                                            if (server_data.has("group_master") && server_data.getInt("group_master") == 0) {
+                                                label_received_by.setText(getResources().getString(R.string.label_sent_by));
+                                            }
                                             label_origin_destination.setText(getResources().getString(R.string.label_stock_origin));
                                             if (server_data.has("warehouse_from_name")) {
                                                 origin_destination.setText(server_data.getString("warehouse_from_name"));
@@ -267,7 +270,10 @@ public class PurchaseDetailActivity extends Activity {
                                         } else if (server_data.getString("type").equals("stock_out")) {
                                             label_stock_in_out_number.setText(getResources().getString(R.string.label_stock_out_number));
                                             label_date_in_out.setText(getResources().getString(R.string.label_date_out));
-                                            label_received_by.setText(getResources().getString(R.string.label_sent_by));
+                                            label_received_by.setText(getResources().getString(R.string.label_received_by));
+                                            if (server_data.has("group_master") && server_data.getInt("group_master") > 0) {
+                                                label_received_by.setText(getResources().getString(R.string.label_sent_by));
+                                            }
                                             label_origin_destination.setText(getResources().getString(R.string.label_stock_destination));
                                             if (server_data.has("warehouse_to_name")) {
                                                 origin_destination.setText(server_data.getString("warehouse_to_name"));
@@ -359,6 +365,11 @@ public class PurchaseDetailActivity extends Activity {
                                     if (server_data.has("created_by_name")) {
                                         created_by.setText(server_data.getString("created_by_name"));
                                     }
+                                    if (server_data.has("finished_by_name")
+                                            && server_data.getString("finished_by_name").length() > 0
+                                            && !server_data.getString("finished_by_name").equals("null")) {
+                                        created_by.setText(server_data.getString("finished_by_name"));
+                                    }
 
                                     JSONObject configs = server_data.getJSONObject("configs");
                                     if (configs.has("items")) {
@@ -414,7 +425,13 @@ public class PurchaseDetailActivity extends Activity {
                                                     }
                                                 }
                                                 label_received_by_rel.setText(getResources().getString(R.string.label_sent_by));
-                                                created_by_rel.setText(related_data.getString("created_by_name"));
+                                                if (related_data.has("finished_by_name")
+                                                        && related_data.getString("finished_by_name").length() > 0
+                                                        && related_data.getInt("group_master") == 0) {
+                                                    created_by_rel.setText(related_data.getString("finished_by_name"));
+                                                } else {
+                                                    created_by_rel.setText(related_data.getString("created_by_name"));
+                                                }
                                                 label_origin_destination_rel.setText(getResources().getString(R.string.label_stock_origin));
                                                 origin_destination_rel.setText(related_data.getString("warehouse_from_name"));
                                                 if (related_data.has("verified_by_name")) {
@@ -436,7 +453,11 @@ public class PurchaseDetailActivity extends Activity {
                                                     }
                                                 }
                                                 label_received_by_rel.setText(getResources().getString(R.string.label_received_by));
-                                                created_by_rel.setText(related_data.getString("created_by_name"));
+                                                if (related_data.has("finished_by_name") && related_data.getString("finished_by_name").length() > 0) {
+                                                    created_by_rel.setText(related_data.getString("finished_by_name"));
+                                                } else {
+                                                    created_by_rel.setText(related_data.getString("created_by_name"));
+                                                }
                                                 label_origin_destination_rel.setText(getResources().getString(R.string.label_stock_destination));
                                                 origin_destination_rel.setText(related_data.getString("warehouse_to_name"));
                                                 if (related_data.has("verified_by_name")) {
@@ -700,7 +721,7 @@ public class PurchaseDetailActivity extends Activity {
     public void cancelIssue(View view) {
         AlertDialog.Builder quitDialog = new AlertDialog.Builder(
                 PurchaseDetailActivity.this);
-        quitDialog.setTitle(getResources().getString(R.string.dialog_cancel_data));
+        quitDialog.setTitle(getResources().getString(R.string.dialog_reject_data));
 
         quitDialog.setPositiveButton(getResources().getString(R.string.button_cancel), new DialogInterface.OnClickListener() {
             @Override

@@ -79,6 +79,7 @@
     <string name="dialog_no_payment">Are you sure you want to make a transaction without any payment?</string>
     <string name="dialog_mark_as_complete">Are you sure you want to Mark this invoice as Complete?</string>
     <string name="dialog_cancel_data">Are you sure you want to CANCEL this data?</string>
+    <string name="dialog_reject_data">Are you sure you want to REJECT this data?</string>
     <string name="dialog_remove_data">Are you sure you want to REMOVE this data?</string>
     <string name="dialog_confirm_data">Are you sure you want all these data is correct?</string>
     <string name="hint_empty_sale">Sale is empty.</string>
@@ -374,6 +375,7 @@
     <string name="button_update">Update</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_remove">Remove</string>
+    <string name="button_reject">Reject</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
 

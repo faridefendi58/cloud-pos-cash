@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +31,7 @@ public class AdapterListPurchaseHistory extends RecyclerView.Adapter<RecyclerVie
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
         public TextView issue_number;
+        public ImageView is_need_confirmation;
         public TextView created_at;
         public TextView status;
         public TextView notes;
@@ -39,6 +41,7 @@ public class AdapterListPurchaseHistory extends RecyclerView.Adapter<RecyclerVie
         public OriginalViewHolder(View v) {
             super(v);
             issue_number = (TextView) v.findViewById(R.id.issue_number);
+            is_need_confirmation = (ImageView) v.findViewById(R.id.is_need_confirmation);
             created_at = (TextView) v.findViewById(R.id.created_at);
             status = (TextView) v.findViewById(R.id.status);
             notes = (TextView) v.findViewById(R.id.notes);
@@ -82,6 +85,11 @@ public class AdapterListPurchaseHistory extends RecyclerView.Adapter<RecyclerVie
                 }
             } else if (pi.getType().equals("stock_out")) {
                 view.issue_number.setTextColor(context.getResources().getColor(R.color.yellowDarkUcok));
+            }
+
+            Log.e("CUK", "pi.getStatus() : "+ pi.getStatus());
+            if (pi.getStatus().equals("0")) {
+                view.is_need_confirmation.setVisibility(View.VISIBLE);
             }
 
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {

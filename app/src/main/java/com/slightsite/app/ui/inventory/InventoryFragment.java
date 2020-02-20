@@ -246,7 +246,6 @@ public class InventoryFragment extends UpdatableFragment {
 		inventoryList = new ArrayList<Map<String, String>>();
 		for(Product product : list) {
 			inventoryList.add(product.toMap());
-			Log.e(getTag(), "product.toMap() : "+ product.toMap().toString());
 		}
 
 		if (inventoryList.size() == 0) {

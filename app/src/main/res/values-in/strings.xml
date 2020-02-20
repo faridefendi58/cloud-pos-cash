@@ -79,6 +79,7 @@
     <string name="dialog_no_payment">Anda yakin ingin melakukan transaksi penjualan tanpa ada pembayaran?</string>
     <string name="dialog_mark_as_complete">Anda yakin ingin menandai tagihan ini sebagai tagihan yang sudah selesai?</string>
     <string name="dialog_cancel_data">Anda yakin ingin MEMBATALKAN data ini?</string>
+    <string name="dialog_reject_data">Anda yakin ingin MENOLAK data ini?</string>
     <string name="dialog_remove_data">Anda yakin ingin MENGHAPUS data ini?</string>
     <string name="dialog_confirm_data">Anda yakin ingin semua data sudah benar?</string>
     <string name="hint_empty_sale">Data penjualan kosong.</string>
@@ -372,6 +373,7 @@
     <string name="button_update">Update</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_remove">Hapus</string>
+    <string name="button_reject">Tolak</string>
 
     <string name="confirm_edit">Anda yakin ingin mengubah data ini?</string>
 
