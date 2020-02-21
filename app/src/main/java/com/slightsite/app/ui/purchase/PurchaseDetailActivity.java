@@ -97,6 +97,7 @@ public class PurchaseDetailActivity extends Activity {
     private CardView notes_container;
     private TextView label_notes;
     private List<PurchaseLineItem> purchase_data = new ArrayList<PurchaseLineItem>();
+    private List<PurchaseLineItem> purchase_data2 = new ArrayList<PurchaseLineItem>();
     private String purchase_date;
     private Boolean do_update_data = false;
     private JSONObject server_data = new JSONObject();
@@ -111,6 +112,8 @@ public class PurchaseDetailActivity extends Activity {
     private TextView label_origin_destination_rel;
     private TextView origin_destination_rel;
     private TextView verified_by_rel;
+    private Boolean is_update_qty = false;
+    private Boolean is_manager = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,6 +125,11 @@ public class PurchaseDetailActivity extends Activity {
             Params whParam = paramCatalog.getParamByName("warehouse_id");
             if (whParam != null) {
                 warehouse_id = Integer.parseInt(whParam.getValue());
+            }
+            String role = paramCatalog.getParamByName("role").getValue();
+            Log.e("CUK", "role : "+ role);
+            if (role != null && role.equals("manager")) {
+                is_manager = true;
             }
         } catch (Exception e){e.printStackTrace();}
 
@@ -246,6 +254,13 @@ public class PurchaseDetailActivity extends Activity {
                                         created_at_txt.setVisibility(View.VISIBLE);
                                     } else if (server_data.getInt("status") == -1) {
                                         status = "Need Check";
+                                        created_at.setVisibility(View.GONE);
+                                        created_at_txt.setVisibility(View.VISIBLE);
+                                        if (is_manager) {
+                                            complete_button_container.setVisibility(View.VISIBLE);
+                                            btn_cancel.setVisibility(View.VISIBLE);
+                                            btn_confirm.setVisibility(View.VISIBLE);
+                                        }
                                     } else if (server_data.getInt("status") == -2) {
                                         status = "Canceled";
                                         complete_button_container.setVisibility(View.VISIBLE);
@@ -398,7 +413,7 @@ public class PurchaseDetailActivity extends Activity {
                                     if (purchase_data.size() > 0) {
                                         AdapterListPurchaseConfirm pAdap = new AdapterListPurchaseConfirm(PurchaseDetailActivity.this, purchase_data);
                                         pAdap.setIsDetail();
-                                        if (server_data.getInt("status") == 1 || server_data.getInt("status") == -2) {
+                                        if (server_data.getInt("status") == 1 || server_data.getInt("status") == -2 || server_data.getInt("status") == -1) {
                                             pAdap.setIsEditable(false);
                                         }
                                         pAdap.notifyDataSetChanged();
@@ -434,8 +449,8 @@ public class PurchaseDetailActivity extends Activity {
                                                 }
                                                 label_origin_destination_rel.setText(getResources().getString(R.string.label_stock_origin));
                                                 origin_destination_rel.setText(related_data.getString("warehouse_from_name"));
-                                                if (related_data.has("verified_by_name")) {
-                                                    verified_by_rel.setText(related_data.getString("verified_by_name"));
+                                                if (related_data.has("checked_by_name") && !related_data.getString("checked_by_name").equals("null")) {
+                                                    verified_by_rel.setText(related_data.getString("checked_by_name"));
                                                 }
                                             } else if (related_data.getString("type").equals("transfer_receipt")) {
                                                 label_stock_in_out_number_rel.setText(getResources().getString(R.string.label_stock_in_number));
@@ -460,8 +475,11 @@ public class PurchaseDetailActivity extends Activity {
                                                 }
                                                 label_origin_destination_rel.setText(getResources().getString(R.string.label_stock_destination));
                                                 origin_destination_rel.setText(related_data.getString("warehouse_to_name"));
-                                                if (related_data.has("verified_by_name")) {
+                                                /*if (related_data.has("verified_by_name")) {
                                                     verified_by_rel.setText(related_data.getString("verified_by_name"));
+                                                }*/
+                                                if (related_data.has("checked_by_name") && !related_data.getString("checked_by_name").equals("null")) {
+                                                    verified_by_rel.setText(related_data.getString("checked_by_name"));
                                                 }
                                             }
                                         }
@@ -555,6 +573,7 @@ public class PurchaseDetailActivity extends Activity {
         try {
             if (attr == "quantity") {
                 purchase_data.get(i).setQuantity(Integer.parseInt(val));
+                this.is_update_qty = true;
             } else if (attr == "price") {
                 purchase_data.get(i).setUnitPriceAtSale(Double.parseDouble(val));
             }
@@ -577,7 +596,6 @@ public class PurchaseDetailActivity extends Activity {
                 mItem.put("name", purchase_data.get(i).getProduct().getName());
                 mItem.put("title", purchase_data.get(i).getProduct().getName());
                 mItem.put("quantity", purchase_data.get(i).getQuantity()+"");
-                Log.e("CUK", "quantity : "+ purchase_data.get(i).getQuantity());
                 mItem.put("unit_price", purchase_data.get(i).getPriceAtSale()+"");
                 arrItems.add(mItem);
             } catch (Exception e) {}
@@ -595,9 +613,13 @@ public class PurchaseDetailActivity extends Activity {
         }
 
         params.put("admin_id", admin_id);
-        params.put("effective_date", purchase_date);
+        if (purchase_date != null && purchase_date.length() > 0) {
+            params.put("effective_date", purchase_date);
+        }
         params.put("id", issue_id);
-        params.put("update_related", "1");
+        if (is_update_qty) {
+            params.put("is_update_qty", "1");
+        }
 
         _string_request(
                 Request.Method.POST,
@@ -672,6 +694,9 @@ public class PurchaseDetailActivity extends Activity {
                 params.put("admin_id", admin_id);
                 params.put("id", issue_id);
                 params.put("status", "1");
+                if (is_manager) {
+                    params.put("force_confirm", "1");
+                }
 
                 _string_request(
                         Request.Method.POST,

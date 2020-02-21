@@ -979,6 +979,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                                 JSONObject roles = jObj.getJSONObject("roles");
                                 if (roles.length() > 0) {
                                     Log.e(getClass().getSimpleName(), "roles : " + roles.toString());
+                                    // just clear the old data
+                                    adminInWarehouseCatalog.clearAdminInWarehouseCatalog();
                                     Iterator<String> iter = roles.keys();
                                     while (iter.hasNext()) {
                                         String key = iter.next();
