@@ -120,7 +120,14 @@
                 <RadioButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Reject"
+                        android:text="@string/reject"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                        android:textSize="@dimen/spacing_large" />
+
+                <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/give_away"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textSize="@dimen/spacing_large" />
 

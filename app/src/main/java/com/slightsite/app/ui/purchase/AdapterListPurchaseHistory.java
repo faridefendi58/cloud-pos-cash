@@ -87,7 +87,6 @@ public class AdapterListPurchaseHistory extends RecyclerView.Adapter<RecyclerVie
                 view.issue_number.setTextColor(context.getResources().getColor(R.color.yellowDarkUcok));
             }
 
-            Log.e("CUK", "pi.getStatus() : "+ pi.getStatus());
             if (pi.getStatus().equals("0")) {
                 view.is_need_confirmation.setVisibility(View.VISIBLE);
             }

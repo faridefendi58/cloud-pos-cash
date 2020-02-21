@@ -86,6 +86,7 @@ public class PurchaseOrderActivity extends AppCompatActivity {
     private List<Warehouses> warehousesListOut = new ArrayList<Warehouses>();
     private int selected_wh_id = -1;
     private String selected_wh_name;
+    private String non_transaction_type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -231,6 +232,10 @@ public class PurchaseOrderActivity extends AppCompatActivity {
             } else if (is_stock_out) {
                 mObj.put("warehouse_from", warehouse_id);
                 mObj.put("warehouse_to", selected_wh_id);
+            }
+        } else {
+            if (non_transaction_type != null) {
+                mObj.put("type", non_transaction_type);
             }
         }
         // force completed
@@ -538,5 +543,12 @@ public class PurchaseOrderActivity extends AppCompatActivity {
     public void setSelectedWH(int warehouse_id, String warehouse_name) {
         this.selected_wh_id = warehouse_id;
         this.selected_wh_name = warehouse_name;
+        if (warehouse_id == 0) {
+            if (warehouse_name.equals(getResources().getString(R.string.reject))) {
+                this.non_transaction_type = "reject";
+            } else if (warehouse_name.equals(getResources().getString(R.string.give_away))){
+                this.non_transaction_type = "giveaway";
+            }
+        }
     }
 }
