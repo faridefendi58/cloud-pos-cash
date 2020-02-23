@@ -194,10 +194,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             adminInWarehouseCatalog = AdminInWarehouseService.getInstance().getAdminInWarehouseCatalog();
             current_lang = LanguageController.getInstance().getLanguage();
             //build the roles
+            roles.put(R.id.role_virtual_staff, 3);
             roles.put(R.id.role_cashier, 5);
             roles.put(R.id.role_cs, 4);
             roles.put(R.id.role_manager, 6);
 
+            role_names.put(3, "virtualstaff");
             role_names.put(4, "cs");
             role_names.put(5, "cashier");
             role_names.put(6, "manager");
@@ -484,7 +486,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         List<Warehouses> whs = warehouseCatalog.getAllWarehouses();
         if (whs != null && whs.size() > 0) {
-            Log.e(getClass().getSimpleName(), "whs : "+ whs.size());
             for (Warehouses wh : whs) {
                 warehouse_names.put(wh.getWarehouseId(), wh.getTitle());
                 warehouse_items.add(wh.getTitle());
