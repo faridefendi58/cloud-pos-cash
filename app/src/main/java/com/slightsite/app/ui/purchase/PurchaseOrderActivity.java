@@ -87,6 +87,7 @@ public class PurchaseOrderActivity extends AppCompatActivity {
     private int selected_wh_id = -1;
     private String selected_wh_name;
     private String non_transaction_type;
+    private Boolean is_virtual_staff = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +116,16 @@ public class PurchaseOrderActivity extends AppCompatActivity {
                 warehouse_id = Integer.parseInt(whParam.getValue());
             }
             warehousesList = warehouseCatalog.getAllWarehouses();
+            String role = paramCatalog.getParamByName("role").getValue();
+            if (role != null) {
+                if (role.equals("virtualstaff")) {
+                    is_virtual_staff = true;
+                }
+            }
             getAvailableWH();
+            if (is_virtual_staff && is_stock_in) {
+                getAvailableSupplier();
+            }
         } catch (Exception e){e.printStackTrace();}
 
         initToolbar();
@@ -176,6 +186,9 @@ public class PurchaseOrderActivity extends AppCompatActivity {
 
     private void initAction() {
         AdapterListPurchaseConfirm pAdap = new AdapterListPurchaseConfirm(PurchaseOrderActivity.this, purchase_data);
+        if (is_stock_in && is_virtual_staff) {
+            pAdap.showPrice();
+        }
         pAdap.notifyDataSetChanged();
         purchaseListView.setAdapter(pAdap);
 
@@ -227,7 +240,11 @@ public class PurchaseOrderActivity extends AppCompatActivity {
 
         if (selected_wh_id > 0) {
             if (is_stock_in) {
-                mObj.put("warehouse_from", selected_wh_id);
+                if (!is_virtual_staff) {
+                    mObj.put("warehouse_from", selected_wh_id);
+                } else {
+                    mObj.put("supplier_from", selected_wh_id);
+                }
                 mObj.put("warehouse_to", warehouse_id);
             } else if (is_stock_out) {
                 mObj.put("warehouse_from", warehouse_id);
@@ -469,43 +486,47 @@ public class PurchaseOrderActivity extends AppCompatActivity {
                             // Check for error node in json
                             if (success == 1) {
                                 JSONObject data = jObj.getJSONObject("data");
-                                JSONArray data_in = data.getJSONArray("in");
-                                if (data_in.length() > 0) {
-                                    for (int i = 0; i < data_in.length(); i++) {
-                                        JSONObject data_n = data_in.getJSONObject(i);
-                                        Warehouses wh = new Warehouses(data_n.getInt("warehouse_rel_id"), data_n.getString("title"), data_n.getString("address"), data_n.getString("phone"), data_n.getInt("active"));
-                                        warehousesListIn.add(wh);
-                                        JSONObject configs = data_n.getJSONObject("configs");
-                                        if (configs.has("category")) {
-                                            String category = configs.getString("category");
-                                            if (grouped_warehouse_list_in.containsKey(category)) {
-                                                List<Warehouses> the_list = grouped_warehouse_list_in.get(category);
-                                                the_list.add(wh);
-                                            } else {
-                                                List<Warehouses> the_list = new ArrayList<Warehouses>();
-                                                the_list.add(wh);
-                                                grouped_warehouse_list_in.put(category, the_list);
+                                if (data.has("in")) {
+                                    JSONArray data_in = data.getJSONArray("in");
+                                    if (data_in.length() > 0) {
+                                        for (int i = 0; i < data_in.length(); i++) {
+                                            JSONObject data_n = data_in.getJSONObject(i);
+                                            Warehouses wh = new Warehouses(data_n.getInt("warehouse_rel_id"), data_n.getString("title"), data_n.getString("address"), data_n.getString("phone"), data_n.getInt("active"));
+                                            warehousesListIn.add(wh);
+                                            JSONObject configs = data_n.getJSONObject("configs");
+                                            if (configs.has("category")) {
+                                                String category = configs.getString("category");
+                                                if (grouped_warehouse_list_in.containsKey(category)) {
+                                                    List<Warehouses> the_list = grouped_warehouse_list_in.get(category);
+                                                    the_list.add(wh);
+                                                } else {
+                                                    List<Warehouses> the_list = new ArrayList<Warehouses>();
+                                                    the_list.add(wh);
+                                                    grouped_warehouse_list_in.put(category, the_list);
+                                                }
                                             }
                                         }
                                     }
                                 }
 
-                                JSONArray data_out = data.getJSONArray("out");
-                                if (data_out.length() > 0) {
-                                    for (int i = 0; i < data_out.length(); i++) {
-                                        JSONObject data_n = data_out.getJSONObject(i);
-                                        Warehouses wh = new Warehouses(data_n.getInt("warehouse_rel_id"), data_n.getString("title"), data_n.getString("address"), data_n.getString("phone"), data_n.getInt("active"));
-                                        warehousesListOut.add(wh);
-                                        JSONObject configs = data_n.getJSONObject("configs");
-                                        if (configs.has("category")) {
-                                            String category = configs.getString("category");
-                                            if (grouped_warehouse_list_out.containsKey(category)) {
-                                                List<Warehouses> the_list = grouped_warehouse_list_out.get(category);
-                                                the_list.add(wh);
-                                            } else {
-                                                List<Warehouses> the_list = new ArrayList<Warehouses>();
-                                                the_list.add(wh);
-                                                grouped_warehouse_list_out.put(category, the_list);
+                                if (data.has("out")) {
+                                    JSONArray data_out = data.getJSONArray("out");
+                                    if (data_out.length() > 0) {
+                                        for (int i = 0; i < data_out.length(); i++) {
+                                            JSONObject data_n = data_out.getJSONObject(i);
+                                            Warehouses wh = new Warehouses(data_n.getInt("warehouse_rel_id"), data_n.getString("title"), data_n.getString("address"), data_n.getString("phone"), data_n.getInt("active"));
+                                            warehousesListOut.add(wh);
+                                            JSONObject configs = data_n.getJSONObject("configs");
+                                            if (configs.has("category")) {
+                                                String category = configs.getString("category");
+                                                if (grouped_warehouse_list_out.containsKey(category)) {
+                                                    List<Warehouses> the_list = grouped_warehouse_list_out.get(category);
+                                                    the_list.add(wh);
+                                                } else {
+                                                    List<Warehouses> the_list = new ArrayList<Warehouses>();
+                                                    the_list.add(wh);
+                                                    grouped_warehouse_list_out.put(category, the_list);
+                                                }
                                             }
                                         }
                                     }
@@ -550,5 +571,48 @@ public class PurchaseOrderActivity extends AppCompatActivity {
                 this.non_transaction_type = "giveaway";
             }
         }
+    }
+
+    private void getAvailableSupplier() {
+        Map<String, String> params = new HashMap<String, String>();
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        Params adminParam = paramCatalog.getParamByName("admin_id");
+        if (adminParam != null) {
+            admin_id = adminParam.getValue();
+        }
+
+        params.put("admin_id", admin_id);
+        params.put("warehouse_id", warehouse_id+"");
+
+        String _url = Server.URL + "supplier/list?api-key=" + Server.API_KEY;
+
+        _string_request(
+                Request.Method.GET,
+                _url,
+                params,
+                false,
+                new VolleyCallback(){
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+                                if (data.length() > 0) {
+                                    for (int i = 0; i < data.length(); i++) {
+                                        JSONObject data_n = data.getJSONObject(i);
+                                        Warehouses wh = new Warehouses(data_n.getInt("id"), data_n.getString("name"), data_n.getString("address"), data_n.getString("phone"), data_n.getInt("active"));
+                                        warehousesListIn.add(wh);
+                                    }
+                                    grouped_warehouse_list_in.put("supplier", warehousesListIn);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 }

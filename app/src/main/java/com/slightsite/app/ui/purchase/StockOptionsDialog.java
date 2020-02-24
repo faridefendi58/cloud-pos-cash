@@ -37,11 +37,13 @@ public class StockOptionsDialog extends DialogFragment {
     private LinearLayout expedition_option_container;
     private LinearLayout production_option_container;
     private LinearLayout nontransaction_option_container;
+    private LinearLayout supplier_option_container;
 
     private RadioGroup radioWarehouse;
     private RadioGroup radioExpedition;
     private RadioGroup radioProduction;
     private RadioGroup radioNonTransaction;
+    private RadioGroup radioSupplier;
 
     private Boolean is_stock_in = true;
     private Boolean is_stock_out = false;
@@ -68,11 +70,13 @@ public class StockOptionsDialog extends DialogFragment {
         expedition_option_container = (LinearLayout) v.findViewById(R.id.expedition_option_container);
         production_option_container = (LinearLayout) v.findViewById(R.id.production_option_container);
         nontransaction_option_container = (LinearLayout) v.findViewById(R.id.nontransaction_option_container);
+        supplier_option_container = (LinearLayout) v.findViewById(R.id.supplier_option_container);
 
         radioWarehouse = (RadioGroup) v.findViewById(R.id.radioWarehouse);
         radioExpedition = (RadioGroup) v.findViewById(R.id.radioExpedition);
         radioProduction = (RadioGroup) v.findViewById(R.id.radioProduction);
         radioNonTransaction = (RadioGroup) v.findViewById(R.id.radioNonTransaction);
+        radioSupplier = (RadioGroup) v.findViewById(R.id.radioSupplier);
 
         buildRadioButton(v);
         initAction();
@@ -215,6 +219,50 @@ public class StockOptionsDialog extends DialogFragment {
                     RadioButton radioBtn = (RadioButton) view.findViewById(checkedRadioButtonId);
                     activeRadio = radioProduction;
                     //Toast.makeText(context, radioBtn.getText(), Toast.LENGTH_SHORT).show();
+                    try {
+                        master_option.setText(radioBtn.getText());
+                        ((PurchaseOrderActivity) context).setSelectedWH(warehouse_ids.get(radioBtn.getText().toString()), radioBtn.getText().toString());
+                    } catch (Exception e){e.printStackTrace();}
+                }
+            });
+        }
+
+        if (listData.containsKey("supplier")) {
+            supplier_option_container.setVisibility(View.VISIBLE);
+            ArrayList<String> stringArrayList = new ArrayList<String>();
+            Boolean is_supl_selected = false;
+            for (Warehouses wh : listData.get("supplier")) {
+                stringArrayList.add(wh.getTitle());
+                warehouse_ids.put(wh.getTitle(), wh.getWarehouseId());
+                RadioButton radioButton = new RadioButton(context);
+                radioButton.setText(wh.getTitle());
+                radioButton.setId(wh.getWarehouseId());
+                if (selected_warehouse_id == wh.getWarehouseId()) {
+                    radioButton.setChecked(true);
+                    is_supl_selected = true;
+                }
+                radioSupplier.addView(radioButton);
+            }
+            if (is_supl_selected) {
+                activeRadio = radioSupplier;
+            }
+            radioSupplier.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    if (activeRadio != null) {
+                        if (!activeRadio.equals(radioSupplier)) {
+                            removeActiveRadio(view);
+                        } else {
+                            if (selected_warehouse_id >= 0) {
+                                RadioButton radioBtn1 = (RadioButton) view.findViewById(selected_warehouse_id);
+                                radioBtn1.setChecked(false);
+                            }
+                        }
+                    }
+                    int checkedRadioButtonId = radioSupplier.getCheckedRadioButtonId();
+                    RadioButton radioBtn = (RadioButton) view.findViewById(checkedRadioButtonId);
+                    activeRadio = radioSupplier;
+                    Toast.makeText(context, radioBtn.getText(), Toast.LENGTH_SHORT).show();
                     try {
                         master_option.setText(radioBtn.getText());
                         ((PurchaseOrderActivity) context).setSelectedWH(warehouse_ids.get(radioBtn.getText().toString()), radioBtn.getText().toString());

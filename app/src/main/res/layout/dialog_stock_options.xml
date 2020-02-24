@@ -135,6 +135,30 @@
 
         </LinearLayout>
 
+        <!-- supplier -->
+        <LinearLayout
+                android:id="@+id/supplier_option_container"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/spacing_middle"
+                android:visibility="gone">
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_supplier"
+                    android:ems="20"
+                    android:textSize="@dimen/spacing_smlarge"/>
+
+            <RadioGroup
+                    android:id="@+id/radioSupplier"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+        <!-- end of supplier -->
+
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
