@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
@@ -88,6 +90,7 @@ public class PurchaseOrderActivity extends AppCompatActivity {
     private String selected_wh_name;
     private String non_transaction_type;
     private Boolean is_virtual_staff = false;
+    private Vibrator vibe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,6 +129,7 @@ public class PurchaseOrderActivity extends AppCompatActivity {
             if (is_virtual_staff && is_stock_in) {
                 getAvailableSupplier();
             }
+            vibe = (Vibrator) getSystemService(getApplicationContext().VIBRATOR_SERVICE);
         } catch (Exception e){e.printStackTrace();}
 
         initToolbar();
@@ -205,6 +209,8 @@ public class PurchaseOrderActivity extends AppCompatActivity {
                 showStockOptions(wh_options);
             }
         });
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     private void setIsStockIn() {
@@ -243,7 +249,7 @@ public class PurchaseOrderActivity extends AppCompatActivity {
                 if (!is_virtual_staff) {
                     mObj.put("warehouse_from", selected_wh_id);
                 } else {
-                    mObj.put("supplier_from", selected_wh_id);
+                    mObj.put("supplier_id", selected_wh_id);
                 }
                 mObj.put("warehouse_to", warehouse_id);
             } else if (is_stock_out) {
@@ -253,6 +259,13 @@ public class PurchaseOrderActivity extends AppCompatActivity {
         } else {
             if (non_transaction_type != null) {
                 mObj.put("type", non_transaction_type);
+            } else {
+                if (selected_wh_id < 0) {
+                    Toast.makeText(getApplicationContext(),
+                            "Mohon pilih salah satu " + wh_options.getText().toString(), Toast.LENGTH_LONG).show();
+                    vibe.vibrate(200);
+                    return;
+                }
             }
         }
         // force completed
@@ -260,8 +273,11 @@ public class PurchaseOrderActivity extends AppCompatActivity {
 
         String _url = "";
         if (is_stock_in) {
-            //_url = Server.URL + "transfer/create-receipt?api-key=" + Server.API_KEY;
-            _url = Server.URL + "transfer/incoming?api-key=" + Server.API_KEY;
+            if (mObj.containsKey("supplier_id")) {
+                _url = Server.URL + "purchase/create-v2?api-key=" + Server.API_KEY;
+            } else {
+                _url = Server.URL + "transfer/incoming?api-key=" + Server.API_KEY;
+            }
         } else if (is_stock_out) {
             if (selected_wh_id > 0) {
                 //_url = Server.URL + "inventory/create-v2?api-key=" + Server.API_KEY;

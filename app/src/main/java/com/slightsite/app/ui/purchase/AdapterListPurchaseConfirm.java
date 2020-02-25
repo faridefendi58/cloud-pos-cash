@@ -86,6 +86,7 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
             if (is_editable) {
                 view.quantity.setSelectAllOnFocus(true);
                 view.quantity.setText(qty + "");
+                view.price.setSelectAllOnFocus(true);
             } else {
                 view.quantity.setVisibility(View.GONE);
                 view.quantity_txt.setText(qty +"");

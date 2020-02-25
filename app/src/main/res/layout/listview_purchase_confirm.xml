@@ -46,8 +46,7 @@
                     android:background="@drawable/edit_text_round_bg_outline"
                     android:inputType="number"
                     android:maxLength="5"
-                    android:textColor="@color/grey_40"
-                    android:focusable="false"/>
+                    android:textColor="@color/grey_40"/>
 
             <TextView
                     android:id="@+id/quantity_txt"
@@ -86,6 +85,7 @@
                     android:inputType="number"
                     android:paddingHorizontal="@dimen/spacing_middle"
                     android:drawableStart="@drawable/ic_iconfinder_at_symbol"
+                    android:drawablePadding="@dimen/spacing_middle"
                     android:textColor="@color/grey_90" />
 
         </LinearLayout>

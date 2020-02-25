@@ -262,7 +262,6 @@ public class StockOptionsDialog extends DialogFragment {
                     int checkedRadioButtonId = radioSupplier.getCheckedRadioButtonId();
                     RadioButton radioBtn = (RadioButton) view.findViewById(checkedRadioButtonId);
                     activeRadio = radioSupplier;
-                    Toast.makeText(context, radioBtn.getText(), Toast.LENGTH_SHORT).show();
                     try {
                         master_option.setText(radioBtn.getText());
                         ((PurchaseOrderActivity) context).setSelectedWH(warehouse_ids.get(radioBtn.getText().toString()), radioBtn.getText().toString());

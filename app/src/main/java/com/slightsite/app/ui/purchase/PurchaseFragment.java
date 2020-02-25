@@ -89,6 +89,7 @@ public class PurchaseFragment extends UpdatableFragment {
     private RadioGroup radioTransactionType;
     private Boolean is_stock_in = true;
     private Boolean is_stock_out = false;
+    private Boolean is_virtual_staff = false;
 
     /**
      * Construct a new PurchaseFragment.
@@ -106,6 +107,7 @@ public class PurchaseFragment extends UpdatableFragment {
             register = Register.getInstance();
             warehousesList = ((MainActivity)getActivity()).getWarehouseList();
             allowed_warehouses = ((MainActivity)getActivity()).getAllowedWarehouseList();
+            is_virtual_staff = ((MainActivity)getActivity()).getIsVirtualStaff();
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -401,7 +403,7 @@ public class PurchaseFragment extends UpdatableFragment {
             stacks.put(p.getId(), quantity);
         }
 
-        viewPager.setCurrentItem(4);
+        //viewPager.setCurrentItem(4);
         updateCart();
     }
 
@@ -440,9 +442,13 @@ public class PurchaseFragment extends UpdatableFragment {
                 showConfirmClearDialog();
                 return false;
             case R.id.nav_history:
-                Intent intent = new Intent(getContext(), PurchaseHistoryActivity.class);
-                getActivity().finish();
-                startActivity(intent);
+                if (!is_virtual_staff) {
+                    Intent intent = new Intent(getContext(), PurchaseHistoryActivity.class);
+                    getActivity().finish();
+                    startActivity(intent);
+                } else {
+                    viewPager.setCurrentItem(1);
+                }
             default:
                 return super.onOptionsItemSelected(item);
         }
