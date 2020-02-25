@@ -354,6 +354,27 @@ public class PurchaseDetailActivity extends Activity {
                                                     issue_formated_number = detail_data.getString("ii_number");
                                                 }
                                             }
+                                        } else if (server_data.getString("type").equals("purchase_order")) {
+                                            label_stock_in_out_number.setText(getResources().getString(R.string.label_stock_in_number));
+                                            label_date_in_out.setText(getResources().getString(R.string.label_date_in));
+                                            label_received_by.setText(getResources().getString(R.string.label_received_by));
+                                            label_origin_destination.setText(getResources().getString(R.string.label_stock_origin));
+
+                                            if (server_data.has("title")) {
+                                                actionBar.setTitle(server_data.getString("title"));
+                                            } else {
+                                                actionBar.setTitle(getResources().getString(R.string.label_stock_in));
+                                            }
+                                            if (server_data.has("detail")) {
+                                                detail_data = server_data.getJSONObject("detail");
+                                                if (detail_data.has("po_number")) {
+                                                    issue_number.setText(detail_data.getString("po_number"));
+                                                    issue_formated_number = detail_data.getString("po_number");
+                                                }
+                                                if (detail_data.has("supplier_name")) {
+                                                    origin_destination.setText(detail_data.getString("supplier_name"));
+                                                }
+                                            }
                                         }
                                     }
                                     if (server_data.has("tr_number")) {
