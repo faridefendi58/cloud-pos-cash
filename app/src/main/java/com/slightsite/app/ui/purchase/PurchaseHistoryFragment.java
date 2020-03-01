@@ -274,9 +274,6 @@ public class PurchaseHistoryFragment extends UpdatableFragment {
                                         }
                                     });
                                 }
-                            } else {
-                                Toast.makeText(getContext(), "Sorry!, No data found.",
-                                        Toast.LENGTH_LONG).show();
                             }
 
                         } catch (JSONException e) {

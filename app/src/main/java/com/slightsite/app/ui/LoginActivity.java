@@ -181,7 +181,15 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             }
 
             Params whParam = paramCatalog.getParamByName("warehouse_id");
+            Boolean need_clear_session = false;
             if (whParam == null) {
+                need_clear_session = true;
+            } else {
+                if (whParam.getValue().equals("0")) {
+                    need_clear_session = true;
+                }
+            }
+            if (need_clear_session) {
                 // delete all session
                 SharedPreferences sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedpreferences.edit();
@@ -983,8 +991,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                                     // just clear the old data
                                     adminInWarehouseCatalog.clearAdminInWarehouseCatalog();
                                     Iterator<String> iter = roles.keys();
+                                    String first_wh = "";
                                     while (iter.hasNext()) {
                                         String key = iter.next();
+                                        if (first_wh.length() == 0){
+                                            first_wh = key;
+                                        }
                                         try {
                                             AdminInWarehouse aiw = adminInWarehouseCatalog.getDataByAdminAndWH(Integer.parseInt(id), Integer.parseInt(key));
                                             if (aiw == null) {
@@ -992,6 +1004,15 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                                             }
                                         } catch (Exception e) {
                                             e.printStackTrace();
+                                        }
+                                    }
+
+                                    // make sure to change wh position on change login identity
+                                    if (first_wh.length() > 0) {
+                                        Params warehouse_id = paramCatalog.getParamByName("warehouse_id");
+                                        if (warehouse_id instanceof Params) { // it must be jump to another wh
+                                            warehouse_id.setValue(first_wh);
+                                            Boolean save_wh_id = paramCatalog.editParam(warehouse_id);
                                         }
                                     }
                                 }

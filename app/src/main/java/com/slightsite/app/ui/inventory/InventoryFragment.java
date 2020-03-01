@@ -483,8 +483,9 @@ public class InventoryFragment extends UpdatableFragment {
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.menu_delete, menu);
 		this.menu = menu;
-		MenuItem item = menu.findItem(R.id.nav_delete);
-		item.setVisible(false);
+		if (stacks.size() == 0) {
+			menu.findItem(R.id.nav_delete).setVisible(false);
+		}
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
