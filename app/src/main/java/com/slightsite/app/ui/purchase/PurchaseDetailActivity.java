@@ -37,6 +37,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.AppController;
 import com.slightsite.app.domain.DateTimeStrategy;
@@ -49,6 +50,8 @@ import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.techicalservices.URLBuilder;
 import com.slightsite.app.ui.LoginActivity;
+import com.slightsite.app.ui.MainActivity;
+import com.slightsite.app.ui.notification.NotificationActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -114,6 +117,7 @@ public class PurchaseDetailActivity extends Activity {
     private TextView verified_by_rel;
     private Boolean is_update_qty = false;
     private Boolean is_manager = false;
+    private Class prev_activity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -139,6 +143,14 @@ public class PurchaseDetailActivity extends Activity {
                 getDetailFromServer();
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+        }
+
+        if (getIntent().hasExtra("prev_activity")) {
+            if (getIntent().getStringExtra("prev_activity").equals("NotificationActivity")) {
+                this.prev_activity = NotificationActivity.class;
+            } else {
+                this.prev_activity = MainActivity.class;
             }
         }
 
@@ -208,7 +220,13 @@ public class PurchaseDetailActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                if (prev_activity == null) {
+                    finish();
+                } else {
+                    Intent _intent = new Intent(getApplicationContext(), prev_activity);
+                    finish();
+                    startActivity(_intent);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

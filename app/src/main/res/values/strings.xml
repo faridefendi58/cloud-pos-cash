@@ -10,6 +10,7 @@
     <string name="action_shop">Shop</string>
     <string name="action_printer">Printer and Receipt</string>
     <string name="action_syncronize">Syncronize</string>
+    <string name="action_notification">Notification</string>
     <string name="action_logout">Logout</string>
 
     <string name="total">Total</string>
@@ -123,6 +124,7 @@
     <string name="title_stock_in_out_history">Stock In/Out History</string>
     <string name="title_stock_in">Stock In</string>
     <string name="title_stock_out">Stock Out</string>
+    <string name="title_notification">Notification</string>
 
     <string name="dashboard_income">Income</string>
     <string name="dashboard_transaction">Transaction</string>
@@ -429,4 +431,7 @@
     <string name="destination">Destination</string>
     <string name="reject">Reject</string>
     <string name="give_away">GiveAway</string>
+    <string name="title_activity_notification">NotificationActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
 </resources>

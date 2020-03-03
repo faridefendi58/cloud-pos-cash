@@ -92,11 +92,11 @@
         <activity
                 android:name=".ui.fee.FeeOnDateActivity"
                 android:screenOrientation="portrait"
-                android:theme="@style/AppCompatTheme"></activity>
+                android:theme="@style/AppCompatTheme" />
         <activity
                 android:name=".ui.fee.FeeDetailActivity"
                 android:screenOrientation="portrait"
-                android:theme="@style/AppCompatTheme"></activity>
+                android:theme="@style/AppCompatTheme" />
         <activity
                 android:name=".ui.purchase.PurchaseOrderActivity"
                 android:label="@string/title_stock_purchase"
@@ -108,8 +108,13 @@
         <activity
                 android:name=".ui.purchase.PurchaseDetailActivity"
                 android:screenOrientation="portrait" />
+        <activity
+                android:name=".ui.notification.NotificationActivity"
+                android:label="@string/title_notification"
+                android:theme="@style/AppCompatTheme"></activity>
 
-        <service android:name=".techicalservices.FCMNotificationService"
+        <service
+                android:name=".techicalservices.FCMNotificationService"
                 android:enabled="true"
                 android:exported="true">
             <intent-filter>

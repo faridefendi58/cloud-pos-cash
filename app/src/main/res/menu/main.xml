@@ -59,6 +59,10 @@
         android:title="@string/action_syncronize">
     </item>
     <item
+            android:id="@+id/notification"
+            android:title="@string/action_notification">
+    </item>
+    <item
         android:id="@+id/help"
         android:title="@string/action_help"
         android:visible="false">

@@ -188,13 +188,6 @@ public class InventoryFragment extends UpdatableFragment {
 					myView.findViewById(R.id.optionView).setVisibility(View.GONE);
 					TextView quantity = myView.findViewById(R.id.quantity);
 					quantity.setText(""+ 1);
-
-					/*Toast toast = Toast.makeText(
-							getActivity().getApplicationContext(),
-							productCatalog.getProductById(id).getName()+ ' ' +res.getString(R.string.message_success_added),
-							Toast.LENGTH_SHORT);
-					toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 8);
-					toast.show();*/
 				}
 			}     
 		});

@@ -10,6 +10,7 @@
     <string name="action_shop">Toko</string>
     <string name="action_printer">Printer dan Struk</string>
     <string name="action_syncronize">Sinkronisasi</string>
+    <string name="action_notification">Pemberitahuan</string>
     <string name="action_logout">Logout</string>
 
     <string name="total">Total</string>
@@ -125,6 +126,7 @@
     <string name="title_stock_in_out_history">Riwayat Stok Masuk/Keluar</string>
     <string name="title_stock_in">Stok Masuk</string>
     <string name="title_stock_out">Stok Keluar</string>
+    <string name="title_notification">Pemberitahuan</string>
 
     <string name="dashboard_income">Pendapatan</string>
     <string name="dashboard_transaction">Transaksi</string>

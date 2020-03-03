@@ -29,5 +29,6 @@
     <dimen name="appbar_padding_top">8dp</dimen>
 
     <dimen name="letter_tile_size">8dp</dimen>
+    <dimen name="appbar_padding">16dp</dimen>
 
 </resources>
