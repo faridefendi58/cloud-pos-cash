@@ -28,6 +28,7 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
     private Boolean is_detail = false;
     private Boolean is_editable = true;
     private Boolean show_price = false;
+    private Boolean show_price_text = false;
 
     public AdapterListPurchaseConfirm(Context _context, List<PurchaseLineItem> items) {
         this.context = _context;
@@ -43,6 +44,7 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
         public View lyt_parent;
         public View line_separator;
         public LinearLayout price_container;
+        public TextView price_text;
 
         public OriginalViewHolder(View v) {
             super(v);
@@ -54,6 +56,7 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
             lyt_parent = (View) v.findViewById(R.id.lyt_parent);
             line_separator = (View) v.findViewById(R.id.line_separator);
             price_container = (LinearLayout) v.findViewById(R.id.price_container);
+            price_text = (TextView) v.findViewById(R.id.price_text);
         }
     }
 
@@ -92,10 +95,16 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
                 view.quantity_txt.setText(qty +"");
                 view.quantity_txt.setVisibility(View.VISIBLE);
             }
-            view.price.setText(CurrencyController.getInstance().moneyFormat(prc));
+            //view.price.setText(CurrencyController.getInstance().moneyFormat(prc));
             if (show_price) {
                 view.price_container.setVisibility(View.VISIBLE);
             }
+
+            if (show_price_text) {
+                view.price_text.setVisibility(View.VISIBLE);
+                view.price_text.setText(CurrencyController.getInstance().moneyFormat(prc));
+            }
+
             view.unit.setText(pl.getProduct().getUnit());
 
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
@@ -208,5 +217,9 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
 
     public void showPrice() {
         this.show_price = true;
+    }
+
+    public void showPriceText() {
+        this.show_price_text = true;
     }
 }

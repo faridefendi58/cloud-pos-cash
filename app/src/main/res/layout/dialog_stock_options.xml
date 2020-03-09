@@ -115,9 +115,9 @@
             <RadioGroup
                     android:id="@+id/radioNonTransaction"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"/>
 
-                <RadioButton
+                <!--<RadioButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/reject"
@@ -129,9 +129,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/give_away"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                        android:textSize="@dimen/spacing_large" />
-
-            </RadioGroup>
+                        android:textSize="@dimen/spacing_large" />-->
 
         </LinearLayout>
 

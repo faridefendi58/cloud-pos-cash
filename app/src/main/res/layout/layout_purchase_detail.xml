@@ -234,63 +234,6 @@
                         </LinearLayout>
                     </android.support.v7.widget.CardView>
 
-                    <LinearLayout
-                            android:id="@+id/notes_header_container"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginTop="@dimen/spacing_middle"
-                            android:visibility="gone">
-
-                        <ImageView
-                                android:layout_width="@dimen/spacing_middle"
-                                android:layout_height="@dimen/spacing_middle"
-                                android:layout_margin="@dimen/spacing_medium"
-                                android:src="@drawable/shape_circle"
-                                android:tint="@color/yellowDarkUcok" />
-
-                        <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="@string/label_notes"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                                android:textColor="@color/grey_40"
-                                android:textAllCaps="true"
-                                android:textStyle="bold" />
-
-                    </LinearLayout>
-
-                    <!-- start of item card -->
-                    <android.support.v7.widget.CardView
-                            android:id="@+id/notes_container"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/spacing_middle"
-                            app:cardBackgroundColor="@android:color/white"
-                            app:cardCornerRadius="1dp"
-                            app:cardElevation="3dp"
-                            app:cardUseCompatPadding="true"
-                            android:visibility="gone">
-
-                        <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical">
-
-                            <TextView
-                                    android:id="@+id/label_notes"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="-"
-                                    android:padding="@dimen/spacing_middle"
-                                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                                    android:textColor="@color/grey_90"
-                                    app:fontFamily="sans-serif-medium" />
-
-                        </LinearLayout>
-                    </android.support.v7.widget.CardView>
-
                     <!-- start of related card -->
                     <android.support.v7.widget.CardView
                             android:id="@+id/related_data_container"
@@ -465,6 +408,74 @@
                             </LinearLayout>
 
                         </LinearLayout>
+                    </android.support.v7.widget.CardView>
+
+                    <LinearLayout
+                            android:id="@+id/notes_header_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="@dimen/spacing_middle"
+                            android:visibility="gone">
+
+                        <ImageView
+                                android:layout_width="@dimen/spacing_middle"
+                                android:layout_height="@dimen/spacing_middle"
+                                android:layout_margin="@dimen/spacing_medium"
+                                android:src="@drawable/shape_circle"
+                                android:tint="@color/yellowDarkUcok" />
+
+                        <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/label_notes"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                android:textColor="@color/grey_40"
+                                android:textAllCaps="true"
+                                android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <!-- start of item card -->
+                    <android.support.v7.widget.CardView
+                            android:id="@+id/notes_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_middle"
+                            app:cardBackgroundColor="@android:color/white"
+                            app:cardCornerRadius="1dp"
+                            app:cardElevation="3dp"
+                            app:cardUseCompatPadding="true"
+                            android:visibility="gone">
+
+                        <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                            <TextView
+                                    android:id="@+id/label_notes"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="-"
+                                    android:padding="@dimen/spacing_middle"
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                    android:textColor="@color/grey_90"
+                                    app:fontFamily="sans-serif-medium" />
+
+                            <EditText
+                                    android:id="@+id/purchase_notes"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="50dp"
+                                    android:layout_margin="@dimen/spacing_middle"
+                                    android:inputType="text|textMultiLine"
+                                    android:background="@drawable/edit_text_round_bg_outline"
+                                    android:hint="@string/hint_notes"
+                                    android:textSize="14dp"/>
+
+                        </LinearLayout>
+
                     </android.support.v7.widget.CardView>
 
                 </LinearLayout>

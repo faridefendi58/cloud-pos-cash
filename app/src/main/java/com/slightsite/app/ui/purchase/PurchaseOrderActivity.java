@@ -86,11 +86,17 @@ public class PurchaseOrderActivity extends AppCompatActivity {
     private List<Warehouses> warehousesList;
     private List<Warehouses> warehousesListIn = new ArrayList<Warehouses>();
     private List<Warehouses> warehousesListOut = new ArrayList<Warehouses>();
+    private JSONObject non_transaction_type_list = new JSONObject();
     private int selected_wh_id = -1;
     private String selected_wh_name;
+    private int selected_non_transaction_id = -1;
+    private String selected_non_transaction_name;
+    private int supplier_id = -1;
+    private String supplier_name;
     private String non_transaction_type;
     private Boolean is_virtual_staff = false;
     private Vibrator vibe;
+    private Map<Integer, Double> unit_prices = new HashMap<Integer, Double>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +135,7 @@ public class PurchaseOrderActivity extends AppCompatActivity {
             if (is_virtual_staff && is_stock_in) {
                 getAvailableSupplier();
             }
+            getTransactionTypes();
             vibe = (Vibrator) getSystemService(getApplicationContext().VIBRATOR_SERVICE);
         } catch (Exception e){e.printStackTrace();}
 
@@ -189,12 +196,7 @@ public class PurchaseOrderActivity extends AppCompatActivity {
     }
 
     private void initAction() {
-        AdapterListPurchaseConfirm pAdap = new AdapterListPurchaseConfirm(PurchaseOrderActivity.this, purchase_data);
-        if (is_stock_in && is_virtual_staff) {
-            pAdap.showPrice();
-        }
-        pAdap.notifyDataSetChanged();
-        purchaseListView.setAdapter(pAdap);
+        buildListPurchase(false);
 
         if (is_stock_in) {
             wh_options.setText(getResources().getString(R.string.origin));
@@ -213,6 +215,18 @@ public class PurchaseOrderActivity extends AppCompatActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
+    private void buildListPurchase(Boolean show_price) {
+        AdapterListPurchaseConfirm pAdap = new AdapterListPurchaseConfirm(PurchaseOrderActivity.this, purchase_data);
+        if (show_price && is_stock_in && is_virtual_staff) {
+            pAdap.showPrice();
+        }
+        pAdap.notifyDataSetChanged();
+        purchaseListView.setAdapter(pAdap);
+        if (!show_price) {
+            unit_prices.clear();
+        }
+    }
+
     private void setIsStockIn() {
         this.is_stock_in = true;
         this.is_stock_out = false;
@@ -229,6 +243,7 @@ public class PurchaseOrderActivity extends AppCompatActivity {
                 purchase_data.get(i).setQuantity(Integer.parseInt(val));
             } else if (attr == "price") {
                 purchase_data.get(i).setUnitPriceAtSale(Double.parseDouble(val));
+                setUnitPrices(purchase_data.get(i).getProduct().getId(), Double.parseDouble(val));
             }
         } catch (Exception e){e.printStackTrace();}
     }
@@ -246,10 +261,10 @@ public class PurchaseOrderActivity extends AppCompatActivity {
 
         if (selected_wh_id > 0) {
             if (is_stock_in) {
-                if (!is_virtual_staff) {
+                if (supplier_id < 0) {
                     mObj.put("warehouse_from", selected_wh_id);
                 } else {
-                    mObj.put("supplier_id", selected_wh_id);
+                    mObj.put("supplier_id", supplier_id);
                 }
                 mObj.put("warehouse_to", warehouse_id);
             } else if (is_stock_out) {
@@ -289,6 +304,7 @@ public class PurchaseOrderActivity extends AppCompatActivity {
         }
         // build the items
         ArrayList arrItems = new ArrayList();
+        Integer is_empty_unit_price = 0;
         for (int i = 0; i < purchase_data.size(); i++){
             Map<String, String> mItem = new HashMap<String, String>();
             try {
@@ -299,9 +315,19 @@ public class PurchaseOrderActivity extends AppCompatActivity {
                 mItem.put("title", purchase_data.get(i).getProduct().getName());
                 mItem.put("quantity", purchase_data.get(i).getQuantity()+"");
                 mItem.put("unit_price", purchase_data.get(i).getPriceAtSale()+"");
+                if (!unit_prices.containsKey(purchase_data.get(i).getProduct().getId())) {
+                    is_empty_unit_price = is_empty_unit_price + 1;
+                }
                 arrItems.add(mItem);
             } catch (Exception e) {}
         }
+        if (is_empty_unit_price > 0 && mObj.containsKey("supplier_id")) {
+            Toast.makeText(getApplicationContext(),
+                    "Harga beli tidak boleh dikosongi.", Toast.LENGTH_LONG).show();
+            vibe.vibrate(200);
+            return;
+        }
+
         mObj.put("items", arrItems);
 
         String qry = URLBuilder.httpBuildQuery(mObj, "UTF-8");
@@ -573,6 +599,10 @@ public class PurchaseOrderActivity extends AppCompatActivity {
             newFragment.setListData(grouped_warehouse_list_out);
             newFragment.setIsStockOut();
             newFragment.setSelectedWarehouseId(selected_wh_id);
+            newFragment.setNonTransactionTypes(non_transaction_type_list);
+            if (selected_non_transaction_id > -1) {
+                newFragment.setSelectedNonTransactionId(selected_non_transaction_id);
+            }
         }
         newFragment.show(getSupportFragmentManager(), "");
     }
@@ -580,12 +610,27 @@ public class PurchaseOrderActivity extends AppCompatActivity {
     public void setSelectedWH(int warehouse_id, String warehouse_name) {
         this.selected_wh_id = warehouse_id;
         this.selected_wh_name = warehouse_name;
-        if (warehouse_id == 0) {
-            if (warehouse_name.equals(getResources().getString(R.string.reject))) {
-                this.non_transaction_type = "reject";
-            } else if (warehouse_name.equals(getResources().getString(R.string.give_away))){
-                this.non_transaction_type = "giveaway";
-            }
+        if (warehouse_id > 0) {
+            this.selected_non_transaction_id = -1;
+            this.non_transaction_type = null;
+            this.selected_non_transaction_name = null;
+            buildListPurchase(false);
+        }
+    }
+
+    public void setSelectedNonTransaction(int _id, String _name) {
+        this.selected_wh_id = 0;
+        this.selected_wh_name = _name;
+        this.selected_non_transaction_id = _id;
+        this.selected_non_transaction_name = _name;
+        this.non_transaction_type = nonTransactionTypeKeys.get(_name).toString();
+    }
+
+    public void setSupplier(int _supplier_id, String _supplier_name) {
+        this.supplier_id = _supplier_id;
+        this.supplier_name = _supplier_name;
+        if (_supplier_id >= 0) {
+            buildListPurchase(true);
         }
     }
 
@@ -620,9 +665,15 @@ public class PurchaseOrderActivity extends AppCompatActivity {
                                     for (int i = 0; i < data.length(); i++) {
                                         JSONObject data_n = data.getJSONObject(i);
                                         Warehouses wh = new Warehouses(data_n.getInt("id"), data_n.getString("name"), data_n.getString("address"), data_n.getString("phone"), data_n.getInt("active"));
-                                        warehousesListIn.add(wh);
+                                        if (grouped_warehouse_list_in.containsKey("supplier")) {
+                                            List<Warehouses> the_list = grouped_warehouse_list_in.get("supplier");
+                                            the_list.add(wh);
+                                        } else {
+                                            List<Warehouses> the_list = new ArrayList<Warehouses>();
+                                            the_list.add(wh);
+                                            grouped_warehouse_list_in.put("supplier", the_list);
+                                        }
                                     }
-                                    grouped_warehouse_list_in.put("supplier", warehousesListIn);
                                 }
                             }
                         } catch (JSONException e) {
@@ -630,5 +681,51 @@ public class PurchaseOrderActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private Map<String, String> nonTransactionTypeKeys = new HashMap<String, String>();
+
+    private void getTransactionTypes() {
+        Map<String, String> params = new HashMap<String, String>();
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        Params adminParam = paramCatalog.getParamByName("admin_id");
+        if (adminParam != null) {
+            admin_id = adminParam.getValue();
+        }
+
+        params.put("admin_id", admin_id);
+
+        String _url = Server.URL + "inventory/non-transaction-type?api-key=" + Server.API_KEY;
+
+        _string_request(
+                Request.Method.GET,
+                _url,
+                params,
+                false,
+                new VolleyCallback(){
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                non_transaction_type_list = jObj.getJSONObject("data");
+                                Iterator<String> keys = non_transaction_type_list.keys();
+                                Integer j = 0;
+                                while (keys.hasNext()) {
+                                    String key = keys.next();
+                                    nonTransactionTypeKeys.put(non_transaction_type_list.getString(key), key);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    public void setUnitPrices(Integer product_id, Double _price) {
+        unit_prices.put(product_id, _price);
     }
 }

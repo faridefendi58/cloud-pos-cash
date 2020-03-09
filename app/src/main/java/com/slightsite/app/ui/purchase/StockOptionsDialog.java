@@ -20,8 +20,11 @@ import android.widget.Toast;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.warehouse.Warehouses;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +36,7 @@ public class StockOptionsDialog extends DialogFragment {
     private EditText master_option;
     private TextView dialog_title;
     private HashMap<String, List<Warehouses>> listData = new HashMap<String, List<Warehouses>>();
+    private JSONObject non_transaction_types = new JSONObject();
     private LinearLayout warehouse_option_container;
     private LinearLayout expedition_option_container;
     private LinearLayout production_option_container;
@@ -50,6 +54,7 @@ public class StockOptionsDialog extends DialogFragment {
 
     private Button confirmButton;
     private int selected_warehouse_id = -1;
+    private int selected_non_transaction_id = -1;
 
     public StockOptionsDialog(Context context, EditText editText) {
         super();
@@ -136,6 +141,7 @@ public class StockOptionsDialog extends DialogFragment {
                     try {
                         master_option.setText(radioBtn.getText());
                         ((PurchaseOrderActivity) context).setSelectedWH(warehouse_ids.get(radioBtn.getText().toString()), radioBtn.getText().toString());
+                        ((PurchaseOrderActivity) context).setSupplier(-1, radioBtn.getText().toString());
                     } catch (Exception e){e.printStackTrace();}
                 }
             });
@@ -179,6 +185,7 @@ public class StockOptionsDialog extends DialogFragment {
                     try {
                         master_option.setText(radioBtn.getText());
                         ((PurchaseOrderActivity) context).setSelectedWH(warehouse_ids.get(radioBtn.getText().toString()), radioBtn.getText().toString());
+                        ((PurchaseOrderActivity) context).setSupplier(-1, radioBtn.getText().toString());
                     } catch (Exception e){e.printStackTrace();}
                 }
             });
@@ -222,6 +229,7 @@ public class StockOptionsDialog extends DialogFragment {
                     try {
                         master_option.setText(radioBtn.getText());
                         ((PurchaseOrderActivity) context).setSelectedWH(warehouse_ids.get(radioBtn.getText().toString()), radioBtn.getText().toString());
+                        ((PurchaseOrderActivity) context).setSupplier(-1, radioBtn.getText().toString());
                     } catch (Exception e){e.printStackTrace();}
                 }
             });
@@ -265,6 +273,7 @@ public class StockOptionsDialog extends DialogFragment {
                     try {
                         master_option.setText(radioBtn.getText());
                         ((PurchaseOrderActivity) context).setSelectedWH(warehouse_ids.get(radioBtn.getText().toString()), radioBtn.getText().toString());
+                        ((PurchaseOrderActivity) context).setSupplier(warehouse_ids.get(radioBtn.getText().toString()), radioBtn.getText().toString());
                     } catch (Exception e){e.printStackTrace();}
                 }
             });
@@ -276,6 +285,24 @@ public class StockOptionsDialog extends DialogFragment {
             if (selected_warehouse_id == 0) {
                 activeRadio = radioNonTransaction;
             }
+
+            try {
+                Iterator<String> keys = non_transaction_types.keys();
+                Integer j = 0;
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    RadioButton radioButton = new RadioButton(context);
+                    radioButton.setText(non_transaction_types.getString(key));
+                    radioButton.setId(j);
+                    if (selected_non_transaction_id == j) {
+                        radioButton.setChecked(true);
+                        is_non_selected = true;
+                    }
+                    radioNonTransaction.addView(radioButton);
+                    j = j + 1;
+                }
+            } catch (Exception e){e.printStackTrace();}
+
             radioNonTransaction.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -294,10 +321,11 @@ public class StockOptionsDialog extends DialogFragment {
                     int checkedRadioButtonId = radioNonTransaction.getCheckedRadioButtonId();
                     RadioButton radioBtn = (RadioButton) view.findViewById(checkedRadioButtonId);
                     activeRadio = radioNonTransaction;
-                    //Toast.makeText(context, radioBtn.getText(), Toast.LENGTH_SHORT).show();
+                    selected_non_transaction_id = checkedId;
                     try {
                         master_option.setText(radioBtn.getText());
                         ((PurchaseOrderActivity) context).setSelectedWH(0, radioBtn.getText().toString());
+                        ((PurchaseOrderActivity) context).setSelectedNonTransaction(selected_non_transaction_id, radioBtn.getText().toString());
                     } catch (Exception e){e.printStackTrace();}
                 }
             });
@@ -330,5 +358,13 @@ public class StockOptionsDialog extends DialogFragment {
 
     public void setSelectedWarehouseId(int warehouseId) {
         this.selected_warehouse_id = warehouseId;
+    }
+
+    public void setNonTransactionTypes(JSONObject _types) {
+        this.non_transaction_types = _types;
+    }
+
+    public void setSelectedNonTransactionId(int _id) {
+        this.selected_non_transaction_id = _id;
     }
 }

@@ -99,6 +99,7 @@ public class PurchaseDetailActivity extends Activity {
     private LinearLayout notes_header_container;
     private CardView notes_container;
     private TextView label_notes;
+    private EditText purchase_notes;
     private List<PurchaseLineItem> purchase_data = new ArrayList<PurchaseLineItem>();
     private List<PurchaseLineItem> purchase_data2 = new ArrayList<PurchaseLineItem>();
     private String purchase_date;
@@ -194,6 +195,7 @@ public class PurchaseDetailActivity extends Activity {
         notes_header_container = (LinearLayout) findViewById(R.id.notes_header_container);
         notes_container = (CardView) findViewById(R.id.notes_container);
         label_notes = (TextView) findViewById(R.id.label_notes);
+        purchase_notes = (EditText) findViewById(R.id.purchase_notes);
 
         // related data
         related_data_container = (CardView) findViewById(R.id.related_data_container);
@@ -270,6 +272,7 @@ public class PurchaseDetailActivity extends Activity {
                                         status = "Complete";
                                         created_at.setVisibility(View.GONE);
                                         created_at_txt.setVisibility(View.VISIBLE);
+                                        purchase_notes.setVisibility(View.GONE);
                                     } else if (server_data.getInt("status") == -1) {
                                         status = "Need Check";
                                         created_at.setVisibility(View.GONE);
@@ -431,7 +434,7 @@ public class PurchaseDetailActivity extends Activity {
                                         if (items.length() > 0) {
                                             for (int i = 0; i < items.length(); i++) {
                                                 JSONObject data_n = items.getJSONObject(i);
-                                                Product product = new Product(data_n.getInt("barcode"), data_n.getString("title"), data_n.getString("barcode"), 0.0);
+                                                Product product = new Product(data_n.getInt("barcode"), data_n.getString("title"), data_n.getString("barcode"), data_n.getDouble("unit_price"));
                                                 PurchaseLineItem lineItem = new PurchaseLineItem(product, data_n.getInt("quantity"), data_n.getInt("quantity"));
                                                 purchase_data.add(lineItem);
                                             }
@@ -454,6 +457,9 @@ public class PurchaseDetailActivity extends Activity {
                                         pAdap.setIsDetail();
                                         if (server_data.getInt("status") == 1 || server_data.getInt("status") == -2 || server_data.getInt("status") == -1) {
                                             pAdap.setIsEditable(false);
+                                            if (server_data.getString("type").equals("purchase_order")) {
+                                                pAdap.showPriceText();
+                                            }
                                         }
                                         pAdap.notifyDataSetChanged();
                                         itemListRecycle.setAdapter(pAdap);
@@ -659,6 +665,9 @@ public class PurchaseDetailActivity extends Activity {
         if (is_update_qty) {
             params.put("is_update_qty", "1");
         }
+        if (purchase_notes.getText().toString().length() > 0) {
+            params.put("notes", purchase_notes.getText().toString());
+        }
 
         _string_request(
                 Request.Method.POST,
@@ -733,6 +742,9 @@ public class PurchaseDetailActivity extends Activity {
                 params.put("admin_id", admin_id);
                 params.put("id", issue_id);
                 params.put("status", "1");
+                if (purchase_notes.getText().toString().length() > 0) {
+                    params.put("notes", purchase_notes.getText().toString());
+                }
                 if (is_manager) {
                     params.put("force_confirm", "1");
                 }
@@ -803,6 +815,9 @@ public class PurchaseDetailActivity extends Activity {
                     params.put("admin_id", admin_id);
                     params.put("id", issue_id);
                     params.put("status", "-2");
+                    if (purchase_notes.getText().toString().length() > 0) {
+                        params.put("notes", purchase_notes.getText().toString());
+                    }
 
                     _string_request(
                             Request.Method.POST,

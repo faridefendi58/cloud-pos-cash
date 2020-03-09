@@ -128,6 +128,8 @@ public class NotificationActivity extends AppCompatActivity {
         Map<String, String> params = new HashMap<String, String>();
         String admin_id = sharedpreferences.getString("id", null);
         params.put("admin_id", admin_id);
+        params.put("warehouse_id", warehouse_id+"");
+        params.put("status", "unread");
 
         final ArrayList<String> descs = new ArrayList<String>();
         _string_request(
@@ -171,6 +173,7 @@ public class NotificationActivity extends AppCompatActivity {
                                                         intent2.putExtra("prev_activity", "NotificationActivity");
                                                     } else {
                                                         intent2 = new Intent(getApplicationContext(), PurchaseHistoryActivity.class);
+                                                        intent2.putExtra("prev_activity", "NotificationActivity");
                                                     }
                                                 } else if (jsonObject.getString("rel_activity").equals("MainActivity")) {
                                                     intent2 = new Intent(getApplicationContext(), MainActivity.class);
@@ -249,36 +252,6 @@ public class NotificationActivity extends AppCompatActivity {
             pDialog.dismiss();
     }
 
-    private void itemListener(final ListView list) {
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.e(TAG, "click i : "+ i);
-                try {
-                    Intent intent2 = new Intent(getApplicationContext(), NotificationActivity.class);
-                    if (notif_data.containsKey(i)) {
-                        JSONObject jsonObject = notif_data.get(i);
-                        if (jsonObject != null) {
-                            //mark_as_viewed(id.getText().toString());
-                            if (jsonObject.getString("rel_activity").equals("PurchaseHistoryActivity")) {
-                                if (jsonObject.has("rel_id") && jsonObject.getInt("rel_id") > 0) {
-                                    intent2 = new Intent(getApplicationContext(), PurchaseDetailActivity.class);
-                                    intent2.putExtra("issue_id", jsonObject.getString("rel_id"));
-                                } else {
-                                    intent2 = new Intent(getApplicationContext(), PurchaseHistoryActivity.class);
-                                }
-                            } else if (jsonObject.getString("rel_activity").equals("MainActivity")) {
-                                intent2 = new Intent(getApplicationContext(), MainActivity.class);
-                            }
-                        }
-                    }
-                    finish();
-                    startActivity(intent2);
-                } catch (Exception e){e.printStackTrace();}
-            }
-        });
-    }
-
     private void mark_as_viewed(String notification_id)
     {
         Log.e(TAG, "Id : "+ notification_id);
@@ -286,6 +259,7 @@ public class NotificationActivity extends AppCompatActivity {
         String admin_id = sharedpreferences.getString("id", null);
         params.put("admin_id", admin_id);
         params.put("notification_id", notification_id);
+        params.put("warehouse_id", warehouse_id+"");
 
         _string_request(
                 Request.Method.POST,
