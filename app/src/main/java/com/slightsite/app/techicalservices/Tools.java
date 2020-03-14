@@ -419,5 +419,14 @@ public class Tools {
 
         return list;
     }
+
+    public static Map<String, String> getWarehouseTypeList() {
+        Map<String, String> list = new HashMap<String, String>();
+        list.put("warehouse", "Warehouse");
+        list.put("expedition_truck", "Truk Ekspedisi");
+        list.put("production", "Produksi");
+
+        return list;
+    }
 }
 

@@ -205,6 +205,7 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 				+ "phone TEXT(32),"
 				+ "status INTEGER DEFAULT 1,"
 				+ "server_product_data TEXT DEFAULT NULL,"
+				+ "configs TEXT DEFAULT NULL,"
 				+ "date_added DATETIME,"
 				+ "date_product_request DATETIME"
 				+ ");");

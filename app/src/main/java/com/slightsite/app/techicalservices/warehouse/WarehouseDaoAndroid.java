@@ -30,6 +30,9 @@ public class WarehouseDaoAndroid implements WarehouseDao {
         content.put("address", warehouse.getAddress());
         content.put("phone", warehouse.getPhone());
         content.put("status", warehouse.getStatus());
+        if (warehouse.getConfigs() != null) {
+            content.put("configs", warehouse.getConfigs());
+        }
 
         int id = database.insert(DatabaseContents.TABLE_WAREHOUSES.toString(), content);
 
@@ -54,6 +57,7 @@ public class WarehouseDaoAndroid implements WarehouseDao {
                     content.getAsInteger("status"));
             wh.setServerProductData(content.getAsString("server_product_data"));
             wh.setDateProductRequest(content.getAsString("date_product_request"));
+            wh.setConfigs(content.getAsString("configs"));
             list.add(wh);
         }
         return list;
@@ -119,6 +123,9 @@ public class WarehouseDaoAndroid implements WarehouseDao {
             content.put("server_product_data", warehouse.getServerProductData());
             content.put("date_product_request", DateTimeStrategy.getCurrentTime());
         }
+        if (warehouse.getConfigs() != null) {
+            content.put("configs", warehouse.getConfigs());
+        }
 
         return database.update(DatabaseContents.TABLE_WAREHOUSES.toString(), content);
     }
@@ -143,5 +150,11 @@ public class WarehouseDaoAndroid implements WarehouseDao {
         content.put("status", 0);
 
         database.update(DatabaseContents.TABLE_WAREHOUSES.toString(), content);
+    }
+
+    @Override
+    public List<Warehouses> getListActiveWarehouses() {
+        List<Warehouses> list = getWarehouseBy("status", "1");
+        return list;
     }
 }

@@ -2,7 +2,12 @@ package com.slightsite.app.domain.warehouse;
 
 import com.slightsite.app.techicalservices.warehouse.WarehouseDao;
 
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WarehouseCatalog {
     private WarehouseDao warehouseDao;
@@ -25,6 +30,11 @@ public class WarehouseCatalog {
      */
     public boolean addWarehouse(int warehouse_id, String title, String address, String phone, int status) {
         Warehouses warehouse = new Warehouses(warehouse_id, title, address, phone, status);
+        int id = warehouseDao.addWarehouse(warehouse);
+        return id != -1;
+    }
+
+    public boolean addWarehouse2(Warehouses warehouse) {
         int id = warehouseDao.addWarehouse(warehouse);
         return id != -1;
     }
@@ -72,6 +82,32 @@ public class WarehouseCatalog {
      */
     public List<Warehouses> getAllWarehouses() {
         return warehouseDao.getAllWarehouses();
+    }
+
+    public Map<String, List<Warehouses>> getAllGroupedWarehouses(Boolean all_status) {
+        List<Warehouses> whs = warehouseDao.getAllWarehouses();
+        Map<String, List<Warehouses>> wh_groups = new HashMap<String, List<Warehouses>>();
+        if (whs.size() > 0) {
+            for (int m = 0; m < whs.size(); m++) {
+                String configs = whs.get(m).getConfigs();
+                if (configs != null) {
+                    try {
+                        JSONObject obj = new JSONObject(configs);
+                        String group_name = obj.getString("category");
+                        if (!wh_groups.containsKey(group_name)) {
+                            List<Warehouses> items = new ArrayList<Warehouses>();
+                            items.add(whs.get(m));
+                            wh_groups.put(group_name, items);
+                        } else {
+                            List<Warehouses> items = wh_groups.get(group_name);
+                            items.add(whs.get(m));
+                            wh_groups.put(group_name, items);
+                        }
+                    } catch (Exception e){}
+                }
+            }
+        }
+        return wh_groups;
     }
 
     /**

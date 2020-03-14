@@ -95,6 +95,7 @@ public class PurchaseOrderActivity extends AppCompatActivity {
     private String supplier_name;
     private String non_transaction_type;
     private Boolean is_virtual_staff = false;
+    private Boolean is_virtual_warehouse = false;
     private Vibrator vibe;
     private Map<Integer, Double> unit_prices = new HashMap<Integer, Double>();
 
@@ -131,11 +132,23 @@ public class PurchaseOrderActivity extends AppCompatActivity {
                     is_virtual_staff = true;
                 }
             }
-            getAvailableWH();
-            if (is_virtual_staff && is_stock_in) {
-                getAvailableSupplier();
+            if (warehouse_id > 0) {
+                Warehouses wh = warehouseCatalog.getWarehouseByWarehouseId(warehouse_id);
+                if (wh.getConfigs() != null) {
+                    try {
+                        JSONObject _cfg = new JSONObject(wh.getConfigs());
+                        if (_cfg.has("category") && !_cfg.getString("category").equals("warehouse")) {
+                            is_virtual_warehouse = true;
+                            is_virtual_staff = true;
+                        }
+                    } catch (Exception e) {e.printStackTrace();}
+                }
             }
-            getTransactionTypes();
+            getAvailableWH();
+            if ((is_virtual_staff || is_virtual_warehouse) && is_stock_in) {
+                //getAvailableSupplier();
+            }
+            //getTransactionTypes(); // moved call from getAvailableWH
             vibe = (Vibrator) getSystemService(getApplicationContext().VIBRATOR_SERVICE);
         } catch (Exception e){e.printStackTrace();}
 
@@ -500,6 +513,7 @@ public class PurchaseOrderActivity extends AppCompatActivity {
 
     private HashMap<String, List<Warehouses>> grouped_warehouse_list_in = new HashMap<String, List<Warehouses>>();
     private HashMap<String, List<Warehouses>> grouped_warehouse_list_out = new HashMap<String, List<Warehouses>>();
+    private List<String> allowed_non_transaction_out = new ArrayList<String>();
 
     private void getAvailableWH() {
         Map<String, String> params = new HashMap<String, String>();
@@ -569,6 +583,56 @@ public class PurchaseOrderActivity extends AppCompatActivity {
                                                     the_list.add(wh);
                                                     grouped_warehouse_list_out.put(category, the_list);
                                                 }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (jObj.has("supplier")) {
+                                    JSONObject obj_supplier = jObj.getJSONObject("supplier");
+                                    if (obj_supplier.has("in")) {
+                                        JSONArray data_supplier_in = obj_supplier.getJSONArray("in");
+                                        if (data_supplier_in.length() > 0) {
+                                            for (int s = 0; s < data_supplier_in.length(); s++) {
+                                                JSONObject data_n = data_supplier_in.getJSONObject(s);
+                                                Warehouses wh = new Warehouses(data_n.getInt("supplier_id"), data_n.getString("supplier_name"), "-", "-", 1);
+                                                if (grouped_warehouse_list_in.containsKey("supplier")) {
+                                                    List<Warehouses> the_list = grouped_warehouse_list_in.get("supplier");
+                                                    the_list.add(wh);
+                                                } else {
+                                                    List<Warehouses> the_list = new ArrayList<Warehouses>();
+                                                    the_list.add(wh);
+                                                    grouped_warehouse_list_in.put("supplier", the_list);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (jObj.has("non_transaction")) {
+                                    JSONObject obj_non_transaction = jObj.getJSONObject("non_transaction");
+                                    if (obj_non_transaction.has("out")) {
+                                        JSONArray data_non_transaction = obj_non_transaction.getJSONArray("out");
+                                        if (data_non_transaction.length() > 0) {
+                                            for (int t = 0; t < data_non_transaction.length(); t++) {
+                                                JSONObject data_t = data_non_transaction.getJSONObject(t);
+                                                if (data_t.has("non_transaction_type")) {
+                                                    allowed_non_transaction_out.add(data_t.getString("non_transaction_type"));
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (jObj.has("non_transaction_types")) {
+                                    JSONObject obj_non_transaction_types = jObj.getJSONObject("non_transaction_types");
+                                    if (obj_non_transaction_types.length() > 0) {
+                                        Iterator<String> keys = obj_non_transaction_types.keys();
+                                        while (keys.hasNext()) {
+                                            String key = keys.next();
+                                            if (allowed_non_transaction_out.contains(key)) {
+                                                nonTransactionTypeKeys.put(obj_non_transaction_types.getString(key), key);
+                                                non_transaction_type_list.put(key, obj_non_transaction_types.getString(key));
                                             }
                                         }
                                     }

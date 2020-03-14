@@ -81,7 +81,7 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
             double sub_total = 0.0;
             try {
                 qty = pl.getQuantity();
-                prc = pl.getPriceAtSale();
+                prc = pl.getProduct().getUnitPrice();
             } catch (Exception e) {
                 e.printStackTrace();
             }

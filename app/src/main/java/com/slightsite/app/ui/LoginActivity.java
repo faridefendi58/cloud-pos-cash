@@ -499,7 +499,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 warehouse_items.add(wh.getTitle());
             }
         } else {
-            Log.e(getClass().getSimpleName(), "Tidak ada data");
             Map<String, String> params = new HashMap<String, String>();
 
             String url = Server.URL + "warehouse/list?api-key=" + Server.API_KEY;
@@ -525,18 +524,19 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                                         // updating or inserting the wh data on local
                                         Warehouses whs = warehouseCatalog.getWarehouseByWarehouseId(data_n.getInt("id"));
                                         if (whs == null) {
-                                            warehouseCatalog.addWarehouse(
-                                                    data_n.getInt("id"),
-                                                    data_n.getString("title"),
-                                                    data_n.getString("address"),
-                                                    data_n.getString("phone"),
-                                                    data_n.getInt("active")
-                                            );
+                                            Warehouses _warehouse = new Warehouses(data_n.getInt("id"), data_n.getString("title"), data_n.getString("address"), data_n.getString("phone"), data_n.getInt("active"));
+                                            if (data_n.has("configs")) {
+                                                _warehouse.setConfigs(data_n.getString("configs"));
+                                            }
+                                            warehouseCatalog.addWarehouse2(_warehouse);
                                         } else {
                                             whs.setTitle(data_n.getString("title"));
                                             whs.setAddress(data_n.getString("address"));
                                             whs.setPhone(data_n.getString("phone"));
                                             whs.setStatus(data_n.getInt("active"));
+                                            if (data_n.has("configs")) {
+                                                whs.setConfigs(data_n.getString("configs"));
+                                            }
                                             warehouseCatalog.editWarehouse(whs);
                                         }
                                     }

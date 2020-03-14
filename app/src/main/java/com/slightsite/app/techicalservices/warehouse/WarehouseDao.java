@@ -46,4 +46,6 @@ public interface WarehouseDao {
     void clearWarehouseCatalog();
 
     void suspendWarehouse(Warehouses warehouse);
+
+    List<Warehouses> getListActiveWarehouses();
 }

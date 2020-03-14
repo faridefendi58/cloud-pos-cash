@@ -94,6 +94,7 @@ public class PurchaseHistoryActivity extends AppCompatActivity {
     private ArrayList<String> type_items = new ArrayList<String>();
     private Map<String, String> purchase_type_map = new HashMap<String, String>();
     private Map<String, String> purchase_type_map_inv = new HashMap<String, String>();
+    private Boolean is_manager = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,6 +161,12 @@ public class PurchaseHistoryActivity extends AppCompatActivity {
             Params whParam = paramCatalog.getParamByName("warehouse_id");
             if (whParam != null) {
                 warehouse_id = Integer.parseInt(whParam.getValue());
+            }
+            String role = paramCatalog.getParamByName("role").getValue();
+            if (role != null) {
+                if (role.equals("manager")) {
+                    is_manager = true;
+                }
             }
             purchase_status_map = Tools.getPurchaseStatusList();
             for (Map.Entry<String, String> entry : purchase_status_map.entrySet()) {
@@ -262,6 +269,9 @@ public class PurchaseHistoryActivity extends AppCompatActivity {
                                     }
 
                                     AdapterListPurchaseHistory pAdap = new AdapterListPurchaseHistory(PurchaseHistoryActivity.this, history_data);
+                                    if (is_manager) {
+                                        pAdap.setIsManager();
+                                    }
                                     pAdap.notifyDataSetChanged();
                                     purchaseHistoryListView.setAdapter(pAdap);
 

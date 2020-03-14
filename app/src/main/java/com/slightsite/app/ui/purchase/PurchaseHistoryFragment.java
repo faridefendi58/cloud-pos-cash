@@ -262,6 +262,10 @@ public class PurchaseHistoryFragment extends UpdatableFragment {
                                     }
 
                                     AdapterListPurchaseHistory pAdap = new AdapterListPurchaseHistory(getContext(), history_data);
+                                    Boolean is_manager = main.getIsManager();
+                                    if (is_manager) {
+                                        pAdap.setIsManager();
+                                    }
                                     pAdap.notifyDataSetChanged();
                                     purchaseHistoryListView.setAdapter(pAdap);
 

@@ -23,6 +23,7 @@ public class AdapterListPurchaseHistory extends RecyclerView.Adapter<RecyclerVie
     private Context context;
     private List<PurchaseItem> items;
     private OnItemClickListener mOnItemClickListener;
+    private Boolean is_manager = false;
 
     public AdapterListPurchaseHistory(Context _context, List<PurchaseItem> items) {
         this.context = _context;
@@ -89,6 +90,10 @@ public class AdapterListPurchaseHistory extends RecyclerView.Adapter<RecyclerVie
 
             if (pi.getStatus().equals("0")) {
                 view.is_need_confirmation.setVisibility(View.VISIBLE);
+            } else if (pi.getStatus().equals("-1")) {
+                if (is_manager) {
+                    view.is_need_confirmation.setVisibility(View.VISIBLE);
+                }
             }
 
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
@@ -124,5 +129,9 @@ public class AdapterListPurchaseHistory extends RecyclerView.Adapter<RecyclerVie
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
         this.mOnItemClickListener = mItemClickListener;
+    }
+
+    public void setIsManager() {
+        this.is_manager = true;
     }
 }

@@ -12,6 +12,7 @@ public class Warehouses {
     private int status;
     private String server_product_data;
     private String date_product_request;
+    private String configs;
 
     /**
      * Static address for UNDEFINED ID.
@@ -93,6 +94,14 @@ public class Warehouses {
         return date_product_request;
     }
 
+    public void setConfigs(String _configs) {
+        this.configs = _configs;
+    }
+
+    public String getConfigs() {
+        return configs;
+    }
+
     /**
      * Returns the status of this Warehouse in Map format.
      * @return the status of this Warehouse in Map format.
@@ -107,6 +116,7 @@ public class Warehouses {
         map.put("status", status + "");
         map.put("server_product_data", server_product_data);
         map.put("date_product_request", date_product_request);
+        map.put("configs", configs);
 
         return map;
 
