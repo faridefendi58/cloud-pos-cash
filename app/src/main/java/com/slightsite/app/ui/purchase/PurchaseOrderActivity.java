@@ -322,7 +322,7 @@ public class PurchaseOrderActivity extends AppCompatActivity {
             Map<String, String> mItem = new HashMap<String, String>();
             try {
                 // use map
-                mItem.put("id", purchase_data.get(i).getProduct().getId()+"");
+                mItem.put("id", purchase_data.get(i).getProduct().getBarcode()+"");
                 mItem.put("barcode", purchase_data.get(i).getProduct().getBarcode());
                 mItem.put("name", purchase_data.get(i).getProduct().getName());
                 mItem.put("title", purchase_data.get(i).getProduct().getName());

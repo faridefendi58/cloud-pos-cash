@@ -268,6 +268,12 @@ public class PurchaseDetailActivity extends Activity {
                                         if (server_data.has("group_master") && server_data.getInt("group_master") == 0) {
                                             btn_confirm.setVisibility(View.VISIBLE);
                                         }
+                                        if (is_manager) {
+                                            complete_button_container.setVisibility(View.VISIBLE);
+                                            btn_cancel.setVisibility(View.VISIBLE);
+                                            btn_confirm.setVisibility(View.VISIBLE);
+                                            btn_update.setVisibility(View.GONE);
+                                        }
                                     } else if (server_data.getInt("status") == 1) {
                                         status = "Complete";
                                         created_at.setVisibility(View.GONE);
@@ -281,6 +287,7 @@ public class PurchaseDetailActivity extends Activity {
                                             complete_button_container.setVisibility(View.VISIBLE);
                                             btn_cancel.setVisibility(View.VISIBLE);
                                             btn_confirm.setVisibility(View.VISIBLE);
+                                            btn_update.setVisibility(View.GONE);
                                         }
                                     } else if (server_data.getInt("status") == -2) {
                                         status = "Canceled";
