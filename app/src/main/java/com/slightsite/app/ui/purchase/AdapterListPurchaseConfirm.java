@@ -12,13 +12,20 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.purchase.PurchaseLineItem;
 import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.ui.MainActivity;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -29,6 +36,7 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
     private Boolean is_editable = true;
     private Boolean show_price = false;
     private Boolean show_price_text = false;
+    private JSONObject supplier_configs = new JSONObject();
 
     public AdapterListPurchaseConfirm(Context _context, List<PurchaseLineItem> items) {
         this.context = _context;
@@ -94,6 +102,22 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
                 view.quantity.setVisibility(View.GONE);
                 view.quantity_txt.setText(qty +"");
                 view.quantity_txt.setVisibility(View.VISIBLE);
+            }
+
+            if ((supplier_configs != null) && supplier_configs.length() > 0 && supplier_configs.has("products")) {
+                try {
+                    JSONObject supplier_products = supplier_configs.getJSONObject("products");
+                    if (supplier_products.has(pl.getProduct().getBarcode())) {
+                        JSONObject _product_data = supplier_products.getJSONObject(pl.getProduct().getBarcode());
+                        if (_product_data.has("price") && (_product_data.getString("price") != null)) {
+                            Double _def_price = _product_data.getDouble("price");
+                            view.price.setText(CurrencyController.getInstance().moneyFormat(_def_price));
+                            view.price.setVisibility(View.GONE);
+                            view.price_text.setVisibility(View.VISIBLE);
+                            view.price_text.setText(CurrencyController.getInstance().moneyFormat(_def_price));
+                        }
+                    }
+                } catch (JSONException e) {e.printStackTrace();}
             }
             //view.price.setText(CurrencyController.getInstance().moneyFormat(prc));
             if (show_price) {
@@ -221,5 +245,9 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
 
     public void showPriceText() {
         this.show_price_text = true;
+    }
+
+    public void setSupplierConfigs(JSONObject _supplierConfig) {
+        this.supplier_configs = _supplierConfig;
     }
 }

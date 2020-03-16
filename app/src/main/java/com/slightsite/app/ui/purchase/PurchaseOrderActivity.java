@@ -232,6 +232,12 @@ public class PurchaseOrderActivity extends AppCompatActivity {
         AdapterListPurchaseConfirm pAdap = new AdapterListPurchaseConfirm(PurchaseOrderActivity.this, purchase_data);
         if (show_price && is_stock_in && is_virtual_staff) {
             pAdap.showPrice();
+            if (supplier_id > 0) {
+                try {
+                    JSONObject sup_configs = supplier_configs.get(supplier_id);
+                    pAdap.setSupplierConfigs(sup_configs);
+                } catch (Exception e){e.printStackTrace();}
+            }
         }
         pAdap.notifyDataSetChanged();
         purchaseListView.setAdapter(pAdap);
@@ -514,6 +520,7 @@ public class PurchaseOrderActivity extends AppCompatActivity {
     private HashMap<String, List<Warehouses>> grouped_warehouse_list_in = new HashMap<String, List<Warehouses>>();
     private HashMap<String, List<Warehouses>> grouped_warehouse_list_out = new HashMap<String, List<Warehouses>>();
     private List<String> allowed_non_transaction_out = new ArrayList<String>();
+    private Map<Integer, JSONObject> supplier_configs = new HashMap<Integer, JSONObject>();
 
     private void getAvailableWH() {
         Map<String, String> params = new HashMap<String, String>();
@@ -604,6 +611,8 @@ public class PurchaseOrderActivity extends AppCompatActivity {
                                                     the_list.add(wh);
                                                     grouped_warehouse_list_in.put("supplier", the_list);
                                                 }
+                                                JSONObject _sup_configs = data_n.getJSONObject("supplier_configs");
+                                                supplier_configs.put(data_n.getInt("supplier_id"), _sup_configs);
                                             }
                                         }
                                     }
@@ -791,5 +800,9 @@ public class PurchaseOrderActivity extends AppCompatActivity {
 
     public void setUnitPrices(Integer product_id, Double _price) {
         unit_prices.put(product_id, _price);
+    }
+
+    public Map<Integer, JSONObject> getSupplierConfigs() {
+        return supplier_configs;
     }
 }
