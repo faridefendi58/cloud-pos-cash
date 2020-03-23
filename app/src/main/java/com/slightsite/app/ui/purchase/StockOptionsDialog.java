@@ -279,7 +279,7 @@ public class StockOptionsDialog extends DialogFragment {
             });
         }
 
-        if (is_stock_out) {
+        if (is_stock_out && non_transaction_types.length() > 0) {
             nontransaction_option_container.setVisibility(View.VISIBLE);
             Boolean is_non_selected = false;
             if (selected_warehouse_id == 0) {

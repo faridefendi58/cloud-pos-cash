@@ -129,7 +129,8 @@ public class NotificationActivity extends AppCompatActivity {
         String admin_id = sharedpreferences.getString("id", null);
         params.put("admin_id", admin_id);
         params.put("warehouse_id", warehouse_id+"");
-        params.put("status", "unread");
+        params.put("limit", "50");
+        //params.put("status", "unread");
 
         final ArrayList<String> descs = new ArrayList<String>();
         _string_request(

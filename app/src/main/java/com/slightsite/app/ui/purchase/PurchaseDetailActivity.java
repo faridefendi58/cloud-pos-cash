@@ -453,10 +453,18 @@ public class PurchaseDetailActivity extends Activity {
                                         created_at_txt.setText(configs.getString("effective_date"));
                                     }
 
-                                    if (configs.has("notes")) {
+                                    if (server_data.getInt("status") == 0 || server_data.getInt("status") == -1) {
                                         notes_header_container.setVisibility(View.VISIBLE);
                                         notes_container.setVisibility(View.VISIBLE);
-                                        label_notes.setText(configs.getString("notes"));
+                                        if (configs.has("notes")) {
+                                            label_notes.setText(configs.getString("notes"));
+                                        }
+                                    } else {
+                                        if (configs.has("notes")) {
+                                            notes_header_container.setVisibility(View.VISIBLE);
+                                            notes_container.setVisibility(View.VISIBLE);
+                                            label_notes.setText(configs.getString("notes"));
+                                        }
                                     }
 
                                     if (purchase_data.size() > 0) {
@@ -464,9 +472,10 @@ public class PurchaseDetailActivity extends Activity {
                                         pAdap.setIsDetail();
                                         if (server_data.getInt("status") == 1 || server_data.getInt("status") == -2 || server_data.getInt("status") == -1) {
                                             pAdap.setIsEditable(false);
-                                            if (server_data.getString("type").equals("purchase_order")) {
+                                            // no need to show price for security reason
+                                            /*if (server_data.getString("type").equals("purchase_order")) {
                                                 pAdap.showPriceText();
-                                            }
+                                            }*/
                                         }
                                         pAdap.notifyDataSetChanged();
                                         itemListRecycle.setAdapter(pAdap);

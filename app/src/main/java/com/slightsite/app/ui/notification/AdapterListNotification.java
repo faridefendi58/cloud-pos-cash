@@ -58,6 +58,13 @@ public class AdapterListNotification extends RecyclerView.Adapter<RecyclerView.V
                 JSONObject jsonObject = items.get(position);
                 view.created_at.setText(jsonObject.getString("created_at"));
                 view.description.setText(jsonObject.getString("message"));
+                if (jsonObject.has("status")) {
+                    if (jsonObject.getString("status").equals("unread")) {
+                        view.lyt_parent.setBackgroundColor(context.getResources().getColor(R.color.green_100));
+                    } else {
+                        view.lyt_parent.setBackgroundColor(context.getResources().getColor(R.color.grey_300));
+                    }
+                }
             } catch (Exception e){e.printStackTrace();}
 
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {

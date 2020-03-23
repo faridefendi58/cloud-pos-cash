@@ -44,6 +44,7 @@ import com.slightsite.app.domain.warehouse.WarehouseCatalog;
 import com.slightsite.app.domain.warehouse.WarehouseService;
 import com.slightsite.app.domain.warehouse.Warehouses;
 import com.slightsite.app.techicalservices.Server;
+import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.techicalservices.URLBuilder;
 import com.slightsite.app.ui.LoginActivity;
 
@@ -595,7 +596,7 @@ public class PurchaseOrderActivity extends AppCompatActivity {
                                     }
                                 }
 
-                                if (jObj.has("supplier")) {
+                                if (jObj.has("supplier") && Tools.isJSONObject(jObj.getString("supplier"))) {
                                     JSONObject obj_supplier = jObj.getJSONObject("supplier");
                                     if (obj_supplier.has("in")) {
                                         JSONArray data_supplier_in = obj_supplier.getJSONArray("in");
@@ -611,14 +612,16 @@ public class PurchaseOrderActivity extends AppCompatActivity {
                                                     the_list.add(wh);
                                                     grouped_warehouse_list_in.put("supplier", the_list);
                                                 }
-                                                JSONObject _sup_configs = data_n.getJSONObject("supplier_configs");
-                                                supplier_configs.put(data_n.getInt("supplier_id"), _sup_configs);
+                                                if (data_n.has("supplier_configs") && !data_n.getString("supplier_configs").equals(null) && !data_n.getString("supplier_configs").equals("null")) {
+                                                    JSONObject _sup_configs = data_n.getJSONObject("supplier_configs");
+                                                    supplier_configs.put(data_n.getInt("supplier_id"), _sup_configs);
+                                                }
                                             }
                                         }
                                     }
                                 }
 
-                                if (jObj.has("non_transaction")) {
+                                if (jObj.has("non_transaction") && Tools.isJSONObject(jObj.getString("non_transaction"))) {
                                     JSONObject obj_non_transaction = jObj.getJSONObject("non_transaction");
                                     if (obj_non_transaction.has("out")) {
                                         JSONArray data_non_transaction = obj_non_transaction.getJSONArray("out");
@@ -633,7 +636,7 @@ public class PurchaseOrderActivity extends AppCompatActivity {
                                     }
                                 }
 
-                                if (jObj.has("non_transaction_types")) {
+                                if (jObj.has("non_transaction_types") && Tools.isJSONObject(jObj.getString("non_transaction_types"))) {
                                     JSONObject obj_non_transaction_types = jObj.getJSONObject("non_transaction_types");
                                     if (obj_non_transaction_types.length() > 0) {
                                         Iterator<String> keys = obj_non_transaction_types.keys();

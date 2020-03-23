@@ -16,6 +16,7 @@ import com.slightsite.app.domain.warehouse.Warehouses;
 import com.slightsite.app.techicalservices.Tools;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ public class AdapterListWarehouse extends RecyclerView.Adapter<RecyclerView.View
     private Context ctx;
     private Integer warehouse_id;
     private Integer has_group_name = 0;
+    private Map<Integer, Integer> whs_notifications = new HashMap<Integer, Integer>();
 
     private OnItemClickListener mOnItemClickListener;
 
@@ -43,12 +45,14 @@ public class AdapterListWarehouse extends RecyclerView.Adapter<RecyclerView.View
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
+        public TextView notif_counter;
         public LinearLayout lyt_parent;
         public ImageView lang_id_checked;
 
         public OriginalViewHolder(View v) {
             super(v);
             title = (TextView) v.findViewById(R.id.title);
+            notif_counter = (TextView) v.findViewById(R.id.notif_counter);
             lyt_parent = (LinearLayout) v.findViewById(R.id.lyt_parent);
             lang_id_checked = (ImageView) v.findViewById(R.id.lang_id_checked);
         }
@@ -81,6 +85,7 @@ public class AdapterListWarehouse extends RecyclerView.Adapter<RecyclerView.View
                     }
                     view.title.setAllCaps(true);
                     view.title.setTypeface(null, Typeface.BOLD);
+                    view.notif_counter.setVisibility(View.GONE);
                     has_group_name = has_group_name + 1;
                 }
                 if (has_group_name > 0) {
@@ -89,6 +94,12 @@ public class AdapterListWarehouse extends RecyclerView.Adapter<RecyclerView.View
                         params.setMargins(20,0,0,0);
                         view.title.setLayoutParams(params);
                     }
+                }
+
+                if (whs_notifications.containsKey(wh.getWarehouseId())) {
+                    view.notif_counter.setText(whs_notifications.get(wh.getWarehouseId()).toString());
+                } else {
+                    view.notif_counter.setVisibility(View.GONE);
                 }
                 if (wh_to_map.get("warehouse_id").equals(warehouse_id+"")) {
                     view.lang_id_checked.setImageDrawable(ctx.getDrawable(R.drawable.ic_check_circle_green_24dp));
@@ -116,5 +127,9 @@ public class AdapterListWarehouse extends RecyclerView.Adapter<RecyclerView.View
 
     public void setSelectedWarehouseId(int warehouse_id) {
         this.warehouse_id = warehouse_id;
+    }
+
+    public void setWhsNotifications(Map<Integer, Integer> _whs_notifications) {
+        this.whs_notifications = _whs_notifications;
     }
 }
