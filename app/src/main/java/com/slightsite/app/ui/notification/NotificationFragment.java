@@ -1,31 +1,28 @@
 package com.slightsite.app.ui.notification;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -38,10 +35,13 @@ import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.params.Params;
+import com.slightsite.app.domain.sale.Register;
+import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.ui.LoginActivity;
 import com.slightsite.app.ui.MainActivity;
+import com.slightsite.app.ui.component.UpdatableFragment;
 import com.slightsite.app.ui.purchase.PurchaseDetailActivity;
 import com.slightsite.app.ui.purchase.PurchaseHistoryActivity;
 
@@ -58,9 +58,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class NotificationActivity extends AppCompatActivity {
+@SuppressLint("ValidFragment")
+public class NotificationFragment extends UpdatableFragment {
 
-    private static final String TAG = NotificationActivity.class.getSimpleName();
+    protected static final int SEARCH_LIMIT = 0;
+
+    private ViewPager viewPager;
+    private Register register;
+    private MainActivity main;
+
+    private Resources res;
+
+    private Map<Integer, Integer> stacks = new HashMap<Integer, Integer>();
+
+    private View fragment_view;
+    private Boolean is_virtual_staff = false;
+    private static final String TAG = NotificationFragment.class.getSimpleName();
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
 
@@ -86,62 +99,42 @@ public class NotificationActivity extends AppCompatActivity {
     private Map<String, String> notif_status_map = new HashMap<String, String>();
     private Map<String, String> notif_status_map_inv = new HashMap<String, String>();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_notification);
-
-        initToolbar();
-        initView();
-        initAction();
+    public NotificationFragment() {
+        super();
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_filter, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            Intent intent = new Intent(NotificationActivity.this, MainActivity.class);
-            intent.putExtra("refreshStock", "1");
-            finish();
-            startActivity(intent);
-        } else if (item.getItemId() == R.id.nav_filter) {
-            filterDialog();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        try {
+            register = Register.getInstance();
+            is_virtual_staff = ((MainActivity)getActivity()).getIsVirtualStaff();
+        } catch (NoDaoSetException e) {
+            e.printStackTrace();
         }
 
-        return super.onOptionsItemSelected(item);
-    }
+        View view = inflater.inflate(R.layout.layout_notification, container, false);
+        setHasOptionsMenu(true);
+        fragment_view = view;
+        res = getResources();
+        main = (MainActivity) getActivity();
+        viewPager = main.getViewPager();
 
-    private void initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_close);
-        toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.colorWhite), PorterDuff.Mode.SRC_ATOP);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(getResources().getString(R.string.title_stock_purchase));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#019e47")));
-        getSupportActionBar().setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#e2e3e5")));
-
-        TextView toolbar_title = (TextView) findViewById(R.id.toolbar_title);
-        toolbar_title.setText(getResources().getString(R.string.title_notification));
+        initView();
+        initAction();
+        return view;
     }
 
     private void initView() {
-        notificationListView = (RecyclerView) findViewById(R.id.notificationListView);
-        notificationListView.setLayoutManager(new LinearLayoutManager(getBaseContext()));
+        notificationListView = (RecyclerView) fragment_view.findViewById(R.id.notificationListView);
+        notificationListView.setLayoutManager(new LinearLayoutManager(getContext()));
         notificationListView.setHasFixedSize(true);
         notificationListView.setNestedScrollingEnabled(false);
     }
 
     private void initAction() {
         try {
-            sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
+            sharedpreferences = main.getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
             paramCatalog = ParamService.getInstance().getParamCatalog();
             Params whParam = paramCatalog.getParamByName("warehouse_id");
             if (whParam != null) {
@@ -152,8 +145,36 @@ public class NotificationActivity extends AppCompatActivity {
                 status_items.add(entry.getValue());
                 notif_status_map_inv.put(entry.getValue(), entry.getKey());
             }
-            buildTheNotifList();
+            //update();
         } catch (Exception e){e.printStackTrace();}
+    }
+
+    @Override
+    public void update() {
+        buildTheNotifList();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        update();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_filter, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_filter :
+                filterDialog();
+                return false;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private ArrayList<JSONObject> list_items = new ArrayList<JSONObject>();
@@ -216,11 +237,10 @@ public class NotificationActivity extends AppCompatActivity {
                 Request.Method.GET,
                 Server.URL + "notification/list?api-key=" + Server.API_KEY,
                 params,
-                true,
-                new VolleyCallback() {
+                false,
+                new NotificationActivity.VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
-                        hideDialog();
                         try {
                             JSONObject jObj = new JSONObject(result);
                             success = jObj.getInt(TAG_SUCCESS);
@@ -235,7 +255,7 @@ public class NotificationActivity extends AppCompatActivity {
                                     list_items.add(data_n);
                                 }
 
-                                AdapterListNotification pAdap = new AdapterListNotification(NotificationActivity.this, list_items);
+                                AdapterListNotification pAdap = new AdapterListNotification(getContext(), list_items);
                                 pAdap.notifyDataSetChanged();
                                 notificationListView.setAdapter(pAdap);
 
@@ -243,23 +263,23 @@ public class NotificationActivity extends AppCompatActivity {
                                     @Override
                                     public void onItemClick(View view, JSONObject jsonObject, int position) {
                                         try {
-                                            Intent intent2 = new Intent(getApplicationContext(), NotificationActivity.class);
+                                            Intent intent2 = new Intent(getContext(), NotificationActivity.class);
                                             if (jsonObject != null) {
                                                 mark_as_viewed(jsonObject.getString("id"));
                                                 if (jsonObject.getString("rel_activity").equals("PurchaseHistoryActivity")) {
                                                     if (jsonObject.has("rel_id") && jsonObject.getInt("rel_id") > 0) {
-                                                        intent2 = new Intent(getApplicationContext(), PurchaseDetailActivity.class);
+                                                        intent2 = new Intent(getContext(), PurchaseDetailActivity.class);
                                                         intent2.putExtra("issue_id", jsonObject.getString("rel_id"));
                                                         intent2.putExtra("prev_activity", "NotificationActivity");
                                                     } else {
-                                                        intent2 = new Intent(getApplicationContext(), PurchaseHistoryActivity.class);
+                                                        intent2 = new Intent(getContext(), PurchaseHistoryActivity.class);
                                                         intent2.putExtra("prev_activity", "NotificationActivity");
                                                     }
                                                 } else if (jsonObject.getString("rel_activity").equals("MainActivity")) {
-                                                    intent2 = new Intent(getApplicationContext(), MainActivity.class);
+                                                    intent2 = new Intent(getContext(), MainActivity.class);
                                                 }
                                             }
-                                            finish();
+                                            main.finish();
                                             startActivity(intent2);
                                         } catch (Exception e){e.printStackTrace();}
                                     }
@@ -273,9 +293,9 @@ public class NotificationActivity extends AppCompatActivity {
                 });
     }
 
-    public void _string_request(int method, String url, final Map params, final Boolean show_dialog, final VolleyCallback callback) {
+    public void _string_request(int method, String url, final Map params, final Boolean show_dialog, final NotificationActivity.VolleyCallback callback) {
         if (show_dialog) {
-            pDialog = new ProgressDialog(this);
+            pDialog = new ProgressDialog(getContext());
             pDialog.setCancelable(false);
             pDialog.setMessage("Request data ...");
             showDialog();
@@ -301,7 +321,7 @@ public class NotificationActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
                 Log.e(TAG, "Request Error: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
+                Toast.makeText(getContext(),
                         error.getMessage(), Toast.LENGTH_LONG).show();
                 if (show_dialog) {
                     hideDialog();
@@ -323,18 +343,19 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     private void showDialog() {
-        if (!pDialog.isShowing())
+        if (pDialog != null && !pDialog.isShowing()) {
             pDialog.show();
+        }
     }
 
     private void hideDialog() {
-        if (pDialog.isShowing())
+        if (pDialog != null && pDialog.isShowing()) {
             pDialog.dismiss();
+        }
     }
 
     private void mark_as_viewed(String notification_id)
     {
-        Log.e(TAG, "Id : "+ notification_id);
         Map<String, String> params = new HashMap<String, String>();
         String admin_id = sharedpreferences.getString("id", null);
         params.put("admin_id", admin_id);
@@ -346,7 +367,7 @@ public class NotificationActivity extends AppCompatActivity {
                 Server.URL + "notification/read?api-key=" + Server.API_KEY,
                 params,
                 false,
-                new VolleyCallback() {
+                new NotificationActivity.VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
                         Log.e(TAG, "Response: " + result.toString());
@@ -366,7 +387,7 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     private void filterDialog() {
-        bottomSheetDialog = new BottomSheetDialog(NotificationActivity.this);
+        bottomSheetDialog = new BottomSheetDialog(getContext());
         View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_filter_purchase, null);
         bottomSheetDialog.setContentView(sheetView);
 
@@ -384,7 +405,7 @@ public class NotificationActivity extends AppCompatActivity {
         month_spinner = (Spinner) sheetView.findViewById(R.id.month_spinner);
         year_spinner = (Spinner) sheetView.findViewById(R.id.year_spinner);
         String[] months = new String[]{"Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"};
-        ArrayAdapter<String> monthAdapter = new ArrayAdapter<String>(NotificationActivity.this, android.R.layout.simple_spinner_dropdown_item, months);
+        ArrayAdapter<String> monthAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, months);
         month_spinner.setAdapter(monthAdapter);
 
         Calendar cur_calender = Calendar.getInstance();
@@ -394,12 +415,12 @@ public class NotificationActivity extends AppCompatActivity {
         }
         years = new String[arr_years.size()];
         years = arr_years.toArray(years);
-        ArrayAdapter<String> yearAdapter = new ArrayAdapter<String>(NotificationActivity.this, android.R.layout.simple_spinner_dropdown_item, years);
+        ArrayAdapter<String> yearAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, years);
         year_spinner.setAdapter(yearAdapter);
 
         filter_status = (Spinner) sheetView.findViewById(R.id.filter_status);
         ArrayAdapter<String> stAdapter = new ArrayAdapter<String>(
-                NotificationActivity.this,
+                getContext(),
                 R.layout.spinner_item, status_items);
         stAdapter.notifyDataSetChanged();
         filter_status.setAdapter(stAdapter);

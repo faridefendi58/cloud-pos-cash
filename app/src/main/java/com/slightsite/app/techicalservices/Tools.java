@@ -428,5 +428,14 @@ public class Tools {
 
         return list;
     }
+
+    public static Map<String, String> getNotificationStatusList() {
+        Map<String, String> list = new HashMap<String, String>();
+        list.put("-", "Semua");
+        list.put("unread", "UnRead");
+        list.put("read", "Read");
+
+        return list;
+    }
 }
 

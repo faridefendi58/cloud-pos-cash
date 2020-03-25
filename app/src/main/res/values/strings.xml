@@ -426,12 +426,10 @@
     <string name="tab_order_list">Order List</string>
     <string name="tab_sales_report">Sales Report</string>
     <string name="tab_stock">Stock</string>
+    <string name="tab_notification">Notification</string>
 
     <string name="origin">Origin</string>
     <string name="destination">Destination</string>
     <string name="reject">Reject</string>
     <string name="give_away">GiveAway</string>
-    <string name="title_activity_notification">NotificationActivity</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
 </resources>

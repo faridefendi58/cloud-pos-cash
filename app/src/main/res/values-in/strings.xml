@@ -424,6 +424,7 @@
     <string name="tab_order_list">Daftar Order</string>
     <string name="tab_sales_report">Laporan Penjualan</string>
     <string name="tab_stock">Stok Barang</string>
+    <string name="tab_notification">Pemberitahuan</string>
 
     <string name="origin">Asal Barang</string>
     <string name="destination">Tujuan</string>
