@@ -1,0 +1,40 @@
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:orientation="vertical">
+
+        <ImageView
+                android:id="@+id/tab_icon"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_marginTop="@dimen/spacing_middle"
+                android:gravity="center"/>
+
+        <TextView
+                android:id="@+id/tab_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:minWidth="@dimen/spacing_xxlarge"
+                android:gravity="center"
+                android:textAppearance="@style/Widget.AppCompat.Light.ActionBar.TabText"/>
+
+    </LinearLayout>
+
+    <TextView
+            android:id="@+id/tab_badge"
+            android:layout_width="21dp"
+            android:layout_height="21dp"
+            android:padding="2dp"
+            android:background="@drawable/badge_background"
+            android:layout_marginLeft="@dimen/spacing_large"
+            android:layout_marginTop="@dimen/spacing_middle"
+            android:layout_gravity="top|center"
+            android:gravity="center"
+            android:textColor="@color/colorWhite"
+            android:textSize="12sp"/>
+
+</FrameLayout>
