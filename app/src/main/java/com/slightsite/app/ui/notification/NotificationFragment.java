@@ -265,8 +265,19 @@ public class NotificationFragment extends UpdatableFragment {
                                         try {
                                             Intent intent2 = new Intent(getContext(), NotificationActivity.class);
                                             if (jsonObject != null) {
-                                                mark_as_viewed(jsonObject.getString("id"));
+                                                if (jsonObject.has("status") && jsonObject.getString("status").equals("unread")) {
+                                                    mark_as_viewed(jsonObject.getString("id"));
+                                                }
                                                 if (jsonObject.getString("rel_activity").equals("PurchaseHistoryActivity")) {
+                                                    if (jsonObject.has("rel_id") && jsonObject.getInt("rel_id") > 0) {
+                                                        intent2 = new Intent(getContext(), PurchaseDetailActivity.class);
+                                                        intent2.putExtra("issue_id", jsonObject.getString("rel_id"));
+                                                        intent2.putExtra("prev_activity", "NotificationActivity");
+                                                    } else {
+                                                        intent2 = new Intent(getContext(), PurchaseHistoryActivity.class);
+                                                        intent2.putExtra("prev_activity", "NotificationActivity");
+                                                    }
+                                                } else if (jsonObject.getString("rel_activity").equals("PurchaseDetailActivity")) {
                                                     if (jsonObject.has("rel_id") && jsonObject.getInt("rel_id") > 0) {
                                                         intent2 = new Intent(getContext(), PurchaseDetailActivity.class);
                                                         intent2.putExtra("issue_id", jsonObject.getString("rel_id"));
@@ -321,8 +332,6 @@ public class NotificationFragment extends UpdatableFragment {
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
                 Log.e(TAG, "Request Error: " + error.getMessage());
-                Toast.makeText(getContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
                 if (show_dialog) {
                     hideDialog();
                 }

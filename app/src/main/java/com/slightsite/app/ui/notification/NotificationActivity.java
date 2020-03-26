@@ -255,6 +255,15 @@ public class NotificationActivity extends AppCompatActivity {
                                                         intent2 = new Intent(getApplicationContext(), PurchaseHistoryActivity.class);
                                                         intent2.putExtra("prev_activity", "NotificationActivity");
                                                     }
+                                                } else if (jsonObject.getString("rel_activity").equals("PurchaseDetailActivity")) {
+                                                    if (jsonObject.has("rel_id") && jsonObject.getInt("rel_id") > 0) {
+                                                        intent2 = new Intent(getApplicationContext(), PurchaseDetailActivity.class);
+                                                        intent2.putExtra("issue_id", jsonObject.getString("rel_id"));
+                                                        intent2.putExtra("prev_activity", "NotificationActivity");
+                                                    } else {
+                                                        intent2 = new Intent(getApplicationContext(), PurchaseHistoryActivity.class);
+                                                        intent2.putExtra("prev_activity", "NotificationActivity");
+                                                    }
                                                 } else if (jsonObject.getString("rel_activity").equals("MainActivity")) {
                                                     intent2 = new Intent(getApplicationContext(), MainActivity.class);
                                                 }
