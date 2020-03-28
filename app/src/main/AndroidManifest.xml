@@ -16,11 +16,8 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <meta-data
-            android:name="firebase_messaging_auto_init_enabled"
-            android:value="false" />
-    <meta-data
-            android:name="firebase_analytics_collection_enabled"
-            android:value="false" />
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
 
     <application
             android:name=".domain.AppController"
@@ -116,7 +113,7 @@
         <service
                 android:name=".techicalservices.FCMNotificationService"
                 android:enabled="true"
-                android:exported="true">
+                android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
