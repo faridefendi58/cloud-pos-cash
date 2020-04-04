@@ -108,7 +108,7 @@ public class AdapterListPurchaseHistory extends RecyclerView.Adapter<RecyclerVie
             view.lyt_content.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (mOnItemClickListener != null) {
+                    if (mOnItemClickListener != null && items.size()>=position) {
                         mOnItemClickListener.onItemClick(view, items.get(position), position);
                     }
                 }

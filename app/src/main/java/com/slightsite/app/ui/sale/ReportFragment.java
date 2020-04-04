@@ -16,6 +16,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -109,6 +110,7 @@ public class ReportFragment extends UpdatableFragment {
 	private DatePickerDialog datePicker;
 	private EditText searchBox;
 	private SimpleAdapter sAdap;
+	private SwipeRefreshLayout swipeRefresh;
 
 	private PaymentCatalog paymentCatalog;
 	private ParamCatalog paramCatalog;
@@ -173,6 +175,7 @@ public class ReportFragment extends UpdatableFragment {
 		button_research = (Button) view.findViewById(R.id.button_research);
 
 		lyt_progress = (LinearLayout) view.findViewById(R.id.lyt_progress);
+		swipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
 
 		initUI();
 
@@ -283,6 +286,14 @@ public class ReportFragment extends UpdatableFragment {
 			@Override
 			public void onClick(View v) {
 				filterDialog();
+			}
+		});
+
+		swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+			@Override
+			public void onRefresh() {
+				update();
+				swipeRefresh.setRefreshing(false);
 			}
 		});
 

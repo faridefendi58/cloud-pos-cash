@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Html;
@@ -101,6 +102,7 @@ public class InventoryFragment extends UpdatableFragment {
 	private List<Warehouses> warehousesList;
 	private Map<Integer, String> allowed_warehouses = new HashMap<Integer, String>();
 	private Menu menu;
+	private SwipeRefreshLayout swipeRefresh;
 
 	/**
 	 * Construct a new InventoryFragment.
@@ -140,6 +142,7 @@ public class InventoryFragment extends UpdatableFragment {
 		lyt_next = (MaterialRippleLayout) view.findViewById(R.id.lyt_next);
 		no_product_container = (LinearLayout) view.findViewById(R.id.no_product_container);
 		wh_options = (EditText) view.findViewById(R.id.wh_options);
+		swipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
 
 		main = (MainActivity) getActivity();
 		viewPager = main.getViewPager();
@@ -226,6 +229,14 @@ public class InventoryFragment extends UpdatableFragment {
 					Toast.makeText(getActivity().getBaseContext(), res.getString(R.string.message_no_product),
 							Toast.LENGTH_SHORT).show();
 				}
+			}
+		});
+
+		swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+			@Override
+			public void onRefresh() {
+				update();
+				swipeRefresh.setRefreshing(false);
 			}
 		});
 	}

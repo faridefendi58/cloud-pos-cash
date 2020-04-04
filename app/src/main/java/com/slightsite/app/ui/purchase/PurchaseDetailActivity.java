@@ -92,6 +92,7 @@ public class PurchaseDetailActivity extends Activity {
     private TextView origin_destination;
     private RecyclerView itemListRecycle;
     private LinearLayout complete_button_container;
+    private LinearLayout origin_destination_container;
     private Button btn_confirm;
     private Button btn_update;
     private Button btn_cancel;
@@ -132,7 +133,6 @@ public class PurchaseDetailActivity extends Activity {
                 warehouse_id = Integer.parseInt(whParam.getValue());
             }
             String role = paramCatalog.getParamByName("role").getValue();
-            Log.e("CUK", "role : "+ role);
             if (role != null && role.equals("manager")) {
                 is_manager = true;
             }
@@ -188,6 +188,7 @@ public class PurchaseDetailActivity extends Activity {
         label_origin_destination = (TextView) findViewById(R.id.label_origin_destination);
         origin_destination = (TextView) findViewById(R.id.origin_destination);
         complete_button_container = (LinearLayout) findViewById(R.id.complete_button_container);
+        origin_destination_container = (LinearLayout) findViewById(R.id.origin_destination_container);
         btn_confirm = (Button) findViewById(R.id.btn_confirm);
         btn_update = (Button) findViewById(R.id.btn_update);
         btn_cancel = (Button) findViewById(R.id.btn_cancel);
@@ -368,7 +369,6 @@ public class PurchaseDetailActivity extends Activity {
                                             label_stock_in_out_number.setText(getResources().getString(R.string.label_stock_out_number));
                                             label_date_in_out.setText(getResources().getString(R.string.label_date_out));
                                             label_received_by.setText(getResources().getString(R.string.label_processed_by));
-                                            LinearLayout origin_destination_container = (LinearLayout) findViewById(R.id.origin_destination_container);
                                             origin_destination_container.setVisibility(View.GONE);
                                             if (server_data.has("title")) {
                                                 actionBar.setTitle(server_data.getString("title"));
@@ -380,6 +380,11 @@ public class PurchaseDetailActivity extends Activity {
                                                 if (detail_data.has("ii_number")) {
                                                     issue_number.setText(detail_data.getString("ii_number"));
                                                     issue_formated_number = detail_data.getString("ii_number");
+                                                }
+                                                if (detail_data.has("type_name")) {
+                                                    origin_destination_container.setVisibility(View.VISIBLE);
+                                                    label_origin_destination.setText(getResources().getString(R.string.destination));
+                                                    origin_destination.setText(detail_data.getString("type_name"));
                                                 }
                                             }
                                         } else if (server_data.getString("type").equals("purchase_order")) {
@@ -473,9 +478,16 @@ public class PurchaseDetailActivity extends Activity {
                                         if (server_data.getInt("status") == 1 || server_data.getInt("status") == -2 || server_data.getInt("status") == -1) {
                                             pAdap.setIsEditable(false);
                                             // no need to show price for security reason
-                                            /*if (server_data.getString("type").equals("purchase_order")) {
+                                            int use_default_price = 0;
+                                            if (server_data.has("detail")) {
+                                                detail_data = server_data.getJSONObject("detail");
+                                                if (detail_data.has("use_default_price")) {
+                                                    use_default_price = detail_data.getInt("use_default_price");
+                                                }
+                                            }
+                                            if (server_data.getString("type").equals("purchase_order") && (use_default_price == 0)) {
                                                 pAdap.showPriceText();
-                                            }*/
+                                            }
                                         }
                                         pAdap.notifyDataSetChanged();
                                         itemListRecycle.setAdapter(pAdap);

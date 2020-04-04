@@ -9,6 +9,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -75,6 +76,7 @@ public class NotificationActivity extends AppCompatActivity {
     private BottomSheetDialog bottomSheetDialog;
     private Button finish_submit_button;
     private Button button_reset_to_default;
+    private SwipeRefreshLayout swipeRefresh;
     private Map<String, String> filter_result = new HashMap<String, String>();
     private Spinner month_spinner;
     private Spinner year_spinner;
@@ -137,6 +139,8 @@ public class NotificationActivity extends AppCompatActivity {
         notificationListView.setLayoutManager(new LinearLayoutManager(getBaseContext()));
         notificationListView.setHasFixedSize(true);
         notificationListView.setNestedScrollingEnabled(false);
+
+        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
     }
 
     private void initAction() {
@@ -152,6 +156,14 @@ public class NotificationActivity extends AppCompatActivity {
                 status_items.add(entry.getValue());
                 notif_status_map_inv.put(entry.getValue(), entry.getKey());
             }
+
+            swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    buildTheNotifList();
+                    swipeRefresh.setRefreshing(false);
+                }
+            });
             buildTheNotifList();
         } catch (Exception e){e.printStackTrace();}
     }

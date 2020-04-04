@@ -112,9 +112,12 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
                         if (_product_data.has("price") && (_product_data.getString("price") != null)) {
                             Double _def_price = _product_data.getDouble("price");
                             view.price.setText(CurrencyController.getInstance().moneyFormat(_def_price));
-                            view.price.setVisibility(View.GONE);
-                            //view.price_text.setVisibility(View.VISIBLE);
-                            //view.price_text.setText(CurrencyController.getInstance().moneyFormat(_def_price));
+                            if (show_price_text) {
+                                view.price.setVisibility(View.GONE);
+                            } else {
+                                view.price_text.setVisibility(View.VISIBLE);
+                                view.price_text.setText(CurrencyController.getInstance().moneyFormat(_def_price));
+                            }
                             Integer _int_price = _product_data.getInt("price");
                             ((PurchaseOrderActivity) context).updatePurchaseData(position, "price", _int_price+"");
                         }

@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -88,6 +89,7 @@ public class PurchaseHistoryFragment extends UpdatableFragment {
     private int sel_month = -1;
     private int sel_year = -1;
     private Spinner filter_status;
+    private SwipeRefreshLayout swipeRefresh;
     private ArrayList<String> status_items = new ArrayList<String>();
     private Map<String, String> purchase_status_map = new HashMap<String, String>();
     private Map<String, String> purchase_status_map_inv = new HashMap<String, String>();
@@ -153,6 +155,8 @@ public class PurchaseHistoryFragment extends UpdatableFragment {
         purchaseHistoryListView.setLayoutManager(new LinearLayoutManager(getContext()));
         purchaseHistoryListView.setHasFixedSize(true);
         purchaseHistoryListView.setNestedScrollingEnabled(false);
+
+        swipeRefresh = (SwipeRefreshLayout) fragment_view.findViewById(R.id.swipeRefresh);
     }
 
     private void initAction() {
@@ -174,6 +178,14 @@ public class PurchaseHistoryFragment extends UpdatableFragment {
                 type_items.add(entry.getValue());
                 purchase_type_map_inv.put(entry.getValue(), entry.getKey());
             }
+
+            swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    update();
+                    swipeRefresh.setRefreshing(false);
+                }
+            });
         } catch (Exception e){e.printStackTrace();}
     }
 

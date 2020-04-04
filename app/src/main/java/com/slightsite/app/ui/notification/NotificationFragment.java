@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -91,6 +92,7 @@ public class NotificationFragment extends UpdatableFragment {
     private Map<String, String> filter_result = new HashMap<String, String>();
     private Spinner month_spinner;
     private Spinner year_spinner;
+    private SwipeRefreshLayout swipeRefresh;
     private String[] years;
     private int sel_month = -1;
     private int sel_year = -1;
@@ -130,6 +132,8 @@ public class NotificationFragment extends UpdatableFragment {
         notificationListView.setLayoutManager(new LinearLayoutManager(getContext()));
         notificationListView.setHasFixedSize(true);
         notificationListView.setNestedScrollingEnabled(false);
+
+        swipeRefresh = (SwipeRefreshLayout) fragment_view.findViewById(R.id.swipeRefresh);
     }
 
     private void initAction() {
@@ -146,6 +150,13 @@ public class NotificationFragment extends UpdatableFragment {
                 notif_status_map_inv.put(entry.getValue(), entry.getKey());
             }
             //update();
+            swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    update();
+                    swipeRefresh.setRefreshing(false);
+                }
+            });
         } catch (Exception e){e.printStackTrace();}
     }
 

@@ -130,16 +130,23 @@
 
         </LinearLayout>
 
-        <GridView
-            android:id="@+id/productListView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
-            android:layout_weight="1"
-            android:numColumns="1"
-            android:scrollbars="vertical">
-        </GridView>
+        <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefresh"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+            <GridView
+                android:id="@+id/productListView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:numColumns="1"
+                android:scrollbars="vertical">
+            </GridView>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
 
         <LinearLayout
             android:id="@+id/bottom_cart_container"
