@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Html;
@@ -73,6 +74,7 @@ public class PurchaseFragment extends UpdatableFragment {
     private MaterialRippleLayout lyt_next;
     private LinearLayout no_product_container;
     private EditText wh_options;
+    private SwipeRefreshLayout swipeRefresh;
 
     private ViewPager viewPager;
     private Register register;
@@ -127,6 +129,7 @@ public class PurchaseFragment extends UpdatableFragment {
         no_product_container = (LinearLayout) view.findViewById(R.id.no_product_container);
         wh_options = (EditText) view.findViewById(R.id.wh_options);
         radioTransactionType = (RadioGroup) view.findViewById(R.id.radioTransactionType);
+        swipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
 
         main = (MainActivity) getActivity();
         viewPager = main.getViewPager();
@@ -207,6 +210,14 @@ public class PurchaseFragment extends UpdatableFragment {
                 try {
                     showList(productCatalog.getAllStockedProduct());
                 } catch (Exception e){e.printStackTrace();}
+            }
+        });
+
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                update();
+                swipeRefresh.setRefreshing(false);
             }
         });
     }
