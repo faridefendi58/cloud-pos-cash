@@ -434,11 +434,11 @@ public class PurchaseDetailActivity extends Activity {
                                     if (server_data.has("created_by_name")) {
                                         created_by.setText(server_data.getString("created_by_name"));
                                     }
-                                    if (server_data.has("finished_by_name")
+                                    /*if (server_data.has("finished_by_name")
                                             && server_data.getString("finished_by_name").length() > 0
                                             && !server_data.getString("finished_by_name").equals("null")) {
                                         created_by.setText(server_data.getString("finished_by_name"));
-                                    }
+                                    }*/
 
                                     JSONObject configs = server_data.getJSONObject("configs");
                                     if (configs.has("items")) {

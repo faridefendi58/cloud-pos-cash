@@ -19,6 +19,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.slightsite.app.R;
 import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.notification.NotificationActivity;
+import com.slightsite.app.ui.purchase.PurchaseDetailActivity;
 
 public class FCMNotificationService extends FirebaseMessagingService {
 
@@ -132,12 +133,36 @@ public class FCMNotificationService extends FirebaseMessagingService {
      */
     private void sendNotification(RemoteMessage remoteMessage) {
         Intent intent = new Intent(this, NotificationActivity.class);
+        if (remoteMessage.getData().containsKey("rel_activity")) {
+            switch(remoteMessage.getData().get("rel_activity").toString()) {
+                case "PurchaseDetailActivity":
+                    intent = new Intent(this, PurchaseDetailActivity.class);
+                    break;
+                case "NotificationActivity":
+                    intent = new Intent(this, NotificationActivity.class);
+                    break;
+                case "MainActivity":
+                    intent = new Intent(this, MainActivity.class);
+                    break;
+                default :
+                    intent = new Intent(this, NotificationActivity.class);
+                    break;
+            }
+        }
+        String channelId = getResources().getString(R.string.default_notification_channel_id); String channelName = "Inventory";
+        if (remoteMessage.getData().containsKey("rel_id")) {
+            intent.putExtra("issue_id", remoteMessage.getData().get("rel_id").toString());
+        }
+        if (remoteMessage.getData().containsKey("warehouse_id")) {
+            intent.putExtra("warehouse_id", remoteMessage.getData().get("warehouse_id").toString());
+            channelId += "_"+ remoteMessage.getData().get("warehouse_id").toString();
+            channelName += " WH "+  remoteMessage.getData().get("warehouse_id").toString();
+        }
         intent.putExtra("msg", remoteMessage.getNotification().getBody());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-        String channelId = getResources().getString(R.string.default_notification_channel_id);
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
@@ -155,7 +180,7 @@ public class FCMNotificationService extends FirebaseMessagingService {
         // Since android Oreo notification channel is needed.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(channelId,
-                    "Channel human readable title",
+                    channelName,
                     NotificationManager.IMPORTANCE_DEFAULT);
             notificationManager.createNotificationChannel(channel);
         }

@@ -106,6 +106,11 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
 
             if ((supplier_configs != null) && supplier_configs.length() > 0 && supplier_configs.has("products")) {
                 try {
+                    if (supplier_configs.has("use_default_price")) {
+                        this.show_price_text = false;
+                        this.show_price = false;
+                    }
+
                     JSONObject supplier_products = supplier_configs.getJSONObject("products");
                     if (supplier_products.has(pl.getProduct().getBarcode())) {
                         JSONObject _product_data = supplier_products.getJSONObject(pl.getProduct().getBarcode());
@@ -113,10 +118,11 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
                             Double _def_price = _product_data.getDouble("price");
                             view.price.setText(CurrencyController.getInstance().moneyFormat(_def_price));
                             if (show_price_text) {
-                                view.price.setVisibility(View.GONE);
-                            } else {
                                 view.price_text.setVisibility(View.VISIBLE);
                                 view.price_text.setText(CurrencyController.getInstance().moneyFormat(_def_price));
+                            }
+                            if (!show_price) {
+                                view.price.setVisibility(View.GONE);
                             }
                             Integer _int_price = _product_data.getInt("price");
                             ((PurchaseOrderActivity) context).updatePurchaseData(position, "price", _int_price+"");

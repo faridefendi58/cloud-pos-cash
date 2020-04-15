@@ -106,10 +106,17 @@ public class InventoryFragment extends UpdatableFragment {
 
 	/**
 	 * Construct a new InventoryFragment.
-	 * @param saleFragment
 	 */
-	public InventoryFragment(UpdatableFragment saleFragment) {
+	/*public InventoryFragment(UpdatableFragment saleFragment) {
 		super();
+		this.saleFragment = saleFragment;
+	}*/
+
+	public InventoryFragment() {
+		super();
+	}
+
+	public void setSaleFragment(UpdatableFragment saleFragment) {
 		this.saleFragment = saleFragment;
 	}
 
@@ -377,7 +384,7 @@ public class InventoryFragment extends UpdatableFragment {
 		} else {
 			// show hide clear menu
 			try {
-				if (menu != null) {
+				if (menu != null && menu.findItem(R.id.nav_delete) != null) {
 					menu.findItem(R.id.nav_delete).setVisible(false);
 				}
 			} catch (Exception e){e.printStackTrace();}

@@ -236,6 +236,16 @@ public class PurchaseOrderActivity extends AppCompatActivity {
             if (supplier_id > 0) {
                 try {
                     JSONObject sup_configs = supplier_configs.get(supplier_id);
+                    if (sup_configs != null && sup_configs.has("use_default_price")) {
+                        try {
+                            int use_default_price = sup_configs.getInt("use_default_price");
+                            if (use_default_price > 0) {
+                                show_price = false;
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     pAdap.setSupplierConfigs(sup_configs);
                 } catch (Exception e){e.printStackTrace();}
             }

@@ -79,8 +79,16 @@ public class SaleFragment extends UpdatableFragment {
 	 * Construct a new SaleFragment.
 	 * @param
 	 */
-	public SaleFragment(UpdatableFragment reportFragment) {
+	/*public SaleFragment(UpdatableFragment reportFragment) {
 		super();
+		this.reportFragment = reportFragment;
+	}*/
+
+	public SaleFragment() {
+		super();
+	}
+
+	public void setReportFragment(UpdatableFragment reportFragment) {
 		this.reportFragment = reportFragment;
 	}
 
