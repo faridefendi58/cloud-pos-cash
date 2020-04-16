@@ -494,7 +494,7 @@
                             android:id="@+id/role_virtual_staff"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/label_role_manager"
+                            android:text="@string/label_role_virtual_staff"
                             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                             android:textSize="@dimen/spacing_large" />
 

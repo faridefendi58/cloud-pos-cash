@@ -385,7 +385,6 @@ public class ProductServerActivity extends Activity {
                                         if (pd == null) {
                                             try {
                                                 String _unit = data_n.getString("unit");
-                                                Log.e("NGINGAS", "_unit : "+ _unit);
                                                 if (config.has("image")) {
                                                     String image = config.getString("image");
                                                     if (config.has("avoid_stock")) {
@@ -415,7 +414,7 @@ public class ProductServerActivity extends Activity {
                                                             _unit);
                                                 }
                                             } catch (Exception e) {
-                                                Log.e(TAG, e.getMessage());
+                                                e.printStackTrace();
                                             }
                                         } else {
                                             try {
@@ -479,14 +478,11 @@ public class ProductServerActivity extends Activity {
                                     stock.clearStock();
 
                                     // also insert the stock
-                                    Log.e(getClass().getSimpleName(), "padahal datanta : "+ stocks.toString());
                                     for (Map.Entry<Integer, Integer> entry : stocks.entrySet()) {
                                         Product pd = null;
                                         try {
                                             pd = productCatalog.getProductByBarcode(entry.getKey().toString());
                                             List lot = stock.getProductLotByProductId(pd.getId());
-                                            Log.e(getClass().getSimpleName(), "product id : "+ entry.getKey());
-                                            Log.e(getClass().getSimpleName(), "stok : "+ entry.getValue());
                                             if (lot.size() > 0) {
                                                 stock.updateStockSum(pd.getId(), entry.getValue());
                                             } else {
@@ -540,7 +536,7 @@ public class ProductServerActivity extends Activity {
                     int warehouse_id = Integer.parseInt(wh_id);
                     AdminInWarehouse aiw = adminInWarehouseCatalog.getDataByAdminAndWH(admin_id, warehouse_id);
                     if (aiw == null) {
-                        Boolean save = adminInWarehouseCatalog.addAdminInWarehouse(admin_id, warehouse_id, 1);
+                        Boolean save = adminInWarehouseCatalog.addAdminInWarehouse(admin_id, warehouse_id, 2, 1);
                     }
                 }
             } catch (Exception e) {

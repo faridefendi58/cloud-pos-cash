@@ -437,5 +437,17 @@ public class Tools {
 
         return list;
     }
+
+    public static HashMap<Integer, String> getRoleList() {
+        HashMap<Integer, String> list = new HashMap<Integer, String>();
+        list.put(1, "admin");
+        list.put(2, "staff");
+        list.put(3, "virtualstaff");
+        list.put(4, "cs");
+        list.put(5, "cashier");
+        list.put(6, "manager");
+
+        return list;
+    }
 }
 

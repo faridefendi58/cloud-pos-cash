@@ -23,8 +23,9 @@ public class AdminInWarehouseCatalog {
      * @warehouse status
      * @return
      */
-    public boolean addAdminInWarehouse(int admin_id, int warehouse_id, int status) {
+    public boolean addAdminInWarehouse(int admin_id, int warehouse_id, int role_id, int status) {
         AdminInWarehouse dt = new AdminInWarehouse(admin_id, warehouse_id, status);
+        dt.setRoleId(role_id);
         int id = adminInWarehouseDao.addAdminInWarehouse(dt);
         return id != -1;
     }

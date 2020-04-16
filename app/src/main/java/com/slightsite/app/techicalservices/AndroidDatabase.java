@@ -215,6 +215,7 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
 				+ "_id INTEGER PRIMARY KEY,"
 				+ "admin_id INTEGER,"
 				+ "warehouse_id INTEGER,"
+				+ "role_id INTEGER DEFAULT 0,"
 				+ "status INTEGER DEFAULT 1,"
 				+ "date_added DATETIME"
 				+ ");");

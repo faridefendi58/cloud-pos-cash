@@ -38,6 +38,9 @@ import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.params.Params;
 import com.slightsite.app.domain.purchase.PurchaseItem;
+import com.slightsite.app.domain.warehouse.AdminInWarehouse;
+import com.slightsite.app.domain.warehouse.AdminInWarehouseCatalog;
+import com.slightsite.app.domain.warehouse.AdminInWarehouseService;
 import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.ui.LoginActivity;
@@ -73,6 +76,7 @@ public class PurchaseHistoryActivity extends AppCompatActivity {
 
     private SharedPreferences sharedpreferences;
     private ParamCatalog paramCatalog;
+    private AdminInWarehouseCatalog adminInWarehouseCatalog;
     private Integer warehouse_id;
     private List<PurchaseItem> history_data = new ArrayList<PurchaseItem>();
 
@@ -166,6 +170,23 @@ public class PurchaseHistoryActivity extends AppCompatActivity {
             if (role != null) {
                 if (role.equals("manager")) {
                     is_manager = true;
+                }
+            }
+
+            String admin_id = sharedpreferences.getString(TAG_ID, null);
+
+            // check role on wh setup
+            adminInWarehouseCatalog = AdminInWarehouseService.getInstance().getAdminInWarehouseCatalog();
+            AdminInWarehouse adminInWarehouse = adminInWarehouseCatalog.getDataByAdminAndWH(Integer.parseInt(admin_id), warehouse_id);
+            HashMap<Integer, String> role_names = Tools.getRoleList();
+            if (adminInWarehouse.getRoleId() > 0) {
+                int _role_id = adminInWarehouse.getRoleId();
+                if (role_names.containsKey(_role_id)) {
+                    if (role_names.get(_role_id).equals("manager")) {
+                        is_manager = true;
+                    } else {
+                        is_manager = false;
+                    }
                 }
             }
             purchase_status_map = Tools.getPurchaseStatusList();

@@ -348,70 +348,76 @@ public class InventoryFragment extends UpdatableFragment {
 	private Boolean show_animation = true;
 
 	public void updateCart() {
-		Double tot_cart = register.getTotal();
-		if (tot_cart > 0) {
-			// show hide clear menu
-			try {
-				if (menu != null) {
-					menu.findItem(R.id.nav_delete).setVisible(true);
-				}
-			} catch (Exception e){e.printStackTrace();}
+	    if (register != null) {
+            Double tot_cart = register.getTotal();
+            if (tot_cart > 0) {
+                // show hide clear menu
+                try {
+                    if (menu != null) {
+                        menu.findItem(R.id.nav_delete).setVisible(true);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-			Integer tot_item_cart = register.getCurrentSale().getAllLineItem().size();
-			String cart_total_txt = getResources().getString(R.string.label_sub_total)+" " +
-					"" + CurrencyController.getInstance().moneyFormat(tot_cart) +" " +
-					getResources().getString(R.string.label_of) +" "+ tot_item_cart + " " +
-					getResources().getString(R.string.label_items);
-			cart_total.setText(cart_total_txt);
+                Integer tot_item_cart = register.getCurrentSale().getAllLineItem().size();
+                String cart_total_txt = getResources().getString(R.string.label_sub_total) + " " +
+                        "" + CurrencyController.getInstance().moneyFormat(tot_cart) + " " +
+                        getResources().getString(R.string.label_of) + " " + tot_item_cart + " " +
+                        getResources().getString(R.string.label_items);
+                cart_total.setText(cart_total_txt);
 
-			bottom_cart_container.getLayoutParams().height = LinearLayout.LayoutParams.WRAP_CONTENT;
-			bottom_cart_container.requestLayout();
+                bottom_cart_container.getLayoutParams().height = LinearLayout.LayoutParams.WRAP_CONTENT;
+                bottom_cart_container.requestLayout();
 
-			bottom_cart_container.setVisibility(View.VISIBLE);
+                bottom_cart_container.setVisibility(View.VISIBLE);
 
-			if (show_animation) {
-				TranslateAnimation animate = new TranslateAnimation(
-						0,                 // fromXDelta
-						0,                 // toXDelta
-						bottom_cart_container.getHeight() + 100,  // fromYDelta
-						0);                // toYDelta
-				animate.setDuration(500);
-				animate.setFillAfter(true);
-				bottom_cart_container.startAnimation(animate);
+                if (show_animation) {
+                    TranslateAnimation animate = new TranslateAnimation(
+                            0,                 // fromXDelta
+                            0,                 // toXDelta
+                            bottom_cart_container.getHeight() + 100,  // fromYDelta
+                            0);                // toYDelta
+                    animate.setDuration(500);
+                    animate.setFillAfter(true);
+                    bottom_cart_container.startAnimation(animate);
 
-				show_animation = false;
-			}
-		} else {
-			// show hide clear menu
-			try {
-				if (menu != null && menu.findItem(R.id.nav_delete) != null) {
-					menu.findItem(R.id.nav_delete).setVisible(false);
-				}
-			} catch (Exception e){e.printStackTrace();}
+                    show_animation = false;
+                }
+            } else {
+                // show hide clear menu
+                try {
+                    if (menu != null && menu.findItem(R.id.nav_delete) != null) {
+                        menu.findItem(R.id.nav_delete).setVisible(false);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-			TranslateAnimation animate = new TranslateAnimation(
-					0,                 // fromXDelta
-					0,                 // toXDelta
-					0,  // fromYDelta
-					bottom_cart_container.getHeight() + 100);                // toYDelta
-			animate.setDuration(500);
-			animate.setFillAfter(true);
-			bottom_cart_container.startAnimation(animate);
+                TranslateAnimation animate = new TranslateAnimation(
+                        0,                 // fromXDelta
+                        0,                 // toXDelta
+                        0,  // fromYDelta
+                        bottom_cart_container.getHeight() + 100);                // toYDelta
+                animate.setDuration(500);
+                animate.setFillAfter(true);
+                bottom_cart_container.startAnimation(animate);
 
-			new android.os.Handler().postDelayed(
-					new Runnable() {
-						public void run() {
-							bottom_cart_container.getLayoutParams().height = 0;
-							bottom_cart_container.requestLayout();
-							bottom_cart_container.setVisibility(View.INVISIBLE);
-						}
-					},
-					600);
+                new android.os.Handler().postDelayed(
+                        new Runnable() {
+                            public void run() {
+                                bottom_cart_container.getLayoutParams().height = 0;
+                                bottom_cart_container.requestLayout();
+                                bottom_cart_container.setVisibility(View.INVISIBLE);
+                            }
+                        },
+                        600);
 
-			cart_total.setText("Empty cart");
+                cart_total.setText("Empty cart");
 
-			show_animation = true;
-		}
+                show_animation = true;
+            }
+        }
 	}
 
 	public void addToCart(Product p) {

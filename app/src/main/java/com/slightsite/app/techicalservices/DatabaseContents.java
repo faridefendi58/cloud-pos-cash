@@ -7,7 +7,7 @@ package com.slightsite.app.techicalservices;
  */
 public enum DatabaseContents {
 	
-	DATABASE("com.slightsite.posdb5"),
+	DATABASE("com.slightsite.posdb7"),
 	TABLE_PRODUCT_CATALOG("product_catalog"),
 	TABLE_STOCK("stock"),
 	TABLE_PRODUCT_DISCOUNT("product_discount"),

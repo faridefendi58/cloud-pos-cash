@@ -138,8 +138,9 @@
 
             <RadioGroup
                     android:id="@+id/radioTransactionType"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
                     android:orientation="horizontal"
                     android:layout_marginBottom="@dimen/spacing_middle">
 

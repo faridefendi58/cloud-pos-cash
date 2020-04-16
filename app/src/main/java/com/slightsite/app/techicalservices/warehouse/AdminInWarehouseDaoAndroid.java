@@ -1,6 +1,7 @@
 package com.slightsite.app.techicalservices.warehouse;
 
 import android.content.ContentValues;
+import android.util.Log;
 
 import com.slightsite.app.domain.warehouse.AdminInWarehouse;
 import com.slightsite.app.techicalservices.Database;
@@ -22,6 +23,7 @@ public class AdminInWarehouseDaoAndroid implements AdminInWarehouseDao {
         ContentValues content = new ContentValues();
         content.put("warehouse_id", warehouse.getWarehouseId());
         content.put("admin_id", warehouse.getAdminId());
+        content.put("role_id", warehouse.getRoleId());
         content.put("status", warehouse.getStatus());
 
         int id = database.insert(DatabaseContents.TABLE_ADMIN_IN_WAREHOUSE.toString(), content);
@@ -35,6 +37,7 @@ public class AdminInWarehouseDaoAndroid implements AdminInWarehouseDao {
         content.put("_id", dt.getId());
         content.put("admin_id", dt.getAdminId());
         content.put("warehouse_id", dt.getWarehouseId());
+        content.put("role_id", dt.getRoleId());
         content.put("status", dt.getStatus());
 
         return database.update(DatabaseContents.TABLE_ADMIN_IN_WAREHOUSE.toString(), content);
@@ -49,6 +52,9 @@ public class AdminInWarehouseDaoAndroid implements AdminInWarehouseDao {
                     content.getAsInteger("warehouse_id"),
                     content.getAsInteger("status"));
             adminInWarehouse.setWarehouseName(content.getAsString("title"));
+            if (content.containsKey("role_id")) {
+                adminInWarehouse.setRoleId(content.getAsInteger("role_id"));
+            }
             list.add(adminInWarehouse);
         }
         return list;

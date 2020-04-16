@@ -75,6 +75,7 @@ import com.slightsite.app.domain.warehouse.WarehouseService;
 import com.slightsite.app.domain.warehouse.Warehouses;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
+import com.slightsite.app.techicalservices.Tools;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -207,10 +208,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             roles.put(R.id.role_cs, 4);
             roles.put(R.id.role_manager, 6);
 
-            role_names.put(3, "virtualstaff");
+            /*role_names.put(3, "virtualstaff");
             role_names.put(4, "cs");
             role_names.put(5, "cashier");
-            role_names.put(6, "manager");
+            role_names.put(6, "manager");*/
+            role_names = Tools.getRoleList();
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -1000,7 +1002,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                                         try {
                                             AdminInWarehouse aiw = adminInWarehouseCatalog.getDataByAdminAndWH(Integer.parseInt(id), Integer.parseInt(key));
                                             if (aiw == null) {
-                                                Boolean save = adminInWarehouseCatalog.addAdminInWarehouse(Integer.parseInt(id), Integer.parseInt(key), 1);
+                                                JSONObject _role_data = roles.getJSONObject(key);
+                                                int _role_id = group_id;
+                                                if (_role_data.has("role_id")) {
+                                                    _role_id = _role_data.getInt("role_id");
+                                                }
+                                                Boolean save = adminInWarehouseCatalog.addAdminInWarehouse(Integer.parseInt(id), Integer.parseInt(key), _role_id,1);
                                             }
                                         } catch (Exception e) {
                                             e.printStackTrace();
@@ -1017,7 +1024,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                                     }
                                 }
                             } else {
-                                Boolean save = adminInWarehouseCatalog.addAdminInWarehouse(Integer.parseInt(id), 8, 1);
+                                Boolean save = adminInWarehouseCatalog.addAdminInWarehouse(Integer.parseInt(id), 8, group_id, 1);
                             }
                         } catch (Exception e){
                             e.printStackTrace();
@@ -1203,7 +1210,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 if (register_admin_id > 0) {
                     AdminInWarehouse aiw = adminInWarehouseCatalog.getDataByAdminAndWH(register_admin_id, warehouse_id);
                     if (aiw == null) {
-                        Boolean save = adminInWarehouseCatalog.addAdminInWarehouse(register_admin_id, warehouse_id, 1);
+                        Boolean save = adminInWarehouseCatalog.addAdminInWarehouse(register_admin_id, warehouse_id, group_id, 1);
                     }
                 }
             } catch (Exception e){e.printStackTrace();}
