@@ -45,24 +45,26 @@
 
                     <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
+                            android:weightSum="3"
                             android:orientation="vertical">
 
                         <TextView
                                 android:id="@+id/name"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
-                                android:layout_marginTop="16dp"
-                                android:layout_marginBottom="8dp"
-                                android:layout_weight="1"/>
+                                android:layout_marginTop="@dimen/spacing_middle"
+                                android:layout_weight="2"
+                                android:maxLines="2"
+                                android:ellipsize="end"/>
 
                         <TextView
                                 android:id="@+id/stock_counter"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
                                 android:layout_weight="1"
-                                android:layout_below="@+id/name"
+                                android:layout_marginBottom="@dimen/spacing_medium"
                                 android:text="100 in stock"
                                 android:textColor="@color/greenUcok"/>
 
