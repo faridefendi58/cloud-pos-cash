@@ -275,13 +275,14 @@
     <string name="label_role_cashier">Cashier</string>
     <string name="label_role_staff">Staff</string>
     <string name="label_role_manager">Manager</string>
-    <string name="label_role_virtual_staff">Virtual WH Staff</string>
+    <string name="label_role_virtual_staff">Staff Gudang</string>
     <string name="label_total_amount">Total Amount</string>
     <string name="label_next">Next</string>
     <string name="label_contact_detail">Contact Detail</string>
     <string name="label_shipping_method">Shipping Method</string>
     <string name="label_checkout_save_order">Checkout / Save Order</string>
     <string name="label_role">Register As</string>
+    <string name="label_role_access">Role Access :</string>
     <string name="label_sub_total">Sub Total</string>
     <string name="label_discount">Discount</string>
     <string name="label_grand_total">Grand Total</string>

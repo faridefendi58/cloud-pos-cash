@@ -449,5 +449,17 @@ public class Tools {
 
         return list;
     }
+
+    public static HashMap<Integer, String> getRoleNames() {
+        HashMap<Integer, String> list = new HashMap<Integer, String>();
+        list.put(1, "Admin");
+        list.put(2, "Staff");
+        list.put(3, "Admin Gudang");
+        list.put(4, "Customer Support");
+        list.put(5, "Kasir");
+        list.put(6, "Manager");
+
+        return list;
+    }
 }
 

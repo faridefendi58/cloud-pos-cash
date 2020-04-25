@@ -173,18 +173,18 @@ public class AdapterListProduct extends BaseAdapter{
         holder.optionView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(activity instanceof MainActivity){
+                /*if(activity instanceof MainActivity){
                     activity.optionOnClickHandler2(p.getId());
-                }
+                }*/
             }
         });
 
         holder.product_image.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(activity instanceof MainActivity){
+                /*if(activity instanceof MainActivity){
                     activity.optionOnClickHandler2(p.getId());
-                }
+                }*/
             }
         });
 

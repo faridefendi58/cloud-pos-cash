@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActionBar;
 
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -21,13 +22,27 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TabHost;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.slightsite.app.R;
+import com.slightsite.app.domain.AppController;
 import com.slightsite.app.domain.ProfileController;
+import com.slightsite.app.techicalservices.Server;
+import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.ui.DashboardActivity;
 import com.slightsite.app.ui.LoginActivity;
 import com.slightsite.app.ui.MainActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ProfileActivity extends Activity {
 
@@ -42,6 +57,13 @@ public class ProfileActivity extends Activity {
     private EditText input_old_password;
     private EditText input_new_password;
     private EditText input_new_password_confirm;
+    private TextView tv_role;
+
+    ProgressDialog pDialog;
+    String tag_json_obj = "json_obj_req";
+    int success;
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_MESSAGE = "message";
 
     @SuppressLint("NewApi")
     private void initiateActionBar() {
@@ -105,6 +127,7 @@ public class ProfileActivity extends Activity {
         input_name = (EditText) findViewById(R.id.input_name);
         input_email = (EditText) findViewById(R.id.input_email);
         input_phone = (EditText) findViewById(R.id.input_phone);
+        tv_role = (TextView) findViewById(R.id.tv_role);
 
         sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
         adminData = ProfileController.getInstance().getDataByEmail(sharedpreferences.getString(LoginActivity.TAG_EMAIL, null));
@@ -112,6 +135,11 @@ public class ProfileActivity extends Activity {
             input_name.setText(adminData.getAsString(LoginActivity.TAG_NAME));
             input_email.setText(adminData.getAsString(LoginActivity.TAG_EMAIL));
             input_phone.setText(adminData.getAsString(LoginActivity.TAG_PHONE));
+            HashMap<Integer, String> role_names = Tools.getRoleNames();
+            int server_group_id = adminData.getAsInteger("server_group_id");
+            if (role_names.containsKey(server_group_id)) {
+                tv_role.setText(role_names.get(server_group_id));
+            }
         } else {
             input_name.setText(sharedpreferences.getString(LoginActivity.TAG_NAME, null));
             input_email.setText(sharedpreferences.getString(LoginActivity.TAG_EMAIL, null));
@@ -168,23 +196,15 @@ public class ProfileActivity extends Activity {
         } else {
             ContentValues content = new ContentValues();
             content.put("_id", adminData.getAsInteger("_id"));
+            content.put("server_admin_id", adminData.getAsInteger("server_admin_id"));
             content.put("email", email);
             content.put("name", name);
             content.put("phone", phone);
 
-            boolean updated = ProfileController.getInstance().update(content);
-            if (updated) {
-                adminData = ProfileController.getInstance().getDataByEmail(email);
-
-                editor.putString(LoginActivity.TAG_NAME, name);
-                editor.putString(LoginActivity.TAG_EMAIL, email);
-                editor.putString(LoginActivity.TAG_PHONE, phone);
-                editor.commit();
-
-                Toast.makeText(ProfileActivity.this,
-                        getResources().getString(R.string.message_success_update),
-                        Toast.LENGTH_SHORT).show();
-            }
+            try {
+                editor = sharedpreferences.edit();
+                doUpdateOnServer(content);
+            } catch (Exception e){e.printStackTrace();}
         }
     }
 
@@ -241,19 +261,181 @@ public class ProfileActivity extends Activity {
         } else {
             ContentValues content = new ContentValues();
             content.put("_id", adminData.getAsInteger("_id"));
+            content.put("server_admin_id", adminData.getAsInteger("server_admin_id"));
             content.put("password", new_password);
+            content.put("old_password", old_password);
+            content.put("new_password", new_password);
 
-            boolean updated = ProfileController.getInstance().update(content);
-            if (updated) {
-                adminData = ProfileController.getInstance().getDataByEmail(
-                        sharedpreferences.getString(LoginActivity.TAG_EMAIL, null));
-                editor.putString(LoginActivity.TAG_PASSWORD, new_password);
-                editor.commit();
-
-                Toast.makeText(ProfileActivity.this,
-                        getResources().getString(R.string.message_success_change_password),
-                        Toast.LENGTH_SHORT).show();
-            }
+            try {
+                doChangePasswordOnServer(content);
+            } catch (Exception e){e.printStackTrace();}
         }
+    }
+
+    private void doUpdateOnServer(final ContentValues content) {
+        Log.e(getClass().getSimpleName(), "content values : "+ content.toString());
+
+        pDialog = new ProgressDialog(this);
+        pDialog.setCancelable(false);
+        pDialog.setMessage("Processing update ...");
+        showDialog();
+
+        StringRequest strReq = new StringRequest(
+                Request.Method.POST,
+                Server.URL + "user/update?api-key=" + Server.API_KEY,
+                new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    success = jObj.getInt(TAG_SUCCESS);
+
+                    // Check for error node in json
+                    if (success == 1) {
+                        content.remove("server_admin_id");
+                        boolean updated = ProfileController.getInstance().update(content);
+                        if (updated) {
+                            //adminData = ProfileController.getInstance().getDataByEmail(content.getAsString("email"));
+
+                            editor.putString(LoginActivity.TAG_NAME, content.getAsString("name"));
+                            editor.putString(LoginActivity.TAG_EMAIL, content.getAsString("email"));
+                            editor.putString(LoginActivity.TAG_PHONE, content.getAsString("phone"));
+                            editor.commit();
+
+                            /*Toast.makeText(ProfileActivity.this,
+                                    getResources().getString(R.string.message_success_update),
+                                    Toast.LENGTH_SHORT).show();*/
+                        }
+
+                        Toast.makeText(getApplicationContext(),
+                                jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+
+                        finish();
+                        startActivity(getIntent());
+                    } else {
+                        Toast.makeText(getApplicationContext(),
+                                jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) { e.printStackTrace(); }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+
+                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to register url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("admin_id", content.getAsString("server_admin_id"));
+                params.put("name", content.getAsString("name"));
+                params.put("email", content.getAsString("email"));
+                params.put("phone", content.getAsString("phone"));
+
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_json_obj);
+    }
+
+    private void doChangePasswordOnServer(final ContentValues content) {
+        Log.e(getClass().getSimpleName(), "content values : "+ content.toString());
+
+        pDialog = new ProgressDialog(this);
+        pDialog.setCancelable(false);
+        pDialog.setMessage("Processing update password ...");
+        showDialog();
+
+        StringRequest strReq = new StringRequest(
+                Request.Method.POST,
+                Server.URL + "user/change-password?api-key=" + Server.API_KEY,
+                new Response.Listener<String>() {
+
+                    @Override
+                    public void onResponse(String response) {
+                        hideDialog();
+
+                        try {
+                            JSONObject jObj = new JSONObject(response);
+                            success = jObj.getInt(TAG_SUCCESS);
+
+                            // Check for error node in json
+                            if (success == 1) {
+                                String new_password = content.getAsString("new_password");
+                                content.remove("server_admin_id");
+                                content.remove("old_password");
+                                content.remove("new_password");
+
+                                boolean updated = ProfileController.getInstance().update(content);
+                                if (updated) {
+                                    adminData = ProfileController.getInstance().getDataByEmail(
+                                            sharedpreferences.getString(LoginActivity.TAG_EMAIL, null));
+                                    editor.putString(LoginActivity.TAG_PASSWORD, new_password);
+                                    editor.commit();
+                                }
+
+                                Toast.makeText(ProfileActivity.this,
+                                        getResources().getString(R.string.message_success_change_password),
+                                        Toast.LENGTH_SHORT).show();
+
+                                finish();
+                                startActivity(getIntent());
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                            }
+                        } catch (JSONException e) { e.printStackTrace(); }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+
+                hideDialog();
+
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to register url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("admin_id", content.getAsString("server_admin_id"));
+                params.put("old_password", content.getAsString("old_password"));
+                params.put("new_password", content.getAsString("new_password"));
+
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_json_obj);
+    }
+
+    private void showDialog() {
+        if (pDialog != null && !pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hideDialog() {
+        if (pDialog != null && pDialog.isShowing())
+            pDialog.dismiss();
     }
 }
