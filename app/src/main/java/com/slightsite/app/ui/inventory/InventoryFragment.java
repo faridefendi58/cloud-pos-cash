@@ -243,6 +243,13 @@ public class InventoryFragment extends UpdatableFragment {
 			@Override
 			public void onRefresh() {
 				update();
+				try {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("warehouse_id", main.getCurrentWarehouseId() + "");
+                    bundle.putString("warehouse_name", main.getWarehouseName());
+                    bundle.putString("update_fragment", "true");
+                    main.update_stock(bundle);
+                } catch (Exception e){e.printStackTrace();}
 				swipeRefresh.setRefreshing(false);
 			}
 		});

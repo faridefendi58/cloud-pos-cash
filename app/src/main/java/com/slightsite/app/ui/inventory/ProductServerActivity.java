@@ -428,6 +428,8 @@ public class ProductServerActivity extends Activity {
                                                 if (config.has("avoid_stock")) {
                                                     int avoid_stock = config.getInt("avoid_stock");
                                                     pd.setIsAvoidStock(avoid_stock);
+                                                } else {
+                                                    pd.setIsAvoidStock(0);
                                                 }
                                                 productCatalog.editProduct(pd);
                                             } catch (Exception e) {}

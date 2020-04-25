@@ -305,6 +305,11 @@ public class ChangeWarehouseDialogFragment extends DialogFragment {
                                                 }
                                                 pd.setUnit(data_n.getString("unit"));
                                                 pd.setPriority(data_n.getInt("priority"));
+                                                if (config.has("avoid_stock")) {
+                                                    pd.setIsAvoidStock(config.getInt("avoid_stock"));
+                                                } else {
+                                                    pd.setIsAvoidStock(0);
+                                                }
                                                 pd.setStatus("ACTIVE");
 
                                                 productCatalog.editProduct(pd);

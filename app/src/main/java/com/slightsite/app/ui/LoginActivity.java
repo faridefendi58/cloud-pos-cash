@@ -984,6 +984,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                             addRoleParams();
                         }
 
+                        Boolean need_update_stock = false;
                         // get the roles form server if any
                         try {
                             if (jObj.get("roles") != null && jObj.get("roles") != "false") {
@@ -1020,6 +1021,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                                         if (warehouse_id instanceof Params) { // it must be jump to another wh
                                             warehouse_id.setValue(first_wh);
                                             Boolean save_wh_id = paramCatalog.editParam(warehouse_id);
+                                            if (save_wh_id) {
+                                                need_update_stock = true;
+                                            }
                                         }
                                     }
                                 }
@@ -1049,6 +1053,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                         intent.putExtra(TAG_NAME, name);
                         intent.putExtra(TAG_EMAIL, email);
                         intent.putExtra(TAG_PHONE, phone);
+                        if (need_update_stock) {
+                            intent.putExtra("refreshStock", "1");
+                        }
                         finish();
                         startActivity(intent);
                     } else {

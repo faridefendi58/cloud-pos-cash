@@ -178,7 +178,7 @@ public class InventoryDaoAndroid implements InventoryDao {
         	content.put("image_bitmap", product.getBitmapAsByteArray());
 		}
 
-		if (product.getIsAvoidStock() > 0) {
+		if (product.getIsAvoidStock() >= 0) {
 			content.put("avoid_stock", product.getIsAvoidStock());
 		}
 
