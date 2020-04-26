@@ -111,6 +111,7 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
                     view.status.setTextColor(view.itemView.getContext().getResources().getColor(R.color.orange_800));
                 } else if (items.get(position).get("status").equals("Selesai")) {
                     view.status.setTextColor(view.itemView.getContext().getResources().getColor(R.color.grey_800));
+                    view.lyt_parent.setBackgroundColor(view.itemView.getContext().getResources().getColor(R.color.grey_200));
                 }
             } catch (Exception e){e.printStackTrace();}
             view.customer_data.setText(items.get(position).get("customer_data"));

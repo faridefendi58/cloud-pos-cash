@@ -111,7 +111,7 @@ public class InventoryDaoAndroid implements InventoryDao {
 	 * @return list of all products in inventory.
 	 */
 	private List<Product> getAllProduct(String condition) {
-		String queryString = "SELECT * FROM " + DatabaseContents.TABLE_PRODUCT_CATALOG.toString() + condition + " ORDER BY priority";
+		String queryString = "SELECT * FROM " + DatabaseContents.TABLE_PRODUCT_CATALOG.toString() + condition + " ORDER BY priority limit 50";
         List<Product> list = toProductList(database.select(queryString));
         return list;
 	}

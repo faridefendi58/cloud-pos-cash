@@ -454,7 +454,7 @@
                     android:orientation="vertical">
 
                     <RadioButton
-                        android:id="@+id/role_cashier"
+                        android:id="@+id/role_staff"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/label_role_staff"
@@ -467,12 +467,37 @@
                         android:layout_height="@dimen/spacing_middle" />
 
                     <RadioButton
-                        android:id="@+id/role_cs"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/label_role_cs"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                        android:textSize="@dimen/spacing_large" />
+                            android:id="@+id/role_virtual_staff"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_role_virtual_staff"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                            android:textSize="@dimen/spacing_large" />
+
+                    <View
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/spacing_middle" />
+
+                    <RadioButton
+                            android:id="@+id/role_cs"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_role_cs"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                            android:textSize="@dimen/spacing_large" />
+
+                    <View
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/spacing_middle" />
+
+                    <RadioButton
+                            android:id="@+id/role_cashier"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_role_cashier"
+                            android:checked="true"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                            android:textSize="@dimen/spacing_large" />
 
                     <View
                             android:layout_width="0dp"
@@ -483,18 +508,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/label_role_manager"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                            android:textSize="@dimen/spacing_large" />
-
-                    <View
-                            android:layout_width="0dp"
-                            android:layout_height="@dimen/spacing_middle" />
-
-                    <RadioButton
-                            android:id="@+id/role_virtual_staff"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/label_role_virtual_staff"
                             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                             android:textSize="@dimen/spacing_large" />
 

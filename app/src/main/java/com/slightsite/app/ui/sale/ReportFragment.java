@@ -1261,61 +1261,64 @@ public class ReportFragment extends UpdatableFragment {
 	private Button cancel_verify_button;
 
 	public void verifyBankTransfer(String sale_id, JSONArray jsonArray, String payment_method, ImageView imageView) {
-	    JSONArray methods = new JSONArray();
-	    List<String> channels = new ArrayList<String>();
-        try {
-            methods = new JSONArray(payment_method);
-            for (int j=0; j < jsonArray.length(); j++) {
-                channels.add(jsonArray.getString(j));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        if (methods.length() > 0) {
-            verifySheetDialog = new BottomSheetDialog(getContext());
-            View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_verify_payment, null);
-            verifySheetDialog.setContentView(sheetView);
-
-            verify_submit_button = (Button) sheetView.findViewById(R.id.verify_submit_button);
-            cancel_verify_button = (Button) sheetView.findViewById(R.id.cancel_verify_button);
-
-            bank_transfer_recycle = (RecyclerView) sheetView.findViewById(R.id.bank_transfer_recycle);
-            bank_transfer_recycle.setLayoutManager(new LinearLayoutManager(getContext()));
-            bank_transfer_recycle.setHasFixedSize(true);
-            bank_transfer_recycle.setNestedScrollingEnabled(false);
-
-            try {
-            	if (verified_sale_ids.contains(Integer.parseInt(sale_id))) {
-					verify_submit_button.setVisibility(View.GONE);
+		Boolean is_cashier = ((MainActivity) getActivity()).getIsCashier();
+		if (is_cashier) { //just cashier able to verify bank transfer
+			JSONArray methods = new JSONArray();
+			List<String> channels = new ArrayList<String>();
+			try {
+				methods = new JSONArray(payment_method);
+				for (int j=0; j < jsonArray.length(); j++) {
+					channels.add(jsonArray.getString(j));
 				}
-			} catch (Exception e){e.printStackTrace();}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 
-            ArrayList<Payment> paymentList = new ArrayList<Payment>();
-            for (int i=0; i < methods.length(); i++) {
-                try {
-                    JSONObject jsonObject = methods.getJSONObject(i);
-                    if (jsonObject.has("type") && channels.contains(jsonObject.getString("type"))) {
-                        Double amount = 0.0;
-                        if (jsonObject.has("amount_tendered")) {
-                            amount = jsonObject.getDouble("amount_tendered");
-                        } else if (jsonObject.has("amount")) {
-                            amount = jsonObject.getDouble("amount");
-                        }
-                        Payment pym = new Payment(i, jsonObject.getString("type"), amount);
-                        paymentList.add(pym);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
+			if (methods.length() > 0) {
+				verifySheetDialog = new BottomSheetDialog(getContext());
+				View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_verify_payment, null);
+				verifySheetDialog.setContentView(sheetView);
 
-            AdapterListPaymentSimple btAdapter = new AdapterListPaymentSimple(paymentList);
-            bank_transfer_recycle.setAdapter(btAdapter);
+				verify_submit_button = (Button) sheetView.findViewById(R.id.verify_submit_button);
+				cancel_verify_button = (Button) sheetView.findViewById(R.id.cancel_verify_button);
 
-            triggerVerifyDialogButton(sheetView, sale_id, imageView);
-            verifySheetDialog.show();
-        }
+				bank_transfer_recycle = (RecyclerView) sheetView.findViewById(R.id.bank_transfer_recycle);
+				bank_transfer_recycle.setLayoutManager(new LinearLayoutManager(getContext()));
+				bank_transfer_recycle.setHasFixedSize(true);
+				bank_transfer_recycle.setNestedScrollingEnabled(false);
+
+				try {
+					if (verified_sale_ids.contains(Integer.parseInt(sale_id))) {
+						verify_submit_button.setVisibility(View.GONE);
+					}
+				} catch (Exception e){e.printStackTrace();}
+
+				ArrayList<Payment> paymentList = new ArrayList<Payment>();
+				for (int i=0; i < methods.length(); i++) {
+					try {
+						JSONObject jsonObject = methods.getJSONObject(i);
+						if (jsonObject.has("type") && channels.contains(jsonObject.getString("type"))) {
+							Double amount = 0.0;
+							if (jsonObject.has("amount_tendered")) {
+								amount = jsonObject.getDouble("amount_tendered");
+							} else if (jsonObject.has("amount")) {
+								amount = jsonObject.getDouble("amount");
+							}
+							Payment pym = new Payment(i, jsonObject.getString("type"), amount);
+							paymentList.add(pym);
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+
+				AdapterListPaymentSimple btAdapter = new AdapterListPaymentSimple(paymentList);
+				bank_transfer_recycle.setAdapter(btAdapter);
+
+				triggerVerifyDialogButton(sheetView, sale_id, imageView);
+				verifySheetDialog.show();
+			}
+		}
     }
 
     private void triggerVerifyDialogButton(View view, final String sale_id, final ImageView imageView) {

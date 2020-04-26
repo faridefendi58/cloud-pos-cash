@@ -203,15 +203,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             adminInWarehouseCatalog = AdminInWarehouseService.getInstance().getAdminInWarehouseCatalog();
             current_lang = LanguageController.getInstance().getLanguage();
             //build the roles
+            roles.put(R.id.role_staff, 2);
             roles.put(R.id.role_virtual_staff, 3);
-            roles.put(R.id.role_cashier, 5);
             roles.put(R.id.role_cs, 4);
+            roles.put(R.id.role_cashier, 5);
             roles.put(R.id.role_manager, 6);
 
-            /*role_names.put(3, "virtualstaff");
-            role_names.put(4, "cs");
-            role_names.put(5, "cashier");
-            role_names.put(6, "manager");*/
             role_names = Tools.getRoleList();
         } catch (NoDaoSetException e) {
             e.printStackTrace();
@@ -1106,6 +1103,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         pDialog.setMessage("Register ...");
         showDialog();
 
+        Log.e(TAG, "register request to "+ url_register);
         StringRequest strReq = new StringRequest(Request.Method.POST, url_register, new Response.Listener<String>() {
 
             @Override
@@ -1159,6 +1157,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 params.put("confirm_password", content.getAsString("password_repeat"));
                 params.put("name", content.getAsString("name"));
                 params.put("email", content.getAsString("email"));
+                if (content.containsKey("phone")) {
+                    params.put("phone", content.getAsString("phone"));
+                }
                 params.put("status", "1");
                 params.put("group_id", content.getAsString("group_id"));
                 params.put("warehouse_name", content.getAsString("warehouse_name"));

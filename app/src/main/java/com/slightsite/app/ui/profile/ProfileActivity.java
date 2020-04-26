@@ -32,9 +32,13 @@ import com.android.volley.toolbox.StringRequest;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.AppController;
 import com.slightsite.app.domain.ProfileController;
+import com.slightsite.app.domain.params.ParamCatalog;
+import com.slightsite.app.domain.params.ParamService;
+import com.slightsite.app.domain.warehouse.AdminInWarehouse;
+import com.slightsite.app.domain.warehouse.AdminInWarehouseCatalog;
+import com.slightsite.app.domain.warehouse.AdminInWarehouseService;
 import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.Tools;
-import com.slightsite.app.ui.DashboardActivity;
 import com.slightsite.app.ui.LoginActivity;
 import com.slightsite.app.ui.MainActivity;
 
@@ -42,6 +46,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ProfileActivity extends Activity {
@@ -62,8 +67,14 @@ public class ProfileActivity extends Activity {
     ProgressDialog pDialog;
     String tag_json_obj = "json_obj_req";
     int success;
+    public final static String TAG_ID = "id";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
+    private Map<Integer, Integer> role_in_warehouses = new HashMap<Integer, Integer>();
+    private AdminInWarehouseCatalog adminInWarehouseCatalog;
+    private AdminInWarehouse adminInWarehouse;
+    private ParamCatalog paramCatalog;
+    private int warehouse_id = 0;
 
     @SuppressLint("NewApi")
     private void initiateActionBar() {
@@ -130,13 +141,29 @@ public class ProfileActivity extends Activity {
         tv_role = (TextView) findViewById(R.id.tv_role);
 
         sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
+        try {
+            paramCatalog = ParamService.getInstance().getParamCatalog();
+            adminInWarehouseCatalog = AdminInWarehouseService.getInstance().getAdminInWarehouseCatalog();
+            if (paramCatalog.getParamByName("warehouse_id") != null) {
+                warehouse_id = Integer.parseInt(paramCatalog.getParamByName("warehouse_id").getValue());
+            }
+            String admin_id = sharedpreferences.getString(TAG_ID, null);
+            if (admin_id != null && warehouse_id > 0) {
+                adminInWarehouse = adminInWarehouseCatalog.getDataByAdminAndWH(Integer.parseInt(admin_id), warehouse_id);
+            }
+        } catch (Exception e){e.printStackTrace();}
+
         adminData = ProfileController.getInstance().getDataByEmail(sharedpreferences.getString(LoginActivity.TAG_EMAIL, null));
         if (adminData != null) {
             input_name.setText(adminData.getAsString(LoginActivity.TAG_NAME));
             input_email.setText(adminData.getAsString(LoginActivity.TAG_EMAIL));
             input_phone.setText(adminData.getAsString(LoginActivity.TAG_PHONE));
+
             HashMap<Integer, String> role_names = Tools.getRoleNames();
             int server_group_id = adminData.getAsInteger("server_group_id");
+            if (adminInWarehouse != null) {
+                server_group_id = adminInWarehouse.getRoleId();
+            }
             if (role_names.containsKey(server_group_id)) {
                 tv_role.setText(role_names.get(server_group_id));
             }
