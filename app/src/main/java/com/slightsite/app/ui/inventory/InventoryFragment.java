@@ -54,6 +54,7 @@ import com.slightsite.app.domain.inventory.Product;
 import com.slightsite.app.domain.inventory.ProductCatalog;
 import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.domain.sale.Sale;
+import com.slightsite.app.domain.sale.SaleLedger;
 import com.slightsite.app.domain.warehouse.WarehouseCatalog;
 import com.slightsite.app.domain.warehouse.WarehouseService;
 import com.slightsite.app.domain.warehouse.Warehouses;
@@ -103,6 +104,10 @@ public class InventoryFragment extends UpdatableFragment {
 	private Map<Integer, String> allowed_warehouses = new HashMap<Integer, String>();
 	private Menu menu;
 	private SwipeRefreshLayout swipeRefresh;
+	private SaleLedger saleLedger;
+	private List<Sale> unPrintedSales;
+	private LinearLayout unfinish_order_container;
+	private TextView unfinish_order_warning;
 
 	/**
 	 * Construct a new InventoryFragment.
@@ -129,6 +134,8 @@ public class InventoryFragment extends UpdatableFragment {
 			register = Register.getInstance();
 			warehousesList = ((MainActivity)getActivity()).getWarehouseList();
 			allowed_warehouses = ((MainActivity)getActivity()).getAllowedWarehouseList();
+			saleLedger = SaleLedger.getInstance();
+			unPrintedSales = saleLedger.getAllUnprintedSales();
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
 		}
@@ -150,6 +157,8 @@ public class InventoryFragment extends UpdatableFragment {
 		no_product_container = (LinearLayout) view.findViewById(R.id.no_product_container);
 		wh_options = (EditText) view.findViewById(R.id.wh_options);
 		swipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
+		unfinish_order_container = (LinearLayout) view.findViewById(R.id.unfinish_order_container);
+		unfinish_order_warning = (TextView) view.findViewById(R.id.unfinish_order_warning);
 
 		main = (MainActivity) getActivity();
 		viewPager = main.getViewPager();
@@ -251,6 +260,18 @@ public class InventoryFragment extends UpdatableFragment {
                     main.update_stock(bundle);
                 } catch (Exception e){e.printStackTrace();}
 				swipeRefresh.setRefreshing(false);
+			}
+		});
+
+		if (unPrintedSales.size() > 0) {
+			unfinish_order_container.setVisibility(View.VISIBLE);
+			unfinish_order_warning.setText(getResources().getString(R.string.message_unprinted_info));
+		}
+
+		unfinish_order_container.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				main.showUnprintedInvoices();
 			}
 		});
 	}

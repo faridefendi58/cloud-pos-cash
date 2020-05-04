@@ -128,6 +128,7 @@ public class ReportFragment extends UpdatableFragment {
 	private final static int LOADING_DURATION = 3500;
 	private LinearLayout lyt_progress;
 	private SharedPreferences sharedpreferences;
+	private MainActivity main;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -144,6 +145,7 @@ public class ReportFragment extends UpdatableFragment {
 			if (sharedpreferences == null) {
 				sharedpreferences = getActivity().getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
 			}
+			main = (MainActivity) getActivity();
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
 		}
@@ -480,6 +482,13 @@ public class ReportFragment extends UpdatableFragment {
 		currentTime = cTime;
 		//list = saleLedger.getAllSaleDuring(cTime, eTime);
 		try {
+			if (main.getIsOnlyShowUnprintedSales()) {
+				filter_result.put("status", "lunas");
+				filter_result.put("delivered", "0");
+				has_been_filtered = true;
+				//lineitemListRecycle2.setVisibility(View.GONE);
+				main.setOnlyShowUnprintedSales(false);
+			}
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("warehouse_id", warehouse_id+"");
 			if (filter_result.size() > 0) {
@@ -850,12 +859,6 @@ public class ReportFragment extends UpdatableFragment {
 		inv_status_items_keys.clear();
 		inv_status_map_keys.clear();
 		//filter_result.clear();
-		/*Log.e("CUK", "inv_status_map : "+ inv_status_map.toString());
-		for (Map.Entry<String, String> entry : inv_status_map.entrySet()) {
-			inv_status_items.add(entry.getValue());
-			inv_status_items_keys.add(entry.getKey());
-			inv_status_map_keys.put(entry.getValue(), entry.getKey());
-		}*/
 
 		int jml = inv_status_strings.length;
 		for (int i=0; i < jml; i++)

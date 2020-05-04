@@ -113,4 +113,8 @@ public class SaleLedger {
 	public Sale getSaleByServerInvoiceId(int id) {
 		return saleDao.getSaleByServerInvoiceId(id);
 	}
+
+	public List<Sale> getAllUnprintedSales() {
+		return saleDao.getAllUnprintedSales();
+	}
 }

@@ -246,6 +246,7 @@
     <string name="message_paid_undelivered">Lunas/Belum Diambil</string>
     <string name="message_gofood_billing_info">Lihat Total Tagihan Langsung Pada Aplikasi Merchant GoFood Anda.</string>
     <string name="message_grabfood_billing_info">Lihat Total Tagihan Langsung Pada Aplikasi Merchant GrabFood Anda.</string>
+    <string name="message_unprinted_info">Ditemukan data order yang belum di print. Mohon segera diselesaikan!</string>
 
     <string name="title_print_invoice">Print Preview</string>
     <string name="title_list_printer">Printer</string>

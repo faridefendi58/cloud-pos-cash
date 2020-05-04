@@ -382,7 +382,8 @@ public class PrintPreviewActivity extends Activity {
         print_button_container = (LinearLayout) findViewById(R.id.print_button_container);
         finish_and_print_button = (Button) findViewById(R.id.finish_and_print_button);
 
-        if (shipping_method == 0 || shipping_method == 3 || shipping_method == 4 || shipping_method == 5) { //directly and tokopedia
+        // 5 mei 20, avoid toped shipping_method == 3
+        if (shipping_method == 0 || shipping_method == 4 || shipping_method == 5) { //directly and tokopedia (toped jangan)
             // bug #15-8, harusnya jangan tampil lg klo dah complete
             print_button_container.setVisibility(View.GONE);
             finish_and_print_button.setVisibility(View.VISIBLE);

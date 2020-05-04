@@ -453,4 +453,33 @@ public class SaleDaoAndroid implements SaleDao {
 
 		return list.get(0);
 	}
+
+	@Override
+	public List<Sale> getAllUnprintedSales() {
+		// shipping : 0 Beli Langsung, 4 GoFood, 5 GrabFood
+		String queryString = "SELECT t.* " +
+				"FROM " + DatabaseContents.TABLE_SALE + " t " +
+				"LEFT JOIN " + DatabaseContents.TABLE_SALE_SHIPPING + " s ON s.sale_id = t._id " +
+				"WHERE t.status <> 'FINISHED' AND s.method IN (0, 4, 5) ";
+
+		List<Object> objectList = database.select(queryString);
+		List<Sale> list = new ArrayList<Sale>();
+		for (Object object: objectList) {
+			ContentValues content = (ContentValues) object;
+			QuickLoadSale the_sale = new QuickLoadSale(
+					content.getAsInteger("_id"),
+					content.getAsString("start_time"),
+					content.getAsString("end_time"),
+					content.getAsString("status"),
+					content.getAsDouble("total"),
+					content.getAsInteger("orders"),
+					content.getAsInteger("customer_id")
+			);
+			the_sale.setServerInvoiceId(content.getAsInteger("server_invoice_id"));
+			the_sale.setServerInvoiceNumber(content.getAsString("server_invoice_number"));
+			the_sale.setDiscount(content.getAsInteger("discount"));
+			list.add(the_sale);
+		}
+		return list;
+	}
 }

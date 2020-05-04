@@ -663,12 +663,12 @@ public class CheckoutActivity extends AppCompatActivity {
     }
 
     private void showDialog() {
-        if (!pDialog.isShowing())
+        if ((pDialog != null) && !pDialog.isShowing())
             pDialog.show();
     }
 
     private void hideDialog() {
-        if (pDialog.isShowing())
+        if ((pDialog != null) && pDialog.isShowing())
             pDialog.dismiss();
     }
 

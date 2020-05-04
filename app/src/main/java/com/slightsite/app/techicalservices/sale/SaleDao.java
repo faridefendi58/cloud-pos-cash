@@ -115,4 +115,6 @@ public interface SaleDao {
 	void setFinished(Sale sale);
 
 	Sale getSaleByServerInvoiceId(int id);
+
+	List<Sale> getAllUnprintedSales();
 }
