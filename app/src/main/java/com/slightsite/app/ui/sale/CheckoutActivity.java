@@ -206,6 +206,15 @@ public class CheckoutActivity extends AppCompatActivity {
         displayFragment(State.SHIPPING);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (pDialog != null) {
+            pDialog.dismiss();
+            pDialog = null;
+        }
+    }
+
     private void initComponent() {
         line_first = (View) findViewById(R.id.line_first);
         line_second = (View) findViewById(R.id.line_second);

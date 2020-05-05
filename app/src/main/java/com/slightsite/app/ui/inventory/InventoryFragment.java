@@ -64,6 +64,7 @@ import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.component.ButtonAdapter;
 import com.slightsite.app.ui.component.UpdatableFragment;
+import com.slightsite.app.ui.printer.PrintPreviewActivity;
 import com.slightsite.app.ui.sale.AdapterListProduct;
 import com.slightsite.app.ui.sale.ChangeWarehouseDialogFragment;
 
@@ -271,7 +272,19 @@ public class InventoryFragment extends UpdatableFragment {
 		unfinish_order_container.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				main.showUnprintedInvoices();
+				if (unPrintedSales != null) {
+					if (unPrintedSales.size() > 1) {
+						main.showUnprintedInvoices();
+					} else if (unPrintedSales.size() == 1) {
+						Sale _sale = unPrintedSales.get(0);
+						if (_sale != null) {
+							Intent newActivity = new Intent(getActivity(),
+									PrintPreviewActivity.class);
+							newActivity.putExtra("saleId", _sale.getId());
+							startActivity(newActivity);
+						}
+					}
+				}
 			}
 		});
 	}
