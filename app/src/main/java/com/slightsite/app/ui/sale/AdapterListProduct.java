@@ -1,11 +1,7 @@
 package com.slightsite.app.ui.sale;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,21 +12,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.slightsite.app.BuildConfig;
 import com.slightsite.app.R;
-import com.slightsite.app.domain.inventory.LineItem;
 import com.slightsite.app.domain.inventory.Product;
 import com.slightsite.app.techicalservices.DownloadImageTask;
 import com.slightsite.app.techicalservices.Server;
-import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.ui.MainActivity;
-import com.slightsite.app.ui.component.UpdatableFragment;
 import com.slightsite.app.ui.inventory.InventoryFragment;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +33,7 @@ public class AdapterListProduct extends BaseAdapter{
     private MainActivity activity;
     private InventoryFragment fragment;
     private Map<Integer, Integer> stacks = new HashMap<Integer, Integer>();
+    private Boolean lock_transaction = false;
 
     private static LayoutInflater inflater = null;
 
@@ -108,11 +99,18 @@ public class AdapterListProduct extends BaseAdapter{
         holder.substract_qty = (TextView) rowView.findViewById(R.id.substract_qty);
         holder.add_qty = (TextView) rowView.findViewById(R.id.add_qty);
 
+        if (lock_transaction) {
+            holder.addCartButton.setBackgroundColor(context.getResources().getColor(R.color.grey_500));
+        }
+
         final Product p = items.get(position);
         Map<String, String> pmap = p.toMap();
         holder.name.setText(p.getName());
         holder.stock_counter.setText(pmap.get("availability"));
         if (p.getImage() != null) {
+            if (BuildConfig.DEBUG && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                // do something for a debug build and high version
+            }
             if (activity.getImageStack(p.getId()) instanceof Bitmap) {
                 holder.product_image.setImageBitmap(activity.getImageStack(p.getId()));
             } else {
@@ -144,113 +142,119 @@ public class AdapterListProduct extends BaseAdapter{
             holder.addCartButton.setVisibility(View.VISIBLE);
         }
 
-        rowView.setOnClickListener(new OnClickListener() {
+        if (!lock_transaction) {
+            rowView.setOnClickListener(new OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                holder.addCartButton.setVisibility(View.GONE);
-                if (!stacks.containsKey(p.getId())) {
-                    holder.add_qty_container.setVisibility(View.VISIBLE);
-                    holder.optionView.setVisibility(View.GONE);
-
-                    int tot_qty = Integer.parseInt(holder.quantity.getText().toString()) + 1;
-                    if (tot_qty <= 0) {
-                        tot_qty = 1;
-                    }
-                    holder.quantity.setText(""+ tot_qty);
-
-                    try {
-                        fragment.addToCart(p);
-                    } catch (Exception e) {e.printStackTrace();}
-                } else {
-                    holder.optionView.setVisibility(View.GONE);
-                    int tot_qty = stacks.get(p.getId());
-                    holder.quantity.setText(""+ tot_qty);
-                }
-            }
-        });
-
-        holder.optionView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /*if(activity instanceof MainActivity){
-                    activity.optionOnClickHandler2(p.getId());
-                }*/
-            }
-        });
-
-        holder.product_image.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /*if(activity instanceof MainActivity){
-                    activity.optionOnClickHandler2(p.getId());
-                }*/
-            }
-        });
-
-        holder.addCartButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!stacks.containsKey(p.getId())) {
-                    holder.add_qty_container.setVisibility(View.VISIBLE);
+                @Override
+                public void onClick(View v) {
                     holder.addCartButton.setVisibility(View.GONE);
+                    if (!stacks.containsKey(p.getId())) {
+                        holder.add_qty_container.setVisibility(View.VISIBLE);
+                        holder.optionView.setVisibility(View.GONE);
 
-                    int tot_qty = Integer.parseInt(holder.quantity.getText().toString()) + 1;
-                    if (tot_qty <= 0) {
-                        tot_qty = 1;
-                    }
-                    holder.quantity.setText(""+ tot_qty);
+                        int tot_qty = Integer.parseInt(holder.quantity.getText().toString()) + 1;
+                        if (tot_qty <= 0) {
+                            tot_qty = 1;
+                        }
+                        holder.quantity.setText(""+ tot_qty);
 
-                    try {
-                        fragment.addToCart(p);
-                    } catch (Exception e) {e.printStackTrace();}
-                } else {
-                    holder.addCartButton.setVisibility(View.VISIBLE);
-                    holder.optionView.setVisibility(View.GONE);
-                    int tot_qty = stacks.get(p.getId()) + 1;
-                    holder.quantity.setText(""+ tot_qty);
-                }
-            }
-        });
-
-        holder.add_qty.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int the_qty = Integer.parseInt(holder.quantity.getText().toString()) + 1;
-                holder.quantity.setText(""+ the_qty);
-                try {
-                    if (the_qty == 1) {
-                        fragment.addToCart(p);
+                        try {
+                            fragment.addToCart(p);
+                        } catch (Exception e) {e.printStackTrace();}
                     } else {
-                        fragment.addSubstractTheCart(p, the_qty);
+                        holder.optionView.setVisibility(View.GONE);
+                        int tot_qty = stacks.get(p.getId());
+                        holder.quantity.setText(""+ tot_qty);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-            }
-        });
+            });
 
-        holder.substract_qty.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int current_qty = Integer.parseInt(holder.quantity.getText().toString());
-                int the_qty = 0;
-                if (current_qty > 1) {
-                    the_qty = current_qty - 1;
+            holder.optionView.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                /*if(activity instanceof MainActivity){
+                    activity.optionOnClickHandler2(p.getId());
+                }*/
                 }
-                holder.quantity.setText(""+ the_qty);
-                if (the_qty == 0) {
-                    holder.addCartButton.setVisibility(View.VISIBLE);
-                    //holder.add_qty_container.setVisibility(View.GONE);
+            });
+
+            holder.product_image.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                /*if(activity instanceof MainActivity){
+                    activity.optionOnClickHandler2(p.getId());
+                }*/
                 }
-                try {
-                    fragment.addSubstractTheCart(p, the_qty);
-                } catch (Exception e) {
-                    e.printStackTrace();
+            });
+
+            holder.addCartButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!stacks.containsKey(p.getId())) {
+                        holder.add_qty_container.setVisibility(View.VISIBLE);
+                        holder.addCartButton.setVisibility(View.GONE);
+
+                        int tot_qty = Integer.parseInt(holder.quantity.getText().toString()) + 1;
+                        if (tot_qty <= 0) {
+                            tot_qty = 1;
+                        }
+                        holder.quantity.setText(""+ tot_qty);
+
+                        try {
+                            fragment.addToCart(p);
+                        } catch (Exception e) {e.printStackTrace();}
+                    } else {
+                        holder.addCartButton.setVisibility(View.VISIBLE);
+                        holder.optionView.setVisibility(View.GONE);
+                        int tot_qty = stacks.get(p.getId()) + 1;
+                        holder.quantity.setText(""+ tot_qty);
+                    }
                 }
-            }
-        });
+            });
+
+            holder.add_qty.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int the_qty = Integer.parseInt(holder.quantity.getText().toString()) + 1;
+                    holder.quantity.setText(""+ the_qty);
+                    try {
+                        if (the_qty == 1) {
+                            fragment.addToCart(p);
+                        } else {
+                            fragment.addSubstractTheCart(p, the_qty);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            holder.substract_qty.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int current_qty = Integer.parseInt(holder.quantity.getText().toString());
+                    int the_qty = 0;
+                    if (current_qty > 1) {
+                        the_qty = current_qty - 1;
+                    }
+                    holder.quantity.setText(""+ the_qty);
+                    if (the_qty == 0) {
+                        holder.addCartButton.setVisibility(View.VISIBLE);
+                        //holder.add_qty_container.setVisibility(View.GONE);
+                    }
+                    try {
+                        fragment.addSubstractTheCart(p, the_qty);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
 
         return rowView;
+    }
+
+    public void setLockTransaction(Boolean _lock) {
+        this.lock_transaction = _lock;
     }
 }

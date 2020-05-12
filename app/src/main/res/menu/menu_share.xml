@@ -15,4 +15,9 @@
         android:title="@string/label_printer_configuration">
     </item>
 
+    <item
+            android:id="@+id/action_remove"
+            android:title="@string/remove_invoice">
+    </item>
+
 </menu>

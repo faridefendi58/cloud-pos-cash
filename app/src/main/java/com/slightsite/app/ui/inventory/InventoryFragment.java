@@ -48,6 +48,9 @@ import com.google.zxing.integration.android.IntentIntegratorSupportV4;
 import com.google.zxing.integration.android.IntentResult;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
+import com.slightsite.app.domain.customer.Customer;
+import com.slightsite.app.domain.customer.CustomerCatalog;
+import com.slightsite.app.domain.customer.CustomerService;
 import com.slightsite.app.domain.inventory.Inventory;
 import com.slightsite.app.domain.inventory.LineItem;
 import com.slightsite.app.domain.inventory.Product;
@@ -80,6 +83,7 @@ public class InventoryFragment extends UpdatableFragment {
 	protected static final int SEARCH_LIMIT = 0;
 	private GridView inventoryListView;
 	private ProductCatalog productCatalog;
+	private CustomerCatalog customerCatalog;
 	private List<Map<String, String>> inventoryList;
 	private com.github.clans.fab.FloatingActionButton addProductButton;
 	private EditText searchBox;
@@ -109,6 +113,7 @@ public class InventoryFragment extends UpdatableFragment {
 	private List<Sale> unPrintedSales;
 	private LinearLayout unfinish_order_container;
 	private TextView unfinish_order_warning;
+	private Button btn_finish_order;
 
 	/**
 	 * Construct a new InventoryFragment.
@@ -137,6 +142,7 @@ public class InventoryFragment extends UpdatableFragment {
 			allowed_warehouses = ((MainActivity)getActivity()).getAllowedWarehouseList();
 			saleLedger = SaleLedger.getInstance();
 			unPrintedSales = saleLedger.getAllUnprintedSales();
+			customerCatalog = CustomerService.getInstance().getCustomerCatalog();
 		} catch (NoDaoSetException e) {
 			e.printStackTrace();
 		}
@@ -160,6 +166,7 @@ public class InventoryFragment extends UpdatableFragment {
 		swipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
 		unfinish_order_container = (LinearLayout) view.findViewById(R.id.unfinish_order_container);
 		unfinish_order_warning = (TextView) view.findViewById(R.id.unfinish_order_warning);
+        btn_finish_order = (Button) view.findViewById(R.id.btn_finish_order);
 
 		main = (MainActivity) getActivity();
 		viewPager = main.getViewPager();
@@ -266,27 +273,31 @@ public class InventoryFragment extends UpdatableFragment {
 
 		if (unPrintedSales.size() > 0) {
 			unfinish_order_container.setVisibility(View.VISIBLE);
-			unfinish_order_warning.setText(getResources().getString(R.string.message_unprinted_info));
-		}
+			//unfinish_order_warning.setText(getResources().getString(R.string.message_unprinted_info));
+            try {
+                Sale _unPrintedSale = unPrintedSales.get(0);
+                Customer _cust = customerCatalog.getCustomerById(_unPrintedSale.getCustomerId());
+                String warning_txt = "Transaksi an '" + _cust.getName() + "' sebesar Rp "+ _unPrintedSale.toMap().get("total") +" belum selesai. Silakan selesaikan segera sebelum membuat transaksi baru.";
+                unfinish_order_warning.setText(warning_txt);
+            } catch (Exception e){e.printStackTrace();}
 
-		unfinish_order_container.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				if (unPrintedSales != null) {
-					if (unPrintedSales.size() > 1) {
-						main.showUnprintedInvoices();
-					} else if (unPrintedSales.size() == 1) {
-						Sale _sale = unPrintedSales.get(0);
-						if (_sale != null) {
-							Intent newActivity = new Intent(getActivity(),
-									PrintPreviewActivity.class);
-							newActivity.putExtra("saleId", _sale.getId());
-							startActivity(newActivity);
-						}
-					}
-				}
-			}
-		});
+            btn_finish_order.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    /*if (unPrintedSales.size() > 1) {
+                        main.showUnprintedInvoices();
+                    }*/
+                    Sale _sale = unPrintedSales.get(0);
+                    if (_sale != null) {
+                        Intent newActivity = new Intent(getActivity(),
+                                PrintPreviewActivity.class);
+                        newActivity.putExtra("saleId", _sale.getId());
+						main.finish();
+                        startActivity(newActivity);
+                    }
+                }
+            });
+		}
 	}
 
 	/**
@@ -309,8 +320,20 @@ public class InventoryFragment extends UpdatableFragment {
 		// clearing the stack on update
 		this.stacks = new HashMap<Integer, Integer>();
 
+		/*if (unPrintedSales == null) {
+            try {
+                if (saleLedger == null) {
+                    saleLedger = SaleLedger.getInstance();
+                }
+                unPrintedSales = saleLedger.getAllUnprintedSales();
+            } catch (NoDaoSetException e) {e.printStackTrace();}
+        }*/
+
 		AdapterListProduct pAdap = new AdapterListProduct(main, list, R.layout.listview_inventory, InventoryFragment.this);
 		pAdap.notifyDataSetChanged();
+		if ((unPrintedSales != null) && (unPrintedSales.size() >= 1)) {
+		    pAdap.setLockTransaction(true);
+        }
 		inventoryListView.setAdapter(pAdap);
 	}
 

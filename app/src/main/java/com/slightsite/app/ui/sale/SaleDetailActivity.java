@@ -575,7 +575,12 @@ public class SaleDetailActivity extends Activity{
 
 				return true;
 			case R.id.action_remove:
-				removeInvoice(getCurrentFocus());
+				if (sale.getIsVerifiedPayment() <= 0 || sale.getStatus() != "FINISHED") { //make sure this is not complete order
+					removeInvoice(getCurrentFocus());
+				} else {
+					Toast.makeText(getApplicationContext(),
+							"Tidak diperbolehkan menghapus data transaksi yang sudah selesai.", Toast.LENGTH_LONG).show();
+				}
 				return true;
 			case R.id.action_print:
 				printInvoice(getCurrentFocus());
@@ -674,7 +679,9 @@ public class SaleDetailActivity extends Activity{
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				try {
-					saleLedger.removeSale(sale);
+					Map<String, Object> mObj = new HashMap<String, Object>();
+					mObj.put("invoice_id", sale.getServerInvoiceId());
+					_server_remove_inv(mObj);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -1676,4 +1683,42 @@ public class SaleDetailActivity extends Activity{
             } catch (Exception e){e.printStackTrace();}
         }
     }
+
+	private void _server_remove_inv(Map mObj) {
+		String _url = Server.URL + "transaction/delete?api-key=" + Server.API_KEY;
+		String qry = URLBuilder.httpBuildQuery(mObj, "UTF-8");
+		_url += "&"+ qry;
+
+		Map<String, String> params = new HashMap<String, String>();
+		String admin_id = sharedpreferences.getString(TAG_ID, null);
+		Params adminParam = paramCatalog.getParamByName("admin_id");
+		if (adminParam != null) {
+			admin_id = adminParam.getValue();
+		}
+
+		params.put("admin_id", admin_id);
+
+		_string_request(
+				Request.Method.POST,
+				_url,
+				params,
+				true,
+				new VolleyCallback(){
+					@Override
+					public void onSuccess(String result) {
+						try {
+							JSONObject jObj = new JSONObject(result);
+							success = jObj.getInt(TAG_SUCCESS);
+							// Check for error node in json
+							if (success == 1) {
+								saleLedger.removeSale(sale);
+							}
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+
+						hideDialog();
+					}
+				});
+	}
 }

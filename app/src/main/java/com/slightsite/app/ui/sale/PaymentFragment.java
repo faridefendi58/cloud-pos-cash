@@ -548,7 +548,6 @@ public class PaymentFragment extends Fragment {
                 // hide cash payment and add switch button
                 switch_cash_container.setVisibility(View.VISIBLE);
                 cash_container.setVisibility(View.GONE);
-                Log.e("CUK", "c_data.getCashReceive() : "+ c_data.getCashReceive());
                 if (c_data.getUseCash()) {
                     cash_container.setVisibility(View.VISIBLE);
                     switch_cash.setChecked(true);

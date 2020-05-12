@@ -103,19 +103,33 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:orientation="vertical"
+                android:background="@color/alertWarning"
                 android:visibility="gone">
 
             <TextView
                     android:id="@+id/unfinish_order_warning"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/spacing_large"
-                    android:padding="@dimen/spacing_large"
+                    android:layout_marginTop="@dimen/spacing_middle"
+                    android:layout_marginBottom="@dimen/spacing_middle"
+                    android:paddingHorizontal="@dimen/spacing_middle"
                     android:gravity="center_horizontal"
-                    android:text="@string/message_no_product"
-                    android:background="@color/alertWarning"
+                    android:text="@string/message_unprinted_info"
+                    android:textStyle="bold"
                     ></TextView>
 
+            <Button
+                    android:id="@+id/btn_finish_order"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_middle"
+                    android:paddingHorizontal="@dimen/spacing_large"
+                    android:text="Selesaikan Order"
+                    android:textColor="@color/colorWhite"
+                    android:background="@color/red_600"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:layout_gravity="center_horizontal"
+                    ></Button>
         </LinearLayout>
 
         <LinearLayout

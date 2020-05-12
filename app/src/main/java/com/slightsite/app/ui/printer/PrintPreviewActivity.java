@@ -3,12 +3,14 @@ package com.slightsite.app.ui.printer;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -321,6 +323,14 @@ public class PrintPreviewActivity extends Activity {
                 return true;
             case R.id.action_print_setting :
                 printerSetting();
+                return true;
+            case R.id.action_remove :
+                if (sale.getIsVerifiedPayment() <= 0 || sale.getStatus() != "FINISHED") { //make sure this is not complete order
+                    removeInvoice(getCurrentFocus());
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            "Tidak diperbolehkan menghapus data transaksi yang sudah selesai.", Toast.LENGTH_LONG).show();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -811,7 +821,6 @@ public class PrintPreviewActivity extends Activity {
             Double has_cash = 0.0;
             for (int j = 0; j < paymentList.size(); ++j) {
                 Payment py = paymentList.get(j);
-                Log.e("CUK", "py.getPaymentChannel() : "+ py.getPaymentChannel());
                 if (py.getPaymentChannel() .equals("cash_receive")) {
                     has_cash = has_cash + py.getAmount();
                 }
@@ -1213,5 +1222,74 @@ public class PrintPreviewActivity extends Activity {
                 bm, 0, 0, width, height, matrix, false);
         bm.recycle();
         return resizedBitmap;
+    }
+
+    public void removeInvoice(View v) {
+        AlertDialog.Builder quitDialog = new AlertDialog.Builder(
+                PrintPreviewActivity.this);
+        quitDialog.setTitle(getResources().getString(R.string.dialog_remove_invoice));
+        quitDialog.setPositiveButton(getResources().getString(R.string.remove), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    Map<String, Object> mObj = new HashMap<String, Object>();
+                    mObj.put("invoice_id", sale.getServerInvoiceId());
+                    _server_remove_inv(mObj);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                Intent newActivity = new Intent(PrintPreviewActivity.this,
+                        MainActivity.class);
+                finish();
+                startActivity(newActivity);
+            }
+        });
+
+        quitDialog.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        quitDialog.show();
+    }
+
+    private void _server_remove_inv(Map mObj) {
+        String _url = Server.URL + "transaction/delete?api-key=" + Server.API_KEY;
+        String qry = URLBuilder.httpBuildQuery(mObj, "UTF-8");
+        _url += "&"+ qry;
+
+        Map<String, String> params = new HashMap<String, String>();
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        Params adminParam = paramCatalog.getParamByName("admin_id");
+        if (adminParam != null) {
+            admin_id = adminParam.getValue();
+        }
+
+        params.put("admin_id", admin_id);
+
+        _string_request(
+                Request.Method.POST,
+                _url,
+                params,
+                true,
+                new VolleyCallback(){
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                saleLedger.removeSale(sale);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        hideDialog();
+                    }
+                });
     }
 }
