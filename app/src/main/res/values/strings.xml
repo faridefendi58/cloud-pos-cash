@@ -64,6 +64,7 @@
     <string name="all_list">All List</string>
     <string name="transaction">Transaction</string>
     <string name="remove_invoice">Remove Invoice</string>
+    <string name="remove_order">Remove Order</string>
     <string name="print_invoice">Print Invoice</string>
     <string name="retur_invoice">Retur Invoice</string>
     <string name="print">Print</string>
@@ -83,6 +84,8 @@
     <string name="dialog_reject_data">Are you sure you want to REJECT this data?</string>
     <string name="dialog_remove_data">Are you sure you want to REMOVE this data?</string>
     <string name="dialog_confirm_data">Are you sure you want all these data is correct?</string>
+    <string name="dialog_proceed_order">Are you sure you want to PROCEED this order?</string>
+    <string name="dialog_remove_order">Are you sure you want to REMOVE this order?</string>
     <string name="hint_empty_sale">Sale is empty.</string>
     <string name="quit">Quit</string>
     <string name="no">No</string>
@@ -125,6 +128,7 @@
     <string name="title_stock_in">Stock In</string>
     <string name="title_stock_out">Stock Out</string>
     <string name="title_notification">Notification</string>
+    <string name="title_stagging">Stagging Order</string>
 
     <string name="dashboard_income">Income</string>
     <string name="dashboard_transaction">Transaction</string>
@@ -223,6 +227,7 @@
     <string name="label_syncron_product">Syncron Product Data</string>
     <string name="label_syncron_customer">Syncron Customer Data</string>
     <string name="label_proceed">Proceed</string>
+    <string name="label_proceed_now">Proceed Now</string>
 
     <string name="message_success_save">Your data has been successfully saved.</string>
     <string name="message_success_update">Your data has been successfully updated.</string>
@@ -384,6 +389,7 @@
     <string name="button_reject">Reject</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
+    <string name="confirm_delete">Are you sure you want to delete this?</string>
 
     <string name="shipping_method_direct">Buy Directly</string>
     <string name="shipping_method_take_it_later">Take It Later</string>
@@ -429,6 +435,7 @@
     <string name="tab_sales_report">Sales Report</string>
     <string name="tab_stock">Stock</string>
     <string name="tab_notification">Notification</string>
+    <string name="tab_stagging">Stagging Order</string>
 
     <string name="origin">Origin</string>
     <string name="destination">Destination</string>

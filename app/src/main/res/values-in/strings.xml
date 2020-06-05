@@ -64,6 +64,7 @@
     <string name="all_list">Semua Daftar</string>
     <string name="transaction">Transaksi Penjualan</string>
     <string name="remove_invoice">Hapus Tagihan</string>
+    <string name="remove_order">Hapus Transaksi</string>
     <string name="print_invoice">Cetak Tagihan</string>
     <string name="retur_invoice">Retur Tagihan</string>
     <string name="print">Print</string>
@@ -83,6 +84,8 @@
     <string name="dialog_reject_data">Anda yakin ingin MENOLAK data ini?</string>
     <string name="dialog_remove_data">Anda yakin ingin MENGHAPUS data ini?</string>
     <string name="dialog_confirm_data">Anda yakin ingin semua data sudah benar?</string>
+    <string name="dialog_proceed_order">Anda yakin ingin MEMPROSES transaksi ini?</string>
+    <string name="dialog_remove_order">Anda yakin ingin MENGHAPUS transaksi ini?</string>
     <string name="hint_empty_sale">Data penjualan kosong.</string>
     <string name="quit">Keluar</string>
     <string name="no">Tidak</string>
@@ -127,6 +130,7 @@
     <string name="title_stock_in">Stok Masuk</string>
     <string name="title_stock_out">Stok Keluar</string>
     <string name="title_notification">Pemberitahuan</string>
+    <string name="title_stagging">Stagging Order</string>
 
     <string name="dashboard_income">Pendapatan</string>
     <string name="dashboard_transaction">Transaksi</string>
@@ -223,6 +227,7 @@
     <string name="label_syncron_product">Sesuaikan Data Produk</string>
     <string name="label_syncron_customer">Sesuaikan Data Pelanggan</string>
     <string name="label_proceed">Lanjutkan</string>
+    <string name="label_proceed_now">Proses Sekarang</string>
 
     <string name="message_success_save">Data Anda telah berhasil disimpan.</string>
     <string name="message_success_update">Data Anda telah berhasil diubah.</string>
@@ -382,6 +387,7 @@
     <string name="button_reject">Tolak</string>
 
     <string name="confirm_edit">Anda yakin ingin mengubah data ini?</string>
+    <string name="confirm_delete">Anda yakin ingin menghapus data ini?</string>
 
     <string name="shipping_method_direct">Beli Langsung</string>
     <string name="shipping_method_take_it_later">Ambil Nanti</string>
@@ -427,6 +433,7 @@
     <string name="tab_sales_report">Laporan Penjualan</string>
     <string name="tab_stock">Stok Barang</string>
     <string name="tab_notification">Pemberitahuan</string>
+    <string name="tab_stagging">Stagging Order</string>
 
     <string name="origin">Asal Barang</string>
     <string name="destination">Tujuan</string>

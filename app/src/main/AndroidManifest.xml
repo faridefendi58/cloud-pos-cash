@@ -109,6 +109,10 @@
                 android:name=".ui.notification.NotificationActivity"
                 android:label="@string/title_notification"
                 android:theme="@style/AppCompatTheme"></activity>
+        <activity
+                android:name=".ui.stagging.StaggingDetailActivity"
+                android:label="@string/title_stagging"
+                android:screenOrientation="portrait" />
 
         <service
                 android:name=".techicalservices.FCMNotificationService"
