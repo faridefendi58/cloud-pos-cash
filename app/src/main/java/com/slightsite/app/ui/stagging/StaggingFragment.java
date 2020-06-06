@@ -140,7 +140,7 @@ public class StaggingFragment extends UpdatableFragment {
             if (whParam != null) {
                 warehouse_id = Integer.parseInt(whParam.getValue());
             }
-            notif_status_map = Tools.getNotificationStatusList();
+            notif_status_map = Tools.getStaggingStatusList();
             for (Map.Entry<String, String> entry : notif_status_map.entrySet()) {
                 status_items.add(entry.getValue());
                 notif_status_map_inv.put(entry.getValue(), entry.getKey());
@@ -201,6 +201,7 @@ public class StaggingFragment extends UpdatableFragment {
         String admin_id = sharedpreferences.getString("id", null);
         params.put("admin_id", admin_id);
         params.put("warehouse_id", warehouse_id+"");
+        params.put("status", "0");
         params.put("limit", "50");
 
         try {

@@ -42,6 +42,7 @@ import com.slightsite.app.R;
 import com.slightsite.app.domain.AppController;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.DateTimeStrategy;
+import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.inventory.Inventory;
 import com.slightsite.app.domain.inventory.LineItem;
 import com.slightsite.app.domain.inventory.Product;
@@ -50,14 +51,15 @@ import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.params.Params;
 import com.slightsite.app.domain.sale.Register;
-import com.slightsite.app.domain.warehouse.WarehouseCatalog;
-import com.slightsite.app.domain.warehouse.WarehouseService;
-import com.slightsite.app.domain.warehouse.Warehouses;
+import com.slightsite.app.domain.sale.Sale;
+import com.slightsite.app.domain.sale.SaleLedger;
+import com.slightsite.app.domain.sale.Shipping;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.URLBuilder;
 import com.slightsite.app.ui.LoginActivity;
 import com.slightsite.app.ui.MainActivity;
+import com.slightsite.app.ui.sale.SaleDetailActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -82,6 +84,10 @@ public class StaggingDetailActivity extends Activity{
 
     private ParamCatalog paramCatalog;
     private ProductCatalog productCatalog;
+    private SaleLedger saleLedger;
+    private Sale sale;
+    private Customer customer;
+    private Shipping shipping;
 
     ProgressDialog pDialog;
     int success;
@@ -103,6 +109,7 @@ public class StaggingDetailActivity extends Activity{
             paramCatalog = ParamService.getInstance().getParamCatalog();
             productCatalog = Inventory.getInstance().getProductCatalog();
             register = Register.getInstance();
+            saleLedger = SaleLedger.getInstance();
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -136,7 +143,7 @@ public class StaggingDetailActivity extends Activity{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_delete, menu);
+        //inflater.inflate(R.menu.menu_delete, menu);
         return true;
     }
 
@@ -182,28 +189,7 @@ public class StaggingDetailActivity extends Activity{
                 startActivity(act);
                 return true;
             case R.id.nav_delete:
-                new AlertDialog.Builder(StaggingDetailActivity.this)
-                        .setTitle(getResources().getString(R.string.remove))
-                        .setMessage(getResources().getString(R.string.confirm_delete))
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                try {
-                                    Map<String, Object> mObj = new HashMap<String, Object>();
-                                    mObj.put("order_key", order_key);
-                                    _server_remove_order(mObj);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-
-                                Intent newActivity = new Intent(StaggingDetailActivity.this,
-                                        MainActivity.class);
-                                finish();
-                                startActivity(newActivity);
-                            }})
-                        .setNegativeButton(android.R.string.no, null).show();
-
+                _remove_order();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -224,6 +210,10 @@ public class StaggingDetailActivity extends Activity{
     }
 
     public void removeOrder(View v) {
+        _remove_order();
+    }
+
+    private void _remove_order() {
         LayoutInflater inflater2 = this.getLayoutInflater();
 
         View titleView = inflater2.inflate(R.layout.dialog_custom_title, null);
@@ -554,12 +544,89 @@ public class StaggingDetailActivity extends Activity{
                     public void onSuccess(String result) {
                         try {
                             JSONObject jObj = new JSONObject(result);
+                            Log.e(TAG, jObj.toString());
                             success = jObj.getInt(TAG_SUCCESS);
                             // Check for error node in json
                             if (success == 1) {
                                 Intent act = new Intent(StaggingDetailActivity.this, MainActivity.class);
+                                if (jObj.has("id")) {
+                                    act = new Intent(StaggingDetailActivity.this, SaleDetailActivity.class);
+
+                                    sale = new Sale(jObj.getInt("id"), server_stagging_data.getString("created_at"));
+                                    sale.setDeliveredPlanAt(server_stagging_data.getString("created_at"));
+                                    sale.setServerInvoiceNumber(jObj.getString("invoice_number"));
+                                    sale.setServerInvoiceId(jObj.getInt("id"));
+                                    sale.setCustomerId(jObj.getInt("customer_id"));
+                                    sale.setStatus("unpaid");
+
+                                    JSONObject config = jObj.getJSONObject("config");
+                                    JSONObject cust_dt = config.getJSONObject("customer");
+                                    if (cust_dt.has("name")) {
+                                        customer = new Customer(
+                                                sale.getCustomerId(),
+                                                cust_dt.getString("name"),
+                                                "-",
+                                                cust_dt.getString("phone"),
+                                                cust_dt.getString("address"),
+                                                1
+                                        );
+                                    }
+
+                                    //act.putExtra("id", sale.getId());
+                                    act.putExtra("sale_intent", sale);
+                                    if (customer != null) {
+                                        act.putExtra("customer_intent", customer);
+                                    }
+
+                                    // build the shipping
+                                    JSONArray arrShip = config.getJSONArray("shipping");
+                                    if (arrShip.length() > 0) {
+                                        JSONObject ship_method = arrShip.getJSONObject(0);
+                                        if (ship_method != null) {
+                                            shipping = new Shipping(
+                                                    ship_method.getInt("method"),
+                                                    ship_method.getString("date_added"),
+                                                    ship_method.getString("address"),
+                                                    ship_method.getInt("warehouse_id")
+                                            );
+                                            if (ship_method.has("warehouse_name")) {
+                                                shipping.setWarehouseName(ship_method.getString("warehouse_name"));
+                                            }
+                                            if (ship_method.has("recipient_name")) {
+                                                shipping.setName(ship_method.getString("recipient_name"));
+                                            }
+                                            if (ship_method.has("recipient_phone")) {
+                                                shipping.setPhone(ship_method.getString("recipient_phone"));
+                                            }
+                                            if (ship_method.has("pickup_date")) {
+                                                shipping.setPickupDate(ship_method.getString("pickup_date"));
+                                            }
+                                        }
+                                    }
+
+                                    if (shipping != null) {
+                                        act.putExtra("shipping_intent", shipping);
+                                    }
+
+                                    // build the payment
+                                    JSONArray arrPayment = config.getJSONArray("payment");
+                                    if (arrPayment.length() > 0) {
+                                        act.putExtra("payment_intent", arrPayment.toString());
+                                    }
+
+                                    // build the line item data
+                                    JSONArray arrItemsBelanja = config.getJSONArray("items_belanja");
+                                    if (arrItemsBelanja.length() > 0) {
+                                        act.putExtra("line_items_intent", arrItemsBelanja.toString());
+                                    }
+                                }
                                 finish();
                                 startActivity(act);
+                            } else {
+                                if (jObj.has(TAG_MESSAGE)) {
+                                    Toast.makeText(getApplicationContext(),
+                                            jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

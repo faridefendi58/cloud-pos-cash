@@ -461,5 +461,14 @@ public class Tools {
 
         return list;
     }
+
+    public static Map<String, String> getStaggingStatusList() {
+        Map<String, String> list = new HashMap<String, String>();
+        list.put("-", "Semua");
+        list.put("0", "Pending");
+        list.put("1", "Approved");
+
+        return list;
+    }
 }
 
