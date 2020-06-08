@@ -134,6 +134,86 @@
                     android:layout_height="1dp"
                     android:background="@color/grey_10" />
 
+                <!-- Ongkir khusus gosend -->
+                <LinearLayout
+                        android:id="@+id/ongkir_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/spacing_middle">
+
+                        <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/label_ongkir"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                                android:textColor="@color/grey_40"
+                                android:textStyle="bold"
+                                android:textAllCaps="true"
+                                app:fontFamily="sans-serif-medium" />
+
+                        <EditText
+                                style="@style/EditText.Flat.Grey"
+                                android:id="@+id/total_ongkir"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@drawable/edit_text_round_bg_outline"
+                                android:drawableEnd="@drawable/ic_expand_arrow"
+                                android:layout_marginTop="@dimen/spacing_middle"
+                                android:drawableRight="@drawable/ic_calculate_black_24dp"
+                                android:minHeight="@dimen/spacing_xmedium"
+                                android:inputType="number"
+                                android:hint="0"
+                                android:singleLine="true"
+                                android:imeOptions="actionDone"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                        <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:paddingVertical="@dimen/spacing_large"
+                                android:gravity="right"
+                                android:text="@string/label_ongkir_cash_to_driver"
+                                android:textColor="@color/grey_40"
+                                android:textStyle="italic"
+                                app:fontFamily="sans-serif-medium" />
+
+                        <View
+                                android:layout_width="@dimen/spacing_small"
+                                android:layout_height="wrap_content" />
+
+                        <android.support.v7.widget.SwitchCompat
+                                android:id="@+id/switch_ongkir_cash_to_driver"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:checked="false"
+                                app:thumbTint="@color/switch_color_primary"/>
+
+                    </LinearLayout>
+
+                    <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/grey_10" />
+
+                </LinearLayout>
+                <!-- end of ongkir -->
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

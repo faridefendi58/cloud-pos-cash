@@ -279,7 +279,7 @@ public class ShippingFragment extends Fragment {
                     if (selected_cust_id > 0) {
                         cust.setId(selected_cust_id);
                     }
-                    //Log.e(getClass().getSimpleName(), "Sebelum setup cust "+ cust.toMap().toString());
+
                     if (setType == "phone") {
                         if (s.toString().length() > 2) {
                             cust.setPhone(s.toString());
@@ -301,7 +301,6 @@ public class ShippingFragment extends Fragment {
                             cust.setEmail(customer_email);
                             cust.setPhone(customer_phone);
                             cust.setAddress(s.toString());
-                            Log.e(getClass().getSimpleName(), "Sedang setup address "+ cust.toMap().toString());
                             ((CheckoutActivity) getActivity()).setCustomer(cust);
                         }
                     }
@@ -462,10 +461,11 @@ public class ShippingFragment extends Fragment {
                 ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
                 setupShippingForm(i);
                 ((EditText) v).setText(ship_methods[i]);
-                if (i == 1 || i == 2) {
+                if (i == 1) {
                     need_time_picker = true;
-                }
-                if (i == 3) { //Tokopedia
+                } else if (i == 2) { //gosend
+                    need_time_picker = true;
+                } else if (i == 3) { //Tokopedia
                     Double tot_inv = register.getTotal();
                     c_data.setWalletTokopedia(tot_inv + "");
                     ((CheckoutActivity) getActivity()).setShipping(ship, c_data);

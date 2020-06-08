@@ -533,6 +533,61 @@
 
                     </LinearLayout>
 
+                    <!-- if any ongkir -->
+                    <LinearLayout
+                            android:id="@+id/ongkir_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+
+                        <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/grey_10" />
+
+                        <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:padding="@dimen/spacing_large">
+
+                            <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="@string/label_ongkir"
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                    android:textColor="@color/grey_40"
+                                    app:fontFamily="sans-serif-medium" />
+
+                            <TextView
+                                    android:id="@+id/total_ongkir"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                    android:textColor="@color/grey_90"
+                                    app:fontFamily="sans-serif-black" />
+
+                        </LinearLayout>
+
+                        <TextView
+                                android:id="@+id/tv_cash_to_driver"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingLeft="@dimen/spacing_large"
+                                android:layout_marginBottom="@dimen/spacing_large"
+                                android:text="@string/label_ongkir_cash_to_driver"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                android:textColor="@color/yellowDarkUcok"
+                                android:textStyle="italic"
+                                app:fontFamily="sans-serif-medium"
+                                android:visibility="gone"/>
+
+                    </LinearLayout>
+                    <!-- endif any ongkir -->
+
                     <!-- special for gograbfood -->
                     <LinearLayout
                             android:id="@+id/gograbfood_discount_container"

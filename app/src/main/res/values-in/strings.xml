@@ -202,6 +202,7 @@
     <string name="error_empty_payment_data">Mohon lengkapi data pembayaran</string>
     <string name="error_not_enough_payment">Jumlah yang Anda bayarkan masih kurang dari total tagihan.</string>
     <string name="error_empty_retur_reason">Pilih minimal 1 alasan retur</string>
+    <string name="error_empty_shipping_customer_data">Mohon lengkapi kolom tanggal Ambil/Kirim, Nama, Telepon, dan Alamat.</string>
     <string name="error_payment_should_be_exact">Jumlah yang dibayarkan harus sesuai dengan jumlah tagihan</string>
     <string name="error_payment_gograb_should_be_exact">Nominal GoPay atau OVO yang dibayarkan harus lebih dari sama dengan jumlah tagihan</string>
     <string name="login_header_information">Isilah form ini dengan akun login anda,
@@ -348,6 +349,8 @@
     <string name="label_notes">Catatan</string>
     <string name="label_verified_by">Verifikasi Oleh</string>
     <string name="label_supplier">Supplier</string>
+    <string name="label_ongkir">Ongkir</string>
+    <string name="label_ongkir_cash_to_driver">Dibayar customer cash ke driver</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Bank Mandiri</string>

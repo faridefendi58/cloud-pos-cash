@@ -199,6 +199,7 @@
     <string name="error_empty_payment_data">Please complete the payment data</string>
     <string name="error_not_enough_payment">Your payment is still less than total invoice, Please check your payment data.</string>
     <string name="error_empty_retur_reason">Please choose at least a reason for the retur</string>
+    <string name="error_empty_shipping_customer_data">Please fill the Shipping Date, Name, Phone, and Address</string>
     <string name="error_payment_should_be_exact">Your payment should be same as total invoice</string>
     <string name="error_payment_gograb_should_be_exact">Your GoPay or OVO payment should be more than or equal than total invoice</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
@@ -350,6 +351,8 @@
     <string name="label_notes">Notes</string>
     <string name="label_verified_by">Verified By</string>
     <string name="label_supplier">Supplier</string>
+    <string name="label_ongkir">Ongkir</string>
+    <string name="label_ongkir_cash_to_driver">Cash by customer to driver</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>

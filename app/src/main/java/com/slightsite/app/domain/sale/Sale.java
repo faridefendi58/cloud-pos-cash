@@ -42,6 +42,8 @@ public class Sale implements Serializable {
 	private String delivered_at;
 	private String delivered_by_name;
 	private int is_verified_payment = 0;
+	private int ongkir = 0;
+	private Boolean ongkir_cash_to_driver = false;
 
 	public Sale(int id, String startTime) {
 		this(id, startTime, startTime, "", new ArrayList<LineItem>(), 0);
@@ -325,5 +327,21 @@ public class Sale implements Serializable {
 
 	public int getIsVerifiedPayment() {
 		return is_verified_payment;
+	}
+
+	public void setOngkir(int _ongkir) {
+		this.ongkir = _ongkir;
+	}
+
+	public int getOngkir() {
+		return ongkir;
+	}
+
+	public void setOngkirCashToDriver(Boolean _ongkir_cash) {
+		this.ongkir_cash_to_driver = _ongkir_cash;
+	}
+
+	public Boolean getOngkirCashToDriver() {
+		return ongkir_cash_to_driver;
 	}
 }

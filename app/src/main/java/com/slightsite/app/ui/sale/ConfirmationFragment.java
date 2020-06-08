@@ -56,6 +56,7 @@ public class ConfirmationFragment extends Fragment {
     private Resources res;
     private TextView totalPrice;
     private TextView total_discount;
+    private TextView total_ongkir;
     private TextView edit_customer;
     private TextView edit_payment;
     private TextView edit_cart;
@@ -65,9 +66,11 @@ public class ConfirmationFragment extends Fragment {
     private TextView gograbfood_discount;
     private TextView gograbfood_total_price;
     private TextView gograbfood_discount_label;
+    private TextView tv_cash_to_driver;
     private LinearLayout change_due_container;
     private LinearLayout gograbfood_discount_container;
     private LinearLayout main_discount_container;
+    private LinearLayout ongkir_container;
     private Payment payment;
 
     /** shipping detail */
@@ -124,6 +127,7 @@ public class ConfirmationFragment extends Fragment {
         conf_customer_address = (TextView) root.findViewById(R.id.conf_customer_address);
         totalPrice = (TextView) root.findViewById(R.id.totalPrice);
         total_discount = (TextView) root.findViewById(R.id.total_discount);
+        total_ongkir = (TextView) root.findViewById(R.id.total_ongkir);
 
         paymentListView = (RecyclerView) root.findViewById(R.id.payment_List);
         paymentListView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -146,9 +150,11 @@ public class ConfirmationFragment extends Fragment {
         change_due_container  = (LinearLayout) root.findViewById(R.id.change_due_container);
         gograbfood_discount_container  = (LinearLayout) root.findViewById(R.id.gograbfood_discount_container);
         main_discount_container  = (LinearLayout) root.findViewById(R.id.main_discount_container);
+        ongkir_container  = (LinearLayout) root.findViewById(R.id.ongkir_container);
         gograbfood_discount = (TextView) root.findViewById(R.id.gograbfood_discount);
         gograbfood_total_price = (TextView) root.findViewById(R.id.gograbfood_total_price);
         gograbfood_discount_label = (TextView) root.findViewById(R.id.gograbfood_discount_label);
+        tv_cash_to_driver = (TextView) root.findViewById(R.id.tv_cash_to_driver);
 
         shipping_method = (TextView) root.findViewById(R.id.shipping_method);
         shipping_date = (TextView) root.findViewById(R.id.shipping_date);
@@ -212,6 +218,9 @@ public class ConfirmationFragment extends Fragment {
             if (c_data.getTotalPaymentReceived() > 0) {
                 totalPayment.setText(CurrencyController.getInstance().moneyFormat(c_data.getTotalPaymentReceived()));
                 Double change_due = c_data.getTotalPaymentReceived() - (register.getTotal() - c_data.getDiscount());
+                if (c_data.getOngkir() > 0 && !c_data.getOngkirCashToDriver()) {
+                    change_due = c_data.getTotalPaymentReceived() - (register.getTotal() - c_data.getDiscount() + c_data.getOngkir());
+                }
                 try {
                     c_data.setChangeDue(change_due);
                     ((CheckoutActivity)getActivity()).setCheckoutData(c_data);
@@ -297,6 +306,14 @@ public class ConfirmationFragment extends Fragment {
                         change_due_container.setVisibility(View.GONE);
                     }
                 }
+
+                if (c_data.getOngkir() > 0) {
+                    ongkir_container.setVisibility(View.VISIBLE);
+                    total_ongkir.setText(CurrencyController.getInstance().moneyFormat(c_data.getOngkir()));
+                    if (c_data.getOngkirCashToDriver()) {
+                        tv_cash_to_driver.setVisibility(View.VISIBLE);
+                    }
+                }
             } else {
                 change_due_label.setText(getResources().getString(R.string.label_dept));
                 change_due_label.setTypeface(Typeface.DEFAULT_BOLD);
@@ -307,10 +324,8 @@ public class ConfirmationFragment extends Fragment {
                 changeDue.setTextColor(getResources().getColor(R.color.red_300));
             }
 
-            Log.e(getTag(), "c_data.getShipping() : "+ c_data.getShipping().toMap().toString());
             if (!c_data.getShipping().equals(null)) {
                 shipping = c_data.getShipping();
-                Log.e(getTag(), "Shipping data on confirmation :"+ shipping.toMap().toString());
                 shipping_method.setText(ship_methods[shipping.getMethod()]);
                 if (shipping.getDate().equals(null) || shipping.getDate().length() == 0) {
                     DateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm");

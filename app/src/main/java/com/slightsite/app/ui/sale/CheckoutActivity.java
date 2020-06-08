@@ -319,8 +319,20 @@ public class CheckoutActivity extends AppCompatActivity {
                         ) {
                             idx_state = idx_state + 1;
                         }
+                        // not allowed empty shipping name phone and address for gosend (2), and tokopedia (3)
+                        if (checkout_data.getShipping().getMethod() == 2 || checkout_data.getShipping().getMethod() == 3) {
+                            if (checkout_data.getShipping().getName() == null
+                                    || checkout_data.getShipping().getPhone() == null
+                                    || checkout_data.getShipping().getAddress() == null
+                                    || checkout_data.getShipping().getDate() == null) {
+                                Toast.makeText(getBaseContext(),
+                                        getResources().getString(R.string.error_empty_shipping_customer_data), Toast.LENGTH_SHORT)
+                                        .show();
+                                vibe.vibrate(200);
+                                return;
+                            }
+                        }
                     } else if (array_state[idx_state] == State.PAYMENT) {
-                        //Log.e(TAG, "shipping data on payment : "+ checkout_data.getShipping().toMap().toString());
                         if (checkout_data.getTotalPaymentReceived() <= 0) {
                             if (checkout_data.getShipping().getMethod() != 3) {
                                 checkout_data.setCashReceive("0");
@@ -888,6 +900,15 @@ public class CheckoutActivity extends AppCompatActivity {
             }
             if (arrMerchant.size() > 0) {
                 mObj.put("merchant", arrMerchant);
+            }
+
+            if (getCheckoutData().getOngkir() > 0) {
+                mObj.put("ongkir", getCheckoutData().getOngkir());
+                if (getCheckoutData().getOngkirCashToDriver()) {
+                    mObj.put("ongkir_cash_to_driver", 1);
+                } else {
+                    mObj.put("ongkir_cash_to_driver", 0);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

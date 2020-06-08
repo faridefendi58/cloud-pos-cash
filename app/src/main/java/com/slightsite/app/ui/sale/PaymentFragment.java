@@ -50,6 +50,7 @@ public class PaymentFragment extends Fragment {
     private LinearLayout payment_gograbfood_container;
     private LinearLayout cash_container;
     private LinearLayout switch_cash_container;
+    private LinearLayout ongkir_container;
     private SwitchCompat switch_tranfer;
     private SwitchCompat switch_edc;
     private SwitchCompat switch_cash;
@@ -71,12 +72,14 @@ public class PaymentFragment extends Fragment {
     private EditText nominal_gograbfood;
     private TextView total_order;
     private EditText total_discount;
+    private EditText total_ongkir;
     private TextView grand_total;
     private TextView billing_info_message;
     private TextView label_gograb_pay;
     private ImageButton bt_toggle_mandiri;
     private ImageButton bt_toggle_bca;
     private ImageButton bt_toggle_bri;
+    private SwitchCompat switch_ongkir_cash_to_driver;
 
     private Register register;
     private ParamCatalog paramCatalog;
@@ -106,7 +109,6 @@ public class PaymentFragment extends Fragment {
         if (!c_data.getTransferBank().isEmpty()) {
             Log.e(getTag(), "transfer bank data on default value :"+ c_data.getTransferBank().toString());
         }
-        Log.e(getTag(), "shipping data on payment frag : "+ c_data.getShipping().toMap().toString());
 
         return root;
     }
@@ -120,6 +122,7 @@ public class PaymentFragment extends Fragment {
         payment_gograbfood_container = (LinearLayout) root.findViewById(R.id.payment_gograbfood_container);
         cash_container = (LinearLayout) root.findViewById(R.id.cash_container);
         switch_cash_container = (LinearLayout) root.findViewById(R.id.switch_cash_container);
+        ongkir_container = (LinearLayout) root.findViewById(R.id.ongkir_container);
         switch_tranfer = (SwitchCompat) root.findViewById(R.id.switch_tranfer);
         switch_edc = (SwitchCompat) root.findViewById(R.id.switch_edc);
         switch_cash = (SwitchCompat) root.findViewById(R.id.switch_cash);
@@ -139,19 +142,20 @@ public class PaymentFragment extends Fragment {
         nominal_gograbfood  = (EditText) root.findViewById(R.id.nominal_gograbfood);
         total_order  = (TextView) root.findViewById(R.id.total_order);
         total_discount  = (EditText) root.findViewById(R.id.total_discount);
+        total_ongkir  = (EditText) root.findViewById(R.id.total_ongkir);
         grand_total  = (TextView) root.findViewById(R.id.grand_total);
         billing_info_message  = (TextView) root.findViewById(R.id.billing_info_message);
         label_gograb_pay  = (TextView) root.findViewById(R.id.label_gograb_pay);
         bt_toggle_mandiri = (ImageButton) root.findViewById(R.id.bt_toggle_mandiri);
         bt_toggle_bca = (ImageButton) root.findViewById(R.id.bt_toggle_bca);
         bt_toggle_bri = (ImageButton) root.findViewById(R.id.bt_toggle_bri);
+        switch_ongkir_cash_to_driver = (SwitchCompat) root.findViewById(R.id.switch_ongkir_cash_to_driver);
     }
 
     private void initAction() {
         c_data = ((CheckoutActivity) getActivity()).getCheckoutData();
         if (!c_data.getTransferBank().isEmpty()) {
             banks = c_data.getTransferBank();
-            Log.e(getTag(), "transfer bank data on init :"+ banks.toString());
         }
 
         if (!c_data.getEdc().isEmpty()) {
@@ -164,6 +168,10 @@ public class PaymentFragment extends Fragment {
             shp.setWarehouseId(checkoutActivity.getCurrentWarehouseId());
             shp.setWarehouseName(checkoutActivity.getCurrentWarehouseName());
             checkoutActivity.setShipping(shp, c_data);
+        }
+
+        if (c_data.getShipping().getMethod() == 2) { //Gosend
+            ongkir_container.setVisibility(View.VISIBLE);
         }
 
         switch_tranfer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -190,6 +198,25 @@ public class PaymentFragment extends Fragment {
             }
         });
 
+        switch_ongkir_cash_to_driver.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                try {
+                    String tot_order = CurrencyController.getInstance().moneyFormat(register.getTotal());
+                    tot_order = tot_order.replace(".", "");
+                    int grand_total_now = Integer.parseInt(tot_order);
+                    int grand_total_current = 0;
+                    if (isChecked) {
+                        grand_total_current = grand_total_now - c_data.getDiscount();
+                    } else {
+                        grand_total_current = grand_total_now - c_data.getDiscount() + c_data.getOngkir();
+                    }
+                    grand_total.setText(CurrencyController.getInstance().moneyFormat(Double.parseDouble(grand_total_current + "")));
+                    ((CheckoutActivity) getActivity()).hideKeyboard(getActivity());
+                    c_data.setOngkirCashToDriver(isChecked);
+                } catch (Exception e){e.printStackTrace();}
+            }
+        });
+
         setTextChangeListener(cash_receive, "cashReceive");
         setTextChangeListener(ed_nominal_mandiri, "nominal_mandiri");
         setTextChangeListener(ed_nominal_bca, "nominal_bca");
@@ -200,7 +227,7 @@ public class PaymentFragment extends Fragment {
         setTextChangeListener(gograbfood_discount, "gograbfood_discount");
         setTextChangeListener(nominal_gograbfood, "nominal_gograbfood");
 
-        String tot_order = CurrencyController.getInstance().moneyFormat(register.getTotal());
+        final String tot_order = CurrencyController.getInstance().moneyFormat(register.getTotal());
         total_order.setText(tot_order);
         grand_total.setText(tot_order);
 
@@ -249,15 +276,18 @@ public class PaymentFragment extends Fragment {
         total_discount.addTextChangedListener(new TextWatcher(){
             private String current_discount_val;
             public void afterTextChanged(Editable s) {
-                if (s.length() >= 3) {
+                if (s.length() >= 1) {
                     try {
                         String cleanString = s.toString().replaceAll("[.]", "");
 
                         int discount_val = Integer.parseInt(cleanString);
+                        int grand_total_current = 0;
                         String tot_order = CurrencyController.getInstance().moneyFormat(register.getTotal());
                         tot_order = tot_order.replace(".", "");
                         int grand_total_now = Integer.parseInt(tot_order);
-                        int grand_total_current = 0;
+                        if (!c_data.getOngkirCashToDriver()) {
+                            grand_total_now = grand_total_now + c_data.getOngkir();
+                        }
                         if (discount_val < grand_total_now) {
                             grand_total_current = grand_total_now - discount_val;
                         }
@@ -266,6 +296,22 @@ public class PaymentFragment extends Fragment {
                         current_discount_val = discount_val+"";
                         c_data.setDiscount(discount_val);
                         //s.setText(CurrencyController.getInstance().moneyFormat(discount_val));
+                        grand_total.setText(CurrencyController.getInstance().moneyFormat(Double.parseDouble(grand_total_current+"")));
+                    } catch (Exception e){e.printStackTrace();}
+                } else {
+                    try {
+                        int grand_total_current = 0;
+                        String tot_order = CurrencyController.getInstance().moneyFormat(register.getTotal());
+                        tot_order = tot_order.replace(".", "");
+                        int grand_total_now = Integer.parseInt(tot_order);
+                        if (!c_data.getOngkirCashToDriver()) {
+                            grand_total_now = grand_total_now + c_data.getOngkir();
+                        }
+                        grand_total_current = grand_total_now;
+
+                        // save the discount value
+                        current_discount_val = "0";
+                        c_data.setDiscount(0);
                         grand_total.setText(CurrencyController.getInstance().moneyFormat(Double.parseDouble(grand_total_current+"")));
                     } catch (Exception e){e.printStackTrace();}
                 }
@@ -277,13 +323,70 @@ public class PaymentFragment extends Fragment {
 
                     String cleanString = s.toString().replaceAll("[.]", "");
 
-                    double parsed = Double.parseDouble(cleanString);
-                    String formatted = CurrencyController.getInstance().moneyFormat(parsed);
+                    String formatted = "";
+                    if (cleanString != null && !cleanString.isEmpty()) {
+                        double parsed = Double.parseDouble(cleanString);
+                        formatted = CurrencyController.getInstance().moneyFormat(parsed);
+                    }
 
                     current_discount_val = formatted;
                     total_discount.setText(formatted);
                     total_discount.setSelection(formatted.length());
                     total_discount.addTextChangedListener(this);
+                }
+            }
+        });
+
+        total_ongkir.addTextChangedListener(new TextWatcher(){
+            private String current_ongkir_val;
+            public void afterTextChanged(Editable s) {
+                if (s.length() >= 1) {
+                    try {
+                        String cleanString = s.toString().replaceAll("[.]", "");
+                        int ongkir_val = Integer.parseInt(cleanString);
+                        String tot_order = CurrencyController.getInstance().moneyFormat(register.getTotal());
+                        tot_order = tot_order.replace(".", "");
+                        int grand_total_now = Integer.parseInt(tot_order);
+                        int grand_total_current = grand_total_now + ongkir_val - c_data.getDiscount();
+                        if (c_data.getOngkirCashToDriver()) {
+                            grand_total_current = grand_total_now + c_data.getDiscount();
+                        }
+
+                        // save the discount value
+                        current_ongkir_val = ongkir_val+"";
+                        c_data.setOngkir(ongkir_val);
+                        grand_total.setText(CurrencyController.getInstance().moneyFormat(Double.parseDouble(grand_total_current+"")));
+                    } catch (Exception e){e.printStackTrace();}
+                } else {
+                    try {
+                        String tot_order = CurrencyController.getInstance().moneyFormat(register.getTotal());
+                        tot_order = tot_order.replace(".", "");
+                        int grand_total_now = Integer.parseInt(tot_order);
+                        int grand_total_current = grand_total_now - c_data.getDiscount();
+
+                        current_ongkir_val = "0";
+                        c_data.setOngkir(0);
+                        grand_total.setText(CurrencyController.getInstance().moneyFormat(Double.parseDouble(grand_total_current+"")));
+                    } catch (Exception e){e.printStackTrace();}
+                }
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void onTextChanged(CharSequence s, int start, int before, int count){
+                if(!s.toString().equals(current_ongkir_val)){
+                    total_ongkir.removeTextChangedListener(this);
+
+                    String cleanString = s.toString().replaceAll("[.]", "");
+
+                    String formatted = "";
+                    if (cleanString != null && !cleanString.isEmpty()) {
+                        double parsed = Double.parseDouble(cleanString);
+                        formatted = CurrencyController.getInstance().moneyFormat(parsed);
+                    }
+
+                    current_ongkir_val = formatted;
+                    total_ongkir.setText(formatted);
+                    total_ongkir.setSelection(formatted.length());
+                    total_ongkir.addTextChangedListener(this);
                 }
             }
         });

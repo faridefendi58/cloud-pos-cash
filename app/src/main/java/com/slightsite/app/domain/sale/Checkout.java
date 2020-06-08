@@ -25,7 +25,9 @@ public class Checkout implements Serializable {
     private Boolean use_cash = false;
     private List<PaymentItem> payment_items;
     private Shipping shipping;
-    private int discount;
+    private int discount = 0;
+    private int ongkir = 0;
+    private Boolean ongkir_cash_to_driver = false;
     private String wallet_tokopedia = "0";
     private String wallet_gofood = "0";
     private String wallet_grabfood = "0";
@@ -249,6 +251,22 @@ public class Checkout implements Serializable {
 
     public int getDiscount() {
         return discount;
+    }
+
+    public void setOngkir(int ongkir) {
+        this.ongkir = ongkir;
+    }
+
+    public int getOngkir() {
+        return ongkir;
+    }
+
+    public void setOngkirCashToDriver(Boolean cash_to_driver) {
+        this.ongkir_cash_to_driver = cash_to_driver;
+    }
+
+    public Boolean getOngkirCashToDriver() {
+        return ongkir_cash_to_driver;
     }
 
     public void setWalletTokopedia(String nominal) {

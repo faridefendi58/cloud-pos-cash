@@ -527,6 +527,12 @@ public class PrintPreviewActivity extends Activity {
                                     sale.setRefundedBy(server_invoice_data.getInt("refunded_by"));
                                     sale.setRefundedByName(server_invoice_data.getString("refunded_by_name"));
                                     sale.setDeliveredByName(server_invoice_data.getString("delivered_by_name"));
+                                    if (server_invoice_data.has("ongkir") && server_invoice_data.getInt("ongkir") > 0) {
+                                        sale.setOngkir(server_invoice_data.getInt("ongkir"));
+                                        if (server_invoice_data.has("ongkir_cash_to_driver") && server_invoice_data.getInt("ongkir_cash_to_driver") > 0) {
+                                            sale.setOngkirCashToDriver(true);
+                                        }
+                                    }
 
                                     // force to be delivered if trigger from proceed Order Button
                                     if (getIntent().hasExtra("process_order")) {
@@ -784,6 +790,16 @@ public class PrintPreviewActivity extends Activity {
                 "<td style=\"text-align:right;\">- "+ CurrencyController.getInstance().moneyFormat(discount) +"</td>";
 
         int grand_total = sub_total + ppn - discount;
+
+        int ongkir = sale.getOngkir();
+        if (ongkir > 0) {
+            Boolean ongkir_cash = sale.getOngkirCashToDriver();
+            if (!ongkir_cash) {
+                res += "<tr class=\"ft-16\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.label_ongkir) +" :</td>" +
+                        "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(ongkir) +"</td>";
+                grand_total = grand_total + ongkir;
+            }
+        }
 
         int cash = grand_total;
         int change_due = grand_total - cash;
