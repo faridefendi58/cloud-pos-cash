@@ -80,6 +80,7 @@ public class StaggingDetailActivity extends Activity{
     private TextView tv_customer_address;
     private TextView tv_customer_phone;
     private TextView tv_shipping_method;
+    private TextView tv_shipping_date;
     private LinearLayout complete_button_container;
 
     private ParamCatalog paramCatalog;
@@ -165,6 +166,7 @@ public class StaggingDetailActivity extends Activity{
         tv_customer_address = (TextView) findViewById(R.id.tv_customer_address);
         tv_customer_phone = (TextView) findViewById(R.id.tv_customer_phone);
         tv_shipping_method = (TextView) findViewById(R.id.tv_shipping_method);
+        tv_shipping_date = (TextView) findViewById(R.id.tv_shipping_date);
 
         complete_button_container = (LinearLayout) findViewById(R.id.complete_button_container);
 
@@ -402,6 +404,7 @@ public class StaggingDetailActivity extends Activity{
                                 } else if (server_stagging_data.getString("shipping_method").equals("gosend")) {
                                     tv_shipping_method.setText("GoSend");
                                 }
+                                tv_shipping_date.setText(server_stagging_data.getString("created_at"));
 
                                 buildListItems();
                             }
