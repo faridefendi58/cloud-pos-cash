@@ -17,6 +17,7 @@ public class Shipping implements Serializable {
     private String name;
     private String phone;
     private String address;
+    private String invoice_number = null;
     private int warehouse_id;
     private String warehouse_name;
     private String date_added;
@@ -59,6 +60,9 @@ public class Shipping implements Serializable {
         map.put("configs", configs);
         map.put("recipient_name", name);
         map.put("recipient_phone", phone);
+        if (invoice_number != null) {
+            map.put("invoice_number", invoice_number); //gosend, gofood, or grabfood inv number
+        }
 
         return map;
 
@@ -150,5 +154,12 @@ public class Shipping implements Serializable {
     }
     public Boolean getUseCustomerData() {
         return use_customer_data;
+    }
+
+    public void setInvoiceNumber(String inv) {
+        this.invoice_number = inv;
+    }
+    public String getInvoiceNumber() {
+        return invoice_number;
     }
 }

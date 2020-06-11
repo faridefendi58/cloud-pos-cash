@@ -310,6 +310,37 @@
 
                 </LinearLayout>
 
+                <LinearLayout
+                        android:id="@+id/shipping_invoice_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                    <TextView
+                            android:id="@+id/inv_prefiks"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/spacing_xmlarge"
+                            android:layout_marginTop="14dp"
+                            android:background="@drawable/btn_white"
+                            android:text="F-"
+                            android:textStyle="bold"
+                            android:visibility="gone"></TextView>
+
+                    <EditText
+                            style="@style/EditText.Flat.Grey"
+                            android:id="@+id/shipping_invoice_number"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_large"
+                            android:background="@drawable/edit_text_round_bg_outline"
+                            android:hint="@string/label_shipping_inv_number"
+                            android:minHeight="@dimen/spacing_xmlarge"
+                            android:inputType="textPersonName"
+                            android:singleLine="true" />
+
+                </LinearLayout>
+
             </LinearLayout>
 
         </android.support.v7.widget.CardView>

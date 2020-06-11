@@ -79,8 +79,10 @@ public class ConfirmationFragment extends Fragment {
     private TextView shipping_warehouse;
     private TextView label_shipping_warehouse;
     private LinearLayout recipient_name_container;
+    private LinearLayout invoice_number_container;
     private TextView shipping_recipient_name;
     private TextView shipping_recipient_phone;
+    private TextView shipping_invoice_number;
     private Shipping shipping;
     private String[] ship_methods;
 
@@ -163,6 +165,8 @@ public class ConfirmationFragment extends Fragment {
         shipping_recipient_name = (TextView) root.findViewById(R.id.shipping_recipient_name);
         shipping_recipient_phone = (TextView) root.findViewById(R.id.shipping_recipient_phone);
         recipient_name_container = (LinearLayout) root.findViewById(R.id.recipient_name_container);
+        invoice_number_container = (LinearLayout) root.findViewById(R.id.invoice_number_container);
+        shipping_invoice_number = (TextView) root.findViewById(R.id.shipping_invoice_number);
     }
 
     private void initAction() {
@@ -351,6 +355,11 @@ public class ConfirmationFragment extends Fragment {
                     recipient_name_container.setVisibility(View.VISIBLE);
                     shipping_recipient_name.setText(shipping.getName());
                     shipping_recipient_phone.setText(shipping.getPhone());
+                }
+
+                if (shipping.getInvoiceNumber() != null) {
+                    invoice_number_container.setVisibility(View.VISIBLE);
+                    shipping_invoice_number.setText(shipping.getInvoiceNumber());
                 }
             }
         } catch (Exception e) {e.printStackTrace();}

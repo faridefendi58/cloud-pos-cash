@@ -200,6 +200,7 @@
     <string name="error_not_enough_payment">Your payment is still less than total invoice, Please check your payment data.</string>
     <string name="error_empty_retur_reason">Please choose at least a reason for the retur</string>
     <string name="error_empty_shipping_customer_data">Please fill the Shipping Date, Name, Phone, and Address</string>
+    <string name="error_empty_shipping_date">Please fill the Shipping Date</string>
     <string name="error_payment_should_be_exact">Your payment should be same as total invoice</string>
     <string name="error_payment_gograb_should_be_exact">Your GoPay or OVO payment should be more than or equal than total invoice</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
@@ -300,6 +301,7 @@
     <string name="label_shipping_name">Recipient Name</string>
     <string name="label_shipping_phone">Recipient Phone</string>
     <string name="label_shipping_use_customer_data">Same as customer data</string>
+    <string name="label_shipping_inv_number">Invoice Number</string>
     <string name="label_payment">Payment</string>
     <string name="label_payment_total_receieved">Total Payment Received</string>
     <string name="label_payment_change_due">Change Due</string>

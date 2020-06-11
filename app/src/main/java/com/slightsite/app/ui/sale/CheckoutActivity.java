@@ -319,14 +319,24 @@ public class CheckoutActivity extends AppCompatActivity {
                         ) {
                             idx_state = idx_state + 1;
                         }
-                        // not allowed empty shipping name phone and address for gosend (2), and tokopedia (3)
-                        if (checkout_data.getShipping().getMethod() == 2 || checkout_data.getShipping().getMethod() == 3) {
+                        // not allowed empty shipping name phone and address for gosend (2)
+                        if (checkout_data.getShipping().getMethod() == 2) {
                             if (checkout_data.getShipping().getName() == null
                                     || checkout_data.getShipping().getPhone() == null
                                     || checkout_data.getShipping().getAddress() == null
                                     || checkout_data.getShipping().getDate() == null) {
                                 Toast.makeText(getBaseContext(),
                                         getResources().getString(R.string.error_empty_shipping_customer_data), Toast.LENGTH_SHORT)
+                                        .show();
+                                vibe.vibrate(200);
+                                return;
+                            }
+                        }
+
+                        if (checkout_data.getShipping().getMethod() == 3) { // Tokopedia
+                            if (checkout_data.getShipping().getDate() == null || checkout_data.getShipping().getInvoiceNumber() == null) {
+                                Toast.makeText(getBaseContext(),
+                                        getResources().getString(R.string.error_empty_shipping_date), Toast.LENGTH_SHORT)
                                         .show();
                                 vibe.vibrate(200);
                                 return;

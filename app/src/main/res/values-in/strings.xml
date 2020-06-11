@@ -203,6 +203,7 @@
     <string name="error_not_enough_payment">Jumlah yang Anda bayarkan masih kurang dari total tagihan.</string>
     <string name="error_empty_retur_reason">Pilih minimal 1 alasan retur</string>
     <string name="error_empty_shipping_customer_data">Mohon lengkapi kolom tanggal Ambil/Kirim, Nama, Telepon, dan Alamat.</string>
+    <string name="error_empty_shipping_date">Mohon lengkapi kolom tanggal Ambil/Kirim.</string>
     <string name="error_payment_should_be_exact">Jumlah yang dibayarkan harus sesuai dengan jumlah tagihan</string>
     <string name="error_payment_gograb_should_be_exact">Nominal GoPay atau OVO yang dibayarkan harus lebih dari sama dengan jumlah tagihan</string>
     <string name="login_header_information">Isilah form ini dengan akun login anda,
@@ -298,6 +299,7 @@
     <string name="label_shipping_name">Nama Penerima</string>
     <string name="label_shipping_phone">No Telp Penerima</string>
     <string name="label_shipping_use_customer_data">Sama dengan data pelanggan</string>
+    <string name="label_shipping_inv_number">Nomor Invoice</string>
     <string name="label_payment">Pembayaran</string>
     <string name="label_payment_total_receieved">Total Dibayarkan</string>
     <string name="label_payment_change_due">Kembali</string>

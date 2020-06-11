@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -73,7 +74,10 @@ public class ShippingFragment extends Fragment {
     private EditText shipping_address;
     private EditText shipping_name;
     private EditText shipping_phone;
+    private EditText shipping_invoice_number;
+    private TextView inv_prefiks;
     private LinearLayout shipping_name_container;
+    private LinearLayout shipping_invoice_container;
     private SwitchCompat switch_use_customer_data;
 
     private Checkout c_data;
@@ -186,8 +190,11 @@ public class ShippingFragment extends Fragment {
         shipping_address = (EditText) root.findViewById(R.id.shipping_address);
         shipping_name = (EditText) root.findViewById(R.id.shipping_name);
         shipping_phone = (EditText) root.findViewById(R.id.shipping_phone);
+        shipping_invoice_number = (EditText) root.findViewById(R.id.shipping_invoice_number);
+        inv_prefiks = (TextView) root.findViewById(R.id.inv_prefiks);
         shipping_warehouse = (AutoCompleteTextView) root.findViewById(R.id.shipping_warehouse);
         shipping_name_container = (LinearLayout) root.findViewById(R.id.shipping_name_container);
+        shipping_invoice_container = (LinearLayout) root.findViewById(R.id.shipping_invoice_container);
         switch_use_customer_data = (SwitchCompat) root.findViewById(R.id.switch_use_customer_data);
 
         final TextView customer_id = (TextView) root.findViewById(R.id.customer_id);
@@ -332,6 +339,19 @@ public class ShippingFragment extends Fragment {
                             ((CheckoutActivity) getActivity()).setCustomer(cust);
                         }
                     }
+
+                    if (setType == "shipping_invoice_number") {
+                        if (s.toString().length() > 2) {
+                            if (ship.getMethod() == 4) {
+                                ship.setInvoiceNumber("F-" + s.toString());
+                            } else if (ship.getMethod() == 5) {
+                                ship.setInvoiceNumber("GF-" + s.toString());
+                            } else {
+                                ship.setInvoiceNumber(s.toString());
+                            }
+                            ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
+                        }
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -386,6 +406,7 @@ public class ShippingFragment extends Fragment {
         setTextChangeListener(shipping_name, "shipping_name");
         setTextChangeListener(shipping_phone, "shipping_phone");
         setTextChangeListener(shipping_address, "shipping_address");
+        setTextChangeListener(shipping_invoice_number, "shipping_invoice_number");
 
         switch_use_customer_data.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -556,6 +577,7 @@ public class ShippingFragment extends Fragment {
     }
 
     private void setupShippingForm(int i) {
+        shipping_invoice_container.setVisibility(View.GONE);
         if (i == 0) {
             shipping_date.setVisibility(View.GONE);
             shipping_address.setVisibility(View.GONE);
@@ -578,6 +600,22 @@ public class ShippingFragment extends Fragment {
                 ship.setPickupDate(DateTimeStrategy.parseDate(cur_time, "dd MMM yyyy HH:mm"));
                 ship.setAddress(cust.getAddress());
                 shipping_name_container.setVisibility(View.GONE);
+                shipping_invoice_container.setVisibility(View.VISIBLE);
+                if (i == 4) { //GoFood
+                    inv_prefiks.setText("F-");
+                    inv_prefiks.setVisibility(View.VISIBLE);
+                    shipping_invoice_number.setInputType(InputType.TYPE_CLASS_NUMBER);
+                } else if (i == 5) { //GrabFood
+                    inv_prefiks.setText("GF-");
+                    inv_prefiks.setVisibility(View.VISIBLE);
+                    shipping_invoice_number.setInputType(InputType.TYPE_CLASS_NUMBER);
+                }
+            } else if (i == 3) { //Tokopedia
+                shipping_date.setVisibility(View.VISIBLE);
+                shipping_name_container.setVisibility(View.GONE);
+                shipping_invoice_container.setVisibility(View.VISIBLE);
+                inv_prefiks.setVisibility(View.GONE);
+                shipping_invoice_number.setInputType(InputType.TYPE_CLASS_TEXT);
             } else {
                 shipping_date.setVisibility(View.VISIBLE);
                 shipping_name_container.setVisibility(View.VISIBLE);
