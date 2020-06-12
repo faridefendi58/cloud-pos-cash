@@ -363,6 +363,10 @@
     <string name="payment_wallet_gofood">GoPay</string>
     <string name="payment_wallet_grab_food">GrabPay (OVO)</string>
 
+    <string name="bank_mandiri">Bank Mandiri</string>
+    <string name="bank_bca">Bank BCA</string>
+    <string name="bank_bri">Bank BRI</string>
+
     <string name="button_add_to_cart">Tambah</string>
     <string name="button_syncron">Sinkronkan</string>
     <string name="button_back">Kembali</string>
@@ -390,6 +394,7 @@
     <string name="button_cancel">Cancel</string>
     <string name="button_remove">Hapus</string>
     <string name="button_reject">Tolak</string>
+    <string name="button_transfer_receipt">Bukti Transfer</string>
 
     <string name="confirm_edit">Anda yakin ingin mengubah data ini?</string>
     <string name="confirm_delete">Anda yakin ingin menghapus data ini?</string>
@@ -406,6 +411,7 @@
     <string name="hint_notes">Tambahkan catatan jika diperlukan.</string>
     <string name="hint_warehouse_from">Warehouse Asal :</string>
     <string name="hint_warehouse_destination">Warehouse Tujuan :</string>
+    <string name="hint_nominal_transfer">Nominal Transfer</string>
 
     <string name="heading_billing_information">Informasi Tagihan</string>
     <string name="heading_payment_method">Cara Pembayaran</string>

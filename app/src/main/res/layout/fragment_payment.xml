@@ -655,7 +655,7 @@
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
-                                        android:text="Bank Mandiri"
+                                        android:text="@string/bank_mandiri"
                                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
                                         android:textColor="@color/grey_80" />
 
@@ -673,6 +673,7 @@
                                     android:id="@+id/lyt_expand_mandiri"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:paddingHorizontal="@dimen/spacing_middle"
                                     android:orientation="vertical" android:visibility="gone">
 
                                 <EditText
@@ -684,9 +685,20 @@
                                         android:drawableEnd="@drawable/ic_expand_arrow"
                                         android:layout_marginTop="@dimen/spacing_middle"
                                         android:drawableRight="@drawable/ic_payment_black_24dp"
-                                        android:hint="Nominal Transfer ke Mandiri"
+                                        android:hint="@string/hint_nominal_transfer"
                                         android:minHeight="@dimen/spacing_xmlarge"
                                         android:inputType="number"/>
+
+                                <ImageView
+                                        android:id="@+id/img_receipt_mandiri"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content" />
+
+                                <Button
+                                        android:id="@+id/btn_receipt_mandiri"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/button_transfer_receipt" />
 
                             </LinearLayout>
 
@@ -714,7 +726,7 @@
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
-                                        android:text="Bank BCA"
+                                        android:text="@string/bank_bca"
                                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
                                         android:textColor="@color/grey_80" />
 
@@ -732,6 +744,7 @@
                                     android:id="@+id/lyt_expand_bca"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:paddingHorizontal="@dimen/spacing_middle"
                                     android:orientation="vertical" android:visibility="gone">
 
                                 <EditText
@@ -743,9 +756,20 @@
                                         android:drawableEnd="@drawable/ic_expand_arrow"
                                         android:layout_marginTop="@dimen/spacing_middle"
                                         android:drawableRight="@drawable/ic_payment_black_24dp"
-                                        android:hint="Nominal Transfer ke BCA"
+                                        android:hint="@string/hint_nominal_transfer"
                                         android:minHeight="@dimen/spacing_xmlarge"
                                         android:inputType="number"/>
+
+                                <ImageView
+                                        android:id="@+id/img_receipt_bca"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content" />
+
+                                <Button
+                                        android:id="@+id/btn_receipt_bca"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/button_transfer_receipt" />
 
                             </LinearLayout>
 
@@ -773,7 +797,7 @@
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
-                                        android:text="BANK BRI"
+                                        android:text="@string/bank_bri"
                                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
                                         android:textColor="@color/grey_80" />
 
@@ -791,6 +815,7 @@
                                     android:id="@+id/lyt_expand_bri"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:paddingHorizontal="@dimen/spacing_middle"
                                     android:orientation="vertical" android:visibility="gone">
 
                                 <EditText
@@ -802,9 +827,20 @@
                                         android:drawableEnd="@drawable/ic_expand_arrow"
                                         android:layout_marginTop="@dimen/spacing_middle"
                                         android:drawableRight="@drawable/ic_payment_black_24dp"
-                                        android:hint="Nominal Transfer ke BRI"
+                                        android:hint="@string/hint_nominal_transfer"
                                         android:minHeight="@dimen/spacing_xmlarge"
                                         android:inputType="number"/>
+
+                                <ImageView
+                                        android:id="@+id/img_receipt_bri"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content" />
+
+                                <Button
+                                        android:id="@+id/btn_receipt_bri"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/button_transfer_receipt" />
 
                             </LinearLayout>
 

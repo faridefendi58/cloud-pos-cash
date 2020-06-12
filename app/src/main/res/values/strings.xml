@@ -365,6 +365,10 @@
     <string name="payment_wallet_gofood">GoPay</string>
     <string name="payment_wallet_grab_food">GrabPay (OVO)</string>
 
+    <string name="bank_mandiri">Bank Mandiri</string>
+    <string name="bank_bca">Bank BCA</string>
+    <string name="bank_bri">Bank BRI</string>
+
     <string name="button_add_to_cart">Add To Cart</string>
     <string name="button_syncron">Syncronize Now</string>
     <string name="button_back">Back</string>
@@ -392,6 +396,7 @@
     <string name="button_cancel">Cancel</string>
     <string name="button_remove">Remove</string>
     <string name="button_reject">Reject</string>
+    <string name="button_transfer_receipt">Transfer Receipt</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
     <string name="confirm_delete">Are you sure you want to delete this?</string>
@@ -408,6 +413,7 @@
     <string name="hint_notes">Add some notes if needed.</string>
     <string name="hint_warehouse_from">Warehouse From :</string>
     <string name="hint_warehouse_destination">Warehouse Destination :</string>
+    <string name="hint_nominal_transfer">Nominal Transfer</string>
 
     <string name="heading_billing_information">Billing Information</string>
     <string name="heading_payment_method">Payment Method</string>

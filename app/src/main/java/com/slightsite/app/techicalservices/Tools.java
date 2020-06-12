@@ -470,5 +470,14 @@ public class Tools {
 
         return list;
     }
+
+    public static Map<String, String> getBankList() {
+        Map<String, String> list = new HashMap<String, String>();
+        list.put("mandiri", "Bank Mandiri");
+        list.put("bca", "Bank BCA");
+        list.put("bri", "Bank BRI");
+
+        return list;
+    }
 }
 

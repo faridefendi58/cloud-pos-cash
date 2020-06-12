@@ -1,6 +1,10 @@
 package com.slightsite.app.ui.sale;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -14,9 +18,11 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,10 +41,14 @@ import com.slightsite.app.techicalservices.Tools;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static android.app.Activity.RESULT_OK;
 
 public class PaymentFragment extends Fragment {
 
@@ -80,6 +90,12 @@ public class PaymentFragment extends Fragment {
     private ImageButton bt_toggle_bca;
     private ImageButton bt_toggle_bri;
     private SwitchCompat switch_ongkir_cash_to_driver;
+    private Button btn_receipt_mandiri;
+    private Button btn_receipt_bca;
+    private Button btn_receipt_bri;
+    private ImageView img_receipt_mandiri;
+    private ImageView img_receipt_bca;
+    private ImageView img_receipt_bri;
 
     private Register register;
     private ParamCatalog paramCatalog;
@@ -87,8 +103,10 @@ public class PaymentFragment extends Fragment {
     private Checkout c_data;
     private HashMap< String, String> banks = new HashMap< String, String>();
     private HashMap< String, String> edcs = new HashMap< String, String>();
+    private Map<String, String> bank_names = new HashMap<String, String>();
 
     private ArrayList<String> warehouse_items = new ArrayList<String>();
+    private int PICK_IMAGE_REQUEST = 1;
 
     public PaymentFragment() {
     }
@@ -98,6 +116,7 @@ public class PaymentFragment extends Fragment {
         try {
             register = Register.getInstance();
             paramCatalog = ParamService.getInstance().getParamCatalog();
+            bank_names = Tools.getBankList();
         } catch (NoDaoSetException e) {
             e.printStackTrace();
         }
@@ -150,6 +169,12 @@ public class PaymentFragment extends Fragment {
         bt_toggle_bca = (ImageButton) root.findViewById(R.id.bt_toggle_bca);
         bt_toggle_bri = (ImageButton) root.findViewById(R.id.bt_toggle_bri);
         switch_ongkir_cash_to_driver = (SwitchCompat) root.findViewById(R.id.switch_ongkir_cash_to_driver);
+        btn_receipt_mandiri = (Button) root.findViewById(R.id.btn_receipt_mandiri);
+        btn_receipt_bca = (Button) root.findViewById(R.id.btn_receipt_bca);
+        btn_receipt_bri = (Button) root.findViewById(R.id.btn_receipt_bri);
+        img_receipt_mandiri = (ImageView) root.findViewById(R.id.img_receipt_mandiri);
+        img_receipt_bca = (ImageView) root.findViewById(R.id.img_receipt_bca);
+        img_receipt_bri = (ImageView) root.findViewById(R.id.img_receipt_bri);
     }
 
     private void initAction() {
@@ -400,6 +425,27 @@ public class PaymentFragment extends Fragment {
                 }
                 ((CheckoutActivity) getActivity()).hideKeyboard(getActivity());
                 c_data.setUseCash(isChecked);
+            }
+        });
+
+        btn_receipt_mandiri.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showFileChooser("mandiri");
+            }
+        });
+
+        btn_receipt_bca.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showFileChooser("bca");
+            }
+        });
+
+        btn_receipt_bri.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showFileChooser("bri");
             }
         });
     }
@@ -670,6 +716,46 @@ public class PaymentFragment extends Fragment {
         } else {
             view.animate().setDuration(200).rotation(0);
             return false;
+        }
+    }
+
+    private void showFileChooser(String bank_name) {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        //startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+        Integer pick_image_request = 1;
+        if (bank_name.equals("mandiri")) {
+            pick_image_request = 1;
+        } else if (bank_name.equals("bca")) {
+            pick_image_request = 2;
+        } else if (bank_name.equals("bri")) {
+            pick_image_request = 3;
+        }
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), pick_image_request);
+    }
+
+    //handling the image chooser activity result
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri filePath = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), filePath);
+                if (requestCode == 1) {
+                    img_receipt_mandiri.setImageBitmap(bitmap);
+                    img_receipt_mandiri.setMaxHeight(30);
+                } else if (requestCode == 2) {
+                    img_receipt_bca.setImageBitmap(bitmap);
+                    img_receipt_bca.setMaxHeight(30);
+                } else if (requestCode == 3) {
+                    img_receipt_bri.setImageBitmap(bitmap);
+                    img_receipt_bri.setMaxHeight(30);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
