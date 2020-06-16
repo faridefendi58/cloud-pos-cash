@@ -692,13 +692,22 @@
                                 <ImageView
                                         android:id="@+id/img_receipt_mandiri"
                                         android:layout_width="match_parent"
-                                        android:layout_height="wrap_content" />
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="@dimen/spacing_middle"
+                                        />
 
                                 <Button
                                         android:id="@+id/btn_receipt_mandiri"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:text="@string/button_transfer_receipt" />
+
+                                <Button
+                                        android:id="@+id/btn_remove_receipt_mandiri"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/button_remove"
+                                        android:visibility="gone"/>
 
                             </LinearLayout>
 
@@ -763,13 +772,21 @@
                                 <ImageView
                                         android:id="@+id/img_receipt_bca"
                                         android:layout_width="match_parent"
-                                        android:layout_height="wrap_content" />
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="@dimen/spacing_middle" />
 
                                 <Button
                                         android:id="@+id/btn_receipt_bca"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:text="@string/button_transfer_receipt" />
+
+                                <Button
+                                        android:id="@+id/btn_remove_receipt_bca"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/button_remove"
+                                        android:visibility="gone"/>
 
                             </LinearLayout>
 
@@ -834,13 +851,21 @@
                                 <ImageView
                                         android:id="@+id/img_receipt_bri"
                                         android:layout_width="match_parent"
-                                        android:layout_height="wrap_content" />
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="@dimen/spacing_middle" />
 
                                 <Button
                                         android:id="@+id/btn_receipt_bri"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:text="@string/button_transfer_receipt" />
+
+                                <Button
+                                        android:id="@+id/btn_remove_receipt_bri"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/button_remove"
+                                        android:visibility="gone"/>
 
                             </LinearLayout>
 

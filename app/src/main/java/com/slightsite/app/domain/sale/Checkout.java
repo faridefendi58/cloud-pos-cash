@@ -7,6 +7,7 @@ import android.util.Log;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.AppController;
 import com.slightsite.app.domain.customer.Customer;
+import com.slightsite.app.techicalservices.Tools;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class Checkout implements Serializable {
     private String gofood_discount = "0";
     private String grabfood_discount = "0";
     private Double change_due = 0.0;
+    private HashMap<String, String> pay_receipts = new HashMap<String, String>();
 
     public Checkout() {}
 
@@ -394,5 +396,23 @@ public class Checkout implements Serializable {
 
     public Boolean getUseCash() {
         return use_cash;
+    }
+
+    public void addReceipt(String bank_name, String btm) {
+        this.pay_receipts.put(bank_name, btm);
+    }
+
+    public Bitmap getPaymentReceipt(String bank_name) {
+        String btm = this.pay_receipts.get(bank_name);
+        if (!btm.isEmpty()) {
+            return Tools.StringToBitMap(btm);
+        }
+        return null;
+    }
+
+    public void removeReceipt(String bank_name) {
+        if (this.pay_receipts.containsKey(bank_name)) {
+            this.pay_receipts.remove(bank_name);
+        }
     }
 }

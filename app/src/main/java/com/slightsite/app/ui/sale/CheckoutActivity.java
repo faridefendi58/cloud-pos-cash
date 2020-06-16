@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -74,6 +76,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -843,6 +848,8 @@ public class CheckoutActivity extends AppCompatActivity {
         ArrayList arrShippingList = new ArrayList();
         Map<String, String> arrMerchant = new HashMap<String, String>();
         ArrayList arrMerchantList = new ArrayList();
+        Map<String, String> arrPaymentBank = new HashMap<String, String>();
+        ArrayList arrReceiptList = new ArrayList();
         try {
             Customer cust = saleLedger.getCustomerBySaleId(saleId);
             mObj.put("items_belanja", arrItems);
@@ -868,6 +875,22 @@ public class CheckoutActivity extends AppCompatActivity {
                     }
                     arrPaymentList.add(arrPayment2);
                     total_tendered = total_tendered + py.getAmount();
+                    if (py.getPaymentChannel().equals("nominal_mandiri")) {
+                        String trf_img = getTransferReceipt("mandiri");
+                        if (trf_img != null) {
+                            mObj.put("receipt_mandiri", trf_img);
+                        }
+                    } else if (py.getPaymentChannel().equals("nominal_bca")) {
+                        String trf_img = getTransferReceipt("bca");
+                        if (trf_img != null) {
+                            mObj.put("receipt_bca", trf_img);
+                        }
+                    } else if (py.getPaymentChannel().equals("nominal_bri")) {
+                        String trf_img = getTransferReceipt("bri");
+                        if (trf_img != null) {
+                            mObj.put("receipt_bri", trf_img);
+                        }
+                    }
                 }
             } else {
                 arrPayment.put("type", "cash_receive");
@@ -876,6 +899,9 @@ public class CheckoutActivity extends AppCompatActivity {
                 arrPaymentList.add(arrPayment);
             }
             mObj.put("payment", arrPaymentList);
+            /*if (arrPaymentBank.size() > 0) { //if any receipt image
+                mObj.put("transfer_receipt", arrPaymentBank);
+            }*/
             // set warehouse_id if any
             Params whParam = paramCatalog.getParamByName("warehouse_id");
             if (whParam != null) {
@@ -940,12 +966,28 @@ public class CheckoutActivity extends AppCompatActivity {
         }
     }
 
-    private void _execute(Map mObj) {
+    private Boolean has_receipt = false;
+    private void _execute(final Map mObj) {
+        Map<String, String> params = new HashMap<String, String>();
+        if (mObj.containsKey("receipt_mandiri")) {
+            has_receipt = true;
+            params.put("receipt_mandiri", mObj.get("receipt_mandiri").toString());
+            mObj.remove("receipt_mandiri");
+        }
+        if (mObj.containsKey("receipt_bca")) {
+            has_receipt = true;
+            params.put("receipt_bca", mObj.get("receipt_bca").toString());
+            mObj.remove("receipt_bca");
+        }
+        if (mObj.containsKey("receipt_bri")) {
+            has_receipt = true;
+            params.put("receipt_bri", mObj.get("receipt_bri").toString());
+            mObj.remove("receipt_bri");
+        }
         String _url = Server.URL + "transaction/create?api-key=" + Server.API_KEY;
         String qry = URLBuilder.httpBuildQuery(mObj, "UTF-8");
         _url += "&"+ qry;
 
-        Map<String, String> params = new HashMap<String, String>();
         String admin_id = sharedpreferences.getString(TAG_ID, null);
         Params adminParam = paramCatalog.getParamByName("admin_id");
         if (adminParam != null) {
@@ -970,6 +1012,12 @@ public class CheckoutActivity extends AppCompatActivity {
                             // Check for error node in json
                             if (success == 1) {
                                 saleLedger.setServerInvoiceId(sale, server_invoice_id, server_invoice_number);
+                                // remove transfer receipt if any
+                                if (has_receipt) {
+                                    removeReceiptBitmap("mandiri");
+                                    removeReceiptBitmap("bca");
+                                    removeReceiptBitmap("bri");
+                                }
                             }
                             /*Toast.makeText(getApplicationContext(),
                                     jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();*/
@@ -994,5 +1042,46 @@ public class CheckoutActivity extends AppCompatActivity {
         transaction.add(R.id.parent_view, newFragment).addToBackStack(null).commit();
         (findViewById(R.id.lyt_next_container)).setVisibility(View.GONE);
         (findViewById(R.id.toolbar)).setVisibility(View.GONE);
+    }
+
+    private String getTransferReceipt(String bank_name) {
+        String encodedImage = null;
+        try {
+            //File file = new File(bank_name);
+            //if(file.exists()) {
+            if (payment_receipts.containsKey(bank_name)) {
+                //Bitmap src = BitmapFactory.decodeStream(openFileInput(bank_name));
+                Bitmap src = payment_receipts.get(bank_name);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                src.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] imageBytes = baos.toByteArray();
+                encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+                Log.e("CUK", "file "+ bank_name + " sebenarnya ada.");
+            } else {
+                Log.e("CUK", "file "+ bank_name + " tidak ada.");
+            }
+        } catch (Exception e) {e.printStackTrace();}
+
+        return encodedImage;
+    }
+
+
+    private HashMap<String, Bitmap> payment_receipts = new HashMap<String, Bitmap>();
+
+    private void removeReceiptBitmap(String bank_name) {
+        try {
+            File file = new File(bank_name);
+            if(file.exists()) {
+                deleteFile(bank_name);
+            }
+            if (payment_receipts.containsKey(bank_name)) {
+                payment_receipts.remove(bank_name);
+            }
+        } catch (Exception e){e.printStackTrace();}
+    }
+
+    public void setReceiptBitmap(String bank_name, Bitmap bitmap) {
+        payment_receipts.put(bank_name, bitmap);
+        Log.e("CUK", "set payment_receipts : "+ payment_receipts.toString());
     }
 }

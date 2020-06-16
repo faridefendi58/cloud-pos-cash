@@ -1,7 +1,11 @@
 package com.slightsite.app.ui.sale;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -28,6 +32,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.balysv.materialripple.MaterialRippleLayout;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.params.ParamCatalog;
@@ -41,6 +48,10 @@ import com.slightsite.app.techicalservices.Tools;
 
 import org.w3c.dom.Text;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -93,6 +104,9 @@ public class PaymentFragment extends Fragment {
     private Button btn_receipt_mandiri;
     private Button btn_receipt_bca;
     private Button btn_receipt_bri;
+    private Button btn_remove_receipt_mandiri;
+    private Button btn_remove_receipt_bca;
+    private Button btn_remove_receipt_bri;
     private ImageView img_receipt_mandiri;
     private ImageView img_receipt_bca;
     private ImageView img_receipt_bri;
@@ -175,6 +189,9 @@ public class PaymentFragment extends Fragment {
         img_receipt_mandiri = (ImageView) root.findViewById(R.id.img_receipt_mandiri);
         img_receipt_bca = (ImageView) root.findViewById(R.id.img_receipt_bca);
         img_receipt_bri = (ImageView) root.findViewById(R.id.img_receipt_bri);
+        btn_remove_receipt_mandiri = (Button) root.findViewById(R.id.btn_remove_receipt_mandiri);
+        btn_remove_receipt_bca = (Button) root.findViewById(R.id.btn_remove_receipt_bca);
+        btn_remove_receipt_bri = (Button) root.findViewById(R.id.btn_remove_receipt_bri);
     }
 
     private void initAction() {
@@ -448,6 +465,63 @@ public class PaymentFragment extends Fragment {
                 showFileChooser("bri");
             }
         });
+
+        btn_remove_receipt_mandiri.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                img_receipt_mandiri.setVisibility(View.GONE);
+                btn_receipt_mandiri.setVisibility(View.VISIBLE);
+                btn_remove_receipt_mandiri.setVisibility(View.GONE);
+                //c_data.removeReceipt("mandiri");
+                removeReceiptBitmap("mandiri");
+            }
+        });
+
+        btn_remove_receipt_bca.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                img_receipt_bca.setVisibility(View.GONE);
+                btn_receipt_bca.setVisibility(View.VISIBLE);
+                btn_remove_receipt_bca.setVisibility(View.GONE);
+                //c_data.removeReceipt("bca");
+                removeReceiptBitmap("bca");
+            }
+        });
+
+        btn_remove_receipt_bri.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                img_receipt_bri.setVisibility(View.GONE);
+                btn_receipt_bri.setVisibility(View.VISIBLE);
+                btn_remove_receipt_bri.setVisibility(View.GONE);
+                //c_data.removeReceipt("bri");
+                removeReceiptBitmap("bri");
+            }
+        });
+
+        try {
+            Bitmap bt_mandiri = getReceiptBitmap("mandiri");
+            if (bt_mandiri != null) {
+                img_receipt_mandiri.setVisibility(View.VISIBLE);
+                img_receipt_mandiri.setImageBitmap(bt_mandiri);
+                btn_remove_receipt_mandiri.setVisibility(View.VISIBLE);
+                btn_receipt_mandiri.setVisibility(View.GONE);
+            }
+            Bitmap bt_bca = getReceiptBitmap("bca");
+            if (bt_bca != null) {
+                img_receipt_bca.setVisibility(View.VISIBLE);
+                img_receipt_bca.setImageBitmap(bt_bca);
+                btn_remove_receipt_bca.setVisibility(View.VISIBLE);
+                btn_receipt_bca.setVisibility(View.GONE);
+            }
+            Bitmap bt_bri = getReceiptBitmap("bri");
+            if (bt_bri != null) {
+                img_receipt_bri.setVisibility(View.VISIBLE);
+                img_receipt_bri.setImageBitmap(bt_bri);
+                btn_remove_receipt_bri.setVisibility(View.VISIBLE);
+                btn_receipt_bri.setVisibility(View.GONE);
+            }
+        } catch (Exception e){e.printStackTrace();}
     }
 
     private void setTextChangeListener(final EditText etv, final String setType) {
@@ -739,23 +813,96 @@ public class PaymentFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        final int reqCode = requestCode;
         if (resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri filePath = data.getData();
             try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), filePath);
-                if (requestCode == 1) {
-                    img_receipt_mandiri.setImageBitmap(bitmap);
-                    img_receipt_mandiri.setMaxHeight(30);
-                } else if (requestCode == 2) {
-                    img_receipt_bca.setImageBitmap(bitmap);
-                    img_receipt_bca.setMaxHeight(30);
-                } else if (requestCode == 3) {
-                    img_receipt_bri.setImageBitmap(bitmap);
-                    img_receipt_bri.setMaxHeight(30);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                Glide.with(getContext().getApplicationContext())
+                        .asBitmap()
+                        .load(filePath)
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap bitmap,
+                                                        Transition<? super Bitmap> transition) {
+                                int w = bitmap.getWidth();
+                                int h = bitmap.getHeight();
+                                Log.e("CUK", "width : "+ w + " Height : "+ h);
+                                float density = getContext().getResources().getDisplayMetrics().density;
+                                int bounding = Math.round(250 * density);
+                                float xScale = ((float) bounding) / w;
+                                float yScale = ((float) bounding) / h;
+                                Log.e("CUK", "xScale : "+ xScale + " yScale : "+ yScale);
+                                float scale = (xScale <= yScale) ? xScale : yScale;
+
+                                // Create a matrix for the scaling and add the scaling data
+                                Matrix matrix = new Matrix();
+                                //matrix.postScale(scale, scale);
+                                matrix.postScale(xScale, yScale);
+
+                                // Create a new bitmap and convert it to a format understood by the ImageView
+                                Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, matrix, true);
+                                if (reqCode == 1) {
+                                    img_receipt_mandiri.setImageBitmap(scaledBitmap);
+                                    img_receipt_mandiri.setVisibility(View.VISIBLE);
+                                    btn_receipt_mandiri.setVisibility(View.GONE);
+                                    btn_remove_receipt_mandiri.setVisibility(View.VISIBLE);
+                                    //c_data.addReceipt("mandiri", createImageFromBitmap(scaledBitmap, "mandiri"));
+                                    ((CheckoutActivity) getActivity()).setReceiptBitmap("mandiri", scaledBitmap);
+                                } else if (reqCode == 2) {
+                                    img_receipt_bca.setImageBitmap(scaledBitmap);
+                                    img_receipt_bca.setVisibility(View.VISIBLE);
+                                    btn_receipt_bca.setVisibility(View.GONE);
+                                    btn_remove_receipt_bca.setVisibility(View.VISIBLE);
+                                    //c_data.addReceipt("bca", Tools.BitMapToString(scaledBitmap));
+                                    ((CheckoutActivity) getActivity()).setReceiptBitmap("bca", scaledBitmap);
+                                } else if (reqCode == 3) {
+                                    img_receipt_bri.setImageBitmap(scaledBitmap);
+                                    img_receipt_bri.setVisibility(View.VISIBLE);
+                                    btn_receipt_bri.setVisibility(View.GONE);
+                                    btn_remove_receipt_bri.setVisibility(View.VISIBLE);
+                                    //c_data.addReceipt("bri", Tools.BitMapToString(scaledBitmap));
+                                    ((CheckoutActivity) getActivity()).setReceiptBitmap("bri", scaledBitmap);
+                                }
+                            }
+                        });
+
+            } catch (Exception e) {e.printStackTrace();}
         }
+    }
+
+    public String createImageFromBitmap(Bitmap bitmap, String fileName) {
+        try {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+            FileOutputStream fo = getActivity().openFileOutput(fileName, Context.MODE_PRIVATE);
+            fo.write(bytes.toByteArray());
+            // remember close file output
+            fo.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            fileName = null;
+        }
+        return fileName;
+    }
+
+    private Bitmap getReceiptBitmap(String bank_name) {
+        Bitmap src = null;
+        try {
+            File file = new File(bank_name);
+            if(file.exists()) {
+                src = BitmapFactory.decodeStream(getActivity().openFileInput(bank_name));
+            }
+        } catch (FileNotFoundException e) {e.printStackTrace();}
+
+        return src;
+    }
+
+    private void removeReceiptBitmap(String bank_name) {
+        try {
+            Bitmap _src = getReceiptBitmap(bank_name);
+            if (_src != null) {
+                getActivity().deleteFile(bank_name);
+            }
+        } catch (Exception e){e.printStackTrace();}
     }
 }
