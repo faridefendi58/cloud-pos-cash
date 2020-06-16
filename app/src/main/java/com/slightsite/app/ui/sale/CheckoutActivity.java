@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -78,7 +79,9 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -142,6 +145,7 @@ public class CheckoutActivity extends AppCompatActivity {
     private ArrayList<Integer> allowed_warehouses = new ArrayList<Integer>();
 
     private Double change_due = 0.0;
+    private HashMap<String, Bitmap> payment_receipts = new HashMap<String, Bitmap>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -875,22 +879,6 @@ public class CheckoutActivity extends AppCompatActivity {
                     }
                     arrPaymentList.add(arrPayment2);
                     total_tendered = total_tendered + py.getAmount();
-                    if (py.getPaymentChannel().equals("nominal_mandiri")) {
-                        String trf_img = getTransferReceipt("mandiri");
-                        if (trf_img != null) {
-                            mObj.put("receipt_mandiri", trf_img);
-                        }
-                    } else if (py.getPaymentChannel().equals("nominal_bca")) {
-                        String trf_img = getTransferReceipt("bca");
-                        if (trf_img != null) {
-                            mObj.put("receipt_bca", trf_img);
-                        }
-                    } else if (py.getPaymentChannel().equals("nominal_bri")) {
-                        String trf_img = getTransferReceipt("bri");
-                        if (trf_img != null) {
-                            mObj.put("receipt_bri", trf_img);
-                        }
-                    }
                 }
             } else {
                 arrPayment.put("type", "cash_receive");
@@ -899,9 +887,6 @@ public class CheckoutActivity extends AppCompatActivity {
                 arrPaymentList.add(arrPayment);
             }
             mObj.put("payment", arrPaymentList);
-            /*if (arrPaymentBank.size() > 0) { //if any receipt image
-                mObj.put("transfer_receipt", arrPaymentBank);
-            }*/
             // set warehouse_id if any
             Params whParam = paramCatalog.getParamByName("warehouse_id");
             if (whParam != null) {
@@ -966,23 +951,25 @@ public class CheckoutActivity extends AppCompatActivity {
         }
     }
 
-    private Boolean has_receipt = false;
     private void _execute(final Map mObj) {
         Map<String, String> params = new HashMap<String, String>();
-        if (mObj.containsKey("receipt_mandiri")) {
-            has_receipt = true;
-            params.put("receipt_mandiri", mObj.get("receipt_mandiri").toString());
-            mObj.remove("receipt_mandiri");
+        if (payment_receipts.containsKey("mandiri")) {
+            String base64 = encodeToBase64("mandiri");
+            if (base64 != null) {
+                params.put("receipt_mandiri", base64);
+            }
         }
-        if (mObj.containsKey("receipt_bca")) {
-            has_receipt = true;
-            params.put("receipt_bca", mObj.get("receipt_bca").toString());
-            mObj.remove("receipt_bca");
+        if (payment_receipts.containsKey("bca")) {
+            String base64 = encodeToBase64("bca");
+            if (base64 != null) {
+                params.put("receipt_bca", base64);
+            }
         }
-        if (mObj.containsKey("receipt_bri")) {
-            has_receipt = true;
-            params.put("receipt_bri", mObj.get("receipt_bri").toString());
-            mObj.remove("receipt_bri");
+        if (payment_receipts.containsKey("bri")) {
+            String base64 = encodeToBase64("bri");
+            if (base64 != null) {
+                params.put("receipt_bri", base64);
+            }
         }
         String _url = Server.URL + "transaction/create?api-key=" + Server.API_KEY;
         String qry = URLBuilder.httpBuildQuery(mObj, "UTF-8");
@@ -1013,11 +1000,16 @@ public class CheckoutActivity extends AppCompatActivity {
                             if (success == 1) {
                                 saleLedger.setServerInvoiceId(sale, server_invoice_id, server_invoice_number);
                                 // remove transfer receipt if any
-                                if (has_receipt) {
+                                if (payment_receipts.containsKey("mandiri")) {
                                     removeReceiptBitmap("mandiri");
+                                }
+                                if (payment_receipts.containsKey("bca")) {
                                     removeReceiptBitmap("bca");
+                                }
+                                if (payment_receipts.containsKey("bri")) {
                                     removeReceiptBitmap("bri");
                                 }
+                                payment_receipts.clear();
                             }
                             /*Toast.makeText(getApplicationContext(),
                                     jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();*/
@@ -1044,35 +1036,12 @@ public class CheckoutActivity extends AppCompatActivity {
         (findViewById(R.id.toolbar)).setVisibility(View.GONE);
     }
 
-    private String getTransferReceipt(String bank_name) {
-        String encodedImage = null;
-        try {
-            //File file = new File(bank_name);
-            //if(file.exists()) {
-            if (payment_receipts.containsKey(bank_name)) {
-                //Bitmap src = BitmapFactory.decodeStream(openFileInput(bank_name));
-                Bitmap src = payment_receipts.get(bank_name);
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                src.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                byte[] imageBytes = baos.toByteArray();
-                encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-                Log.e("CUK", "file "+ bank_name + " sebenarnya ada.");
-            } else {
-                Log.e("CUK", "file "+ bank_name + " tidak ada.");
-            }
-        } catch (Exception e) {e.printStackTrace();}
-
-        return encodedImage;
-    }
-
-
-    private HashMap<String, Bitmap> payment_receipts = new HashMap<String, Bitmap>();
-
     private void removeReceiptBitmap(String bank_name) {
         try {
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/UcokPOS/" + bank_name + ".jpg";
             File file = new File(bank_name);
             if(file.exists()) {
-                deleteFile(bank_name);
+                deleteFile(path);
             }
             if (payment_receipts.containsKey(bank_name)) {
                 payment_receipts.remove(bank_name);
@@ -1082,6 +1051,41 @@ public class CheckoutActivity extends AppCompatActivity {
 
     public void setReceiptBitmap(String bank_name, Bitmap bitmap) {
         payment_receipts.put(bank_name, bitmap);
-        Log.e("CUK", "set payment_receipts : "+ payment_receipts.toString());
+        /*try {
+            String encodedImage = encodeToBase64(bank_name);
+            Log.e("CUK", "set payment_receipts : "+ encodedImage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
+    }
+
+    private String encodeToBase64(final String file_name){
+        try {
+            String url = Environment.getExternalStorageDirectory().getAbsolutePath() + "/UcokPOS/" + file_name +".jpg";
+            File file = new File(url);
+            byte[] bFile = new byte[(int) file.length()];
+            FileInputStream inputStream = new FileInputStream(url);
+            inputStream.read(bFile);
+            inputStream.close();
+            return Base64.encodeToString(bFile, Base64.NO_WRAP);
+        } catch (IOException e) { e.printStackTrace();}
+        return null;
+    }
+
+    public static File saveReceiptBitmap(Bitmap bm, String fileName){
+        final String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/UcokPOS";
+        File dir = new File(path);
+        if(!dir.exists())
+            dir.mkdirs();
+        File file = new File(dir, fileName);
+        try {
+            FileOutputStream fOut = new FileOutputStream(file);
+            bm.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+            fOut.flush();
+            fOut.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return file;
     }
 }

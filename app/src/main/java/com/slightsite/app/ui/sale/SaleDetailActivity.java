@@ -85,6 +85,7 @@ import com.slightsite.app.domain.warehouse.WarehouseService;
 import com.slightsite.app.domain.warehouse.Warehouses;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
+import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.techicalservices.URLBuilder;
 import com.slightsite.app.ui.LoginActivity;
 import com.slightsite.app.ui.MainActivity;
@@ -112,6 +113,7 @@ public class SaleDetailActivity extends Activity{
 	private TextView dateBox;
 	private RecyclerView lineitemListRecycle;
 	private RecyclerView paymentitemListView;
+	private RecyclerView receiptitemListView;
 	private List<Map<String, String>> lineitemList;
 	private Sale sale;
 	private int saleId;
@@ -151,6 +153,7 @@ public class SaleDetailActivity extends Activity{
 	private LinearLayout main_discount_container;
 	private LinearLayout gograbfood_discount_container;
 	private LinearLayout main_total_price_container;
+	private LinearLayout receipt_information;
 	private TextView gograbfood_discount_label;
 	private TextView gograbfood_total_price;
 	private TextView gograbfood_discount;
@@ -308,6 +311,11 @@ public class SaleDetailActivity extends Activity{
 		paymentitemListView.setHasFixedSize(true);
 		paymentitemListView.setNestedScrollingEnabled(false);
 
+		receiptitemListView = (RecyclerView) findViewById(R.id.receiptitemList);
+		receiptitemListView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+		receiptitemListView.setHasFixedSize(true);
+		receiptitemListView.setNestedScrollingEnabled(false);
+
 		customerBox = (TextView) findViewById(R.id.customerBox);
 		status = (TextView) findViewById(R.id.status);
         invoice_number = (TextView) findViewById(R.id.invoice_number);
@@ -333,6 +341,7 @@ public class SaleDetailActivity extends Activity{
 		main_discount_container = (LinearLayout) findViewById(R.id.main_discount_container);
 		gograbfood_discount_container = (LinearLayout) findViewById(R.id.gograbfood_discount_container);
 		main_total_price_container = (LinearLayout) findViewById(R.id.main_total_price_container);
+		receipt_information = (LinearLayout) findViewById(R.id.receipt_information);
 
 		gograbfood_discount_label = (TextView) findViewById(R.id.gograbfood_discount_label);
 		gograbfood_total_price = (TextView) findViewById(R.id.gograbfood_total_price);
@@ -1090,6 +1099,24 @@ public class SaleDetailActivity extends Activity{
 											payment_debt_container.setVisibility(View.GONE);
 											spacer_debt.setVisibility(View.GONE);
 										} catch (Exception e){e.printStackTrace();}
+									}
+								}
+
+								if (server_invoice_data.has("transfer_receipt")) {
+									JSONObject transfer_receipt = server_invoice_data.getJSONObject("transfer_receipt");
+									List<JSONObject> rec_list = new ArrayList<JSONObject>();
+									Iterator<String> keys = transfer_receipt.keys();
+									while(keys.hasNext()) {
+										String key = keys.next();
+										JSONObject xobj = new JSONObject();
+										xobj.put("title", key);
+										xobj.put("image_url", Server.BASE_API_URL +""+ transfer_receipt.getString(key));
+										rec_list.add(xobj);
+									}
+									if (rec_list.size() > 0) {
+										AdapterListReceipt rAdap = new AdapterListReceipt(rec_list);
+										receiptitemListView.setAdapter(rAdap);
+										receipt_information.setVisibility(View.VISIBLE);
 									}
 								}
 							}

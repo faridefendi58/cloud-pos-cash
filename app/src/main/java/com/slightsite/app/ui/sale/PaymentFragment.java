@@ -8,6 +8,7 @@ import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -847,6 +848,8 @@ public class PaymentFragment extends Fragment {
                                     btn_receipt_mandiri.setVisibility(View.GONE);
                                     btn_remove_receipt_mandiri.setVisibility(View.VISIBLE);
                                     //c_data.addReceipt("mandiri", createImageFromBitmap(scaledBitmap, "mandiri"));
+                                    //String saveBitmap = createImageFromBitmap(scaledBitmap, "mandiri");
+                                    File savedBitmap = ((CheckoutActivity) getActivity()).saveReceiptBitmap(scaledBitmap, "mandiri.jpg");
                                     ((CheckoutActivity) getActivity()).setReceiptBitmap("mandiri", scaledBitmap);
                                 } else if (reqCode == 2) {
                                     img_receipt_bca.setImageBitmap(scaledBitmap);
@@ -854,6 +857,7 @@ public class PaymentFragment extends Fragment {
                                     btn_receipt_bca.setVisibility(View.GONE);
                                     btn_remove_receipt_bca.setVisibility(View.VISIBLE);
                                     //c_data.addReceipt("bca", Tools.BitMapToString(scaledBitmap));
+                                    File savedBitmap = ((CheckoutActivity) getActivity()).saveReceiptBitmap(scaledBitmap, "bca.jpg");
                                     ((CheckoutActivity) getActivity()).setReceiptBitmap("bca", scaledBitmap);
                                 } else if (reqCode == 3) {
                                     img_receipt_bri.setImageBitmap(scaledBitmap);
@@ -861,6 +865,7 @@ public class PaymentFragment extends Fragment {
                                     btn_receipt_bri.setVisibility(View.GONE);
                                     btn_remove_receipt_bri.setVisibility(View.VISIBLE);
                                     //c_data.addReceipt("bri", Tools.BitMapToString(scaledBitmap));
+                                    File savedBitmap = ((CheckoutActivity) getActivity()).saveReceiptBitmap(scaledBitmap, "bri.jpg");
                                     ((CheckoutActivity) getActivity()).setReceiptBitmap("bri", scaledBitmap);
                                 }
                             }
@@ -888,6 +893,7 @@ public class PaymentFragment extends Fragment {
     private Bitmap getReceiptBitmap(String bank_name) {
         Bitmap src = null;
         try {
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/UcokPOS/" + bank_name + ".jpg";
             File file = new File(bank_name);
             if(file.exists()) {
                 src = BitmapFactory.decodeStream(getActivity().openFileInput(bank_name));
@@ -899,9 +905,10 @@ public class PaymentFragment extends Fragment {
 
     private void removeReceiptBitmap(String bank_name) {
         try {
-            Bitmap _src = getReceiptBitmap(bank_name);
-            if (_src != null) {
-                getActivity().deleteFile(bank_name);
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/UcokPOS/" + bank_name + ".jpg";
+            File file = new File(bank_name);
+            if(file.exists()) {
+                getActivity().deleteFile(path);
             }
         } catch (Exception e){e.printStackTrace();}
     }
