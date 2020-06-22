@@ -395,12 +395,13 @@
     <string name="button_remove">Hapus</string>
     <string name="button_reject">Tolak</string>
     <string name="button_transfer_receipt">Bukti Transfer</string>
+    <string name="button_approve">Setujui</string>
 
     <string name="confirm_edit">Anda yakin ingin mengubah data ini?</string>
     <string name="confirm_delete">Anda yakin ingin menghapus data ini?</string>
 
     <string name="shipping_method_direct">Beli Langsung</string>
-    <string name="shipping_method_take_it_later">Ambil Nanti</string>
+    <string name="shipping_method_take_it_later">Ambil Di Warehouse</string>
     <string name="shipping_method_gojek_grab">GoSend / Grab Express</string>
     <string name="shipping_method_tokopedia">Tokopedia</string>
     <string name="shipping_method_gofood">GoFood</string>
@@ -445,7 +446,7 @@
     <string name="tab_sales_report">Laporan Penjualan</string>
     <string name="tab_stock">Stok Barang</string>
     <string name="tab_notification">Pemberitahuan</string>
-    <string name="tab_stagging">Stagging Order</string>
+    <string name="tab_stagging">Website Order</string>
 
     <string name="origin">Asal Barang</string>
     <string name="destination">Tujuan</string>

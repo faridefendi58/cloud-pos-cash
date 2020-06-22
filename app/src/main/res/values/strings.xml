@@ -397,12 +397,13 @@
     <string name="button_remove">Remove</string>
     <string name="button_reject">Reject</string>
     <string name="button_transfer_receipt">Transfer Receipt</string>
+    <string name="button_approve">Approve</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
     <string name="confirm_delete">Are you sure you want to delete this?</string>
 
     <string name="shipping_method_direct">Buy Directly</string>
-    <string name="shipping_method_take_it_later">Take It Later</string>
+    <string name="shipping_method_take_it_later">Takeaway At Warehouse</string>
     <string name="shipping_method_gojek_grab">GoSend / Grab Express</string>
     <string name="shipping_method_tokopedia">Tokopedia</string>
     <string name="shipping_method_gofood">GoFood</string>
@@ -447,7 +448,7 @@
     <string name="tab_sales_report">Sales Report</string>
     <string name="tab_stock">Stock</string>
     <string name="tab_notification">Notification</string>
-    <string name="tab_stagging">Stagging Order</string>
+    <string name="tab_stagging">Website Order</string>
 
     <string name="origin">Origin</string>
     <string name="destination">Destination</string>

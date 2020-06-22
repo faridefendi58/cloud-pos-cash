@@ -241,8 +241,9 @@ public class ShippingFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 try {
                     if (customerHashMap.size() > 0) {
-                        cust = customerHashMap.get(actv.getText().toString());
-                        if (cust != null) {
+                        Customer _cust = customerHashMap.get(actv.getText().toString());
+                        if (_cust != null) {
+                            cust = _cust;
                             ((CheckoutActivity) getActivity()).setCustomer(cust);
                             customer_name = cust.getName();
                             customer_email = cust.getEmail();
@@ -283,6 +284,7 @@ public class ShippingFragment extends Fragment {
                     customer_phone = customer_phone_autocomplete.getText().toString();
                     customer_address = address.getText().toString();
                     int customer_id = c_data.getCustomer().getId();
+                    Log.e(getClass().getSimpleName(), "c_data.getCustomer() : "+ c_data.getCustomer().toMap().toString());
                     if (selected_cust_id > 0) {
                         cust.setId(selected_cust_id);
                     }
@@ -299,6 +301,7 @@ public class ShippingFragment extends Fragment {
                             if (customer_address.equals(null)) {
                                 cust.setAddress(customer_address);
                             }
+                            Log.e(getClass().getSimpleName(), "setType phone : "+ cust.toMap().toString());
                             ((CheckoutActivity) getActivity()).setCustomer(cust);
                         }
                     }
@@ -308,6 +311,7 @@ public class ShippingFragment extends Fragment {
                             cust.setEmail(customer_email);
                             cust.setPhone(customer_phone);
                             cust.setAddress(s.toString());
+                            Log.e(getClass().getSimpleName(), "setType address : "+ cust.toMap().toString());
                             ((CheckoutActivity) getActivity()).setCustomer(cust);
                         }
                     }
@@ -340,6 +344,14 @@ public class ShippingFragment extends Fragment {
                         }
                     }
 
+                    if (setType == "customer_phone" && selected_cust_id <= 0) {
+                        if (s.toString().length() > 2) {
+                            cust.setPhone(customer_phone);
+                            cust.setEmail(customer_email);
+                            ((CheckoutActivity) getActivity()).setCustomer(cust);
+                        }
+                    }
+
                     if (setType == "shipping_invoice_number") {
                         if (s.toString().length() > 2) {
                             if (ship.getMethod() == 4) {
@@ -364,6 +376,7 @@ public class ShippingFragment extends Fragment {
         cust = c_data.getCustomer();
         //setTextChangeListener(phone, "phone");
         setTextChangeListener(customer_name_autocomplete, "customer_name");
+        setTextChangeListener(customer_phone_autocomplete, "customer_phone");
         setTextChangeListener(address, "address");
 
         if (ship == null) {

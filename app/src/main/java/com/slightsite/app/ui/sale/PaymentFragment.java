@@ -827,21 +827,23 @@ public class PaymentFragment extends Fragment {
                                                         Transition<? super Bitmap> transition) {
                                 int w = bitmap.getWidth();
                                 int h = bitmap.getHeight();
-                                Log.e("CUK", "width : "+ w + " Height : "+ h);
+                                Log.e(getTag(), "width : "+ w + " Height : "+ h);
                                 float density = getContext().getResources().getDisplayMetrics().density;
                                 int bounding = Math.round(250 * density);
                                 float xScale = ((float) bounding) / w;
                                 float yScale = ((float) bounding) / h;
-                                Log.e("CUK", "xScale : "+ xScale + " yScale : "+ yScale);
+                                Log.e(getClass().getSimpleName(), "xScale : "+ xScale + " yScale : "+ yScale);
                                 float scale = (xScale <= yScale) ? xScale : yScale;
 
                                 // Create a matrix for the scaling and add the scaling data
                                 Matrix matrix = new Matrix();
-                                //matrix.postScale(scale, scale);
-                                matrix.postScale(xScale, yScale);
+                                matrix.postScale(scale, scale);
 
                                 // Create a new bitmap and convert it to a format understood by the ImageView
                                 Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, matrix, true);
+                                int w2 = scaledBitmap.getWidth();
+                                int h2 = scaledBitmap.getHeight();
+                                Log.e(getClass().getSimpleName(), "scalled width : "+ w2 + " Scalled Height : "+ h2);
                                 if (reqCode == 1) {
                                     img_receipt_mandiri.setImageBitmap(scaledBitmap);
                                     img_receipt_mandiri.setVisibility(View.VISIBLE);

@@ -472,7 +472,7 @@
                     android:layout_weight="1"
                     android:textColor="@android:color/white"
                     android:background="@color/btnInfo"
-                    android:text="@string/button_mark_as_complete"
+                    android:text="@string/button_approve"
                     android:textSize="14sp"
                     android:clickable="true"
                     android:onClick="proceedOrder"/>
