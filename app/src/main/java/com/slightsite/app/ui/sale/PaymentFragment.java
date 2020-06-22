@@ -829,7 +829,12 @@ public class PaymentFragment extends Fragment {
                                 int h = bitmap.getHeight();
                                 Log.e(getTag(), "width : "+ w + " Height : "+ h);
                                 float density = getContext().getResources().getDisplayMetrics().density;
+                                if (density > 2) {
+                                    density = 2;
+                                }
+                                Log.e(getTag(), "density : "+ density);
                                 int bounding = Math.round(250 * density);
+                                Log.e(getTag(), "bounding : "+ bounding);
                                 float xScale = ((float) bounding) / w;
                                 float yScale = ((float) bounding) / h;
                                 Log.e(getClass().getSimpleName(), "xScale : "+ xScale + " yScale : "+ yScale);

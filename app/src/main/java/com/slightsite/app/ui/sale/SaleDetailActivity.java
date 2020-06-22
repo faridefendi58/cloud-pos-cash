@@ -1,7 +1,10 @@
 package com.slightsite.app.ui.sale;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,8 +27,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -36,6 +41,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -57,6 +63,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.AppController;
 import com.slightsite.app.domain.CurrencyController;
@@ -191,6 +200,8 @@ public class SaleDetailActivity extends Activity{
 	private Shipping shipping_intent;
 	private String payment_intent;
 	private String line_items_intent;
+
+	private HashMap<String, Bitmap> payment_receipts = new HashMap<String, Bitmap>();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -1144,6 +1155,21 @@ public class SaleDetailActivity extends Activity{
 	private EditText nominal_mandiri;
 	private EditText nominal_bri;
 	private List<PaymentItem> payment_items;
+	private TextView edc_header;
+	private LinearLayout edc_container;
+	private EditText edc_card_type;
+	private EditText edc_card_number;
+	private EditText edc_nominal;
+
+	private Button btn_receipt_mandiri;
+	private Button btn_receipt_bca;
+	private Button btn_receipt_bri;
+	private Button btn_remove_receipt_mandiri;
+	private Button btn_remove_receipt_bca;
+	private Button btn_remove_receipt_bri;
+	private ImageView img_receipt_mandiri;
+	private ImageView img_receipt_bca;
+	private ImageView img_receipt_bri;
 
 	public void markAsComplete(View v) {
 		bottomSheetDialog = new BottomSheetDialog(SaleDetailActivity.this);
@@ -1157,6 +1183,21 @@ public class SaleDetailActivity extends Activity{
 		nominal_bca = (EditText) sheetView.findViewById(R.id.nominal_bca);
 		nominal_mandiri = (EditText) sheetView.findViewById(R.id.nominal_mandiri);
 		nominal_bri = (EditText) sheetView.findViewById(R.id.nominal_bri);
+		edc_header = (TextView) sheetView.findViewById(R.id.edc_header);
+		edc_container = (LinearLayout) sheetView.findViewById(R.id.edc_container);
+		edc_card_type = (EditText) sheetView.findViewById(R.id.edc_card_type);
+		edc_card_number  = (EditText) sheetView.findViewById(R.id.edc_card_number);
+		edc_nominal  = (EditText) sheetView.findViewById(R.id.edc_nominal);
+
+		btn_receipt_mandiri = (Button) sheetView.findViewById(R.id.btn_receipt_mandiri);
+		btn_receipt_bca = (Button) sheetView.findViewById(R.id.btn_receipt_bca);
+		btn_receipt_bri = (Button) sheetView.findViewById(R.id.btn_receipt_bri);
+		img_receipt_mandiri = (ImageView) sheetView.findViewById(R.id.img_receipt_mandiri);
+		img_receipt_bca = (ImageView) sheetView.findViewById(R.id.img_receipt_bca);
+		img_receipt_bri = (ImageView) sheetView.findViewById(R.id.img_receipt_bri);
+		btn_remove_receipt_mandiri = (Button) sheetView.findViewById(R.id.btn_remove_receipt_mandiri);
+		btn_remove_receipt_bca = (Button) sheetView.findViewById(R.id.btn_remove_receipt_bca);
+		btn_remove_receipt_bri = (Button) sheetView.findViewById(R.id.btn_remove_receipt_bri);
 
 		bottomSheetDialog.show();
 
@@ -1169,6 +1210,8 @@ public class SaleDetailActivity extends Activity{
 		setTextChangeListener(nominal_mandiri, "nominal_mandiri");
 		setTextChangeListener(nominal_bca, "nominal_bca");
 		setTextChangeListener(nominal_bri, "nominal_bri");
+		setTextChangeListener(edc_card_number, "card_number");
+		setTextChangeListener(edc_nominal, "nominal_edc");
 
 		transfer_bank_header.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -1183,6 +1226,94 @@ public class SaleDetailActivity extends Activity{
 			}
 		});
 
+		edc_header.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (edc_container.getVisibility() == View.GONE) {
+					edc_container.setVisibility(View.VISIBLE);
+					edc_header.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_remove_black, 0);
+				} else {
+					edc_container.setVisibility(View.GONE);
+					edc_header.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_add_black, 0);
+				}
+			}
+		});
+
+		btn_receipt_mandiri.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				showFileChooser("mandiri");
+			}
+		});
+
+		btn_receipt_bca.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				showFileChooser("bca");
+			}
+		});
+
+		btn_receipt_bri.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				showFileChooser("bri");
+			}
+		});
+
+		btn_remove_receipt_mandiri.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				img_receipt_mandiri.setVisibility(View.GONE);
+				btn_receipt_mandiri.setVisibility(View.VISIBLE);
+				btn_remove_receipt_mandiri.setVisibility(View.GONE);
+				removeReceiptBitmap("mandiri");
+			}
+		});
+
+		btn_remove_receipt_bca.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				img_receipt_bca.setVisibility(View.GONE);
+				btn_receipt_bca.setVisibility(View.VISIBLE);
+				btn_remove_receipt_bca.setVisibility(View.GONE);
+				removeReceiptBitmap("bca");
+			}
+		});
+
+		btn_remove_receipt_bri.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				img_receipt_bri.setVisibility(View.GONE);
+				btn_receipt_bri.setVisibility(View.VISIBLE);
+				btn_remove_receipt_bri.setVisibility(View.GONE);
+				removeReceiptBitmap("bri");
+			}
+		});
+
+		try {
+			Bitmap bt_mandiri = getReceiptBitmap("mandiri");
+			if (bt_mandiri != null) {
+				img_receipt_mandiri.setVisibility(View.VISIBLE);
+				img_receipt_mandiri.setImageBitmap(bt_mandiri);
+				btn_remove_receipt_mandiri.setVisibility(View.VISIBLE);
+				btn_receipt_mandiri.setVisibility(View.GONE);
+			}
+			Bitmap bt_bca = getReceiptBitmap("bca");
+			if (bt_bca != null) {
+				img_receipt_bca.setVisibility(View.VISIBLE);
+				img_receipt_bca.setImageBitmap(bt_bca);
+				btn_remove_receipt_bca.setVisibility(View.VISIBLE);
+				btn_receipt_bca.setVisibility(View.GONE);
+			}
+			Bitmap bt_bri = getReceiptBitmap("bri");
+			if (bt_bri != null) {
+				img_receipt_bri.setVisibility(View.VISIBLE);
+				img_receipt_bri.setImageBitmap(bt_bri);
+				btn_remove_receipt_bri.setVisibility(View.VISIBLE);
+				btn_receipt_bri.setVisibility(View.GONE);
+			}
+		} catch (Exception e){e.printStackTrace();}
+
 		finish_submit_button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -1191,6 +1322,8 @@ public class SaleDetailActivity extends Activity{
 				String bca = nominal_bca.getText().toString();
 				String mandiri = nominal_mandiri.getText().toString();
 				String bri = nominal_bri.getText().toString();
+				String edc = edc_nominal.getText().toString();
+
 				Double tot_payment = 0.0;
 				if (cash.length() > 0) {
 					cash = cash.replaceAll("\\.", "");
@@ -1224,6 +1357,15 @@ public class SaleDetailActivity extends Activity{
 					PaymentItem pi_bri = new PaymentItem("nominal_bri", Double.parseDouble(bri));
 					payment_items.add(pi_bri);
 					tot_payment = tot_payment + Double.parseDouble(bri);
+				}
+
+				if (edc.length() > 0) {
+					if (edc.contains(".")) {
+						edc = edc.replaceAll("\\.", "");
+					}
+					PaymentItem pi_edc = new PaymentItem("nominal_edc", Double.parseDouble(edc));
+					payment_items.add(pi_edc);
+					tot_payment = tot_payment + Double.parseDouble(edc);
 				}
 
 				if (tot_payment < tot_debt) {
@@ -1267,11 +1409,29 @@ public class SaleDetailActivity extends Activity{
 	 * @param mObj
 	 */
 	private void _complete_inv(final Map mObj) {
+		Map<String, String> params = new HashMap<String, String>();
+		if (payment_receipts.containsKey("mandiri")) {
+			String base64 = encodeToBase64("mandiri");
+			if (base64 != null) {
+				params.put("receipt_mandiri", base64);
+			}
+		}
+		if (payment_receipts.containsKey("bca")) {
+			String base64 = encodeToBase64("bca");
+			if (base64 != null) {
+				params.put("receipt_bca", base64);
+			}
+		}
+		if (payment_receipts.containsKey("bri")) {
+			String base64 = encodeToBase64("bri");
+			if (base64 != null) {
+				params.put("receipt_bri", base64);
+			}
+		}
 		String _url = Server.URL + "transaction/complete-payment?api-key=" + Server.API_KEY;
 		String qry = URLBuilder.httpBuildQuery(mObj, "UTF-8");
 		_url += "&"+ qry;
 
-		Map<String, String> params = new HashMap<String, String>();
 		String admin_id = sharedpreferences.getString(TAG_ID, null);
 		Params adminParam = paramCatalog.getParamByName("admin_id");
 		if (adminParam != null) {
@@ -1362,10 +1522,16 @@ public class SaleDetailActivity extends Activity{
 					if (cleanString.length() >= 3) {
 						etv.removeTextChangedListener(this);
 
-						double parsed = Double.parseDouble(cleanString);
-						String formatted = CurrencyController.getInstance().moneyFormat(parsed);
+						String formatted = "";
+						if (setType.equals("card_number")) {
+							formatted = Tools.cardFormat(cleanString);
+							current_val = formatted;
+						} else {
+							double parsed = Double.parseDouble(cleanString);
+							formatted = CurrencyController.getInstance().moneyFormat(parsed);
 
-						current_val = formatted;
+							current_val = formatted;
+						}
 						etv.setText(formatted);
 						etv.setSelection(formatted.length());
 						etv.addTextChangedListener(this);
@@ -1747,5 +1913,147 @@ public class SaleDetailActivity extends Activity{
 						hideDialog();
 					}
 				});
+	}
+
+	private void showFileChooser(String bank_name) {
+		Intent intent = new Intent();
+		intent.setType("image/*");
+		intent.setAction(Intent.ACTION_GET_CONTENT);
+		//startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+		Integer pick_image_request = 1;
+		if (bank_name.equals("mandiri")) {
+			pick_image_request = 1;
+		} else if (bank_name.equals("bca")) {
+			pick_image_request = 2;
+		} else if (bank_name.equals("bri")) {
+			pick_image_request = 3;
+		}
+		startActivityForResult(Intent.createChooser(intent, "Select Picture"), pick_image_request);
+	}
+
+	private Bitmap getReceiptBitmap(String bank_name) {
+		Bitmap src = null;
+		try {
+			String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/UcokPOS/" + bank_name + ".jpg";
+			File file = new File(bank_name);
+			if(file.exists()) {
+				src = BitmapFactory.decodeStream(openFileInput(bank_name));
+			}
+		} catch (FileNotFoundException e) {e.printStackTrace();}
+
+		return src;
+	}
+
+	private void removeReceiptBitmap(String bank_name) {
+		try {
+			String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/UcokPOS/" + bank_name + ".jpg";
+			File file = new File(bank_name);
+			if(file.exists()) {
+				deleteFile(path);
+			}
+		} catch (Exception e){e.printStackTrace();}
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		final int reqCode = requestCode;
+		if (resultCode == RESULT_OK && data != null && data.getData() != null) {
+			Uri filePath = data.getData();
+			try {
+				Glide.with(getApplicationContext())
+						.asBitmap()
+						.load(filePath)
+						.into(new SimpleTarget<Bitmap>() {
+							@Override
+							public void onResourceReady(Bitmap bitmap,
+														Transition<? super Bitmap> transition) {
+								int w = bitmap.getWidth();
+								int h = bitmap.getHeight();
+								Log.e(getClass().getSimpleName(), "width : "+ w + " Height : "+ h);
+								float density = getResources().getDisplayMetrics().density;
+								if (density > 2) {
+									density = 2;
+								}
+								Log.e(getClass().getSimpleName(), "density : "+ density);
+								int bounding = Math.round(250 * density);
+								Log.e(getClass().getSimpleName(), "bounding : "+ bounding);
+								float xScale = ((float) bounding) / w;
+								float yScale = ((float) bounding) / h;
+								Log.e(getClass().getSimpleName(), "xScale : "+ xScale + " yScale : "+ yScale);
+								float scale = (xScale <= yScale) ? xScale : yScale;
+
+								// Create a matrix for the scaling and add the scaling data
+								Matrix matrix = new Matrix();
+								matrix.postScale(scale, scale);
+
+								// Create a new bitmap and convert it to a format understood by the ImageView
+								Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, matrix, true);
+								int w2 = scaledBitmap.getWidth();
+								int h2 = scaledBitmap.getHeight();
+								Log.e(getClass().getSimpleName(), "scalled width : "+ w2 + " Scalled Height : "+ h2);
+								if (reqCode == 1) {
+									img_receipt_mandiri.setImageBitmap(scaledBitmap);
+									img_receipt_mandiri.setVisibility(View.VISIBLE);
+									btn_receipt_mandiri.setVisibility(View.GONE);
+									btn_remove_receipt_mandiri.setVisibility(View.VISIBLE);
+									File savedBitmap = saveReceiptBitmap(scaledBitmap, "mandiri.jpg");
+									setReceiptBitmap("mandiri", scaledBitmap);
+								} else if (reqCode == 2) {
+									img_receipt_bca.setImageBitmap(scaledBitmap);
+									img_receipt_bca.setVisibility(View.VISIBLE);
+									btn_receipt_bca.setVisibility(View.GONE);
+									btn_remove_receipt_bca.setVisibility(View.VISIBLE);
+
+									File savedBitmap = saveReceiptBitmap(scaledBitmap, "bca.jpg");
+									setReceiptBitmap("bca", scaledBitmap);
+								} else if (reqCode == 3) {
+									img_receipt_bri.setImageBitmap(scaledBitmap);
+									img_receipt_bri.setVisibility(View.VISIBLE);
+									btn_receipt_bri.setVisibility(View.GONE);
+									btn_remove_receipt_bri.setVisibility(View.VISIBLE);
+
+									File savedBitmap = saveReceiptBitmap(scaledBitmap, "bri.jpg");
+									setReceiptBitmap("bri", scaledBitmap);
+								}
+							}
+						});
+
+			} catch (Exception e) {e.printStackTrace();}
+		}
+	}
+
+	private void setReceiptBitmap(String bank_name, Bitmap bitmap) {
+		payment_receipts.put(bank_name, bitmap);
+	}
+
+	private String encodeToBase64(final String file_name){
+		try {
+			String url = Environment.getExternalStorageDirectory().getAbsolutePath() + "/UcokPOS/" + file_name +".jpg";
+			File file = new File(url);
+			byte[] bFile = new byte[(int) file.length()];
+			FileInputStream inputStream = new FileInputStream(url);
+			inputStream.read(bFile);
+			inputStream.close();
+			return Base64.encodeToString(bFile, Base64.NO_WRAP);
+		} catch (IOException e) { e.printStackTrace();}
+		return null;
+	}
+
+	private static File saveReceiptBitmap(Bitmap bm, String fileName){
+		final String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/UcokPOS";
+		File dir = new File(path);
+		if(!dir.exists())
+			dir.mkdirs();
+		File file = new File(dir, fileName);
+		try {
+			FileOutputStream fOut = new FileOutputStream(file);
+			bm.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+			fOut.flush();
+			fOut.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return file;
 	}
 }
