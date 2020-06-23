@@ -14,6 +14,7 @@ public class Payment implements Serializable {
     private int sale_id;
     private String payment_channel;
     private Double amount;
+    private String transfer_receipt;
 
     /**
      * Static value for UNDEFINED ID.
@@ -89,6 +90,9 @@ public class Payment implements Serializable {
             }
         }
         map.put("formated_payment_channel", formated_payment_channel);
+        if (transfer_receipt != null) {
+            map.put("transfer_receipt", transfer_receipt);
+        }
 
         return map;
     }
@@ -105,5 +109,9 @@ public class Payment implements Serializable {
         types.put("wallet_grabfood", AppController.getInstance().getString(R.string.payment_wallet_grab_food));
 
         return types;
+    }
+
+    public void setTransferReceipt(String _receipt) {
+        this.transfer_receipt = _receipt;
     }
 }

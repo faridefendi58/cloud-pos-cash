@@ -83,7 +83,9 @@ public class AdapterListBank extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 public void onClick(View view) {
                     if (mOnItemClickListener != null) {
                         try {
-                            mOnItemClickListener.onItemClick(view, items.getString(position), position);
+                            if (items != null && (position < items.length())) {
+                                mOnItemClickListener.onItemClick(view, items.getString(position), position);
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

@@ -32,6 +32,12 @@
 
     </LinearLayout>
 
+    <com.slightsite.app.techicalservices.ZoomableImageView
+            android:id="@+id/img_receipt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

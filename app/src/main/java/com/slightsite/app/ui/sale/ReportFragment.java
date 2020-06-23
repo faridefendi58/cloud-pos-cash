@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -377,10 +378,8 @@ public class ReportFragment extends UpdatableFragment {
 
 				Shipping shipping = list_of_shippings.get(sale.getId());
 				if (shipping != null) {
-					Log.e(getTag(), "shipping : "+ shipping.toMap().toString());
 					salemap.put("shipping_method", shipping.toMap().get("method_name"));
 					if (shipping.toMap().containsKey("pickup_date") && !shipping.toMap().get("pickup_date").equals("null")) {
-						Log.e("CUK", "delivered_plan_at : "+ shipping.toMap().get("pickup_date"));
 						salemap.put("delivered_plan_at", shipping.toMap().get("pickup_date"));
 					}
 				} else {
@@ -393,6 +392,11 @@ public class ReportFragment extends UpdatableFragment {
 					salemap.put("payment_icons", icons);
                     salemap.put("sale_id", sale.getServerInvoiceId()+"");
                     salemap.put("payment_method", list_of_payments2.get(sale.getId()).toString());
+				}
+
+				//check has receipt
+				if (sale.getTransferReceipt() != null && !sale.getTransferReceipt().isEmpty()) {
+					salemap.put("transfer_receipt", sale.getTransferReceipt());
 				}
 			} catch (Exception e){
 				e.printStackTrace();
@@ -628,6 +632,11 @@ public class ReportFragment extends UpdatableFragment {
 											sale.setIsVerifiedPayment(config.getInt("is_verified_payment"));
 											verified_sale_ids.add(sale.getServerInvoiceId());
 										}
+
+										if (config.has("transfer_receipt")) {
+											sale.setTransferReceipt(config.getString("transfer_receipt"));
+										}
+
 										list_of_transactions.add(sale);
 										Customer cust = new Customer(
 												sale.getCustomerId(),
@@ -1263,7 +1272,7 @@ public class ReportFragment extends UpdatableFragment {
 	private Button verify_submit_button;
 	private Button cancel_verify_button;
 
-	public void verifyBankTransfer(String sale_id, JSONArray jsonArray, String payment_method, ImageView imageView) {
+	public void verifyBankTransfer(String sale_id, JSONArray jsonArray, String payment_method, ImageView imageView, @Nullable String transfer_receipt) {
 		Boolean is_cashier = ((MainActivity) getActivity()).getIsCashier();
 		if (is_cashier) { //just cashier able to verify bank transfer
 			JSONArray methods = new JSONArray();
@@ -1279,6 +1288,8 @@ public class ReportFragment extends UpdatableFragment {
 
 			if (methods.length() > 0) {
 				verifySheetDialog = new BottomSheetDialog(getContext());
+				verifySheetDialog.setCanceledOnTouchOutside(false);
+				verifySheetDialog.setCancelable(false);
 				View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_verify_payment, null);
 				verifySheetDialog.setContentView(sheetView);
 
@@ -1308,6 +1319,13 @@ public class ReportFragment extends UpdatableFragment {
 								amount = jsonObject.getDouble("amount");
 							}
 							Payment pym = new Payment(i, jsonObject.getString("type"), amount);
+							if (jsonObject.has("transfer_receipt")) {
+                                pym.setTransferReceipt(Server.BASE_API_URL +""+ jsonObject.getString("transfer_receipt"));
+                            } else {
+                                if (transfer_receipt != null && !transfer_receipt.isEmpty()) {
+                                    pym.setTransferReceipt(transfer_receipt);
+                                }
+                            }
 							paymentList.add(pym);
 						}
 					} catch (JSONException e) {

@@ -8,78 +8,90 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
+    <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:background="@color/greenUcok"
-            android:paddingHorizontal="@dimen/spacing_middle"
-            android:paddingVertical="@dimen/spacing_large"
-            android:orientation="vertical">
+            android:layout_height="fill_parent">
 
-        <TextView
+        <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/title_verify_payment"
-                android:textSize="@dimen/spacing_large"
-                android:textStyle="bold"
-                android:textColor="@color/colorWhite"/>
+                android:orientation="vertical">
 
-    </LinearLayout>
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:background="@color/greenUcok"
+                    android:paddingHorizontal="@dimen/spacing_middle"
+                    android:paddingVertical="@dimen/spacing_large"
+                    android:orientation="vertical">
 
-    <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/grey_10" />
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/title_verify_payment"
+                        android:textSize="@dimen/spacing_large"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorWhite"/>
 
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            </LinearLayout>
 
-        <android.support.v7.widget.RecyclerView
-                android:id="@+id/bank_transfer_recycle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="vertical"
-                android:scrollingCache="true"/>
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/grey_10" />
 
-    </LinearLayout>
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-    <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/grey_10" />
+                <android.support.v7.widget.RecyclerView
+                        android:id="@+id/bank_transfer_recycle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="vertical"
+                        android:scrollingCache="true"/>
 
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="1"
-            android:layout_marginTop="@dimen/spacing_middle"
-            android:padding="@dimen/spacing_middle">
+            </LinearLayout>
 
-        <Button
-                android:id="@+id/cancel_verify_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:layout_marginRight="@dimen/spacing_xsmall"
-                android:text="@string/cancel"
-                android:textColor="@color/colorWhite"
-                android:background="@color/yellow_900" />
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/grey_10" />
 
-        <Button
-                android:id="@+id/verify_submit_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:layout_marginLeft="@dimen/spacing_xsmall"
-                android:text="@string/button_mark_as_verified"
-                android:textColor="@color/colorWhite"
-                android:background="@color/greenUcok" />
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="1"
+                    android:layout_marginTop="@dimen/spacing_middle"
+                    android:padding="@dimen/spacing_middle">
 
-    </LinearLayout>
+                <Button
+                        android:id="@+id/cancel_verify_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:layout_marginRight="@dimen/spacing_xsmall"
+                        android:text="@string/cancel"
+                        android:textColor="@color/colorWhite"
+                        android:background="@color/yellow_900" />
+
+                <Button
+                        android:id="@+id/verify_submit_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:layout_marginLeft="@dimen/spacing_xsmall"
+                        android:text="@string/button_mark_as_verified"
+                        android:textColor="@color/colorWhite"
+                        android:background="@color/greenUcok" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

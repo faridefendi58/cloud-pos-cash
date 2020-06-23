@@ -96,13 +96,6 @@ public class AdapterListReceipt extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public static Bitmap getBitmapFromURL(String src) {
         try {
-            Log.e("CUK", "src : "+ src);
-            /*URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);*/
             InputStream in = new java.net.URL(src).openStream();
             Bitmap myBitmap = BitmapFactory.decodeStream(in);
             return myBitmap;

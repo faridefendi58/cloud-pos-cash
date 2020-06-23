@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.JsonObject;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.LanguageController;
@@ -44,6 +45,7 @@ public class Sale implements Serializable {
 	private int is_verified_payment = 0;
 	private int ongkir = 0;
 	private Boolean ongkir_cash_to_driver = false;
+	private String transfer_receipt = null;
 
 	public Sale(int id, String startTime) {
 		this(id, startTime, startTime, "", new ArrayList<LineItem>(), 0);
@@ -343,5 +345,13 @@ public class Sale implements Serializable {
 
 	public Boolean getOngkirCashToDriver() {
 		return ongkir_cash_to_driver;
+	}
+
+	public void setTransferReceipt(String _receipt) {
+		this.transfer_receipt = _receipt;
+	}
+
+	public String getTransferReceipt() {
+		return transfer_receipt;
 	}
 }

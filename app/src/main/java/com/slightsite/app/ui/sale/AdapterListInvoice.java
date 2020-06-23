@@ -121,6 +121,7 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
             view.shipping_method.setText(items.get(position).get("shipping_method"));
             Boolean has_bank_payment = false;
             if (items.get(position).containsKey("payment_icons")) {
+                Log.e("CUX", "items.get(position) : "+ items.get(position).toString());
                 String str_p_icons = items.get(position).get("payment_icons");
                 JSONArray jsonArray = new JSONArray();
                 try {
@@ -141,7 +142,13 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
                         @Override
                         public void onItemClick(View view, String obj, int position) {
                             if (fragment != null) {
-                                fragment.verifyBankTransfer(items.get(pos).get("sale_id"), jArray, items.get(pos).get("payment_method"), _ic);
+                                String transfer_receipt = null;
+                                if (position < items.size()) {
+                                    if (items.get(position).containsKey("transfer_receipt")) {
+                                        transfer_receipt = items.get(position).get("transfer_receipt");
+                                    }
+                                    fragment.verifyBankTransfer(items.get(pos).get("sale_id"), jArray, items.get(pos).get("payment_method"), _ic, transfer_receipt);
+                                }
                             }
                         }
                     });
@@ -150,7 +157,11 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
                         @Override
                         public void onClick(View view) {
                             if (fragment != null) {
-                                fragment.verifyBankTransfer(items.get(pos).get("sale_id"), jArray, items.get(pos).get("payment_method"), _ic);
+                                String transfer_receipt = null;
+                                if (items.get(position).containsKey("transfer_receipt")) {
+                                    transfer_receipt = items.get(position).get("transfer_receipt");
+                                }
+                                fragment.verifyBankTransfer(items.get(pos).get("sale_id"), jArray, items.get(pos).get("payment_method"), _ic, transfer_receipt);
                             }
                         }
                     });
