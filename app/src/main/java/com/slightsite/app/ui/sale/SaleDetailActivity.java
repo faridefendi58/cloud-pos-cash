@@ -1439,6 +1439,7 @@ public class SaleDetailActivity extends Activity{
 		}
 
 		params.put("admin_id", admin_id);
+		//Log.e(TAG, "params complete-payment : "+ params.toString());
 
 		_string_request(
 				Request.Method.POST,

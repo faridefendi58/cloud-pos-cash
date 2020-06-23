@@ -9,485 +9,500 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:padding="@dimen/spacing_middle"
-        android:orientation="vertical">
-
-        <TextView
+    <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/title_mark_complete"
-            android:textSize="@dimen/spacing_large"
-            android:textStyle="bold"
-            android:layout_marginBottom="@dimen/spacing_large"/>
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/grey_10" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+            android:layout_height="fill_parent">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="1"
-            android:padding="@dimen/spacing_middle">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="@string/label_dept"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:textColor="@color/grey_40"
-                android:textStyle="bold"
-                android:textAllCaps="true"
-                app:fontFamily="sans-serif-medium" />
-
-            <TextView
-                style="@style/EditText.Flat.Grey"
-                android:id="@+id/debt_must_pay"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:layout_marginTop="@dimen/spacing_middle"
-                android:hint="0"
-                android:textStyle="bold"
-                android:layout_gravity="right"/>
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/grey_10" />
-
-        <!-- start of payment form -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="1"
-            android:padding="@dimen/spacing_middle">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="@string/payment_cash"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:textColor="@color/grey_40"
-                android:textStyle="bold"
-                android:textAllCaps="true"
-                app:fontFamily="sans-serif-medium" />
-
-            <EditText
-                style="@style/EditText.Flat.Grey"
-                android:id="@+id/cash_receive"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:background="@drawable/edit_text_round_bg_outline"
-                android:drawableEnd="@drawable/ic_expand_arrow"
-                android:drawableRight="@drawable/ic_money_black_24dp"
-                android:hint="0"
-                android:minHeight="@dimen/spacing_xmlarge"
-                android:inputType="number"
-                android:singleLine="true"
-                android:imeOptions="actionDone"/>
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/grey_10" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="@dimen/spacing_middle">
-
-            <TextView
-                android:id="@+id/transfer_bank_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingVertical="@dimen/spacing_large"
-                android:text="@string/transfer"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:textColor="@color/grey_40"
-                android:textStyle="bold"
-                android:textAllCaps="true"
-                app:fontFamily="sans-serif-medium"
-                android:drawableRight="@drawable/ic_add_black"
-                android:clickable="true"/>
+                android:orientation="vertical">
 
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/grey_10" />
-
-        <LinearLayout
-            android:id="@+id/transfer_bank_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingVertical="@dimen/spacing_large"
-            android:visibility="gone">
-
-            <!-- start of bca -->
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="1">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:padding="@dimen/spacing_middle"
+                    android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:text="@string/payment_bca"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                    android:textColor="@color/grey_40"
-                    android:textStyle="bold"
-                    android:textAllCaps="true"
-                    android:paddingLeft="@dimen/spacing_middle"
-                    android:layout_gravity="right"
-                    app:fontFamily="sans-serif-medium" />
-
-                <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        android:orientation="vertical">
-
-                    <EditText
-                            style="@style/EditText.Flat.Grey"
-                            android:id="@+id/nominal_bca"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/edit_text_round_bg_outline"
-                            android:hint="0"
-                            android:minHeight="@dimen/spacing_xmlarge"
-                            android:inputType="number"
-                            android:singleLine="true"
-                            android:imeOptions="actionDone"/>
-
-                    <ImageView
-                            android:id="@+id/img_receipt_bca"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/spacing_middle"
-                            />
-
-                    <Button
-                            android:id="@+id/btn_receipt_bca"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/button_transfer_receipt" />
-
-                    <Button
-                            android:id="@+id/btn_remove_receipt_bca"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/button_remove"
-                            android:visibility="gone"/>
-
-                </LinearLayout>
+                        android:layout_gravity="center"
+                        android:text="@string/title_mark_complete"
+                        android:textSize="@dimen/spacing_large"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="@dimen/spacing_large"/>
 
             </LinearLayout>
-            <!-- end of bca -->
-
-            <!-- start of mandiri -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="@dimen/spacing_middle"
-                android:weightSum="1">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:text="@string/payment_mandiri"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                    android:textColor="@color/grey_40"
-                    android:textStyle="bold"
-                    android:textAllCaps="true"
-                    android:layout_gravity="right"
-                    android:paddingLeft="@dimen/spacing_middle"
-                    app:fontFamily="sans-serif-medium" />
-
-                <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        android:orientation="vertical">
-
-                    <EditText
-                            style="@style/EditText.Flat.Grey"
-                            android:id="@+id/nominal_mandiri"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/edit_text_round_bg_outline"
-                            android:hint="0"
-                            android:minHeight="@dimen/spacing_xmlarge"
-                            android:inputType="number"
-                            android:singleLine="true"
-                            android:imeOptions="actionDone"/>
-
-                    <ImageView
-                            android:id="@+id/img_receipt_mandiri"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/spacing_middle"
-                            />
-
-                    <Button
-                            android:id="@+id/btn_receipt_mandiri"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/button_transfer_receipt" />
-
-                    <Button
-                            android:id="@+id/btn_remove_receipt_mandiri"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/button_remove"
-                            android:visibility="gone"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-            <!-- end of mandiri -->
-
-            <!-- start of bri -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="@dimen/spacing_middle"
-                android:weightSum="1">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:text="@string/payment_bri"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                    android:textColor="@color/grey_40"
-                    android:textStyle="bold"
-                    android:textAllCaps="true"
-                    android:paddingLeft="@dimen/spacing_middle"
-                    android:layout_gravity="right"
-                    app:fontFamily="sans-serif-medium" />
-
-                <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        android:orientation="vertical">
-
-                    <EditText
-                            style="@style/EditText.Flat.Grey"
-                            android:id="@+id/nominal_bri"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/edit_text_round_bg_outline"
-                            android:hint="0"
-                            android:minHeight="@dimen/spacing_xmlarge"
-                            android:inputType="number"
-                            android:singleLine="true"
-                            android:imeOptions="actionDone"/>
-
-                    <ImageView
-                            android:id="@+id/img_receipt_bri"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/spacing_middle"
-                            />
-
-                    <Button
-                            android:id="@+id/btn_receipt_bri"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/button_transfer_receipt" />
-
-                    <Button
-                            android:id="@+id/btn_remove_receipt_bri"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/button_remove"
-                            android:visibility="gone"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-            <!-- end of bri -->
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/grey_10" />
-
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="@dimen/spacing_middle">
-
-        <TextView
-                android:id="@+id/edc_header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingVertical="@dimen/spacing_large"
-                android:text="@string/payment_edc"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:textColor="@color/grey_40"
-                android:textStyle="bold"
-                android:textAllCaps="true"
-                app:fontFamily="sans-serif-medium"
-                android:drawableRight="@drawable/ic_add_black"
-                android:clickable="true"/>
-
-    </LinearLayout>
-
-    <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/grey_10" />
-
-    <LinearLayout
-            android:id="@+id/edc_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/spacing_large"
-            android:visibility="gone">
-
-        <ImageView
-                android:layout_width="@dimen/spacing_xmlarge"
-                android:layout_height="@dimen/spacing_large"
-                android:layout_gravity="end"
-                android:layout_marginTop="@dimen/spacing_large"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_visa"
-                android:visibility="gone"/>
-
-        <EditText
-                style="@style/EditText.Flat.Grey"
-                android:id="@+id/edc_card_type"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/edit_text_round_bg_outline"
-                android:drawableEnd="@drawable/ic_expand_arrow"
-                android:layout_marginTop="@dimen/spacing_middle"
-                android:drawableRight="@drawable/ic_expand_arrow"
-                android:hint="Card Type"
-                android:minHeight="@dimen/spacing_xmlarge"
-                android:visibility="gone"/>
-
-        <EditText
-                style="@style/EditText.Flat.Grey"
-                android:id="@+id/edc_card_number"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_middle"
-                android:background="@drawable/edit_text_round_bg_outline"
-                android:hint="Nomor Kartu"
-                android:minHeight="@dimen/spacing_xmlarge"
-                android:drawableEnd="@drawable/ic_credit_card_grey"
-                android:drawableRight="@drawable/ic_credit_card_grey"
-                android:inputType="number" />
-
-        <EditText
-                android:id="@+id/edc_nominal"
-                style="@style/EditText.Flat.Grey"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_middle"
-                android:background="@drawable/edit_text_round_bg_outline"
-                android:hint="Nominal dibayarkan"
-                android:minHeight="@dimen/spacing_xmlarge"
-                android:drawableEnd="@drawable/ic_money_white_24dp"
-                android:drawableRight="@drawable/ic_money_white_24dp"
-                android:inputType="number" />
-
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_middle"
-                android:orientation="horizontal"
-                android:visibility="gone">
-
-            <EditText
-                    style="@style/EditText.Flat.Grey"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawableEnd="@drawable/ic_event_grey"
-                    android:drawableRight="@drawable/ic_event_grey"
-                    android:background="@drawable/edit_text_round_bg_outline"
-                    android:hint="Expired Date"
-                    android:minHeight="@dimen/spacing_xmlarge" />
 
             <View
-                    android:layout_width="@dimen/spacing_middle"
-                    android:layout_height="0dp" />
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/grey_10" />
 
-            <EditText
-                    style="@style/EditText.Flat.Grey"
-                    android:layout_width="0dp"
+            <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/edit_text_round_bg_outline"
-                    android:hint="CVV"
-                    android:minHeight="@dimen/spacing_xmlarge" />
+                    android:orientation="vertical">
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="1"
+                        android:padding="@dimen/spacing_middle">
+
+                    <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:text="@string/label_dept"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textColor="@color/grey_40"
+                            android:textStyle="bold"
+                            android:textAllCaps="true"
+                            app:fontFamily="sans-serif-medium" />
+
+                    <TextView
+                            style="@style/EditText.Flat.Grey"
+                            android:id="@+id/debt_must_pay"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:layout_marginTop="@dimen/spacing_middle"
+                            android:hint="0"
+                            android:textStyle="bold"
+                            android:layout_gravity="right"/>
+
+                </LinearLayout>
+
+                <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/grey_10" />
+
+                <!-- start of payment form -->
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="1"
+                        android:padding="@dimen/spacing_middle">
+
+                    <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:text="@string/payment_cash"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textColor="@color/grey_40"
+                            android:textStyle="bold"
+                            android:textAllCaps="true"
+                            app:fontFamily="sans-serif-medium" />
+
+                    <EditText
+                            style="@style/EditText.Flat.Grey"
+                            android:id="@+id/cash_receive"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:background="@drawable/edit_text_round_bg_outline"
+                            android:drawableEnd="@drawable/ic_expand_arrow"
+                            android:drawableRight="@drawable/ic_money_black_24dp"
+                            android:hint="0"
+                            android:minHeight="@dimen/spacing_xmlarge"
+                            android:inputType="number"
+                            android:singleLine="true"
+                            android:imeOptions="actionDone"/>
+
+                </LinearLayout>
+
+                <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/grey_10" />
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/spacing_middle">
+
+                    <TextView
+                            android:id="@+id/transfer_bank_header"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingVertical="@dimen/spacing_large"
+                            android:text="@string/transfer"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textColor="@color/grey_40"
+                            android:textStyle="bold"
+                            android:textAllCaps="true"
+                            app:fontFamily="sans-serif-medium"
+                            android:drawableRight="@drawable/ic_add_black"
+                            android:clickable="true"/>
+
+                </LinearLayout>
+
+                <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/grey_10" />
+
+                <LinearLayout
+                        android:id="@+id/transfer_bank_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingVertical="@dimen/spacing_large"
+                        android:visibility="gone">
+
+                    <!-- start of bca -->
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="1">
+
+                        <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:text="@string/payment_bca"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                                android:textColor="@color/grey_40"
+                                android:textStyle="bold"
+                                android:textAllCaps="true"
+                                android:paddingLeft="@dimen/spacing_middle"
+                                android:layout_gravity="right"
+                                app:fontFamily="sans-serif-medium" />
+
+                        <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:orientation="vertical">
+
+                            <EditText
+                                    style="@style/EditText.Flat.Grey"
+                                    android:id="@+id/nominal_bca"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/edit_text_round_bg_outline"
+                                    android:hint="0"
+                                    android:minHeight="@dimen/spacing_xmlarge"
+                                    android:inputType="number"
+                                    android:singleLine="true"
+                                    android:imeOptions="actionDone"/>
+
+                            <ImageView
+                                    android:id="@+id/img_receipt_bca"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_middle"
+                                    />
+
+                            <Button
+                                    android:id="@+id/btn_receipt_bca"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/button_transfer_receipt" />
+
+                            <Button
+                                    android:id="@+id/btn_remove_receipt_bca"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/button_remove"
+                                    android:visibility="gone"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+                    <!-- end of bca -->
+
+                    <!-- start of mandiri -->
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="@dimen/spacing_middle"
+                            android:weightSum="1">
+
+                        <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:text="@string/payment_mandiri"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                                android:textColor="@color/grey_40"
+                                android:textStyle="bold"
+                                android:textAllCaps="true"
+                                android:layout_gravity="right"
+                                android:paddingLeft="@dimen/spacing_middle"
+                                app:fontFamily="sans-serif-medium" />
+
+                        <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:orientation="vertical">
+
+                            <EditText
+                                    style="@style/EditText.Flat.Grey"
+                                    android:id="@+id/nominal_mandiri"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/edit_text_round_bg_outline"
+                                    android:hint="0"
+                                    android:minHeight="@dimen/spacing_xmlarge"
+                                    android:inputType="number"
+                                    android:singleLine="true"
+                                    android:imeOptions="actionDone"/>
+
+                            <ImageView
+                                    android:id="@+id/img_receipt_mandiri"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_middle"
+                                    />
+
+                            <Button
+                                    android:id="@+id/btn_receipt_mandiri"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/button_transfer_receipt" />
+
+                            <Button
+                                    android:id="@+id/btn_remove_receipt_mandiri"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/button_remove"
+                                    android:visibility="gone"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+                    <!-- end of mandiri -->
+
+                    <!-- start of bri -->
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="@dimen/spacing_middle"
+                            android:weightSum="1">
+
+                        <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:text="@string/payment_bri"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                                android:textColor="@color/grey_40"
+                                android:textStyle="bold"
+                                android:textAllCaps="true"
+                                android:paddingLeft="@dimen/spacing_middle"
+                                android:layout_gravity="right"
+                                app:fontFamily="sans-serif-medium" />
+
+                        <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:orientation="vertical">
+
+                            <EditText
+                                    style="@style/EditText.Flat.Grey"
+                                    android:id="@+id/nominal_bri"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/edit_text_round_bg_outline"
+                                    android:hint="0"
+                                    android:minHeight="@dimen/spacing_xmlarge"
+                                    android:inputType="number"
+                                    android:singleLine="true"
+                                    android:imeOptions="actionDone"/>
+
+                            <ImageView
+                                    android:id="@+id/img_receipt_bri"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_middle"
+                                    />
+
+                            <Button
+                                    android:id="@+id/btn_receipt_bri"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/button_transfer_receipt" />
+
+                            <Button
+                                    android:id="@+id/btn_remove_receipt_bri"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/button_remove"
+                                    android:visibility="gone"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+                    <!-- end of bri -->
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/grey_10" />
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/spacing_middle">
+
+                <TextView
+                        android:id="@+id/edc_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingVertical="@dimen/spacing_large"
+                        android:text="@string/payment_edc"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                        android:textColor="@color/grey_40"
+                        android:textStyle="bold"
+                        android:textAllCaps="true"
+                        app:fontFamily="sans-serif-medium"
+                        android:drawableRight="@drawable/ic_add_black"
+                        android:clickable="true"/>
+
+            </LinearLayout>
+
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/grey_10" />
+
+            <LinearLayout
+                    android:id="@+id/edc_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_large"
+                    android:visibility="gone">
+
+                <ImageView
+                        android:layout_width="@dimen/spacing_xmlarge"
+                        android:layout_height="@dimen/spacing_large"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="@dimen/spacing_large"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_visa"
+                        android:visibility="gone"/>
+
+                <EditText
+                        style="@style/EditText.Flat.Grey"
+                        android:id="@+id/edc_card_type"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/edit_text_round_bg_outline"
+                        android:drawableEnd="@drawable/ic_expand_arrow"
+                        android:layout_marginTop="@dimen/spacing_middle"
+                        android:drawableRight="@drawable/ic_expand_arrow"
+                        android:hint="Card Type"
+                        android:minHeight="@dimen/spacing_xmlarge"
+                        android:visibility="gone"/>
+
+                <EditText
+                        style="@style/EditText.Flat.Grey"
+                        android:id="@+id/edc_card_number"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_middle"
+                        android:background="@drawable/edit_text_round_bg_outline"
+                        android:hint="Nomor Kartu"
+                        android:minHeight="@dimen/spacing_xmlarge"
+                        android:drawableEnd="@drawable/ic_credit_card_grey"
+                        android:drawableRight="@drawable/ic_credit_card_grey"
+                        android:inputType="number" />
+
+                <EditText
+                        android:id="@+id/edc_nominal"
+                        style="@style/EditText.Flat.Grey"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_middle"
+                        android:background="@drawable/edit_text_round_bg_outline"
+                        android:hint="Nominal dibayarkan"
+                        android:minHeight="@dimen/spacing_xmlarge"
+                        android:drawableEnd="@drawable/ic_money_white_24dp"
+                        android:drawableRight="@drawable/ic_money_white_24dp"
+                        android:inputType="number" />
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_middle"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                    <EditText
+                            style="@style/EditText.Flat.Grey"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:drawableEnd="@drawable/ic_event_grey"
+                            android:drawableRight="@drawable/ic_event_grey"
+                            android:background="@drawable/edit_text_round_bg_outline"
+                            android:hint="Expired Date"
+                            android:minHeight="@dimen/spacing_xmlarge" />
+
+                    <View
+                            android:layout_width="@dimen/spacing_middle"
+                            android:layout_height="0dp" />
+
+                    <EditText
+                            style="@style/EditText.Flat.Grey"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/edit_text_round_bg_outline"
+                            android:hint="CVV"
+                            android:minHeight="@dimen/spacing_xmlarge" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- submit botton -->
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="1"
+                    android:layout_marginTop="@dimen/spacing_middle">
+
+                <View
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"></View>
+
+                <Button
+                        android:id="@+id/finish_submit_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:text="@string/label_checkout_order"
+                        android:textColor="@color/colorWhite"
+                        android:background="@color/greenUcok" />
+
+            </LinearLayout>
+            <!--  endof submit button -->
 
         </LinearLayout>
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="1"
-        android:layout_marginTop="@dimen/spacing_middle">
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"></View>
-
-        <Button
-            android:id="@+id/finish_submit_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:text="@string/label_checkout_order"
-            android:textColor="@color/colorWhite"
-            android:background="@color/greenUcok" />
-
-    </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

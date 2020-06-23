@@ -73,7 +73,12 @@ public class AdapterListReceipt extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             final JSONObject p = items.get(position);
             try {
-                view.title.setText(Tools.capitalize(p.getString("title")));
+                String title = p.getString("title");
+                if (!title.isEmpty() && title.contains("_")) {
+                    String[] separated = title.split("_");
+                    title = separated[0];
+                }
+                view.title.setText(title.toUpperCase());
                 if (p.has("image_url")) {
                     DownloadImageTask2 downloadImageTask = new DownloadImageTask2(view.img_receipt);
                     downloadImageTask.execute(p.getString("image_url"));
