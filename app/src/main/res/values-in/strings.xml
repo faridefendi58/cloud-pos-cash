@@ -131,6 +131,7 @@
     <string name="title_stock_out">Stok Keluar</string>
     <string name="title_notification">Pemberitahuan</string>
     <string name="title_stagging">Stagging Order</string>
+    <string name="title_customer">Pelanggan</string>
 
     <string name="dashboard_income">Pendapatan</string>
     <string name="dashboard_transaction">Transaksi</string>
@@ -277,6 +278,8 @@
     <string name="label_customer_name">Nama Pelanggan</string>
     <string name="label_customer_address">Alamat</string>
     <string name="label_customer_phone">Telepon</string>
+    <string name="label_customer_email">Email</string>
+    <string name="label_customer_type">Jenis Pelanggan</string>
     <string name="label_role_cs">Customer Support</string>
     <string name="label_role_cashier">Kasir</string>
     <string name="label_role_staff">Staff</string>
@@ -353,6 +356,7 @@
     <string name="label_supplier">Supplier</string>
     <string name="label_ongkir">Ongkir</string>
     <string name="label_ongkir_cash_to_driver">Dibayar customer cash ke driver</string>
+    <string name="label_order_by">Urut Berdasar</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Bank Mandiri</string>
@@ -447,6 +451,7 @@
     <string name="tab_stock">Stok Barang</string>
     <string name="tab_notification">Pemberitahuan</string>
     <string name="tab_stagging">Website Order</string>
+    <string name="tab_customer">Pelanggan</string>
 
     <string name="origin">Asal Barang</string>
     <string name="destination">Tujuan</string>

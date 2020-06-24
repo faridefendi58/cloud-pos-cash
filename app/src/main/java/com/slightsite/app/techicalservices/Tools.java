@@ -475,6 +475,24 @@ public class Tools {
         return list;
     }
 
+    public static Map<String, String> getCustomerTypeList() {
+        Map<String, String> list = new HashMap<String, String>();
+        list.put("1", "General");
+        list.put("2", "Reseller");
+        list.put("3", "Power Reseller");
+
+        return list;
+    }
+
+    public static Map<String, String> getCustomerOrderList() {
+        Map<String, String> list = new HashMap<String, String>();
+        list.put("name", "By Name");
+        list.put("highest_order", "By Highest Order");
+        list.put("latest_order", "By Latest Order");
+
+        return list;
+    }
+
     public static Map<String, String> getBankList() {
         Map<String, String> list = new HashMap<String, String>();
         list.put("mandiri", "Bank Mandiri");

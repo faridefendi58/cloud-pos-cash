@@ -129,6 +129,7 @@
     <string name="title_stock_out">Stock Out</string>
     <string name="title_notification">Notification</string>
     <string name="title_stagging">Stagging Order</string>
+    <string name="title_customer">Customer</string>
 
     <string name="dashboard_income">Income</string>
     <string name="dashboard_transaction">Transaction</string>
@@ -279,6 +280,8 @@
     <string name="label_customer_name">Customer Name</string>
     <string name="label_customer_address">Address</string>
     <string name="label_customer_phone">Phone Number</string>
+    <string name="label_customer_email">Email</string>
+    <string name="label_customer_type">Customer Type</string>
     <string name="label_role_cs">Customer Support</string>
     <string name="label_role_cashier">Cashier</string>
     <string name="label_role_staff">Staff</string>
@@ -355,6 +358,7 @@
     <string name="label_supplier">Supplier</string>
     <string name="label_ongkir">Ongkir</string>
     <string name="label_ongkir_cash_to_driver">Cash by customer to driver</string>
+    <string name="label_order_by">Order By</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>
@@ -449,6 +453,7 @@
     <string name="tab_stock">Stock</string>
     <string name="tab_notification">Notification</string>
     <string name="tab_stagging">Website Order</string>
+    <string name="tab_customer">Customer</string>
 
     <string name="origin">Origin</string>
     <string name="destination">Destination</string>
