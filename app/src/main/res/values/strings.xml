@@ -359,6 +359,7 @@
     <string name="label_ongkir">Ongkir</string>
     <string name="label_ongkir_cash_to_driver">Cash by customer to driver</string>
     <string name="label_order_by">Order By</string>
+    <string name="label_total_spend">Total Spend</string>
 
     <string name="payment_cash">Cash</string>
     <string name="payment_mandiri">Mandiri Transfer</string>

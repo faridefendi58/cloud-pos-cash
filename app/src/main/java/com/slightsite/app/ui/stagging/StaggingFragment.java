@@ -275,6 +275,8 @@ public class StaggingFragment extends UpdatableFragment {
                                             if (jsonObject != null) {
                                                 intent2 = new Intent(getContext(), StaggingDetailActivity.class);
                                                 intent2.putExtra("order_key", jsonObject.getString("order_key"));
+                                                int current_tab = ((MainActivity)getActivity()).getCurrentTabPosition();
+                                                intent2.putExtra("fragment", current_tab +"");
                                             }
                                             main.finish();
                                             startActivity(intent2);

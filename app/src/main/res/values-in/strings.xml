@@ -357,6 +357,7 @@
     <string name="label_ongkir">Ongkir</string>
     <string name="label_ongkir_cash_to_driver">Dibayar customer cash ke driver</string>
     <string name="label_order_by">Urut Berdasar</string>
+    <string name="label_total_spend">Total Belanja</string>
 
     <string name="payment_cash">Tunai</string>
     <string name="payment_mandiri">Transfer Bank Mandiri</string>

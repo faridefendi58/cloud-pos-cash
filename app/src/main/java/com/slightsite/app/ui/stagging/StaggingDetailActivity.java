@@ -103,6 +103,8 @@ public class StaggingDetailActivity extends Activity{
     private SharedPreferences sharedpreferences;
     private Register register;
 
+    private int FRAGMENT_STAGGING = 4;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,6 +119,10 @@ public class StaggingDetailActivity extends Activity{
 
         if (getIntent().hasExtra("order_key")) { // has sale data from server
             order_key = getIntent().getStringExtra("order_key");
+        }
+
+        if (getIntent().hasExtra("fragment")) {
+            FRAGMENT_STAGGING = Integer.parseInt(getIntent().getStringExtra("fragment"));
         }
 
         sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
@@ -187,6 +193,7 @@ public class StaggingDetailActivity extends Activity{
         switch (item.getItemId()) {
             case android.R.id.home:
                 Intent act = new Intent(StaggingDetailActivity.this, MainActivity.class);
+                act.putExtra("fragment", FRAGMENT_STAGGING);
                 finish();
                 startActivity(act);
                 return true;

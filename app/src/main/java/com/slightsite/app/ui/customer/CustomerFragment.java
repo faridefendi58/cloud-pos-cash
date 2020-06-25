@@ -25,8 +25,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -34,7 +32,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.slightsite.app.R;
 import com.slightsite.app.domain.AppController;
-import com.slightsite.app.domain.DateTimeStrategy;
 import com.slightsite.app.domain.params.ParamCatalog;
 import com.slightsite.app.domain.params.ParamService;
 import com.slightsite.app.domain.params.Params;
@@ -50,13 +47,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 @SuppressLint("ValidFragment")
@@ -264,6 +257,8 @@ public class CustomerFragment extends UpdatableFragment {
                                             if (jsonObject != null) {
                                                 intent2 = new Intent(getContext(), CustomerDetailActivity.class);
                                                 intent2.putExtra("id", jsonObject.getString("id"));
+                                                int current_tab = ((MainActivity)getActivity()).getCurrentTabPosition();
+                                                intent2.putExtra("fragment", current_tab +"");
                                             }
                                             main.finish();
                                             startActivity(intent2);
