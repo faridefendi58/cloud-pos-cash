@@ -442,6 +442,8 @@
     <string name="heading_stock_in_out_notes">Stock In/Out Information</string>
     <string name="heading_stock_in_out_type">Stock Transaction Type</string>
     <string name="heading_transfer_receipt">Transfer Receipt</string>
+    <string name="heading_order_information">Order Information</string>
+    <string name="heading_summary">Summary</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

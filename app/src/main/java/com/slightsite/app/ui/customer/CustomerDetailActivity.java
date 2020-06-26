@@ -45,12 +45,13 @@ import com.slightsite.app.domain.payment.Payment;
 import com.slightsite.app.domain.sale.FeeOn;
 import com.slightsite.app.domain.sale.ItemCounter;
 import com.slightsite.app.domain.sale.Register;
+import com.slightsite.app.domain.sale.Sale;
+import com.slightsite.app.domain.sale.Shipping;
 import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.techicalservices.URLBuilder;
 import com.slightsite.app.ui.LoginActivity;
 import com.slightsite.app.ui.MainActivity;
-import com.slightsite.app.ui.fee.AdapterListFeeOn;
 import com.slightsite.app.ui.fee.AdapterListPaymentOn;
 import com.slightsite.app.ui.fee.AdapterListSaleCounter;
 import com.slightsite.app.ui.sale.SaleDetailActivity;
@@ -93,6 +94,7 @@ public class CustomerDetailActivity extends Activity {
     private RecyclerView paymentListRecycle;
     private TextView total_spend;
     private TextView total_transaction;
+    private TextView fee_report_title;
     private RecyclerView refundListRecycle;
 
     private RecyclerView saleItemListRecycle;
@@ -160,6 +162,8 @@ public class CustomerDetailActivity extends Activity {
         tv_customer_email = (TextView) findViewById(R.id.tv_customer_email);
         tv_customer_phone = (TextView) findViewById(R.id.tv_customer_phone);
         tv_customer_address = (TextView) findViewById(R.id.tv_customer_address);
+        fee_report_title = (TextView) findViewById(R.id.fee_report_title);
+        fee_report_title.setText(getResources().getString(R.string.heading_summary));
 
         orderListRecycle = (RecyclerView) findViewById(R.id.orderListRecycle);
         orderListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -301,7 +305,13 @@ public class CustomerDetailActivity extends Activity {
                     }
                 });
     }
-    
+
+    private Map<Integer, Sale> list_invoices = new HashMap<Integer, Sale>();
+    private Map<Integer, Customer> list_customers = new HashMap<Integer, Customer>();
+    private Map<Integer, Shipping> list_shippings = new HashMap<Integer, Shipping>();
+    private Map<Integer, String> list_payments = new HashMap<Integer, String>();
+    private Map<Integer, String> list_items_belanja = new HashMap<Integer, String>();
+
     private void buildListOrder() {
         int warehouse_id = Integer.parseInt(paramCatalog.getParamByName("warehouse_id").getValue());
         final Map<String, String> params = new HashMap<String, String>();
@@ -339,6 +349,10 @@ public class CustomerDetailActivity extends Activity {
                                         listOrder.add(_fee);
                                         invoice_ids.put(n, item_data.getInt("invoice_id"));
                                         items_datas.put(n, item_data);
+
+                                        // buid bundle for saleDetail
+                                        buildBundleForSaleDetail(item_data);
+                                        // endof build bundle for saleDetail
                                     }
 
                                     JSONObject summary_data = data.getJSONObject("summary");
@@ -398,9 +412,14 @@ public class CustomerDetailActivity extends Activity {
                                 adapter.setOnItemClickListener(new AdapterListCustomerOrder.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(View view, FeeOn obj, int position) {
-                                        /*Intent newActivity = new Intent(getBaseContext(), SaleDetailActivity.class);
-                                        newActivity.putExtra("sale_intent", invoice_ids.get(position));
-                                        startActivity(newActivity);*/
+                                        Intent newActivity = new Intent(getBaseContext(), SaleDetailActivity.class);
+                                        int _inv_id = invoice_ids.get(position);
+                                        newActivity.putExtra("sale_intent", list_invoices.get(_inv_id));
+                                        newActivity.putExtra("customer_intent", list_customers.get(_inv_id));
+                                        newActivity.putExtra("shipping_intent", list_shippings.get(_inv_id));
+                                        newActivity.putExtra("payment_intent", list_payments.get(_inv_id));
+                                        newActivity.putExtra("line_items_intent", list_items_belanja.get(_inv_id));
+                                        startActivity(newActivity);
                                     }
                                 });
 
@@ -560,5 +579,94 @@ public class CustomerDetailActivity extends Activity {
                         } catch (Exception e){e.printStackTrace();}
                     }
                 });
+    }
+
+    private void buildBundleForSaleDetail(JSONObject item_data) {
+        try {
+            // build the sale
+            Sale sale = new Sale(item_data.getInt("invoice_id"), item_data.getString("created_at"));
+            if (item_data.has("delivered_at")) {
+                sale.setDeliveredPlanAt(item_data.getString("delivered_at"));
+            }
+            sale.setServerInvoiceNumber(item_data.getString("invoice_number"));
+            sale.setServerInvoiceId(item_data.getInt("invoice_id"));
+            if (item_data.has("customer_id")) {
+                sale.setCustomerId(item_data.getInt("customer_id"));
+            }
+            if (item_data.has("status")) {
+                String _status = "paid";
+                if (item_data.getInt("status") == 0) {
+                    sale.setStatus("unpaid");
+                }
+            }
+            list_invoices.put(item_data.getInt("invoice_id"), sale);
+
+            // build customer
+            JSONObject invoice_configs = item_data.getJSONObject("invoice_configs");
+            if (invoice_configs.has("customer")) {
+                JSONObject cust_dt = invoice_configs.getJSONObject("customer");
+                String _email = "-";
+                if (cust_dt.has("email") && cust_dt.getString("email") != null) {
+                    _email = cust_dt.getString("email");
+                }
+                Customer _customer = new Customer(
+                        sale.getCustomerId(),
+                        cust_dt.getString("name"),
+                        _email,
+                        cust_dt.getString("phone"),
+                        cust_dt.getString("address"),
+                        1
+                );
+                list_customers.put(item_data.getInt("invoice_id"), _customer);
+            }
+
+            // build shipping
+            if (invoice_configs.has("shipping")) {
+                JSONArray arrShip = invoice_configs.getJSONArray("shipping");
+                if (arrShip.length() > 0) {
+                    JSONObject ship_method = arrShip.getJSONObject(0);
+                    if (ship_method != null) {
+                        Shipping shipping = new Shipping(
+                                ship_method.getInt("method"),
+                                ship_method.getString("date_added"),
+                                ship_method.getString("address"),
+                                ship_method.getInt("warehouse_id")
+                        );
+                        if (ship_method.has("warehouse_name")) {
+                            shipping.setWarehouseName(ship_method.getString("warehouse_name"));
+                        }
+                        if (ship_method.has("recipient_name")) {
+                            shipping.setName(ship_method.getString("recipient_name"));
+                        }
+                        if (ship_method.has("recipient_phone")) {
+                            if (ship_method.getString("recipient_phone") != null && ship_method.getString("recipient_phone") !="null") {
+                                shipping.setPhone(ship_method.getString("recipient_phone"));
+                            }
+                        }
+                        if (ship_method.has("pickup_date")) {
+                            shipping.setPickupDate(ship_method.getString("pickup_date"));
+                        }
+
+                        list_shippings.put(item_data.getInt("invoice_id"), shipping);
+                    }
+                }
+            }
+
+            // build the payment
+            if (item_data.has("payments")) {
+                JSONArray arrPayment = item_data.getJSONArray("payments");
+                if (arrPayment.length() > 0) {
+                    list_payments.put(item_data.getInt("invoice_id"), arrPayment.toString());
+                }
+            }
+
+            // build the line item data
+            if (invoice_configs.has("items_belanja")) {
+                JSONArray arrItemsBelanja = invoice_configs.getJSONArray("items_belanja");
+                if (arrItemsBelanja.length() > 0) {
+                    list_items_belanja.put(item_data.getInt("invoice_id"), arrItemsBelanja.toString());
+                }
+            }
+        } catch (Exception e){e.printStackTrace();}
     }
 }

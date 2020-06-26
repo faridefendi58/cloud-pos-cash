@@ -181,7 +181,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="@string/tab_order_list"
+                                android:text="@string/heading_order_information"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                                 android:textColor="@color/grey_40"
                                 android:textAllCaps="true"
@@ -202,90 +202,139 @@
                                 android:orientation="vertical">
 
                             <!-- Header fee report -->
-                            <include
-                                    layout="@layout/partial_order_summary"
+                            <android.support.v7.widget.CardView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_alignParentBottom="false"/>
-                            <!-- Header fee report -->
+                                    android:layout_marginTop="@dimen/spacing_middle"
+                                    app:cardBackgroundColor="@android:color/white"
+                                    app:cardCornerRadius="1dp"
+                                    app:cardElevation="3dp"
+                                    app:cardUseCompatPadding="true">
 
-                            <RelativeLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginVertical="@dimen/spacing_middle">
-
-                                <LinearLayout
+                                <include
+                                        layout="@layout/partial_order_summary"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:orientation="vertical">
+                                        android:layout_alignParentBottom="false"/>
 
-                                    <android.support.v7.widget.RecyclerView
-                                            android:id="@+id/orderListRecycle"
+                            </android.support.v7.widget.CardView>
+                            <!-- Header fee report -->
+
+                            <android.support.v7.widget.CardView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_middle"
+                                    app:cardBackgroundColor="@android:color/white"
+                                    app:cardCornerRadius="1dp"
+                                    app:cardElevation="3dp"
+                                    app:cardUseCompatPadding="true">
+
+                                <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/spacing_middle">
+
+                                    <LinearLayout
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
-                                            android:scrollbars="vertical"
-                                            android:scrollingCache="true" />
+                                            android:orientation="vertical">
 
-                                </LinearLayout>
+                                        <android.support.v7.widget.RecyclerView
+                                                android:id="@+id/orderListRecycle"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:scrollbars="vertical"
+                                                android:scrollingCache="true" />
 
-                            </RelativeLayout>
+                                    </LinearLayout>
+
+                                </RelativeLayout>
+
+                            </android.support.v7.widget.CardView>
 
                             <!-- Strat Footer order report -->
                             <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="0dp"
                                     android:layout_weight="1"
-                                    android:orientation="vertical"
-                                    android:background="@color/grey_10">
+                                    android:orientation="vertical">
 
-                                <LinearLayout
+                                <android.support.v7.widget.CardView
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:orientation="horizontal"
-                                        android:padding="@dimen/spacing_middle">
+                                        android:layout_marginTop="@dimen/spacing_middle"
+                                        app:cardBackgroundColor="@android:color/white"
+                                        app:cardCornerRadius="1dp"
+                                        app:cardElevation="3dp"
+                                        app:cardUseCompatPadding="true">
 
-                                    <TextView
+                                    <LinearLayout
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
-                                            android:textStyle="bold"
-                                            android:gravity="center"
-                                            android:text="@string/heading_payment_detail"
-                                            android:textSize="@dimen/spacing_large"/>
+                                            android:background="@color/grey_10"
+                                            android:orientation="vertical">
 
-                                </LinearLayout>
+                                        <LinearLayout
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:orientation="horizontal"
+                                                android:padding="@dimen/spacing_middle">
 
-                                <View
-                                        android:layout_width="match_parent"
-                                        android:layout_height="1dp"
-                                        android:background="@color/grey_20"/>
+                                            <TextView
+                                                    android:layout_width="match_parent"
+                                                    android:layout_height="wrap_content"
+                                                    android:textStyle="bold"
+                                                    android:gravity="center"
+                                                    android:text="@string/heading_payment_detail"
+                                                    android:textSize="@dimen/spacing_large"/>
 
-                                <LinearLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:paddingVertical="@dimen/spacing_middle"
-                                        android:orientation="vertical">
+                                        </LinearLayout>
 
-                                    <android.support.v7.widget.RecyclerView
-                                            android:id="@+id/paymentListRecycle"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="match_parent"
-                                            android:scrollbars="vertical"
-                                            android:scrollingCache="true" />
+                                        <View
+                                                android:layout_width="match_parent"
+                                                android:layout_height="1dp"
+                                                android:background="@color/grey_20"/>
 
-                                </LinearLayout>
+                                        <LinearLayout
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:paddingVertical="@dimen/spacing_middle"
+                                                android:orientation="vertical">
+
+                                            <android.support.v7.widget.RecyclerView
+                                                    android:id="@+id/paymentListRecycle"
+                                                    android:layout_width="match_parent"
+                                                    android:layout_height="match_parent"
+                                                    android:scrollbars="vertical"
+                                                    android:scrollingCache="true" />
+
+                                        </LinearLayout>
+
+                                    </LinearLayout>
+
+                                </android.support.v7.widget.CardView>
 
                             </LinearLayout>
 
-                            <!-- start of sale item detail -->
-                            <include
-                                    android:id="@+id/sale_item_detail_container"
-                                    layout="@layout/_fee_sale_detail"
+                            <android.support.v7.widget.CardView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="@dimen/spacing_middle"/>
-                            <!-- End of Footer fee report -->
+                                    android:layout_marginTop="@dimen/spacing_middle"
+                                    app:cardBackgroundColor="@android:color/white"
+                                    app:cardCornerRadius="1dp"
+                                    app:cardElevation="3dp"
+                                    app:cardUseCompatPadding="true">
+
+                                <include
+                                        android:id="@+id/sale_item_detail_container"
+                                        layout="@layout/_fee_sale_detail"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"/>
+
+                            </android.support.v7.widget.CardView>
 
                         </LinearLayout>
+
                     </LinearLayout>
 
                 </LinearLayout>
