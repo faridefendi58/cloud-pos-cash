@@ -271,6 +271,10 @@ public class PrintPreviewActivity extends Activity {
                 should_be_finished = true;
             }
 
+            if (shipping_method == 6) { //nitip barang
+                should_be_finished = false;
+            }
+
             Params bParam = paramCatalog.getParamByName("bluetooth_device_name");
             if (bParam != null) {
                 bluetoothDeviceName = bParam.getValue();

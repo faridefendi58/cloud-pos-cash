@@ -105,7 +105,8 @@ public class AppController extends Application {
                 context.getString(R.string.shipping_method_gojek_grab),
                 context.getString(R.string.shipping_method_tokopedia),
                 context.getString(R.string.shipping_method_gofood),
-                context.getString(R.string.shipping_method_grab_food)
+                context.getString(R.string.shipping_method_grab_food),
+                context.getString(R.string.shipping_method_deposit)
         };
     }
 

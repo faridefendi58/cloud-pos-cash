@@ -80,6 +80,8 @@ public class ConfirmationFragment extends Fragment {
     private TextView label_shipping_warehouse;
     private LinearLayout recipient_name_container;
     private LinearLayout invoice_number_container;
+    private LinearLayout shipping_date_container;
+    private LinearLayout shipping_location_container;
     private TextView shipping_recipient_name;
     private TextView shipping_recipient_phone;
     private TextView shipping_invoice_number;
@@ -166,6 +168,8 @@ public class ConfirmationFragment extends Fragment {
         shipping_recipient_phone = (TextView) root.findViewById(R.id.shipping_recipient_phone);
         recipient_name_container = (LinearLayout) root.findViewById(R.id.recipient_name_container);
         invoice_number_container = (LinearLayout) root.findViewById(R.id.invoice_number_container);
+        shipping_date_container = (LinearLayout) root.findViewById(R.id.shipping_date_container);
+        shipping_location_container = (LinearLayout) root.findViewById(R.id.shipping_location_container);
         shipping_invoice_number = (TextView) root.findViewById(R.id.shipping_invoice_number);
     }
 
@@ -355,6 +359,12 @@ public class ConfirmationFragment extends Fragment {
                     recipient_name_container.setVisibility(View.VISIBLE);
                     shipping_recipient_name.setText(shipping.getName());
                     shipping_recipient_phone.setText(shipping.getPhone());
+                }
+
+                if (shipping.getMethod() == 6) { // nitip barang
+                    shipping_date_container.setVisibility(View.GONE);
+                    shipping_location_container.setVisibility(View.GONE);
+                    recipient_name_container.setVisibility(View.GONE);
                 }
 
                 if (shipping.getInvoiceNumber() != null) {

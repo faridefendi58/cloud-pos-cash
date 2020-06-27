@@ -81,6 +81,7 @@
     </LinearLayout>
 
     <LinearLayout
+            android:id="@+id/shipping_date_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="@dimen/spacing_middle"
@@ -191,6 +192,7 @@
     </LinearLayout>
 
     <LinearLayout
+            android:id="@+id/shipping_location_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="@dimen/spacing_middle"

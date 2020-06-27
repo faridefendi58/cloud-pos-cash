@@ -629,6 +629,11 @@ public class ShippingFragment extends Fragment {
                 shipping_invoice_container.setVisibility(View.VISIBLE);
                 inv_prefiks.setVisibility(View.GONE);
                 shipping_invoice_number.setInputType(InputType.TYPE_CLASS_TEXT);
+            } else if (i == 6) {
+                shipping_date.setVisibility(View.GONE);
+                shipping_address.setVisibility(View.GONE);
+                shipping_name_container.setVisibility(View.GONE);
+                shipping_warehouse.setVisibility(View.GONE);
             } else {
                 shipping_date.setVisibility(View.VISIBLE);
                 shipping_name_container.setVisibility(View.VISIBLE);
@@ -639,35 +644,6 @@ public class ShippingFragment extends Fragment {
     }
 
     private void setupPhoneAutoComplete() {
-        /*float elevation = 6f;
-        Drawable backgroundDrawable = new ColorDrawable(Color.WHITE);
-        AutocompletePresenter<Customer> presenter = new PhonePresenter(getContext(), customers);
-        AutocompleteCallback<Customer> callback = new AutocompleteCallback<Customer>() {
-            @Override
-            public boolean onPopupItemClicked(Editable editable, Customer item) {
-                editable.clear();
-                editable.append(item.getPhone());
-                name.setText(item.getName());
-                phone.setText(item.getPhone());
-                email.setText(item.getEmail());
-                address.setText(item.getAddress());
-                selected_cust_id = item.getId();
-
-                ((CheckoutActivity) getActivity()).setCustomer(item);
-                ((CheckoutActivity) getActivity()).hideKeyboard(getActivity());
-                return true;
-            }
-
-            public void onPopupVisibilityChanged(boolean shown) {}
-        };
-
-        phoneAutocomplete = Autocomplete.<Customer>on(phone)
-                .with(elevation)
-                .with(backgroundDrawable)
-                .with(presenter)
-                .with(callback)
-                .build();*/
-
         customer_phone_autocomplete = (AutoCompleteTextView) root.findViewById(R.id.customer_phone_autocomplete);
         AutoCompleteAdapter adapter = new AutoCompleteAdapter(getContext(), R.layout.spinner_item);
         adapter.setDelimeter("telephone");

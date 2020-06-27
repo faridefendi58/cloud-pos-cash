@@ -411,6 +411,7 @@
     <string name="shipping_method_tokopedia">Tokopedia</string>
     <string name="shipping_method_gofood">GoFood</string>
     <string name="shipping_method_grab_food">GrabFood</string>
+    <string name="shipping_method_deposit">Beli dan Titip Barang</string>
 
     <string name="hint_email">Contoh: john@gmail.com</string>
     <string name="hint_retur_notes">Tambahkan catatan jika diperlukan.</string>

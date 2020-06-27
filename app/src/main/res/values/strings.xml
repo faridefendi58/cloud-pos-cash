@@ -413,6 +413,7 @@
     <string name="shipping_method_tokopedia">Tokopedia</string>
     <string name="shipping_method_gofood">GoFood</string>
     <string name="shipping_method_grab_food">GrabFood</string>
+    <string name="shipping_method_deposit">Buy and Deposit</string>
 
     <string name="hint_email">E.g: john@gmail.com</string>
     <string name="hint_retur_notes">Add some notes if needed.</string>

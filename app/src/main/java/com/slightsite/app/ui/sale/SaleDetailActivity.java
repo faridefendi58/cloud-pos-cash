@@ -163,6 +163,7 @@ public class SaleDetailActivity extends Activity{
 	private LinearLayout gograbfood_discount_container;
 	private LinearLayout main_total_price_container;
 	private LinearLayout receipt_information;
+	private LinearLayout shipping_information_container;
 	private TextView gograbfood_discount_label;
 	private TextView gograbfood_total_price;
 	private TextView gograbfood_discount;
@@ -353,6 +354,7 @@ public class SaleDetailActivity extends Activity{
 		gograbfood_discount_container = (LinearLayout) findViewById(R.id.gograbfood_discount_container);
 		main_total_price_container = (LinearLayout) findViewById(R.id.main_total_price_container);
 		receipt_information = (LinearLayout) findViewById(R.id.receipt_information);
+		shipping_information_container = (LinearLayout) findViewById(R.id.shipping_information_container);
 
 		gograbfood_discount_label = (TextView) findViewById(R.id.gograbfood_discount_label);
 		gograbfood_total_price = (TextView) findViewById(R.id.gograbfood_total_price);
@@ -533,6 +535,10 @@ public class SaleDetailActivity extends Activity{
 				recipient_name_container.setVisibility(View.VISIBLE);
 				shipping_recipient_name.setText(shipping.getName());
 				shipping_recipient_phone.setText(shipping.getPhone());
+			}
+
+			if (shipping.getMethod() == 6) { //6 is nitip barang
+				shipping_information_container.setVisibility(View.GONE);
 			}
 		}
 
