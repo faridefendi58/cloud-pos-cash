@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        tools:context="com.slightsite.app.ui.deposit.DepositActivity">
+
+    <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/grey_3"
+            app:contentInsetStartWithNavigation="0dp"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/Toolbar.Light">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_marginEnd="@dimen/spacing_large"
+                android:layout_marginRight="@dimen/spacing_large"
+                android:paddingTop="@dimen/spacing_large"
+                android:gravity="left"
+                android:orientation="horizontal">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_take_good"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/colorWhite"
+                    app:fontFamily="sans-serif-medium" />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+            android:id="@+id/sale_detail_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+        <android.support.v4.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.95">
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                <android.support.v7.widget.RecyclerView
+                        android:id="@+id/lineitemListRecycle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="vertical"
+                        android:scrollingCache="true" />
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/spacing_middle">
+
+                    <EditText
+                            android:id="@+id/take_good_notes"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginTop="@dimen/spacing_middle"
+                            android:inputType="text|textMultiLine"
+                            android:background="@drawable/edit_text_round_bg_outline"
+                            android:hint="@string/hint_retur_notes"
+                            android:textSize="14dp"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </android.support.v4.widget.NestedScrollView>
+
+        <LinearLayout
+                android:id="@+id/proceed_button_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_alignParentBottom="true">
+
+            <Button
+                    android:id="@+id/btn_proceed"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:textColor="@android:color/white"
+                    android:background="@color/btnInfo"
+                    android:text="@string/button_proceed_take_good"
+                    android:textSize="14sp"
+                    android:clickable="true"
+                    android:onClick="proceedTakeGood"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

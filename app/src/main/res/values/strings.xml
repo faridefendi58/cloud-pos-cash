@@ -86,6 +86,7 @@
     <string name="dialog_confirm_data">Are you sure you want all these data is correct?</string>
     <string name="dialog_proceed_order">Are you sure you want to PROCEED this order?</string>
     <string name="dialog_remove_order">Are you sure you want to REMOVE this order?</string>
+    <string name="dialog_proceed_take_good">Are you sure you want to PROCESS taking deposit good?</string>
     <string name="hint_empty_sale">Sale is empty.</string>
     <string name="quit">Quit</string>
     <string name="no">No</string>
@@ -263,6 +264,7 @@
     <string name="title_change_warehouse">Change Warehouse</string>
     <string name="title_bluetooth_devices">Bluetooth Devices</string>
     <string name="title_retur_invoice">Retur Invoice</string>
+    <string name="title_take_good">Take Deposit Good</string>
 
     <string name="label_print_char_length">Character Length :</string>
     <string name="label_print_header">Header :</string>
@@ -403,6 +405,9 @@
     <string name="button_reject">Reject</string>
     <string name="button_transfer_receipt">Transfer Receipt</string>
     <string name="button_approve">Approve</string>
+    <string name="button_take_good">Take Good</string>
+    <string name="button_proceed_take_good">Proceed Take Good</string>
+    <string name="button_add_to_take_good">Take</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
     <string name="confirm_delete">Are you sure you want to delete this?</string>

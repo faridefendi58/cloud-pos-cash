@@ -113,6 +113,13 @@
                 android:name=".ui.stagging.StaggingDetailActivity"
                 android:label="@string/title_stagging"
                 android:screenOrientation="portrait" />
+        <activity
+                android:name=".ui.deposit.DepositActivity"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppCompatTheme" />
+        <activity
+                android:name=".ui.deposit.PrintDepositActivity"
+                android:screenOrientation="portrait" />
 
         <service
                 android:name=".techicalservices.FCMNotificationService"

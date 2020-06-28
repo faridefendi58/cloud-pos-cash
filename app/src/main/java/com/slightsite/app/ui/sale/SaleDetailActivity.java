@@ -98,6 +98,7 @@ import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.techicalservices.URLBuilder;
 import com.slightsite.app.ui.LoginActivity;
 import com.slightsite.app.ui.MainActivity;
+import com.slightsite.app.ui.deposit.DepositActivity;
 import com.slightsite.app.ui.inventory.ProductServerActivity;
 import com.slightsite.app.ui.printer.PrintPreviewActivity;
 import com.slightsite.app.ui.printer.PrinterActivity;
@@ -164,6 +165,7 @@ public class SaleDetailActivity extends Activity{
 	private LinearLayout main_total_price_container;
 	private LinearLayout receipt_information;
 	private LinearLayout shipping_information_container;
+	private LinearLayout take_good_button_container;
 	private TextView gograbfood_discount_label;
 	private TextView gograbfood_total_price;
 	private TextView gograbfood_discount;
@@ -355,6 +357,7 @@ public class SaleDetailActivity extends Activity{
 		main_total_price_container = (LinearLayout) findViewById(R.id.main_total_price_container);
 		receipt_information = (LinearLayout) findViewById(R.id.receipt_information);
 		shipping_information_container = (LinearLayout) findViewById(R.id.shipping_information_container);
+        take_good_button_container = (LinearLayout) findViewById(R.id.take_good_button_container);
 
 		gograbfood_discount_label = (TextView) findViewById(R.id.gograbfood_discount_label);
 		gograbfood_total_price = (TextView) findViewById(R.id.gograbfood_total_price);
@@ -1053,7 +1056,7 @@ public class SaleDetailActivity extends Activity{
 									Log.e(getClass().getSimpleName(), "obj_retur : "+ obj_retur.toString());
 
 									if (server_invoice_data.getInt("status") == 0) {
-										complete_button_container.setVisibility(View.VISIBLE);
+                                        complete_button_container.setVisibility(View.VISIBLE);
 									} else if (server_invoice_data.getInt("status") == 1) {
 										if (server_invoice_data.getInt("delivered") == 1) {
 											try {
@@ -1072,7 +1075,12 @@ public class SaleDetailActivity extends Activity{
 												buildReturInformation();
 											}
 										} else {
-											finish_button_container.setVisibility(View.VISIBLE);
+                                            Log.e(TAG, "shipping.getMethod() : "+ shipping.getMethod());
+                                            if (shipping.getMethod() == 6) {
+                                                take_good_button_container.setVisibility(View.VISIBLE);
+                                            } else {
+                                                finish_button_container.setVisibility(View.VISIBLE);
+                                            }
 										}
 									}
 								}
@@ -2063,4 +2071,25 @@ public class SaleDetailActivity extends Activity{
 		}
 		return file;
 	}
+
+    public void takeTheGood(View v) {
+        Intent intent = new Intent(SaleDetailActivity.this, DepositActivity.class);
+        intent.putExtra("saleId", saleId+"");
+
+        Sale new_sale = new Sale(saleId, sale.getEndTime());
+        new_sale.setServerInvoiceNumber(sale.getServerInvoiceNumber());
+        new_sale.setServerInvoiceId(sale.getServerInvoiceId());
+        new_sale.setCustomerId(sale.getCustomerId());
+        new_sale.setStatus(sale.getStatus());
+        new_sale.setDiscount(sale.getDiscount());
+
+        intent.putExtra("sale_intent", new_sale);
+        intent.putExtra("customer_intent", customer_intent);
+        intent.putExtra("shipping_intent", shipping_intent);
+        intent.putExtra("payment_intent", payment_intent);
+        intent.putExtra("line_items_intent", line_items_intent);
+
+        //finish();
+        startActivity(intent);
+    }
 }
