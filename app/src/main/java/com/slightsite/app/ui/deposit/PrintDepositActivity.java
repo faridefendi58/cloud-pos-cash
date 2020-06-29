@@ -110,7 +110,7 @@ public class PrintDepositActivity extends Activity {
     ProgressDialog pDialog;
     int success;
 
-    private Retur retur;
+    private Deposit deposit;
     private Sale sale;
     private int serverInvoiceId;
 
@@ -146,11 +146,11 @@ public class PrintDepositActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
-            if (getIntent().hasExtra("retur_intent")) {
-                retur = (Retur) getIntent().getSerializableExtra("retur_intent");
-                serverInvoiceId = retur.getServerInvoiceId();
-                Log.e(getClass().getSimpleName(), "retur items : "+ retur.getItems().toString());
-                customer = retur.getCustomer();
+            if (getIntent().hasExtra("deposit_intent")) {
+                deposit = (Deposit) getIntent().getSerializableExtra("deposit_intent");
+                serverInvoiceId = deposit.getServerInvoiceId();
+                Log.e(getClass().getSimpleName(), "arrTakeDepositList items : "+ deposit.getItems().toString());
+                customer = deposit.getCustomer();
                 Log.e(getClass().getSimpleName(), "customer : "+ customer.toMap().toString());
             }
 
@@ -291,7 +291,7 @@ public class PrintDepositActivity extends Activity {
         finish_and_print_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finishAndPrint();
+                just_print(false);
             }
         });
 
@@ -370,12 +370,10 @@ public class PrintDepositActivity extends Activity {
         Double sale_total = 0.00;
         Double amount_tendered = 0.00;
         try {
-            //current_time = sale.getEndTime();
             current_time = DateTimeStrategy.parseDate(current_time, "dd MMM yyyy hh:mm");
             sale_total = sale.getTotal();
         } catch (Exception e) { e.printStackTrace(); }
 
-        //String[] separated = current_time.split(" ");
         res += "<tr class=\"ft-18\"><td>"+ getResources().getString(R.string.label_date)+ "</td>" +
                 "<td colspan=\"3\" class=\"ft-17\"> : "+ current_time +"</td>";
         String date_transaction = sale.getEndTime();
@@ -405,19 +403,6 @@ public class PrintDepositActivity extends Activity {
 
         res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.label_no_nota)+ "</td><td colspan=\"3\"> : "+ no_nota +"</td></tr>";
 
-        if (sale.getCreatedBy() > 0) {
-            res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_created_by) + "</td><td colspan=\"3\"> : " + sale.getCreatedByName() + "</td></tr>";
-            if (sale.getRefundedBy() > 0) {
-                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + sale.getRefundedByName() + "</td></tr>";
-            } else {
-                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
-            }
-        } else {
-            if (adminData != null) {
-                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_processed_by) + "</td><td colspan=\"3\"> : " + adminData.getAsString(LoginActivity.TAG_NAME) + "</td></tr>";
-            }
-        }
-
         if (customer != null) {
             res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.customer)+ "</td><td colspan=\"3\"> : "+ customer.getName() +"</td></tr>";
             res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.label_customer_address)+ "</td><td colspan=\"3\"> : "+ customer.getAddress() +"</td></tr>";
@@ -426,128 +411,23 @@ public class PrintDepositActivity extends Activity {
 
         res += "<tr><td colspan=\"4\"><hr/></td></tr>";
 
-        List<Map<String, String >> list = retur.getItems();
-        int sub_total = 0;
-        Map<String,Integer> list_tukar_barang = new HashMap<>();
+        List<Map<String, String >> list = deposit.getItems();
+        Map<String,Integer> list_ambil_barang = new HashMap<>();
         for (Map<String, String> entry : list) {
             int qty = Integer.parseInt(entry.get("quantity"));
-            int change_qty = Integer.parseInt(entry.get("change_item"));
-            int refund_qty = qty - change_qty;
-            String str_price = entry.get("price");
-            if (str_price.contains(".")) {
-                str_price = str_price.substring(0, str_price.indexOf("."));
-            }
-            int prc = Integer.parseInt(str_price);
-            int tot = prc * refund_qty;
-            if (change_qty > 0) {
-                list_tukar_barang.put(entry.get("title"), change_qty);
-            }
-
-            sub_total = sub_total + tot;
+            list_ambil_barang.put(entry.get("title"), qty);
         }
 
-        if (list_tukar_barang.size() > 0) {
-            res += "<tr><td colspan=\"4\"><b>Penukaran Barang</b></td></tr>";
+        if (list_ambil_barang.size() > 0) {
+            res += "<tr><td colspan=\"4\"><b>Pengambilan Barang</b></td></tr>";
             res += "<tr><td colspan=\"4\"><hr/></td></tr></table>";
             res += "<table width=\"100%\" style=\"margin-bottom:25px;\">";
-            for (Map.Entry<String, Integer> tb_entry : list_tukar_barang.entrySet()) {
+            for (Map.Entry<String, Integer> tb_entry : list_ambil_barang.entrySet()) {
                 res += "<tr class=\"ft-17\"><td colspan=\"4\">"+ tb_entry.getKey() +"</td></tr>";
-                res += "<tr class=\"ft-17\"><td colspan=\"4\" style=\"padding-left:10px;\">" + tb_entry.getValue() + " pcs tukar barang</td>";
+                res += "<tr class=\"ft-17\"><td colspan=\"4\" style=\"padding-left:10px;\">- " + tb_entry.getValue() + "</td>";
             }
         } else {
             res += "</table><table width=\"100%\" style=\"margin-bottom:25px;\">";
-        }
-
-        if (sub_total > 0) {
-            if (list_tukar_barang.size() > 0) {
-                res += "<tr><td colspan=\"4\">&nbsp;</td></tr>";
-            }
-            res += "<tr><td colspan=\"4\"><b>Pengembalian Barang</b></td></tr>";
-            res += "<tr><td colspan=\"4\"><hr/></td></tr>";
-            for (Map<String, String> entry2 : list) {
-                int qty = Integer.parseInt(entry2.get("quantity"));
-                int change_qty = Integer.parseInt(entry2.get("change_item"));
-                int refund_qty = qty - change_qty;
-                String str_price = entry2.get("price");
-                if (str_price.contains(".")) {
-                    str_price = str_price.substring(0, str_price.indexOf("."));
-                }
-                int prc = Integer.parseInt(str_price);
-                int tot = prc * refund_qty;
-                if (refund_qty > 0) {
-                    res += "<tr class=\"ft-17\"><td colspan=\"4\">" + entry2.get("title") + "</td></tr>";
-                    res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"padding-left:10px;\">" + refund_qty + " x " + CurrencyController.getInstance().moneyFormat(prc) + "</td>";
-                    res += "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(tot) + "</td></tr>";
-                }
-            }
-        }
-
-        res += "<tr><td colspan=\"4\"><hr/></td></tr>";
-
-        int grand_total = sub_total;
-
-        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">"+ getResources().getString(R.string.total) +" :</td>" +
-                "<td style=\"text-align:right;\">"+ CurrencyController.getInstance().moneyFormat(grand_total) +"</td>";
-
-        List<Map<String, String >> list_change = retur.getItemsChange();
-        if (list_change.size() > 0) {
-            res += "<tr><td colspan=\"4\">&nbsp;</td></tr>";
-            res += "<tr><td colspan=\"4\" style=\"text-align:left;\"><b>Ganti Item Lain</b></td></tr>";
-            res += "<tr><td colspan=\"4\"><hr/></td></tr>";
-            int tot_ctot = 0;
-            for (Map<String, String> c_entry : list_change) {
-                res += "<tr class=\"ft-17\"><td colspan=\"4\">"+ c_entry.get("title") +"</td></tr>";
-                int cqty = Integer.parseInt(c_entry.get("quantity"));
-                String str_price = c_entry.get("price");
-                if (str_price.contains(".")) {
-                    str_price = str_price.substring(0, str_price.indexOf("."));
-                }
-                int cprc = Integer.parseInt(str_price);
-                int ctot = cprc * cqty;
-                tot_ctot = tot_ctot + ctot;
-                res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"padding-left:10px;\">" + c_entry.get("quantity") + " x -"+ CurrencyController.getInstance().moneyFormat(cprc) +"</td>";
-                res += "<td style=\"text-align:right;\">-" + CurrencyController.getInstance().moneyFormat(ctot) + "</td></tr>";
-            }
-            res += "<tr><td colspan=\"4\"><hr/></td></tr>";
-            res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">Total :</td>" +
-                    "<td style=\"text-align:right;\">-" + CurrencyController.getInstance().moneyFormat(tot_ctot) + "</td>";
-            int sisa = grand_total - tot_ctot;
-            res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">Sisa Pengembalian :</td>" +
-                    "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(sisa) + "</td>";
-        }
-
-        if (grand_total > 0) {
-            res += "<tr><td colspan=\"4\">&nbsp;</td></tr>";
-            res += "<tr><td colspan=\"4\" style=\"text-align:right;\"><b>Cara Pengembalian</b></td></tr>";
-            res += "<tr><td colspan=\"4\">&nbsp;</td></tr>";
-
-            List<Map<String, String>> payments = retur.getPayment();
-            Log.e(getClass().getSimpleName(), "payments : " + payments.toString());
-            for (Map<String, String> payment : payments) {
-                int amnt = 0;
-                String amnt_str = payment.get("amount_tendered");
-                try {
-                    if (amnt_str.contains(".")) {
-                        //amnt_str = amnt_str.replace(".", "");
-                        amnt_str = amnt_str.substring(0, amnt_str.indexOf("."));
-                    }
-                    if (amnt_str != "0" || amnt_str != "0.0") {
-                        amnt = Integer.parseInt(amnt_str);
-                    }
-                } catch (Exception e) {
-                    Log.e(getClass().getSimpleName(), e.getMessage());
-                }
-
-                if (amnt > 0) {
-                    try {
-                        String pay_channel = payment.get("type");
-                        res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\">" + getResources().getString(getPaymentChannel(pay_channel)) + " :</td>" +
-                                "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(amnt) + "</td>";
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
         }
 
         res += "<tr><td colspan=\"4\"><hr/></td></tr>";
@@ -555,22 +435,6 @@ public class PrintDepositActivity extends Activity {
         res += "<tr class=\"ft-17\" style=\"padding-bottom:25px;\"><td colspan=\"4\"><center>Terimakasih.<br />Selamat belanja kembali.</center></td></tr></table>";
 
         return res;
-    }
-
-    public Integer getPaymentChannel(String channel) {
-        Map<String, Integer> result = new HashMap<>();
-
-        result.put("cash_receive", R.string.payment_cash);
-        result.put("nominal_mandiri", R.string.payment_mandiri);
-        result.put("nominal_bca", R.string.payment_bca);
-        result.put("nominal_bri", R.string.payment_bri);
-        result.put("nominal_edc", R.string.payment_edc);
-        result.put("nominal_wallet_tokopedia", R.string.payment_wallet_tokopedia);
-        result.put("wallet_tokopedia", R.string.payment_wallet_tokopedia);
-        result.put("wallet_gofood", R.string.payment_wallet_gofood);
-        result.put("wallet_grabfood", R.string.payment_wallet_grab_food);
-
-        return result.get(channel);
     }
 
     public void InitDeviceList() {
@@ -907,145 +771,6 @@ public class PrintDepositActivity extends Activity {
                 bm, 0, 0, width, height, matrix, false);
         bm.recycle();
         return resizedBitmap;
-    }
-
-    private Boolean is_finished = false;
-
-    private void finishAndPrint() {
-        if (!is_finished) {
-            try {
-                Map<String, Object> mObj = new HashMap<String, Object>();
-                mObj.put("invoice_id", serverInvoiceId);
-
-                List<Map<String, String >> list = retur.getItems();
-                ArrayList arrItems = new ArrayList();
-                for (Map<String, String> entry : list) {
-                    int qty = Integer.parseInt(entry.get("quantity"));
-                    int change_qty = Integer.parseInt(entry.get("change_item"));
-                    int refund_qty = qty - change_qty;
-                    String str_price = entry.get("price");
-                    if (str_price.contains(".")) {
-                        str_price = str_price.substring(0, str_price.indexOf("."));
-                    }
-                    int prc = Integer.parseInt(str_price);
-                    //int tot = prc * refund_qty;
-
-                    Map<String, String> mItem = new HashMap<String, String>();
-                    mItem.put("name", entry.get("title"));
-                    mItem.put("total_qty", qty +"");
-                    mItem.put("returned_qty", change_qty +"");
-                    mItem.put("refunded_qty", refund_qty +"");
-                    mItem.put("price", prc +"");
-                    arrItems.add(mItem);
-                }
-                mObj.put("items", arrItems);
-
-                ArrayList arrPaymentList = new ArrayList();
-
-                List<Map<String, String>> payments = retur.getPayment();
-                for (Map<String, String> payment : payments) {
-                    int amnt = 0;
-                    String amnt_str = payment.get("amount_tendered");
-                    if (amnt_str.contains(".")) {
-                        amnt_str = amnt_str.substring(0, amnt_str.indexOf("."));
-                    }
-                    Map<String, String> arrPayment = new HashMap<String, String>();
-                    arrPayment.put("type", payment.get("type"));
-                    arrPayment.put("amount", amnt_str);
-                    arrPaymentList.add(arrPayment);
-                }
-                mObj.put("payments", arrPaymentList);
-
-                List<Map<String, String >> change_item_list = retur.getItemsChange();
-                if (change_item_list.size() > 0) {
-                    ArrayList arrChangeItems = new ArrayList();
-                    for (Map<String, String> entry : change_item_list) {
-                        String str_price = entry.get("price");
-                        if (str_price.contains(".")) {
-                            str_price = str_price.substring(0, str_price.indexOf("."));
-                        }
-                        int prc = Integer.parseInt(str_price);
-
-                        Map<String, String> mItem = new HashMap<String, String>();
-                        if (entry.containsKey("product_id")) {
-                            mItem.put("id", entry.get("product_id"));
-                        }
-                        mItem.put("name", entry.get("title"));
-                        mItem.put("quantity", entry.get("quantity"));
-                        mItem.put("quantity_total", entry.get("quantity_total"));
-                        mItem.put("price", prc +"");
-                        arrChangeItems.add(mItem);
-                    }
-                    mObj.put("items_change", arrChangeItems);
-                }
-
-                ArrayList<String> retur_reasons = retur.getItemsReason();
-                if (retur_reasons.size() > 0) {
-                    mObj.put("reasons", retur_reasons);
-                }
-                String retur_notes = retur.getNotes();
-                if (retur_notes !=null && retur_notes.length() > 0) {
-                    mObj.put("notes", retur_notes);
-                }
-                Log.e(getClass().getSimpleName(), "mObj : "+ mObj.toString());
-
-                _create_retur_inv(mObj);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            if (finish_and_print_button.getVisibility() == View.VISIBLE) {
-                finish_and_print_button.setText(getResources().getString(R.string.button_new_transaction));
-                is_finished = true;
-            }
-        } else {
-            Intent intent = new Intent(PrintDepositActivity.this, MainActivity.class);
-            intent.putExtra("refreshStock", true);
-            finish();
-            startActivity(intent);
-        }
-    }
-
-    private void _create_retur_inv(Map mObj) {
-        String _url = Server.URL + "transaction/refund?api-key=" + Server.API_KEY;
-        String qry = URLBuilder.httpBuildQuery(mObj, "UTF-8");
-        _url += "&"+ qry;
-        Log.e(getClass().getSimpleName(), "url : "+ qry);
-
-        Map<String, String> params = new HashMap<String, String>();
-        String admin_id = sharedpreferences.getString(TAG_ID, null);
-        Params adminParam = paramCatalog.getParamByName("admin_id");
-        if (adminParam != null) {
-            admin_id = adminParam.getValue();
-        }
-
-        params.put("admin_id", admin_id);
-
-        _string_request(
-                Request.Method.POST,
-                _url,
-                params,
-                true,
-                new VolleyCallback(){
-                    @Override
-                    public void onSuccess(String result) {
-                        try {
-                            JSONObject jObj = new JSONObject(result);
-                            success = jObj.getInt(TAG_SUCCESS);
-                            // Check for error node in json
-                            if (success == 1) {
-                                String server_invoice_number = jObj.getString("invoice_number");
-                                sale.setServerInvoiceNumber(server_invoice_number);
-                                // and then trigger print the invoice
-                                just_print(false);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        hideDialog();
-                    }
-                });
     }
 }
 

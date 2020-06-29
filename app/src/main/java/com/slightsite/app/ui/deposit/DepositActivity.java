@@ -180,6 +180,7 @@ public class DepositActivity extends AppCompatActivity {
                                 lineItem.setUnitPriceAtSale(line_object.getDouble("unit_price"));
                                 lineItems.add(lineItem);
                                 total_inv_qty = total_inv_qty + line_object.getInt("qty");
+                                product_qty_stacks.put(Integer.parseInt(p.getBarcode()), line_object.getInt("qty"));
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -199,6 +200,15 @@ public class DepositActivity extends AppCompatActivity {
                 showOriginalList(sale.getAllLineItem());
             } catch (Exception e){e.printStackTrace();}
         }
+
+        if (sale != null) {
+            for (LineItem line : sale.getAllLineItem()) {
+                int p_id = Integer.parseInt(line.getProduct().getBarcode());
+                product_price_stacks.put(p_id, line.getPriceAtSale());
+                product_name_stacks.put(p_id, line.getProduct().getName());
+            }
+        }
+
         getTakeGoodHistory();
     }
 
@@ -242,19 +252,6 @@ public class DepositActivity extends AppCompatActivity {
         take_history_container = (LinearLayout) findViewById(R.id.take_history_container);
     }
 
-    /*private void showList(List<LineItem> list) {
-        lineitemList = new ArrayList<Map<String, String>>();
-        for(LineItem line : list) {
-            avail_product_qty_stacks.put(line.getProduct().getId(), line.getQuantity());
-            product_price_stacks.put(line.getProduct().getId(), line.getPriceAtSale());
-            product_name_stacks.put(line.getProduct().getId(), line.getProduct().getName());
-            lineitemList.add(line.toMap());
-        }
-
-        AdapterListProductTake sAdap = new AdapterListProductTake(DepositActivity.this, list, register);
-        lineitemListRecycle.setAdapter(sAdap);
-    }*/
-
     private void showOriginalList(List<LineItem> list) {
         lineitemList = new ArrayList<Map<String, String>>();
         for(LineItem line : list) {
@@ -276,6 +273,8 @@ public class DepositActivity extends AppCompatActivity {
         }
         Log.e(getClass().getSimpleName(), "product_take_stacks : "+ product_take_stacks.toString());
     }
+
+    private Deposit deposit;
 
     public void proceedTakeGood(View v) {
         if (product_take_stacks.size() > 0) {
@@ -312,6 +311,15 @@ public class DepositActivity extends AppCompatActivity {
                         if (take_good_notes.getText().toString().length() > 0) {
                             mObj.put("notes", take_good_notes.getText().toString());
                         }
+
+                        mObj.put("items_available", avail_product_qty_stacks);
+
+                        deposit = new Deposit(sale.getServerInvoiceId());
+                        deposit.setCustomer(customer);
+                        if (mObj.containsKey("notes")) {
+                            deposit.setNotes(mObj.get("notes").toString());
+                        }
+                        deposit.setItems(arrRefundList);
 
                         createTakeGoodHistory(mObj);
                         Log.e(getClass().getSimpleName(), "mObj : "+ mObj.toString());
@@ -376,10 +384,11 @@ public class DepositActivity extends AppCompatActivity {
                                         JSONObject item_data = items.getJSONObject(n);
                                         if (item_data.has("quantity_before") && item_data.has("quantity") && item_data.has("product_id")) {
                                             int avail = item_data.getInt("quantity_before") - item_data.getInt("quantity");
-                                            if (avail_product_qty_stacks.containsKey(item_data.getInt("product_id"))) {
-                                                avail = avail_product_qty_stacks.get("product_id") - avail;
+                                            if ((avail_product_qty_stacks != null) && avail_product_qty_stacks.containsKey(item_data.getInt("product_id"))) {
+                                                avail = avail_product_qty_stacks.get(item_data.getInt("product_id")) - item_data.getInt("quantity");
                                             }
                                             avail_product_qty_stacks.put(item_data.getInt("product_id"), avail);
+                                            product_qty_stacks.put(item_data.getInt("product_id"), avail);
                                         }
                                     }
                                 }
@@ -409,7 +418,7 @@ public class DepositActivity extends AppCompatActivity {
                 });
     }
 
-    private void createTakeGoodHistory(Map<String, Object> mObj) {
+    private void createTakeGoodHistory(Map<String, Object> _mObj) {
         Map<String, String> params = new HashMap<String, String>();
         String admin_id = sharedpreferences.getString(TAG_ID, null);
         Params adminParam = paramCatalog.getParamByName("admin_id");
@@ -417,19 +426,20 @@ public class DepositActivity extends AppCompatActivity {
             admin_id = adminParam.getValue();
         }
         params.put("admin_id", admin_id);
-        if (mObj.containsKey("notes")) {
-            params.put("notes", mObj.get("notes").toString());
-            mObj.remove("notes");
+        if (_mObj.containsKey("notes")) {
+            params.put("notes", _mObj.get("notes").toString());
+            _mObj.remove("notes");
         }
-        if (mObj.containsKey("invoice_id")) {
-            params.put("invoice_id", mObj.get("invoice_id").toString());
-            mObj.remove("invoice_id");
+        if (_mObj.containsKey("invoice_id")) {
+            params.put("invoice_id", _mObj.get("invoice_id").toString());
+            _mObj.remove("invoice_id");
         }
 
         String _url = Server.URL + "transaction/create-deposit-take?api-key=" + Server.API_KEY;
 
-        String qry = URLBuilder.httpBuildQuery(mObj, "UTF-8");
+        String qry = URLBuilder.httpBuildQuery(_mObj, "UTF-8");
         _url += "&"+ qry;
+        Log.e(TAG, "params : "+ params.toString());
 
         _string_request(
                 Request.Method.POST,
@@ -453,14 +463,14 @@ public class DepositActivity extends AppCompatActivity {
                                         is_complete = true;
                                     }
                                 }
+                                Intent newActivity = new Intent(DepositActivity.this, PrintDepositActivity.class);
                                 if (is_complete) {
                                     // go to normal print preview
                                 }
-                                /*Intent newActivity = new Intent(DepositActivity.this,
-                        PrintDepositActivity.class);
-                newActivity.putExtra("retur_intent", retur);
-                finish();
-                startActivity(newActivity);*/
+                                newActivity.putExtra("deposit_intent", deposit);
+                                newActivity.putExtra("just_print", true);
+                                finish();
+                                startActivity(newActivity);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
