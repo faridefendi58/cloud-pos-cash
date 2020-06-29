@@ -120,6 +120,7 @@ public class PrintDepositActivity extends Activity {
     private Warehouses warehouse;
     private Customer customer;
     private JSONObject server_invoice_data;
+    private JSONArray items_belanja;
 
     private WebView print_webview;
     private LinearLayout print_preview_container;
@@ -392,9 +393,6 @@ public class PrintDepositActivity extends Activity {
         String no_nota = date_transaction+"/"+sale.getId();
         if (sale.getServerInvoiceNumber() != null) {
             no_nota = sale.getServerInvoiceNumber();
-            if (no_nota.contains("PAID")) {
-                no_nota = no_nota.replace("PAID", "REFUND");
-            }
         } else {
             if (admin_id != null) {
                 no_nota = date_transaction + "/" + admin_id + "/" + sale.getId();
@@ -411,23 +409,62 @@ public class PrintDepositActivity extends Activity {
 
         res += "<tr><td colspan=\"4\"><hr/></td></tr>";
 
+        if (items_belanja != null && items_belanja.length() > 0) {
+            try {
+                res += "<tr><td colspan=\"4\"><b>Rincian Order</b></td></tr>";
+                res += "<tr><td colspan=\"4\"><hr/></td></tr></table>";
+                res += "<table width=\"100%\" style=\"margin-bottom:25px;\">";
+                for(int n = 0; n < items_belanja.length(); n++) {
+                    JSONObject item_data = items_belanja.getJSONObject(n);
+                    res += "<tr class=\"ft-17\"><td colspan=\"3\">"+ item_data.getString("name") +"</td>";
+                    res += "<td style=\"text-align:right;\">" + item_data.getString("qty") + "</td></tr>";
+                }
+                res += "<tr><td colspan=\"4\"><hr/></td></tr>";
+            } catch (Exception e){}
+        }
+
         List<Map<String, String >> list = deposit.getItems();
         Map<String,Integer> list_ambil_barang = new HashMap<>();
+        Map<Integer,Integer> list_ambil_item = new HashMap<>();
         for (Map<String, String> entry : list) {
             int qty = Integer.parseInt(entry.get("quantity"));
             list_ambil_barang.put(entry.get("title"), qty);
+            int p_id = Integer.parseInt(entry.get("product_id"));
+            list_ambil_item.put(p_id, qty);
         }
 
         if (list_ambil_barang.size() > 0) {
-            res += "<tr><td colspan=\"4\"><b>Pengambilan Barang</b></td></tr>";
-            res += "<tr><td colspan=\"4\"><hr/></td></tr></table>";
-            res += "<table width=\"100%\" style=\"margin-bottom:25px;\">";
+            res += "<tr><td colspan=\"4\"><b>Rincian Pengambilan</b></td></tr>";
+            res += "<tr><td colspan=\"4\"><hr/></td></tr>";
             for (Map.Entry<String, Integer> tb_entry : list_ambil_barang.entrySet()) {
-                res += "<tr class=\"ft-17\"><td colspan=\"4\">"+ tb_entry.getKey() +"</td></tr>";
-                res += "<tr class=\"ft-17\"><td colspan=\"4\" style=\"padding-left:10px;\">- " + tb_entry.getValue() + "</td>";
+                res += "<tr class=\"ft-17\"><td colspan=\"3\">"+ tb_entry.getKey() +"</td>";
+                res += "<td style=\"text-align:right;\">- " + tb_entry.getValue() + "</td></tr>";
             }
+            res += "<tr><td colspan=\"4\"><hr/></td></tr>";
         } else {
             res += "</table><table width=\"100%\" style=\"margin-bottom:25px;\">";
+        }
+
+        Map<Integer,Integer> availableQtys = deposit.getAvailableQty();
+        if (availableQtys.size() > 0 && items_belanja != null && items_belanja.length() > 0) {
+            try {
+                res += "<tr><td colspan=\"4\"><b>Sisa Titipan</b></td></tr>";
+                res += "<tr><td colspan=\"4\"><hr/></td></tr>";
+                for(int n = 0; n < items_belanja.length(); n++) {
+                    JSONObject item_data = items_belanja.getJSONObject(n);
+                    res += "<tr class=\"ft-17\"><td colspan=\"3\">"+ item_data.getString("name") +"</td>";
+                    int pid = item_data.getInt("barcode");
+                    if (availableQtys.containsKey(pid)) {
+                        int _av = availableQtys.get(pid);
+                        if (list_ambil_item.containsKey(pid)) {
+                            _av = _av - list_ambil_item.get(pid);
+                        }
+                        res += "<td style=\"text-align:right;\">" + _av + "</td></tr>";
+                    } else {
+                        res += "<td style=\"text-align:right;\">" + item_data.getString("qty") + "</td></tr>";
+                    }
+                }
+            } catch (Exception e){}
         }
 
         res += "<tr><td colspan=\"4\"><hr/></td></tr>";
@@ -524,6 +561,9 @@ public class PrintDepositActivity extends Activity {
                                     sale.setRefundedBy(server_invoice_data.getInt("refunded_by"));
                                     sale.setRefundedByName(server_invoice_data.getString("refunded_by_name"));
                                     sale.setDeliveredByName(server_invoice_data.getString("delivered_by_name"));
+                                    if (server_invoice_data.has("items_belanja")) {
+                                        items_belanja = server_invoice_data.getJSONArray("items_belanja");
+                                    }
 
                                     formated_receipt = getFormatedReceiptHtml();
 

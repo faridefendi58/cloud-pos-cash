@@ -320,6 +320,7 @@ public class DepositActivity extends AppCompatActivity {
                             deposit.setNotes(mObj.get("notes").toString());
                         }
                         deposit.setItems(arrRefundList);
+                        deposit.setAvailableQty(avail_product_qty_stacks);
 
                         createTakeGoodHistory(mObj);
                         Log.e(getClass().getSimpleName(), "mObj : "+ mObj.toString());
