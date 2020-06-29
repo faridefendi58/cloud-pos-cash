@@ -450,6 +450,8 @@
     <string name="heading_transfer_receipt">Transfer Receipt</string>
     <string name="heading_order_information">Order Information</string>
     <string name="heading_summary">Summary</string>
+    <string name="heading_detail_order">Detail Order</string>
+    <string name="heading_take_good_history">Rincian Pengambilan</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

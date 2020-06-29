@@ -1,6 +1,8 @@
 package com.slightsite.app.ui.deposit;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,13 +30,22 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.slightsite.app.R;
+import com.slightsite.app.domain.AppController;
 import com.slightsite.app.domain.CurrencyController;
 import com.slightsite.app.domain.customer.Customer;
 import com.slightsite.app.domain.inventory.Inventory;
 import com.slightsite.app.domain.inventory.LineItem;
 import com.slightsite.app.domain.inventory.Product;
 import com.slightsite.app.domain.inventory.ProductCatalog;
+import com.slightsite.app.domain.params.ParamCatalog;
+import com.slightsite.app.domain.params.ParamService;
+import com.slightsite.app.domain.params.Params;
 import com.slightsite.app.domain.retur.Retur;
 import com.slightsite.app.domain.sale.PaymentItem;
 import com.slightsite.app.domain.sale.Register;
@@ -42,6 +53,9 @@ import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.domain.sale.SaleLedger;
 import com.slightsite.app.domain.sale.Shipping;
 import com.slightsite.app.techicalservices.NoDaoSetException;
+import com.slightsite.app.techicalservices.Server;
+import com.slightsite.app.techicalservices.URLBuilder;
+import com.slightsite.app.ui.LoginActivity;
 import com.slightsite.app.ui.deposit.AdapterListProductTake;
 
 import org.json.JSONArray;
@@ -50,14 +64,22 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import static com.slightsite.app.ui.LoginActivity.TAG_ID;
 
 public class DepositActivity extends AppCompatActivity {
 
     private static final String TAG = DepositActivity.class.getSimpleName();
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
+
+    ProgressDialog pDialog;
+    int success;
+    private SharedPreferences sharedpreferences;
+    private ParamCatalog paramCatalog;
 
     private Sale sale;
     private int saleId;
@@ -71,18 +93,21 @@ public class DepositActivity extends AppCompatActivity {
     private Map<Integer, Double> product_price_stacks = new HashMap<Integer, Double>();
     private Map<Integer, Integer> product_take_stacks = new HashMap<Integer, Integer>();
     private Map<Integer, String> product_name_stacks = new HashMap<Integer, String>();
-    private ArrayList<String> take_good_reason = new ArrayList<String>();
+    private Map<Integer, Integer> avail_product_qty_stacks = new HashMap<Integer, Integer>();
+    private List<JSONObject> take_history_stacks = new ArrayList<JSONObject>();
 
     private String line_items_intent;
     private List<LineItem> lineItems;
     private ProductCatalog productCatalog;
 
-    private SharedPreferences sharedpreferences;
     private Register register;
     private Boolean is_local_data = false;
     private int total_inv_qty = 0;
 
     private RecyclerView lineitemListRecycle;
+    private RecyclerView originalItemListRecycle;
+    private RecyclerView takeGoodHistoryRecycle;
+    private LinearLayout take_history_container;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +127,8 @@ public class DepositActivity extends AppCompatActivity {
         initView();
 
         try {
+            sharedpreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
+            paramCatalog = ParamService.getInstance().getParamCatalog();
             saleLedger = SaleLedger.getInstance();
             register = Register.getInstance();
             productCatalog = Inventory.getInstance().getProductCatalog();
@@ -111,7 +138,7 @@ public class DepositActivity extends AppCompatActivity {
 
         if (getIntent().hasExtra("sale_intent")) { // has sale data from server
             sale = (Sale) getIntent().getSerializableExtra("sale_intent");
-            Log.e(getClass().getSimpleName(), "sale : "+ sale.toMap().toString());
+            //Log.e(getClass().getSimpleName(), "sale : "+ sale.toMap().toString());
             sale_intent = sale;
             saleId = sale.getId();
             // check if any data in local db
@@ -162,16 +189,17 @@ public class DepositActivity extends AppCompatActivity {
                 }
             }
 
-            showList(sale.getAllLineItem());
+            showOriginalList(sale.getAllLineItem());
         } else {
             saleId = Integer.parseInt(getIntent().getStringExtra("saleId"));
             is_local_data = true;
             try {
                 sale = saleLedger.getSaleById(saleId);
                 customer = saleLedger.getCustomerBySaleId(saleId);
-                showList(sale.getAllLineItem());
+                showOriginalList(sale.getAllLineItem());
             } catch (Exception e){e.printStackTrace();}
         }
+        getTakeGoodHistory();
     }
 
     @Override
@@ -200,13 +228,24 @@ public class DepositActivity extends AppCompatActivity {
         lineitemListRecycle.setHasFixedSize(true);
         lineitemListRecycle.setNestedScrollingEnabled(false);
 
+        originalItemListRecycle = (RecyclerView) findViewById(R.id.originalItemListRecycle);
+        originalItemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        originalItemListRecycle.setHasFixedSize(true);
+        originalItemListRecycle.setNestedScrollingEnabled(false);
+
+        takeGoodHistoryRecycle = (RecyclerView) findViewById(R.id.takeGoodHistoryRecycle);
+        takeGoodHistoryRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        takeGoodHistoryRecycle.setHasFixedSize(true);
+        takeGoodHistoryRecycle.setNestedScrollingEnabled(false);
+
         take_good_notes = (EditText) findViewById(R.id.take_good_notes);
+        take_history_container = (LinearLayout) findViewById(R.id.take_history_container);
     }
 
-    private void showList(List<LineItem> list) {
+    /*private void showList(List<LineItem> list) {
         lineitemList = new ArrayList<Map<String, String>>();
         for(LineItem line : list) {
-            product_qty_stacks.put(line.getProduct().getId(), line.getQuantity());
+            avail_product_qty_stacks.put(line.getProduct().getId(), line.getQuantity());
             product_price_stacks.put(line.getProduct().getId(), line.getPriceAtSale());
             product_name_stacks.put(line.getProduct().getId(), line.getProduct().getName());
             lineitemList.add(line.toMap());
@@ -214,6 +253,19 @@ public class DepositActivity extends AppCompatActivity {
 
         AdapterListProductTake sAdap = new AdapterListProductTake(DepositActivity.this, list, register);
         lineitemListRecycle.setAdapter(sAdap);
+    }*/
+
+    private void showOriginalList(List<LineItem> list) {
+        lineitemList = new ArrayList<Map<String, String>>();
+        for(LineItem line : list) {
+            Map<String,String> _map = new HashMap<String, String>();
+            _map.put("title", line.getProduct().getName());
+            _map.put("quantity", line.getQuantity()+"");
+            lineitemList.add(_map);
+        }
+
+        AdapterListSimple sAdap = new AdapterListSimple(DepositActivity.this, lineitemList);
+        originalItemListRecycle.setAdapter(sAdap);
     }
 
     public void updateProductTakeStacks(int product_id, int qty) {
@@ -226,9 +278,6 @@ public class DepositActivity extends AppCompatActivity {
     }
 
     public void proceedTakeGood(View v) {
-        // check the reason first
-        Boolean has_take_good_reason = hasReturReason();
-        Log.e(getClass().getSimpleName(), "has_take_good_reason : "+ has_take_good_reason);
         if (product_take_stacks.size() > 0) {
             LayoutInflater inflater2 = getLayoutInflater();
 
@@ -243,7 +292,7 @@ public class DepositActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
                     try {
                         Map<String, Object> mObj = new HashMap<String, Object>();
-                        mObj.put("invoice_id", sale.getServerInvoiceId());
+                        mObj.put("invoice_id", sale.getServerInvoiceId()+"");
 
                         // the items data include id, price, qty, and how much item to be changed
                         ArrayList arrRefundList = new ArrayList();
@@ -264,14 +313,8 @@ public class DepositActivity extends AppCompatActivity {
                             mObj.put("notes", take_good_notes.getText().toString());
                         }
 
+                        createTakeGoodHistory(mObj);
                         Log.e(getClass().getSimpleName(), "mObj : "+ mObj.toString());
-
-                /*Intent newActivity = new Intent(DepositActivity.this,
-                        PrintDepositActivity.class);
-                newActivity.putExtra("retur_intent", retur);
-                finish();
-                startActivity(newActivity);*/
-
                     } catch (Exception e){
                         e.printStackTrace();
                     }
@@ -286,26 +329,213 @@ public class DepositActivity extends AppCompatActivity {
 
             dialog.show();
         } else {
-            // no item to be retured
-            if (!has_take_good_reason) {
-                /*Toast.makeText(getBaseContext(),
+            /*Toast.makeText(getBaseContext(),
                         getResources().getString(R.string.error_empty_retur_reason), Toast.LENGTH_LONG)
                         .show();*/
-            }
         }
     }
 
-    private Boolean hasReturReason() {
-        take_good_reason.clear();
+    private void getTakeGoodHistory() {
+        Map<String, Object> mObj = new HashMap<String, Object>();
+        mObj.put("invoice_id", sale.getServerInvoiceId());
+        String _url = Server.URL + "transaction/list-deposit-take?api-key=" + Server.API_KEY;
 
-        if (take_good_reason.size() > 0) {
-            return true;
-        } else {
-            if (take_good_notes.getText().toString().length() > 0) {
-                return true;
+        String qry = URLBuilder.httpBuildQuery(mObj, "UTF-8");
+        _url += "&"+ qry;
+
+        Map<String, String> params = new HashMap<String, String>();
+        String admin_id = sharedpreferences.getString("id", null);
+        Params adminParam = paramCatalog.getParamByName("admin_id");
+        if (adminParam != null) {
+            admin_id = adminParam.getValue();
+        }
+
+        params.put("admin_id", admin_id);
+
+        _string_request(
+                Request.Method.GET,
+                _url,
+                params,
+                false,
+                new VolleyCallback(){
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            Log.e(TAG, "getTakeGoodHistory : "+ jObj.toString());
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            List<LineItem> list = sale.getAllLineItem();
+                            if (success == 1) {
+                                JSONArray data = jObj.getJSONArray("data");
+                                for(int m = 0; m < data.length(); m++) {
+                                    JSONObject data_m = data.getJSONObject(m);
+                                    take_history_stacks.add(data_m);
+                                    JSONArray items =  data_m.getJSONArray("items");
+                                    for(int n = 0; n < items.length(); n++) {
+                                        JSONObject item_data = items.getJSONObject(n);
+                                        if (item_data.has("quantity_before") && item_data.has("quantity") && item_data.has("product_id")) {
+                                            int avail = item_data.getInt("quantity_before") - item_data.getInt("quantity");
+                                            if (avail_product_qty_stacks.containsKey(item_data.getInt("product_id"))) {
+                                                avail = avail_product_qty_stacks.get("product_id") - avail;
+                                            }
+                                            avail_product_qty_stacks.put(item_data.getInt("product_id"), avail);
+                                        }
+                                    }
+                                }
+
+                                for(int p = 0; p < list.size(); p++) {
+                                    LineItem line = list.get(p);
+                                    int bc = Integer.parseInt(line.getProduct().getBarcode());
+                                    if (avail_product_qty_stacks.containsKey(bc)) {
+                                        line.setQuantity(avail_product_qty_stacks.get(bc));
+                                    }
+                                    list.set(p, line);
+                                }
+
+                                if (take_history_stacks.size() > 0) {
+                                    AdapterListTakeGood hAdap = new AdapterListTakeGood(DepositActivity.this, take_history_stacks);
+                                    takeGoodHistoryRecycle.setAdapter(hAdap);
+                                    take_history_container.setVisibility(View.VISIBLE);
+                                }
+                            }
+
+                            AdapterListProductTake sAdap = new AdapterListProductTake(DepositActivity.this, list, register);
+                            lineitemListRecycle.setAdapter(sAdap);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    private void createTakeGoodHistory(Map<String, Object> mObj) {
+        Map<String, String> params = new HashMap<String, String>();
+        String admin_id = sharedpreferences.getString(TAG_ID, null);
+        Params adminParam = paramCatalog.getParamByName("admin_id");
+        if (adminParam != null) {
+            admin_id = adminParam.getValue();
+        }
+        params.put("admin_id", admin_id);
+        if (mObj.containsKey("notes")) {
+            params.put("notes", mObj.get("notes").toString());
+            mObj.remove("notes");
+        }
+        if (mObj.containsKey("invoice_id")) {
+            params.put("invoice_id", mObj.get("invoice_id").toString());
+            mObj.remove("invoice_id");
+        }
+
+        String _url = Server.URL + "transaction/create-deposit-take?api-key=" + Server.API_KEY;
+
+        String qry = URLBuilder.httpBuildQuery(mObj, "UTF-8");
+        _url += "&"+ qry;
+
+        _string_request(
+                Request.Method.POST,
+                _url,
+                params,
+                true,
+                new VolleyCallback(){
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jObj = new JSONObject(result);
+                            Log.e(TAG, "createTakeGoodHistory : "+ jObj.toString());
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                Toast.makeText(getApplicationContext(),
+                                        jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                                Boolean is_complete = false;
+                                if (jObj.has("available_qty")) {
+                                    if (jObj.getInt("available_qty") == 0) {
+                                        is_complete = true;
+                                    }
+                                }
+                                if (is_complete) {
+                                    // go to normal print preview
+                                }
+                                /*Intent newActivity = new Intent(DepositActivity.this,
+                        PrintDepositActivity.class);
+                newActivity.putExtra("retur_intent", retur);
+                finish();
+                startActivity(newActivity);*/
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        hideDialog();
+                    }
+                });
+    }
+
+    public interface VolleyCallback {
+        void onSuccess(String result);
+    }
+
+    private void showDialog() {
+        if (pDialog != null && !pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hideDialog() {
+        if (pDialog != null && pDialog.isShowing())
+            pDialog.dismiss();
+    }
+
+    private void _string_request(int method, String url, final Map params, final Boolean show_dialog, final VolleyCallback callback) {
+        if (show_dialog) {
+            pDialog = new ProgressDialog(this);
+            pDialog.setCancelable(false);
+            pDialog.setMessage("Request data ...");
+            showDialog();
+        }
+
+        if (method == Request.Method.GET) { //get method doesnt support getParams
+            Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
+            while(iterator.hasNext())
+            {
+                Map.Entry<String, String> pair = iterator.next();
+                String pair_value = pair.getValue();
+                if (pair_value.contains(" "))
+                    pair_value = pair.getValue().replace(" ", "%20");
+                url += "&" + pair.getKey() + "=" + pair_value;
             }
         }
 
-        return false;
+        StringRequest strReq = new StringRequest(method, url, new Response.Listener < String > () {
+
+            @Override
+            public void onResponse(String Response) {
+                callback.onSuccess(Response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                if (show_dialog) {
+                    hideDialog();
+                }
+            }
+        })
+        {
+            // set headers
+            @Override
+            protected Map<String, String> getParams() {
+                return params;
+            }
+        };
+
+        strReq.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        try {
+            AppController.getInstance().addToRequestQueue(strReq, "json_obj_req");
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), e.getMessage());
+        }
     }
 }

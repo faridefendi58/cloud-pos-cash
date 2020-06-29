@@ -331,7 +331,7 @@ public class Tools {
     }
 
     public static String getFormattedDateOnly(Long dateTime) {
-        SimpleDateFormat newFormat = new SimpleDateFormat("dd MMM yy");
+        SimpleDateFormat newFormat = new SimpleDateFormat("dd MMM yyyy");
         return newFormat.format(new Date(dateTime));
     }
 

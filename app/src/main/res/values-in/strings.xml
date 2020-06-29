@@ -448,6 +448,8 @@
     <string name="heading_transfer_receipt">Bukti Transfer</string>
     <string name="heading_order_information">Informasi Order</string>
     <string name="heading_summary">Summary</string>
+    <string name="heading_detail_order">Rincian Order</string>
+    <string name="heading_take_good_history">Take Good History</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

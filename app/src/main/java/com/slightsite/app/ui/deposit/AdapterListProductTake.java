@@ -143,7 +143,8 @@ public class AdapterListProductTake extends RecyclerView.Adapter<RecyclerView.Vi
 
                         view.quantity.setText(current_qty+"");
                         if (current_qty >= 0) {
-                            ((DepositActivity) ctx).updateProductTakeStacks(p.getProduct().getId(), current_qty);
+                            int barcode = Integer.parseInt(p.getProduct().getBarcode());
+                            ((DepositActivity) ctx).updateProductTakeStacks(barcode, current_qty);
                             if (current_qty == 0) {
                                 view.add_to_queue_container.setVisibility(View.VISIBLE);
                                 view.add_qty_container.setVisibility(View.GONE);
@@ -167,7 +168,8 @@ public class AdapterListProductTake extends RecyclerView.Adapter<RecyclerView.Vi
 
                         view.quantity.setText(current_qty+"");
                         if (current_qty > 0 && current_qty <= max_qty) {
-                            ((DepositActivity) ctx).updateProductTakeStacks(p.getProduct().getId(), current_qty);
+                            int barcode = Integer.parseInt(p.getProduct().getBarcode());
+                            ((DepositActivity) ctx).updateProductTakeStacks(barcode, current_qty);
                         }
                     } catch (Exception e){e.printStackTrace();}
                 }
@@ -176,7 +178,8 @@ public class AdapterListProductTake extends RecyclerView.Adapter<RecyclerView.Vi
             view.addTakeGoodButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((DepositActivity) ctx).updateProductTakeStacks(p.getProduct().getId(), 1);
+                    int barcode = Integer.parseInt(p.getProduct().getBarcode());
+                    ((DepositActivity) ctx).updateProductTakeStacks(barcode, 1);
                     view.quantity.setText("1");
                     view.add_qty_container.setVisibility(View.VISIBLE);
                     view.add_to_queue_container.setVisibility(View.GONE);
