@@ -57,6 +57,7 @@ import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.URLBuilder;
 import com.slightsite.app.ui.LoginActivity;
 import com.slightsite.app.ui.deposit.AdapterListProductTake;
+import com.slightsite.app.ui.printer.PrintPreviewActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -97,6 +98,7 @@ public class DepositActivity extends AppCompatActivity {
     private List<JSONObject> take_history_stacks = new ArrayList<JSONObject>();
 
     private String line_items_intent;
+    private String payment_intent;
     private List<LineItem> lineItems;
     private ProductCatalog productCatalog;
 
@@ -190,6 +192,14 @@ public class DepositActivity extends AppCompatActivity {
                 }
             }
 
+            if (getIntent().hasExtra("payment_intent")) {
+                payment_intent = getIntent().getStringExtra("payment_intent");
+            }
+
+            if (getIntent().hasExtra("shipping_intent")) {
+                shipping_intent = (Shipping) getIntent().getSerializableExtra("shipping_intent");
+            }
+
             showOriginalList(sale.getAllLineItem());
         } else {
             saleId = Integer.parseInt(getIntent().getStringExtra("saleId"));
@@ -271,7 +281,6 @@ public class DepositActivity extends AppCompatActivity {
         } else {
             product_take_stacks.remove(product_id);
         }
-        Log.e(getClass().getSimpleName(), "product_take_stacks : "+ product_take_stacks.toString());
     }
 
     private Deposit deposit;
@@ -338,9 +347,9 @@ public class DepositActivity extends AppCompatActivity {
 
             dialog.show();
         } else {
-            /*Toast.makeText(getBaseContext(),
-                        getResources().getString(R.string.error_empty_retur_reason), Toast.LENGTH_LONG)
-                        .show();*/
+            Toast.makeText(getBaseContext(),
+                        getResources().getString(R.string.error_empty_take_good), Toast.LENGTH_LONG)
+                        .show();
         }
     }
 
@@ -464,14 +473,34 @@ public class DepositActivity extends AppCompatActivity {
                                         is_complete = true;
                                     }
                                 }
-                                Intent newActivity = new Intent(DepositActivity.this, PrintDepositActivity.class);
+
                                 if (is_complete) {
                                     // go to normal print preview
+                                    Intent newActivity = new Intent(DepositActivity.this, PrintPreviewActivity.class);
+                                    Sale new_sale = new Sale(saleId, sale.getEndTime());
+                                    new_sale.setServerInvoiceNumber(sale.getServerInvoiceNumber());
+                                    new_sale.setServerInvoiceId(sale.getServerInvoiceId());
+                                    new_sale.setCustomerId(sale.getCustomerId());
+                                    new_sale.setStatus(sale.getStatus());
+                                    new_sale.setDiscount(sale.getDiscount());
+                                    new_sale.setDeliveredAt(sale.getDeliveredAt());
+                                    new_sale.setDeliveredByName(sale.getDeliveredByName());
+
+                                    newActivity.putExtra("sale_intent", new_sale);
+                                    newActivity.putExtra("customer_intent", customer_intent);
+                                    newActivity.putExtra("shipping_intent", shipping_intent);
+                                    newActivity.putExtra("payment_intent", payment_intent);
+                                    newActivity.putExtra("line_items_intent", line_items_intent);
+                                    newActivity.putExtra("deposit_order", true);
+                                    finish();
+                                    startActivity(newActivity);
+                                } else {
+                                    Intent newActivity = new Intent(DepositActivity.this, PrintDepositActivity.class);
+                                    newActivity.putExtra("deposit_intent", deposit);
+                                    newActivity.putExtra("just_print", true);
+                                    finish();
+                                    startActivity(newActivity);
                                 }
-                                newActivity.putExtra("deposit_intent", deposit);
-                                newActivity.putExtra("just_print", true);
-                                finish();
-                                startActivity(newActivity);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

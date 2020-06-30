@@ -412,6 +412,7 @@ public class SaleDetailActivity extends Activity{
 			shippingCatalog = ShippingService.getInstance().getShippingCatalog();
 			if (getIntent().hasExtra("shipping_intent")) {
 				shipping = (Shipping) getIntent().getSerializableExtra("shipping_intent");
+				shipping_intent = shipping;
 			} else {
 				shipping = shippingCatalog.getShippingBySaleId(saleId);
 			}

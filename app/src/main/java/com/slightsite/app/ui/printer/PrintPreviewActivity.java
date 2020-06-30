@@ -135,7 +135,7 @@ public class PrintPreviewActivity extends Activity {
     private WarehouseCatalog warehouseCatalog;
     private CustomerCatalog customerCatalog;
     private ProductCatalog productCatalog;
-    private List<Payment> paymentList;
+    private List<Payment> paymentList = new ArrayList<Payment>();
     private List<Map<String, String>> lineitemList;
     private int warehouse_id;
     private Warehouses warehouse;
@@ -219,7 +219,6 @@ public class PrintPreviewActivity extends Activity {
                         e.printStackTrace();
                     }
                     if (arrPayment != null) {
-                        paymentList = new ArrayList<Payment>();
                         for (int m = 0; m < arrPayment.length(); m++) {
                             JSONObject pay_method = null;
                             try {
@@ -406,6 +405,11 @@ public class PrintPreviewActivity extends Activity {
         if (getIntent().hasExtra("process_order")) {
             print_button_container.setVisibility(View.GONE);
             finish_and_print_button.setVisibility(View.VISIBLE);
+        }
+
+        if (getIntent().hasExtra("deposit_order")) { //from deposit complete take
+            print_button_container.setVisibility(View.VISIBLE);
+            finish_and_print_button.setVisibility(View.GONE);
         }
     }
 
