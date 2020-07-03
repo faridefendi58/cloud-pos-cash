@@ -212,7 +212,7 @@ public class ReportFragment extends UpdatableFragment {
 	 */
 	private void initUI() {
 		currentTime = Calendar.getInstance();
-		currentTime.set(Calendar.DAY_OF_MONTH, 1);
+		//currentTime.set(Calendar.DAY_OF_MONTH, 1);
 
 		datePicker = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
 			@Override
@@ -367,6 +367,11 @@ public class ReportFragment extends UpdatableFragment {
 			salemap.put("customer_data", "-");
 			try {
 				Customer cust = list_of_customers.get(sale.getCustomerId());
+				if (cust.getId() == 1) {
+					if (list_of_customers_walk_in.containsKey(sale.getServerInvoiceId())) {
+						cust = list_of_customers_walk_in.get(sale.getServerInvoiceId());
+					}
+				}
 				if (cust.getName().length() > 0) {
 					salemap.put("customer_data", cust.getName() + " - " + cust.getPhone() + " - " + cust.getAddress());
 					salemap.put("customer_name", cust.getName());
@@ -418,7 +423,11 @@ public class ReportFragment extends UpdatableFragment {
 					newActivity.putExtra("id", id);
 					Sale selected_sale = list_of_transactions.get(position);
 					newActivity.putExtra("sale_intent", selected_sale);
-					newActivity.putExtra("customer_intent", list_of_customers.get(selected_sale.getCustomerId()));
+					if (selected_sale.getCustomerId() == 1) {
+						newActivity.putExtra("customer_intent", list_of_customers_walk_in.get(selected_sale.getServerInvoiceId()));
+					} else {
+						newActivity.putExtra("customer_intent", list_of_customers.get(selected_sale.getCustomerId()));
+					}
 					newActivity.putExtra("shipping_intent", list_of_shippings.get(selected_sale.getId()));
 					newActivity.putExtra("payment_intent", list_of_payments2.get(selected_sale.getId()).toString());
 					newActivity.putExtra("line_items_intent", list_of_line_items2.get(selected_sale.getId()).toString());
@@ -461,14 +470,14 @@ public class ReportFragment extends UpdatableFragment {
 			currentBox.setTextSize(16);
 			currentBox.setText(toShow);
 		} else if (period == MONTHLY){
-			cTime.set(Calendar.DATE, 1);
+			//cTime.set(Calendar.DATE, 1);
 			eTime = (Calendar) cTime.clone();
 			eTime.add(Calendar.MONTH, 1);
 			eTime.add(Calendar.DATE, -1);
 			currentBox.setTextSize(18);
 			currentBox.setText(" [" + currentTime.get(Calendar.YEAR) + "-" + (currentTime.get(Calendar.MONTH)+1) + "] ");
 		} else if (period == YEARLY){
-			cTime.set(Calendar.DATE, 1);
+			//cTime.set(Calendar.DATE, 1);
 			cTime.set(Calendar.MONTH, 0);
 			eTime = (Calendar) cTime.clone();
 			eTime.add(Calendar.YEAR, 1);
@@ -536,6 +545,7 @@ public class ReportFragment extends UpdatableFragment {
 			}
 
 			params.put("delivered_plan_at_from", filter_result.get("date_from"));
+			Log.e("YYY", "filter_result.get(\"date_from\") : "+ filter_result.get("date_from"));
 			params.put("delivered_plan_at_to", filter_result.get("date_to"));
 			params.put("custom_order_by", "status_order_code");
 			params.put("order_type", "ASC");
@@ -590,6 +600,7 @@ public class ReportFragment extends UpdatableFragment {
 
 	private List<Sale> list_of_transactions = new ArrayList<Sale>();
 	private Map<Integer, Customer> list_of_customers = new HashMap<Integer, Customer>();
+	private Map<Integer, Customer> list_of_customers_walk_in = new HashMap<Integer, Customer>();
 	private Map<Integer, Shipping> list_of_shippings = new HashMap<Integer, Shipping>();
 	private JSONArray list_of_payments;
 	private JSONArray list_of_line_items;
@@ -600,10 +611,12 @@ public class ReportFragment extends UpdatableFragment {
 	public void setTransactionList(final Map<String, String> params) {
 		list_of_transactions.clear();
 		list_of_customers.clear();
+		list_of_customers_walk_in.clear();
 		list_of_shippings.clear();
 		list_of_payments2.clear();
 		list_of_line_items2.clear();
 		String url = Server.URL + "transaction/list?api-key=" + Server.API_KEY;
+		Log.e("XXX", "url 1 : "+ url);
 		_string_request(Request.Method.GET, url, params, false,
 				new VolleyCallback() {
 					@Override
@@ -653,6 +666,7 @@ public class ReportFragment extends UpdatableFragment {
 													cust.setName(cust_dt.getString("name"));
 													cust.setPhone("-");
 													cust.setAddress("-");
+													list_of_customers_walk_in.put(sale.getServerInvoiceId(), cust);
 												}
 											} catch (Exception e){}
 										}
@@ -1050,6 +1064,7 @@ public class ReportFragment extends UpdatableFragment {
 		list_of_payments3.clear();
 		list_of_line_items3.clear();
 		String url = Server.URL + "transaction/list?api-key=" + Server.API_KEY;
+		Log.e("XXX", "url : "+ url);
 		_string_request(Request.Method.GET, url, params, false,
 				new VolleyCallback() {
 					@Override
@@ -1308,6 +1323,7 @@ public class ReportFragment extends UpdatableFragment {
 				} catch (Exception e){e.printStackTrace();}
 
 				ArrayList<Payment> paymentList = new ArrayList<Payment>();
+				ArrayList<String> receipt_urls = new ArrayList<String>();
 				for (int i=0; i < methods.length(); i++) {
 					try {
 						JSONObject jsonObject = methods.getJSONObject(i);
@@ -1321,9 +1337,19 @@ public class ReportFragment extends UpdatableFragment {
 							Payment pym = new Payment(i, jsonObject.getString("type"), amount);
 							if (jsonObject.has("transfer_receipt")) {
                                 pym.setTransferReceipt(Server.BASE_API_URL +""+ jsonObject.getString("transfer_receipt"));
+                                receipt_urls.add(jsonObject.getString("transfer_receipt"));
                             } else {
                                 if (transfer_receipt != null && !transfer_receipt.isEmpty()) {
-                                    pym.setTransferReceipt(transfer_receipt);
+                                    //pym.setTransferReceipt(transfer_receipt);
+                                    JSONObject trf_obj = new JSONObject(transfer_receipt);
+                                    Iterator<?> keys = trf_obj.keys();
+                                    while(keys.hasNext() ) {
+                                        String key = (String)keys.next();
+                                        if (trf_obj.get(key) != null && !receipt_urls.contains(trf_obj.get(key))) {
+                                            pym.setTransferReceipt(Server.BASE_API_URL +""+ trf_obj.getString(key));
+                                            receipt_urls.add(trf_obj.getString(key));
+                                        }
+                                    }
                                 }
                             }
 							paymentList.add(pym);

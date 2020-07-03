@@ -121,7 +121,6 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
             view.shipping_method.setText(items.get(position).get("shipping_method"));
             Boolean has_bank_payment = false;
             if (items.get(position).containsKey("payment_icons")) {
-                Log.e("CUX", "items.get(position) : "+ items.get(position).toString());
                 String str_p_icons = items.get(position).get("payment_icons");
                 JSONArray jsonArray = new JSONArray();
                 try {

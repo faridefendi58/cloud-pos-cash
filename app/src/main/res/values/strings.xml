@@ -66,7 +66,7 @@
     <string name="remove_invoice">Remove Invoice</string>
     <string name="remove_order">Remove Order</string>
     <string name="print_invoice">Print Invoice</string>
-    <string name="retur_invoice">Retur Invoice</string>
+    <string name="retur_invoice">Return Item</string>
     <string name="print">Print</string>
     <string name="sync_product">Syncron Product</string>
     <string name="push">Push</string>
@@ -264,7 +264,7 @@
     <string name="title_print_config">Configs</string>
     <string name="title_change_warehouse">Change Warehouse</string>
     <string name="title_bluetooth_devices">Bluetooth Devices</string>
-    <string name="title_retur_invoice">Retur Invoice</string>
+    <string name="title_retur_invoice">Return Item</string>
     <string name="title_take_good">Take Deposit Good</string>
 
     <string name="label_print_char_length">Character Length :</string>
@@ -406,8 +406,8 @@
     <string name="button_reject">Reject</string>
     <string name="button_transfer_receipt">Transfer Receipt</string>
     <string name="button_approve">Approve</string>
-    <string name="button_take_good">Take Good</string>
-    <string name="button_proceed_take_good">Proceed Take Good</string>
+    <string name="button_take_good">Take Item</string>
+    <string name="button_proceed_take_good">Proceed Take Item</string>
     <string name="button_add_to_take_good">Take</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>

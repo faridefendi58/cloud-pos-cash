@@ -1130,7 +1130,9 @@ public class SaleDetailActivity extends Activity{
 
 								if (server_invoice_data.has("transfer_receipt")) {
 									JSONObject transfer_receipt = server_invoice_data.getJSONObject("transfer_receipt");
+
 									List<JSONObject> rec_list = new ArrayList<JSONObject>();
+									ArrayList<String> receipt_urls = new ArrayList<String>();
 									Iterator<String> keys = transfer_receipt.keys();
 									while(keys.hasNext()) {
 										String key = keys.next();
@@ -1138,6 +1140,24 @@ public class SaleDetailActivity extends Activity{
 										xobj.put("title", key);
 										xobj.put("image_url", Server.BASE_API_URL +""+ transfer_receipt.getString(key));
 										rec_list.add(xobj);
+										receipt_urls.add(transfer_receipt.getString(key));
+									}
+									// wait check receipt on payment if any
+									if (server_invoice_data.has("payment")) {
+										JSONArray pym_list = server_invoice_data.getJSONArray("payment");
+										for (int pli = 0; pli < pym_list.length(); pli++) {
+											JSONObject pym_dt = pym_list.getJSONObject(pli);
+											if (pym_dt != null && pym_dt.has("transfer_receipt")) {
+												if (!receipt_urls.contains(pym_dt.getString("transfer_receipt"))) {
+													receipt_urls.add(pym_dt.getString("transfer_receipt"));
+													JSONObject xobj2 = new JSONObject();
+													String _bank = pym_dt.getString("type").replace("nominal_", "");
+													xobj2.put("title", _bank);
+													xobj2.put("image_url", Server.BASE_API_URL +""+ pym_dt.getString("transfer_receipt"));
+													rec_list.add(xobj2);
+												}
+											}
+										}
 									}
 									if (rec_list.size() > 0) {
 										AdapterListReceipt rAdap = new AdapterListReceipt(rec_list);
@@ -1722,7 +1742,9 @@ public class SaleDetailActivity extends Activity{
 			if (obj_retur.has("payments") && !obj_retur.getString("payments").equals("null")) {
 				paymentJSONArray = obj_retur.getJSONArray("payments");
 			}
-			changeOtherItemsJSONArray = obj_retur.getJSONArray("items_change");
+			if (obj_retur.has("items_change")) {
+				changeOtherItemsJSONArray = obj_retur.getJSONArray("items_change");
+			}
 			// build other information
 			retur_invoice_number = (TextView) findViewById(R.id.retur_invoice_number);
 			retur_invoice_number.setText(obj_retur.getString("invoice_number"));
