@@ -127,6 +127,9 @@ public class ShippingFragment extends Fragment {
             String customer_phone = getArguments().getString("customer_phone");
             String customer_email = getArguments().getString("customer_email");
             String customer_address = getArguments().getString("customer_address");
+            if (customer_address == "-" || customer_address == "na") {
+                customer_address = "";
+            }
 
             customer_name_autocomplete.setText(customer_name);
             customer_phone_autocomplete.setText(customer_phone);

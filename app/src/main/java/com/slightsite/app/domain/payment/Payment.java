@@ -1,5 +1,7 @@
 package com.slightsite.app.domain.payment;
 
+import android.util.Log;
+
 import com.slightsite.app.R;
 import com.slightsite.app.domain.AppController;
 import com.slightsite.app.domain.CurrencyController;
@@ -113,5 +115,9 @@ public class Payment implements Serializable {
 
     public void setTransferReceipt(String _receipt) {
         this.transfer_receipt = _receipt;
+    }
+
+    public String getTransferReceipt() {
+        return transfer_receipt;
     }
 }

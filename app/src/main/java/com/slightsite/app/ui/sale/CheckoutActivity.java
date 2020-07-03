@@ -336,7 +336,9 @@ public class CheckoutActivity extends AppCompatActivity {
                             if (checkout_data.getShipping().getName() == null
                                     || checkout_data.getShipping().getPhone() == null
                                     || checkout_data.getShipping().getAddress() == null
-                                    || checkout_data.getShipping().getDate() == null) {
+                                    || checkout_data.getShipping().getDate() == null
+                                    || checkout_data.getShipping().getPhone() == ""
+                                    || checkout_data.getShipping().getAddress() == "") {
                                 Toast.makeText(getBaseContext(),
                                         getResources().getString(R.string.error_empty_shipping_customer_data), Toast.LENGTH_SHORT)
                                         .show();
@@ -448,7 +450,6 @@ public class CheckoutActivity extends AppCompatActivity {
                         // check exact payment
                         try {
                             Double _tot_inv = register.getCurrentSale().getTotal() - register.getCurrentSale().getDiscount();
-                            Log.e("CUK", "_tot_inv"+ _tot_inv);
                             if (checkout_data.getUseEdc()) {
                                 // do something
                                 if (checkout_data.getTotalPaymentReceived() > _tot_inv) {
@@ -1053,7 +1054,6 @@ public class CheckoutActivity extends AppCompatActivity {
         payment_receipts.put(bank_name, bitmap);
         /*try {
             String encodedImage = encodeToBase64(bank_name);
-            Log.e("CUK", "set payment_receipts : "+ encodedImage);
         } catch (Exception e) {
             e.printStackTrace();
         }*/

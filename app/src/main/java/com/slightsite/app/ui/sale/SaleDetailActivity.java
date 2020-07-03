@@ -666,7 +666,7 @@ public class SaleDetailActivity extends Activity{
 			customer_phone_container.setVisibility(View.GONE);
 		}
 
-		if (customer.getAddress().equals("-")) {
+		if (customer.getAddress().equals("-") || customer.getAddress().equals("na")) {
 			customer_address_container.setVisibility(View.GONE);
 		}
 	}

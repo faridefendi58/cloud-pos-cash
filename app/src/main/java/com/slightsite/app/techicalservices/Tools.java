@@ -384,11 +384,9 @@ public class Tools {
         s = s.replaceAll("[-]","");
 
         /*char space = ' ';
-        Log.e("CUK", s.length()+"");
         if (s.length() > 0 && (s.length() % 5) == 0) {
             char c = s.charAt(s.length() - 1);
             String[] _split = TextUtils.split(s, String.valueOf(space));
-            Log.e("CUK", _split.toString());
             String s2 = TextUtils.join("-", _split);
             return s2;
         }*/

@@ -67,7 +67,7 @@ public class Checkout implements Serializable {
 
     public Customer getCustomer() {
         if (customer == null)
-            customer = new Customer("Walk In", "email@email.com", "0000", "na", 1);
+            customer = new Customer("Walk In", "email@email.com", "0000", "", 1);
         return customer;
     }
 

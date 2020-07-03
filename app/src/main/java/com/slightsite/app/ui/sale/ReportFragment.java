@@ -85,6 +85,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static android.content.ComponentCallbacks2.TRIM_MEMORY_BACKGROUND;
 import static com.slightsite.app.ui.LoginActivity.TAG_ID;
 
 /**
@@ -616,7 +617,6 @@ public class ReportFragment extends UpdatableFragment {
 		list_of_payments2.clear();
 		list_of_line_items2.clear();
 		String url = Server.URL + "transaction/list?api-key=" + Server.API_KEY;
-		Log.e("XXX", "url 1 : "+ url);
 		_string_request(Request.Method.GET, url, params, false,
 				new VolleyCallback() {
 					@Override
@@ -1064,7 +1064,6 @@ public class ReportFragment extends UpdatableFragment {
 		list_of_payments3.clear();
 		list_of_line_items3.clear();
 		String url = Server.URL + "transaction/list?api-key=" + Server.API_KEY;
-		Log.e("XXX", "url : "+ url);
 		_string_request(Request.Method.GET, url, params, false,
 				new VolleyCallback() {
 					@Override
@@ -1336,18 +1335,21 @@ public class ReportFragment extends UpdatableFragment {
 							}
 							Payment pym = new Payment(i, jsonObject.getString("type"), amount);
 							if (jsonObject.has("transfer_receipt")) {
-                                pym.setTransferReceipt(Server.BASE_API_URL +""+ jsonObject.getString("transfer_receipt"));
+								pym.setTransferReceipt(Server.BASE_API_URL +""+ jsonObject.getString("transfer_receipt"));
                                 receipt_urls.add(jsonObject.getString("transfer_receipt"));
                             } else {
                                 if (transfer_receipt != null && !transfer_receipt.isEmpty()) {
-                                    //pym.setTransferReceipt(transfer_receipt);
+                                	//pym.setTransferReceipt(transfer_receipt);
                                     JSONObject trf_obj = new JSONObject(transfer_receipt);
                                     Iterator<?> keys = trf_obj.keys();
+                                    Boolean added = false;
                                     while(keys.hasNext() ) {
                                         String key = (String)keys.next();
-                                        if (trf_obj.get(key) != null && !receipt_urls.contains(trf_obj.get(key))) {
-                                            pym.setTransferReceipt(Server.BASE_API_URL +""+ trf_obj.getString(key));
-                                            receipt_urls.add(trf_obj.getString(key));
+										String _bnk = jsonObject.getString("type").replace("nominal_", "");
+                                        if (trf_obj.get(key) != null && !receipt_urls.contains(trf_obj.get(key)) && key.contains(_bnk) && !added) {
+											pym.setTransferReceipt(Server.BASE_API_URL + "" + trf_obj.getString(key));
+											receipt_urls.add(trf_obj.getString(key));
+											added = true;
                                         }
                                     }
                                 }

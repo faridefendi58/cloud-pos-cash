@@ -567,9 +567,6 @@ public class FeeDetailActivity extends AppCompatActivity {
                         str_total_invoice = str_total_invoice.split("\\.")[0];
                     }
                     fee_merchant = Integer.parseInt(str_total_invoice) - grand_total - discount;
-                    Log.e("CUK", "str_total_invoice : "+ str_total_invoice);
-                    Log.e("CUK", "grand_total : "+ grand_total);
-                    Log.e("CUK", "discount : "+ discount);
                     if (fee_merchant > 0) {
                         res += "<tr class=\"ft-17\"><td colspan=\"3\" style=\"text-align:right;\"> Fee " + merchant_data.getString("name") + " :</td>" +
                                 "<td style=\"text-align:right;\">" + CurrencyController.getInstance().moneyFormat(fee_merchant) + "</td></tr>";

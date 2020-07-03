@@ -127,7 +127,6 @@ public class ZoomableImageView extends ImageView {
         float x = m[Matrix.MTRANS_X];
         float y = m[Matrix.MTRANS_Y];
         PointF curr = new PointF(event.getX(), event.getY());
-        Log.e("CUX", "event.getAction() : "+ event.getAction());
         switch (event.getAction()) {
             //when one finger is touching
             //set the mode to DRAG
