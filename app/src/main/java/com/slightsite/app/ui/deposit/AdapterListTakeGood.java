@@ -29,6 +29,7 @@ public class AdapterListTakeGood extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private Context ctx;
     private OnItemClickListener mOnItemClickListener;
+    private Integer view_version = 1;
 
     public interface OnItemClickListener {
         void onItemClick(View view, JSONObject obj, int position);
@@ -46,6 +47,7 @@ public class AdapterListTakeGood extends RecyclerView.Adapter<RecyclerView.ViewH
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
         public TextView created_at;
         public TextView admin_name;
+        public TextView history_title;
         public View lyt_parent;
         public View line_separator;
         public RecyclerView takeGoodItemRecycle;
@@ -54,6 +56,7 @@ public class AdapterListTakeGood extends RecyclerView.Adapter<RecyclerView.ViewH
             super(v);
             created_at = (TextView) v.findViewById(R.id.created_at);
             admin_name = (TextView) v.findViewById(R.id.admin_name);
+            history_title = (TextView) v.findViewById(R.id.history_title);
             lyt_parent = (View) v.findViewById(R.id.lyt_parent);
             line_separator = (View) v.findViewById(R.id.line_separator);
             takeGoodItemRecycle = (RecyclerView) v.findViewById(R.id.takeGoodItemRecycle);
@@ -80,18 +83,28 @@ public class AdapterListTakeGood extends RecyclerView.Adapter<RecyclerView.ViewH
 
             final JSONObject item = items.get(position);
             try {
+                String _picked_at = "";
                 if (item.has("created_at")) {
                     String dtStart = item.getString("created_at");
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     try {
                         Date date = format.parse(dtStart);
                         long _created_at = date.getTime();
+                        _picked_at = Tools.getFormattedDateTimeShort(_created_at);
                         view.created_at.setText(Tools.getFormattedDateOnly(_created_at));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
                 }
                 view.admin_name.setText(item.getString("admin_name"));
+                if (view_version == 2) {
+                    if (_picked_at.length() > 0) {
+                        view.history_title.setText("Pengambilan ("+ _picked_at +")");
+                        view.created_at.setVisibility(View.GONE);
+                        view.admin_name.setVisibility(View.GONE);
+                        view.history_title.setVisibility(View.VISIBLE);
+                    }
+                }
                 if (item.has("items")) {
                     List<Map<String,String>> lineitemList = new ArrayList<Map<String, String>>();
                     JSONArray _items = item.getJSONArray("items");
@@ -129,5 +142,9 @@ public class AdapterListTakeGood extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public int getItemCount() {
         return items.size();
+    }
+
+    public void setViewVersion(int _view_version) {
+        this.view_version = _view_version;
     }
 }

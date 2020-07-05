@@ -89,6 +89,7 @@ import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.URLBuilder;
 import com.slightsite.app.ui.LoginActivity;
 import com.slightsite.app.ui.MainActivity;
+import com.slightsite.app.ui.sale.SaleDetailActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -493,9 +494,10 @@ public class PrintPreviewActivity extends Activity {
                             // Check for error node in json
                             if (success == 1) {
                                 server_invoice_data = jObj.getJSONObject("data");
+                                JSONObject obj_shipping = new JSONObject();
                                 if (server_invoice_data.has("shipping")) {
                                     JSONArray arr_shipping = server_invoice_data.getJSONArray("shipping");
-                                    JSONObject obj_shipping = arr_shipping.getJSONObject(0);
+                                    obj_shipping = arr_shipping.getJSONObject(0);
                                     // instead of using local data, its better build payment data from server
                                     // in order to get latest data
                                     JSONArray arr_payment = server_invoice_data.getJSONArray("payment");
@@ -569,6 +571,11 @@ public class PrintPreviewActivity extends Activity {
                                         if (status > 0 && delivered > 0) {
                                             print_button_container.setVisibility(View.VISIBLE);
                                             finish_and_print_button.setVisibility(View.GONE);
+                                        }
+
+                                        // do something if pelunasan ambil titip barang
+                                        if ((status > 0) && (delivered == 0) && obj_shipping.has("method") && (obj_shipping.getInt("method") == 6)) {
+
                                         }
                                     }
                                 } else {
@@ -745,7 +752,9 @@ public class PrintPreviewActivity extends Activity {
         if (customer != null) {
             res += "<tr class=\"ft-16\"><td>"+ getResources().getString(R.string.customer)+ "</td><td colspan=\"3\"> : "+ customer.getName() +"</td></tr>";
             if (customer.getServerCustomerId() > 1) {
-                res += "<tr class=\"ft-16\"><td>" + getResources().getString(R.string.label_customer_address) + "</td><td colspan=\"3\"> : " + customer.getAddress() + "</td></tr>";
+                if (customer.getAddress() != null && !customer.getAddress().equals("null") && !customer.getAddress().equals("na")) {
+                    res += "<tr class=\"ft-16\"><td>" + getResources().getString(R.string.label_customer_address) + "</td><td colspan=\"3\"> : " + customer.getAddress() + "</td></tr>";
+                }
                 res += "<tr class=\"ft-16\"><td>" + getResources().getString(R.string.label_customer_phone) + "</td><td colspan=\"3\"> : " + customer.getPhone() + "</td></tr>";
             }
         }

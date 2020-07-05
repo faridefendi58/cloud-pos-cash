@@ -386,36 +386,53 @@ public class DepositActivity extends AppCompatActivity {
                             List<LineItem> list = sale.getAllLineItem();
                             if (success == 1) {
                                 JSONArray data = jObj.getJSONArray("data");
-                                for(int m = 0; m < data.length(); m++) {
-                                    JSONObject data_m = data.getJSONObject(m);
-                                    take_history_stacks.add(data_m);
-                                    JSONArray items =  data_m.getJSONArray("items");
-                                    for(int n = 0; n < items.length(); n++) {
-                                        JSONObject item_data = items.getJSONObject(n);
-                                        if (item_data.has("quantity_before") && item_data.has("quantity") && item_data.has("product_id")) {
-                                            int avail = item_data.getInt("quantity_before") - item_data.getInt("quantity");
-                                            if ((avail_product_qty_stacks != null) && avail_product_qty_stacks.containsKey(item_data.getInt("product_id"))) {
-                                                avail = avail_product_qty_stacks.get(item_data.getInt("product_id")) - item_data.getInt("quantity");
+                                if (jObj.has("data")) {
+                                    for (int m = 0; m < data.length(); m++) {
+                                        JSONObject data_m = data.getJSONObject(m);
+                                        take_history_stacks.add(data_m);
+                                        JSONArray items = data_m.getJSONArray("items");
+                                        for (int n = 0; n < items.length(); n++) {
+                                            JSONObject item_data = items.getJSONObject(n);
+                                            if (item_data.has("quantity_before") && item_data.has("quantity") && item_data.has("product_id")) {
+                                                int avail = item_data.getInt("quantity_before") - item_data.getInt("quantity");
+                                                if ((avail_product_qty_stacks != null) && avail_product_qty_stacks.containsKey(item_data.getInt("product_id"))) {
+                                                    avail = avail_product_qty_stacks.get(item_data.getInt("product_id")) - item_data.getInt("quantity");
+                                                }
+                                                avail_product_qty_stacks.put(item_data.getInt("product_id"), avail);
+                                                product_qty_stacks.put(item_data.getInt("product_id"), avail);
                                             }
-                                            avail_product_qty_stacks.put(item_data.getInt("product_id"), avail);
-                                            product_qty_stacks.put(item_data.getInt("product_id"), avail);
                                         }
                                     }
-                                }
 
-                                for(int p = 0; p < list.size(); p++) {
-                                    LineItem line = list.get(p);
-                                    int bc = Integer.parseInt(line.getProduct().getBarcode());
-                                    if (avail_product_qty_stacks.containsKey(bc)) {
-                                        line.setQuantity(avail_product_qty_stacks.get(bc));
+                                    for (int p = 0; p < list.size(); p++) {
+                                        LineItem line = list.get(p);
+                                        int bc = Integer.parseInt(line.getProduct().getBarcode());
+                                        if (avail_product_qty_stacks.containsKey(bc)) {
+                                            line.setQuantity(avail_product_qty_stacks.get(bc));
+                                        }
+                                        list.set(p, line);
                                     }
-                                    list.set(p, line);
+                                } else { //never take item
+                                    for (int p = 0; p < list.size(); p++) {
+                                        LineItem line = list.get(p);
+                                        int bc = Integer.parseInt(line.getProduct().getBarcode());
+                                        avail_product_qty_stacks.put(bc, line.getQuantity());
+                                        product_qty_stacks.put(bc, line.getQuantity());
+                                        list.set(p, line);
+                                    }
                                 }
 
                                 if (take_history_stacks.size() > 0) {
                                     AdapterListTakeGood hAdap = new AdapterListTakeGood(DepositActivity.this, take_history_stacks);
                                     takeGoodHistoryRecycle.setAdapter(hAdap);
                                     take_history_container.setVisibility(View.VISIBLE);
+                                }
+                            } else {
+                                for (int p = 0; p < list.size(); p++) {
+                                    LineItem line = list.get(p);
+                                    int bc = Integer.parseInt(line.getProduct().getBarcode());
+                                    avail_product_qty_stacks.put(bc, line.getQuantity());
+                                    list.set(p, line);
                                 }
                             }
 

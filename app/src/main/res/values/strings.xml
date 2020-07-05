@@ -272,7 +272,7 @@
     <string name="label_print_footer">Footer :</string>
 
     <string name="label_change_due">Change Due</string>
-    <string name="label_dept">Dept</string>
+    <string name="label_dept">Debt</string>
     <string name="label_date">Date</string>
     <string name="label_date_created">Date Created</string>
     <string name="label_date_finished">Date Finished</string>
@@ -472,4 +472,5 @@
     <string name="reject">Reject</string>
     <string name="give_away">GiveAway</string>
     <string name="default_notification_channel_id">inventory</string>
+    <string name="available_deposit">Available Deposit</string>
 </resources>

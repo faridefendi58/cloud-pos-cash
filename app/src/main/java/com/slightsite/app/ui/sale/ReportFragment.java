@@ -546,7 +546,6 @@ public class ReportFragment extends UpdatableFragment {
 			}
 
 			params.put("delivered_plan_at_from", filter_result.get("date_from"));
-			Log.e("YYY", "filter_result.get(\"date_from\") : "+ filter_result.get("date_from"));
 			params.put("delivered_plan_at_to", filter_result.get("date_to"));
 			params.put("custom_order_by", "status_order_code");
 			params.put("order_type", "ASC");

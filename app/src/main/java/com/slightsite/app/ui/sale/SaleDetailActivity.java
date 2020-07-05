@@ -98,6 +98,9 @@ import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.techicalservices.URLBuilder;
 import com.slightsite.app.ui.LoginActivity;
 import com.slightsite.app.ui.MainActivity;
+import com.slightsite.app.ui.deposit.AdapterListProductTake;
+import com.slightsite.app.ui.deposit.AdapterListSimple;
+import com.slightsite.app.ui.deposit.AdapterListTakeGood;
 import com.slightsite.app.ui.deposit.DepositActivity;
 import com.slightsite.app.ui.inventory.ProductServerActivity;
 import com.slightsite.app.ui.printer.PrintPreviewActivity;
@@ -124,6 +127,8 @@ public class SaleDetailActivity extends Activity{
 	private RecyclerView lineitemListRecycle;
 	private RecyclerView paymentitemListView;
 	private RecyclerView receiptitemListView;
+	private RecyclerView takeGoodHistoryRecycle;
+	private RecyclerView availableDepositRecycle;
 	private List<Map<String, String>> lineitemList;
 	private Sale sale;
 	private int saleId;
@@ -166,6 +171,7 @@ public class SaleDetailActivity extends Activity{
 	private LinearLayout receipt_information;
 	private LinearLayout shipping_information_container;
 	private LinearLayout take_good_button_container;
+	private LinearLayout take_item_information;
 	private TextView gograbfood_discount_label;
 	private TextView gograbfood_total_price;
 	private TextView gograbfood_discount;
@@ -330,6 +336,16 @@ public class SaleDetailActivity extends Activity{
 		receiptitemListView.setHasFixedSize(true);
 		receiptitemListView.setNestedScrollingEnabled(false);
 
+		takeGoodHistoryRecycle = (RecyclerView) findViewById(R.id.takeGoodHistoryRecycle);
+		takeGoodHistoryRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+		takeGoodHistoryRecycle.setHasFixedSize(true);
+		takeGoodHistoryRecycle.setNestedScrollingEnabled(false);
+
+		availableDepositRecycle = (RecyclerView) findViewById(R.id.availableDepositRecycle);
+		availableDepositRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+		availableDepositRecycle.setHasFixedSize(true);
+		availableDepositRecycle.setNestedScrollingEnabled(false);
+
 		customerBox = (TextView) findViewById(R.id.customerBox);
 		status = (TextView) findViewById(R.id.status);
         invoice_number = (TextView) findViewById(R.id.invoice_number);
@@ -358,6 +374,7 @@ public class SaleDetailActivity extends Activity{
 		receipt_information = (LinearLayout) findViewById(R.id.receipt_information);
 		shipping_information_container = (LinearLayout) findViewById(R.id.shipping_information_container);
         take_good_button_container = (LinearLayout) findViewById(R.id.take_good_button_container);
+		take_item_information = (LinearLayout) findViewById(R.id.take_item_information);
 
 		gograbfood_discount_label = (TextView) findViewById(R.id.gograbfood_discount_label);
 		gograbfood_total_price = (TextView) findViewById(R.id.gograbfood_total_price);
@@ -1050,11 +1067,10 @@ public class SaleDetailActivity extends Activity{
 
 									// find the retur data
 									try {
-										obj_retur = server_invoice_data.getJSONObject("refund");
-									} catch (JSONException e) {
-										Log.e("JSON Parser", "Error parsing data " + e.toString());
-									}
-									Log.e(getClass().getSimpleName(), "obj_retur : "+ obj_retur.toString());
+										if (server_invoice_data.has("refund") && Tools.isJSONObject(server_invoice_data.getString("refund"))) {
+											obj_retur = server_invoice_data.getJSONObject("refund");
+										}
+									} catch (JSONException e) {e.printStackTrace();}
 
 									if (server_invoice_data.getInt("status") == 0) {
                                         complete_button_container.setVisibility(View.VISIBLE);
@@ -1076,12 +1092,18 @@ public class SaleDetailActivity extends Activity{
 												buildReturInformation();
 											}
 										} else {
-                                            Log.e(TAG, "shipping.getMethod() : "+ shipping.getMethod());
                                             if (shipping.getMethod() == 6) {
                                                 take_good_button_container.setVisibility(View.VISIBLE);
                                             } else {
                                                 finish_button_container.setVisibility(View.VISIBLE);
                                             }
+										}
+
+										// build history
+										if (shipping.getMethod() == 6) {
+											try {
+												getTakeGoodHistory();
+											} catch (Exception e){e.printStackTrace();}
 										}
 									}
 								}
@@ -1474,7 +1496,6 @@ public class SaleDetailActivity extends Activity{
 		}
 
 		params.put("admin_id", admin_id);
-		//Log.e(TAG, "params complete-payment : "+ params.toString());
 
 		_string_request(
 				Request.Method.POST,
@@ -1497,42 +1518,51 @@ public class SaleDetailActivity extends Activity{
 
 								bottomSheetDialog.dismiss();
 
-								//Intent newActivity = new Intent(getApplicationContext(), MainActivity.class);
-								Intent newActivity = new Intent(SaleDetailActivity.this,
-										PrintPreviewActivity.class);
-								newActivity.putExtra("saleId", saleId);
-								newActivity.putExtra("shipping_method", shipping.getMethod());
-								newActivity.putExtra("process_order", true);
-								if (!is_local_data) {
-									Sale new_sale = new Sale(saleId, sale.getEndTime());
-									new_sale.setServerInvoiceNumber(sale.getServerInvoiceNumber());
-									new_sale.setServerInvoiceId(sale.getServerInvoiceId());
-									new_sale.setCustomerId(sale.getCustomerId());
-									new_sale.setStatus(sale.getStatus());
-									new_sale.setDiscount(sale.getDiscount());
+								if (shipping.getMethod() == 6) { //if completing deposit order
+									Toast.makeText(getApplicationContext(),
+											getResources().getString(R.string.message_success_payment),
+											Toast.LENGTH_SHORT).show();
+									finish_submit_button.setVisibility(View.GONE);
+									take_good_button_container.setVisibility(View.VISIBLE);
+									complete_button_container.setVisibility(View.GONE);
+									goToDeposit(); //go to deposit section
+								} else {
+									Intent newActivity = new Intent(SaleDetailActivity.this,
+											PrintPreviewActivity.class);
+									newActivity.putExtra("saleId", saleId);
+									newActivity.putExtra("shipping_method", shipping.getMethod());
+									newActivity.putExtra("process_order", true);
+									if (!is_local_data) {
+										Sale new_sale = new Sale(saleId, sale.getEndTime());
+										new_sale.setServerInvoiceNumber(sale.getServerInvoiceNumber());
+										new_sale.setServerInvoiceId(sale.getServerInvoiceId());
+										new_sale.setCustomerId(sale.getCustomerId());
+										new_sale.setStatus(sale.getStatus());
+										new_sale.setDiscount(sale.getDiscount());
 
-									newActivity.putExtra("sale_intent", new_sale);
-									newActivity.putExtra("customer_intent", customer_intent);
-									newActivity.putExtra("shipping_intent", shipping_intent);
+										newActivity.putExtra("sale_intent", new_sale);
+										newActivity.putExtra("customer_intent", customer_intent);
+										newActivity.putExtra("shipping_intent", shipping_intent);
 
-                                    JSONArray arrPayment = null;
-                                    try {
-                                        arrPayment = new JSONArray(payment_intent);
-                                        if (arrPayment != null) {
-                                            for (PaymentItem pi : payment_items) {
-                                                arrPayment.put(pi.toMap());
-                                            }
-                                            payment_intent = arrPayment.toString();
-                                        }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
+										JSONArray arrPayment = null;
+										try {
+											arrPayment = new JSONArray(payment_intent);
+											if (arrPayment != null) {
+												for (PaymentItem pi : payment_items) {
+													arrPayment.put(pi.toMap());
+												}
+												payment_intent = arrPayment.toString();
+											}
+										} catch (JSONException e) {
+											e.printStackTrace();
+										}
 
-									newActivity.putExtra("payment_intent", payment_intent);
-									newActivity.putExtra("line_items_intent", line_items_intent);
+										newActivity.putExtra("payment_intent", payment_intent);
+										newActivity.putExtra("line_items_intent", line_items_intent);
+									}
+									finish();
+									startActivity(newActivity);
 								}
-								finish();
-								startActivity(newActivity);
 							}
 						} catch (JSONException e) {
 							e.printStackTrace();
@@ -2096,23 +2126,116 @@ public class SaleDetailActivity extends Activity{
 	}
 
     public void takeTheGood(View v) {
-        Intent intent = new Intent(SaleDetailActivity.this, DepositActivity.class);
-        intent.putExtra("saleId", saleId+"");
-
-        Sale new_sale = new Sale(saleId, sale.getEndTime());
-        new_sale.setServerInvoiceNumber(sale.getServerInvoiceNumber());
-        new_sale.setServerInvoiceId(sale.getServerInvoiceId());
-        new_sale.setCustomerId(sale.getCustomerId());
-        new_sale.setStatus(sale.getStatus());
-        new_sale.setDiscount(sale.getDiscount());
-
-        intent.putExtra("sale_intent", new_sale);
-        intent.putExtra("customer_intent", customer_intent);
-        intent.putExtra("shipping_intent", shipping_intent);
-        intent.putExtra("payment_intent", payment_intent);
-        intent.putExtra("line_items_intent", line_items_intent);
-
-        //finish();
-        startActivity(intent);
+        goToDeposit();
     }
+
+    private void goToDeposit() {
+		Intent intent = new Intent(SaleDetailActivity.this, DepositActivity.class);
+		intent.putExtra("saleId", saleId+"");
+
+		Sale new_sale = new Sale(saleId, sale.getEndTime());
+		new_sale.setServerInvoiceNumber(sale.getServerInvoiceNumber());
+		new_sale.setServerInvoiceId(sale.getServerInvoiceId());
+		new_sale.setCustomerId(sale.getCustomerId());
+		new_sale.setStatus(sale.getStatus());
+		new_sale.setDiscount(sale.getDiscount());
+
+		intent.putExtra("sale_intent", new_sale);
+		intent.putExtra("customer_intent", customer_intent);
+		intent.putExtra("shipping_intent", shipping_intent);
+		intent.putExtra("payment_intent", payment_intent);
+		intent.putExtra("line_items_intent", line_items_intent);
+
+		//finish();
+		startActivity(intent);
+	}
+
+	private List<JSONObject> take_history_stacks = new ArrayList<JSONObject>();
+	private Map<Integer, Integer> avail_product_qty_stacks = new HashMap<Integer, Integer>();
+	private Map<Integer, Integer> product_qty_stacks = new HashMap<Integer, Integer>();
+
+	private void getTakeGoodHistory() {
+		Map<String, Object> mObj = new HashMap<String, Object>();
+		mObj.put("invoice_id", sale.getServerInvoiceId());
+		String _url = Server.URL + "transaction/list-deposit-take?api-key=" + Server.API_KEY;
+
+		String qry = URLBuilder.httpBuildQuery(mObj, "UTF-8");
+		_url += "&"+ qry;
+
+		Map<String, String> params = new HashMap<String, String>();
+		String admin_id = sharedpreferences.getString("id", null);
+		Params adminParam = paramCatalog.getParamByName("admin_id");
+		if (adminParam != null) {
+			admin_id = adminParam.getValue();
+		}
+
+		params.put("admin_id", admin_id);
+
+		_string_request(
+				Request.Method.GET,
+				_url,
+				params,
+				false,
+				new VolleyCallback(){
+					@Override
+					public void onSuccess(String result) {
+						try {
+							JSONObject jObj = new JSONObject(result);
+							Log.e(TAG, "getTakeGoodHistory : "+ jObj.toString());
+							success = jObj.getInt(TAG_SUCCESS);
+							// Check for error node in json
+							List<LineItem> list = sale.getAllLineItem();
+							if (success == 1) {
+								JSONArray data = jObj.getJSONArray("data");
+								for(int m = 0; m < data.length(); m++) {
+									JSONObject data_m = data.getJSONObject(m);
+									take_history_stacks.add(data_m);
+									JSONArray items =  data_m.getJSONArray("items");
+									for(int n = 0; n < items.length(); n++) {
+										JSONObject item_data = items.getJSONObject(n);
+										if (item_data.has("quantity_before") && item_data.has("quantity") && item_data.has("product_id")) {
+											int avail = item_data.getInt("quantity_before") - item_data.getInt("quantity");
+											if ((avail_product_qty_stacks != null) && avail_product_qty_stacks.containsKey(item_data.getInt("product_id"))) {
+												avail = avail_product_qty_stacks.get(item_data.getInt("product_id")) - item_data.getInt("quantity");
+											}
+											avail_product_qty_stacks.put(item_data.getInt("product_id"), avail);
+											product_qty_stacks.put(item_data.getInt("product_id"), avail);
+										}
+									}
+								}
+
+								List<Map<String,String>> avitemList = new ArrayList<Map<String, String>>();
+								for(int p = 0; p < list.size(); p++) {
+									LineItem line = list.get(p);
+									int bc = Integer.parseInt(line.getProduct().getBarcode());
+									if (avail_product_qty_stacks.containsKey(bc)) {
+										line.setQuantity(avail_product_qty_stacks.get(bc));
+									}
+									list.set(p, line);
+
+									Map<String,String> _map = new HashMap<String, String>();
+									_map.put("title", line.getProduct().getName());
+									_map.put("quantity", ""+ line.getQuantity());
+									avitemList.add(_map);
+								}
+
+								if (take_history_stacks.size() > 0) {
+									AdapterListTakeGood hAdap = new AdapterListTakeGood(SaleDetailActivity.this, take_history_stacks);
+									hAdap.setViewVersion(2);
+									takeGoodHistoryRecycle.setAdapter(hAdap);
+									take_item_information.setVisibility(View.VISIBLE);
+								}
+
+								if (avail_product_qty_stacks.size() > 0) {
+									AdapterListSimple avAdap = new AdapterListSimple(SaleDetailActivity.this, avitemList);
+									availableDepositRecycle.setAdapter(avAdap);
+								}
+							}
+
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+	}
 }

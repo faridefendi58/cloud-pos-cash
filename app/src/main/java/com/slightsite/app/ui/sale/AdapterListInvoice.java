@@ -117,7 +117,13 @@ public class AdapterListInvoice extends RecyclerView.Adapter<RecyclerView.ViewHo
             view.customer_data.setText(items.get(position).get("customer_data"));
             view.customer_name.setText(items.get(position).get("customer_name"));
             view.customer_phone.setText(items.get(position).get("customer_phone"));
-            view.customer_address.setText(items.get(position).get("customer_address"));
+            if (items.get(position).get("customer_address") != null
+                    && !items.get(position).get("customer_address").equals("null")
+                    && !items.get(position).get("customer_address").equals("na")) {
+                view.customer_address.setText(items.get(position).get("customer_address"));
+            } else {
+                view.customer_address.setVisibility(View.GONE);
+            }
             view.shipping_method.setText(items.get(position).get("shipping_method"));
             Boolean has_bank_payment = false;
             if (items.get(position).containsKey("payment_icons")) {
