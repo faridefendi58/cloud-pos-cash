@@ -420,22 +420,24 @@ public class CustomerDetailActivity extends Activity {
                                     moreOrderListButton.setVisibility(View.VISIBLE);
                                 }
 
-                                AdapterListCustomerOrder adapter = new AdapterListCustomerOrder(getApplicationContext(), order_parts.get(0));
-                                orderListRecycle.setAdapter(adapter);
+                                if (order_parts.size() > 0) {
+                                    AdapterListCustomerOrder adapter = new AdapterListCustomerOrder(getApplicationContext(), order_parts.get(0));
+                                    orderListRecycle.setAdapter(adapter);
 
-                                adapter.setOnItemClickListener(new AdapterListCustomerOrder.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(View view, FeeOn obj, int position) {
-                                        Intent newActivity = new Intent(getBaseContext(), SaleDetailActivity.class);
-                                        int _inv_id = invoice_ids.get(position);
-                                        newActivity.putExtra("sale_intent", list_invoices.get(_inv_id));
-                                        newActivity.putExtra("customer_intent", list_customers.get(_inv_id));
-                                        newActivity.putExtra("shipping_intent", list_shippings.get(_inv_id));
-                                        newActivity.putExtra("payment_intent", list_payments.get(_inv_id));
-                                        newActivity.putExtra("line_items_intent", list_items_belanja.get(_inv_id));
-                                        startActivity(newActivity);
-                                    }
-                                });
+                                    adapter.setOnItemClickListener(new AdapterListCustomerOrder.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(View view, FeeOn obj, int position) {
+                                            Intent newActivity = new Intent(getBaseContext(), SaleDetailActivity.class);
+                                            int _inv_id = invoice_ids.get(position);
+                                            newActivity.putExtra("sale_intent", list_invoices.get(_inv_id));
+                                            newActivity.putExtra("customer_intent", list_customers.get(_inv_id));
+                                            newActivity.putExtra("shipping_intent", list_shippings.get(_inv_id));
+                                            newActivity.putExtra("payment_intent", list_payments.get(_inv_id));
+                                            newActivity.putExtra("line_items_intent", list_items_belanja.get(_inv_id));
+                                            startActivity(newActivity);
+                                        }
+                                    });
+                                }
 
                                 AdapterListPaymentOn pAdap = new AdapterListPaymentOn(paymentList);
                                 paymentListRecycle.setAdapter(pAdap);

@@ -352,12 +352,22 @@ public class CheckoutActivity extends AppCompatActivity {
                                 Toast.makeText(getBaseContext(),
                                         getResources().getString(R.string.error_empty_shipping_date), Toast.LENGTH_SHORT)
                                         .show();
-                                vibe.vibrate(200);
+                                vibe.vibrate(
+                                        200);
                                 return;
                             }
                         }
                     } else if (array_state[idx_state] == State.PAYMENT) {
                         if (checkout_data.getTotalPaymentReceived() <= 0) {
+                            //not allowed buy directly, buy and deposit not allow debt, 6 jul 20 dont allow debt
+                            if (checkout_data.getShipping().getMethod() == 0
+                                    || checkout_data.getShipping().getMethod() == 6) {
+                                Toast.makeText(getBaseContext(),
+                                        getResources().getString(R.string.error_payment_should_be_exact), Toast.LENGTH_LONG)
+                                        .show();
+                                vibe.vibrate(200);
+                                return;
+                            }
                             if (checkout_data.getShipping().getMethod() != 3) {
                                 checkout_data.setCashReceive("0");
                             }
@@ -370,7 +380,6 @@ public class CheckoutActivity extends AppCompatActivity {
 
                             AlertDialog.Builder dialog = new AlertDialog.Builder(CheckoutActivity.this);
                             dialog.setCustomTitle(titleView);
-                            //dialog.setTitle(Html.fromHtml("<small>"+getResources().getString(R.string.dialog_no_payment)+"</small>"));
                             dialog.setPositiveButton(getResources().getString(R.string.label_proceed), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -457,6 +466,18 @@ public class CheckoutActivity extends AppCompatActivity {
                                             getResources().getString(R.string.error_payment_should_be_exact), Toast.LENGTH_LONG)
                                             .show();
 
+                                    vibe.vibrate(200);
+                                    return;
+                                }
+                            }
+                            //not allowed buy directly, buy and deposit not allow debt, 6 jul 20 dont allow debt
+                            if (checkout_data.getShipping().getMethod() == 0
+                                    || checkout_data.getShipping().getMethod() == 6) {
+
+                                if (checkout_data.getTotalPaymentReceived() < _tot_inv) {
+                                    Toast.makeText(getBaseContext(),
+                                            getResources().getString(R.string.error_payment_should_be_exact), Toast.LENGTH_LONG)
+                                            .show();
                                     vibe.vibrate(200);
                                     return;
                                 }
