@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +30,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -96,6 +98,7 @@ public class CustomerDetailActivity extends Activity {
     private TextView total_transaction;
     private TextView fee_report_title;
     private RecyclerView refundListRecycle;
+    private Button moreOrderListButton;
 
     private RecyclerView saleItemListRecycle;
     private RecyclerView minOrder10ItemListRecycle;
@@ -169,6 +172,8 @@ public class CustomerDetailActivity extends Activity {
         orderListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         orderListRecycle.setHasFixedSize(true);
         orderListRecycle.setNestedScrollingEnabled(false);
+
+        moreOrderListButton = (Button) findViewById(R.id.moreOrderListButton);
 
         paymentListRecycle = (RecyclerView) findViewById(R.id.paymentListRecycle);
         paymentListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -311,6 +316,10 @@ public class CustomerDetailActivity extends Activity {
     private Map<Integer, Shipping> list_shippings = new HashMap<Integer, Shipping>();
     private Map<Integer, String> list_payments = new HashMap<Integer, String>();
     private Map<Integer, String> list_items_belanja = new HashMap<Integer, String>();
+    private int order_limit = 2;
+    private int current_page = 1;
+    private ArrayList<FeeOn> listOrder = new ArrayList<FeeOn>();
+    private List<List<FeeOn>> order_parts = new ArrayList<>();
 
     private void buildListOrder() {
         int warehouse_id = Integer.parseInt(paramCatalog.getParamByName("warehouse_id").getValue());
@@ -331,7 +340,6 @@ public class CustomerDetailActivity extends Activity {
                                 int success = jObj.getInt("success");
                                 // Check for error node in json
                                 final Map<Integer, Integer> invoice_ids = new HashMap<Integer, Integer>();;
-                                ArrayList<FeeOn> listOrder = new ArrayList<FeeOn>();
                                 ArrayList<Payment> paymentList = new ArrayList<Payment>();
                                 ArrayList<Payment> refundList = new ArrayList<Payment>();
                                 final Map<Integer, JSONObject> items_datas = new HashMap<Integer, JSONObject>();;
@@ -406,7 +414,13 @@ public class CustomerDetailActivity extends Activity {
                                     total_spend.setText(CurrencyController.getInstance().moneyFormat(total_revenue));
                                 }
 
-                                AdapterListCustomerOrder adapter = new AdapterListCustomerOrder(getApplicationContext(), listOrder);
+                                // chunk list order
+                                order_parts = chopped(listOrder, order_limit);
+                                if (order_parts.size() > 1) {
+                                    moreOrderListButton.setVisibility(View.VISIBLE);
+                                }
+
+                                AdapterListCustomerOrder adapter = new AdapterListCustomerOrder(getApplicationContext(), order_parts.get(0));
                                 orderListRecycle.setAdapter(adapter);
 
                                 adapter.setOnItemClickListener(new AdapterListCustomerOrder.OnItemClickListener() {
@@ -425,10 +439,6 @@ public class CustomerDetailActivity extends Activity {
 
                                 AdapterListPaymentOn pAdap = new AdapterListPaymentOn(paymentList);
                                 paymentListRecycle.setAdapter(pAdap);
-
-                                if (refundList.size() > 0) {
-                                    
-                                }
 
                                 // build sales counter summary
                                 Map<String, String> params2 = new HashMap<String, String>();
@@ -668,5 +678,32 @@ public class CustomerDetailActivity extends Activity {
                 }
             }
         } catch (Exception e){e.printStackTrace();}
+    }
+
+    private static <T> List<List<T>> chopped(List<T> list, final int L) {
+        List<List<T>> parts = new ArrayList<List<T>>();
+        final int N = list.size();
+        for (int i = 0; i < N; i += L) {
+            parts.add(new ArrayList<T>(
+                    list.subList(i, Math.min(N, i + L)))
+            );
+        }
+        return parts;
+    }
+
+    public void showMoreOrder(View view) {
+        current_page = current_page + 1;
+        if (order_parts.size() >= current_page) {
+            int chunk_size = current_page * order_limit;
+            List<List<FeeOn>> new_order_parts = chopped(listOrder, chunk_size);
+            AdapterListCustomerOrder adapter = new AdapterListCustomerOrder(getApplicationContext(), new_order_parts.get(0));
+            orderListRecycle.setAdapter(adapter);
+            orderListRecycle.scrollToPosition((chunk_size-1));
+            if (new_order_parts.size() <= 1) {
+                view.setVisibility(View.GONE);
+            }
+        } else {
+            view.setVisibility(View.GONE);
+        }
     }
 }

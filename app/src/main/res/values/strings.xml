@@ -473,4 +473,5 @@
     <string name="give_away">GiveAway</string>
     <string name="default_notification_channel_id">inventory</string>
     <string name="available_deposit">Available Deposit</string>
+    <string name="more_result">More Result</string>
 </resources>

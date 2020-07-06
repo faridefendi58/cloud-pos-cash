@@ -461,7 +461,7 @@ public class PrintDepositActivity extends Activity {
                             res += "<tr class=\"ft-17\"><td colspan=\"3\">"+ _obj_item.getString("title") +"</td>";
                             res += "<td style=\"text-align:right;\">- " + _obj_item.getString("quantity") + "</td></tr>";
                             int p_id = Integer.parseInt(_obj_item.getString("product_id"));
-                            list_ambil_item.put(p_id, _obj_item.getInt("quantity"));
+                            //list_ambil_item.put(p_id, _obj_item.getInt("quantity"));
                         }
                         res += "<tr><td colspan=\"4\"><hr/></td></tr>";
                     }
