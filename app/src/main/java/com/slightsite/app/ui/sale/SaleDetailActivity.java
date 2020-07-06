@@ -101,7 +101,9 @@ import com.slightsite.app.ui.MainActivity;
 import com.slightsite.app.ui.deposit.AdapterListProductTake;
 import com.slightsite.app.ui.deposit.AdapterListSimple;
 import com.slightsite.app.ui.deposit.AdapterListTakeGood;
+import com.slightsite.app.ui.deposit.Deposit;
 import com.slightsite.app.ui.deposit.DepositActivity;
+import com.slightsite.app.ui.deposit.PrintDepositActivity;
 import com.slightsite.app.ui.inventory.ProductServerActivity;
 import com.slightsite.app.ui.printer.PrintPreviewActivity;
 import com.slightsite.app.ui.printer.PrinterActivity;
@@ -2153,6 +2155,8 @@ public class SaleDetailActivity extends Activity{
 	private List<JSONObject> take_history_stacks = new ArrayList<JSONObject>();
 	private Map<Integer, Integer> avail_product_qty_stacks = new HashMap<Integer, Integer>();
 	private Map<Integer, Integer> product_qty_stacks = new HashMap<Integer, Integer>();
+    private ArrayList arrTakeItemList = new ArrayList();
+    private String take_history = "";
 
 	private void getTakeGoodHistory() {
 		Map<String, Object> mObj = new HashMap<String, Object>();
@@ -2187,6 +2191,7 @@ public class SaleDetailActivity extends Activity{
 							List<LineItem> list = sale.getAllLineItem();
 							if (success == 1) {
 								JSONArray data = jObj.getJSONArray("data");
+								take_history = jObj.getString("data");
 								for(int m = 0; m < data.length(); m++) {
 									JSONObject data_m = data.getJSONObject(m);
 									take_history_stacks.add(data_m);
@@ -2200,6 +2205,12 @@ public class SaleDetailActivity extends Activity{
 											}
 											avail_product_qty_stacks.put(item_data.getInt("product_id"), avail);
 											product_qty_stacks.put(item_data.getInt("product_id"), avail);
+
+                                            Map<String, String> hMap = new HashMap<String, String>();
+                                            hMap.put("title", item_data.getString("title"));
+                                            hMap.put("product_id", item_data.getString("product_id"));
+                                            hMap.put("quantity", item_data.getString("quantity"));
+                                            arrTakeItemList.add(hMap);
 										}
 									}
 								}
@@ -2238,4 +2249,22 @@ public class SaleDetailActivity extends Activity{
 					}
 				});
 	}
+
+    private Deposit deposit;
+
+	public void printTakeDeposit(View view) {
+	    try {
+            deposit = new Deposit(sale.getServerInvoiceId());
+            deposit.setCustomer(customer);
+            deposit.setItems(arrTakeItemList);
+            deposit.setAvailableQty(avail_product_qty_stacks);
+
+            Intent newActivity = new Intent(SaleDetailActivity.this, PrintDepositActivity.class);
+            newActivity.putExtra("deposit_intent", deposit);
+            newActivity.putExtra("history_intent", take_history);
+            newActivity.putExtra("just_print", true);
+            //finish();
+            startActivity(newActivity);
+        } catch (Exception e){e.printStackTrace();}
+    }
 }

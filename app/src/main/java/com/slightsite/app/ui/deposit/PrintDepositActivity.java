@@ -70,6 +70,7 @@ import com.slightsite.app.domain.warehouse.WarehouseService;
 import com.slightsite.app.domain.warehouse.Warehouses;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
+import com.slightsite.app.techicalservices.Tools;
 import com.slightsite.app.techicalservices.URLBuilder;
 import com.slightsite.app.ui.LoginActivity;
 import com.slightsite.app.ui.MainActivity;
@@ -87,9 +88,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -142,6 +145,7 @@ public class PrintDepositActivity extends Activity {
 
     private int screen_width = 0;
     private Boolean just_print = false;
+    private JSONArray take_history = new JSONArray();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -157,6 +161,12 @@ public class PrintDepositActivity extends Activity {
 
             if (getIntent().hasExtra("just_print")) {
                 just_print = getIntent().getBooleanExtra("just_print", false);
+            }
+
+            if (getIntent().hasExtra("history_intent")) {
+                try {
+                    take_history = new JSONArray(getIntent().getStringExtra("history_intent"));
+                } catch (Exception e){e.printStackTrace();}
             }
 
             warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
@@ -236,7 +246,6 @@ public class PrintDepositActivity extends Activity {
         display.getSize(size);
         screen_width = size.x;
 
-        Log.e(getClass().getSimpleName(), "screen_width : "+ screen_width);
         if (screen_width > 900) {
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(760, LinearLayout.LayoutParams.WRAP_CONTENT);
             print_webview.setLayoutParams(params);
@@ -403,7 +412,9 @@ public class PrintDepositActivity extends Activity {
 
         if (customer != null) {
             res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.customer)+ "</td><td colspan=\"3\"> : "+ customer.getName() +"</td></tr>";
-            res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.label_customer_address)+ "</td><td colspan=\"3\"> : "+ customer.getAddress() +"</td></tr>";
+            if (customer.getAddress() != null && !customer.getAddress().equals("null") && !customer.getAddress().equals("na")) {
+                res += "<tr class=\"ft-17\"><td>" + getResources().getString(R.string.label_customer_address) + "</td><td colspan=\"3\"> : " + customer.getAddress() + "</td></tr>";
+            }
             res += "<tr class=\"ft-17\"><td>"+ getResources().getString(R.string.label_customer_phone)+ "</td><td colspan=\"3\"> : "+ customer.getPhone() +"</td></tr>";
         }
 
@@ -423,26 +434,61 @@ public class PrintDepositActivity extends Activity {
             } catch (Exception e){}
         }
 
-        List<Map<String, String >> list = deposit.getItems();
-        Map<String,Integer> list_ambil_barang = new HashMap<>();
         Map<Integer,Integer> list_ambil_item = new HashMap<>();
-        for (Map<String, String> entry : list) {
-            int qty = Integer.parseInt(entry.get("quantity"));
-            list_ambil_barang.put(entry.get("title"), qty);
-            int p_id = Integer.parseInt(entry.get("product_id"));
-            list_ambil_item.put(p_id, qty);
-        }
-
-        if (list_ambil_barang.size() > 0) {
-            res += "<tr><td colspan=\"4\"><b>Rincian Pengambilan</b></td></tr>";
-            res += "<tr><td colspan=\"4\"><hr/></td></tr>";
-            for (Map.Entry<String, Integer> tb_entry : list_ambil_barang.entrySet()) {
-                res += "<tr class=\"ft-17\"><td colspan=\"3\">"+ tb_entry.getKey() +"</td>";
-                res += "<td style=\"text-align:right;\">- " + tb_entry.getValue() + "</td></tr>";
-            }
-            res += "<tr><td colspan=\"4\"><hr/></td></tr>";
+        if (take_history.length() > 0) {
+            res += "<tr><td colspan=\"4\">&nbsp;</td></tr>";
+            try {
+                for (int d = 0; d < take_history.length(); d++) {
+                    JSONObject item_data = take_history.getJSONObject(d);
+                    if (item_data.has("items") && item_data.has("created_at")) {
+                        String _picked_at = "#"+(d+1)+"";
+                        if (item_data.has("created_at")) {
+                            String dtStart = item_data.getString("created_at");
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            try {
+                                Date date = format.parse(dtStart);
+                                long _created_at = date.getTime();
+                                _picked_at = Tools.getFormattedDateTimeShort(_created_at);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        res += "<tr><td colspan=\"4\"><b>Pengambilan "+ _picked_at +"</b></td></tr>";
+                        res += "<tr><td colspan=\"4\"><hr/></td></tr>";
+                        JSONArray _items = item_data.getJSONArray("items");
+                        for (int e = 0; e < _items.length(); e++) {
+                            JSONObject _obj_item = _items.getJSONObject(e);
+                            res += "<tr class=\"ft-17\"><td colspan=\"3\">"+ _obj_item.getString("title") +"</td>";
+                            res += "<td style=\"text-align:right;\">- " + _obj_item.getString("quantity") + "</td></tr>";
+                            int p_id = Integer.parseInt(_obj_item.getString("product_id"));
+                            list_ambil_item.put(p_id, _obj_item.getInt("quantity"));
+                        }
+                        res += "<tr><td colspan=\"4\"><hr/></td></tr>";
+                    }
+                }
+            } catch (Exception e){e.printStackTrace();}
+            res += "<tr><td colspan=\"4\">&nbsp;</td></tr>";
         } else {
-            res += "</table><table width=\"100%\" style=\"margin-bottom:25px;\">";
+            List<Map<String, String >> list = deposit.getItems();
+            Map<String,Integer> list_ambil_barang = new HashMap<>();
+            for (Map<String, String> entry : list) {
+                int qty = Integer.parseInt(entry.get("quantity"));
+                list_ambil_barang.put(entry.get("title"), qty);
+                int p_id = Integer.parseInt(entry.get("product_id"));
+                list_ambil_item.put(p_id, qty);
+            }
+
+            if (list_ambil_barang.size() > 0) {
+                res += "<tr><td colspan=\"4\"><b>Rincian Pengambilan</b></td></tr>";
+                res += "<tr><td colspan=\"4\"><hr/></td></tr>";
+                for (Map.Entry<String, Integer> tb_entry : list_ambil_barang.entrySet()) {
+                    res += "<tr class=\"ft-17\"><td colspan=\"3\">"+ tb_entry.getKey() +"</td>";
+                    res += "<td style=\"text-align:right;\">- " + tb_entry.getValue() + "</td></tr>";
+                }
+                res += "<tr><td colspan=\"4\"><hr/></td></tr>";
+            } else {
+                res += "</table><table width=\"100%\" style=\"margin-bottom:25px;\">";
+            }
         }
 
         Map<Integer,Integer> availableQtys = deposit.getAvailableQty();
