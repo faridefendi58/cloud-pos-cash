@@ -316,7 +316,7 @@ public class CustomerDetailActivity extends Activity {
     private Map<Integer, Shipping> list_shippings = new HashMap<Integer, Shipping>();
     private Map<Integer, String> list_payments = new HashMap<Integer, String>();
     private Map<Integer, String> list_items_belanja = new HashMap<Integer, String>();
-    private int order_limit = 2;
+    private int order_limit = 10;
     private int current_page = 1;
     private ArrayList<FeeOn> listOrder = new ArrayList<FeeOn>();
     private List<List<FeeOn>> order_parts = new ArrayList<>();

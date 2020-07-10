@@ -360,8 +360,7 @@ public class CheckoutActivity extends AppCompatActivity {
                     } else if (array_state[idx_state] == State.PAYMENT) {
                         if (checkout_data.getTotalPaymentReceived() <= 0) {
                             //not allowed buy directly, buy and deposit not allow debt, 6 jul 20 dont allow debt
-                            if (checkout_data.getShipping().getMethod() == 0
-                                    || checkout_data.getShipping().getMethod() == 6) {
+                            if (checkout_data.getShipping().getMethod() == 0) {
                                 Toast.makeText(getBaseContext(),
                                         getResources().getString(R.string.error_payment_should_be_exact), Toast.LENGTH_LONG)
                                         .show();
@@ -471,8 +470,7 @@ public class CheckoutActivity extends AppCompatActivity {
                                 }
                             }
                             //not allowed buy directly, buy and deposit not allow debt, 6 jul 20 dont allow debt
-                            if (checkout_data.getShipping().getMethod() == 0
-                                    || checkout_data.getShipping().getMethod() == 6) {
+                            if (checkout_data.getShipping().getMethod() == 0) {
 
                                 if (checkout_data.getTotalPaymentReceived() < _tot_inv) {
                                     Toast.makeText(getBaseContext(),

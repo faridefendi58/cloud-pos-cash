@@ -173,7 +173,7 @@ public class DepositActivity extends AppCompatActivity {
                         try {
                             line_object = arrLineItems.getJSONObject(m);
                             Product p = productCatalog.getProductByBarcode(line_object.getString("barcode"));
-                            if (p != null) {
+                            if (p != null && line_object.getInt("qty") > 0) {
                                 LineItem lineItem = new LineItem(
                                         p,
                                         line_object.getInt("qty"),

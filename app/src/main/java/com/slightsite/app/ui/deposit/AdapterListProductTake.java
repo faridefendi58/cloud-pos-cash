@@ -101,6 +101,9 @@ public class AdapterListProductTake extends RecyclerView.Adapter<RecyclerView.Vi
             } catch (Exception e) {
                 Log.e("Adapter List Cart", e.getMessage());
             }
+            if (qty <= 0) {
+                view.add_to_queue_container.setVisibility(View.GONE);
+            }
             view.price.setText(""+ qty +" x "+ CurrencyController.getInstance().moneyFormat(prc));
             view.quantity.setText("0");
             Log.e(getClass().getSimpleName(), "qty_stacks : "+ qty_stacks.toString());
