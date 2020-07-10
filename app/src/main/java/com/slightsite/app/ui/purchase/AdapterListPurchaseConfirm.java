@@ -254,8 +254,16 @@ public class AdapterListPurchaseConfirm extends RecyclerView.Adapter<RecyclerVie
         this.show_price = true;
     }
 
+    public void hidePrice() {
+        this.show_price = false;
+    }
+
     public void showPriceText() {
         this.show_price_text = true;
+    }
+
+    public void hidePriceText() {
+        this.show_price_text = false;
     }
 
     public void setSupplierConfigs(JSONObject _supplierConfig) {

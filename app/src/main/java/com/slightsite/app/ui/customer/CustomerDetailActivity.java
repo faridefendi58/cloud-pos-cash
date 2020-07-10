@@ -286,6 +286,8 @@ public class CustomerDetailActivity extends Activity {
         params.put("id", id);
 
         String url = Server.URL + "customer/detail?api-key=" + Server.API_KEY;
+        Log.e(TAG, "getDetailFromServer : "+ url);
+        Log.e(TAG, "params : "+ params.toString());
         _string_request(
                 Request.Method.GET,
                 url, params, false,
@@ -320,6 +322,7 @@ public class CustomerDetailActivity extends Activity {
     private int current_page = 1;
     private ArrayList<FeeOn> listOrder = new ArrayList<FeeOn>();
     private List<List<FeeOn>> order_parts = new ArrayList<>();
+    private Map<Integer, Integer> invoice_ids = new HashMap<Integer, Integer>();
 
     private void buildListOrder() {
         int warehouse_id = Integer.parseInt(paramCatalog.getParamByName("warehouse_id").getValue());
@@ -339,7 +342,6 @@ public class CustomerDetailActivity extends Activity {
                                 final JSONObject jObj = new JSONObject(result);
                                 int success = jObj.getInt("success");
                                 // Check for error node in json
-                                final Map<Integer, Integer> invoice_ids = new HashMap<Integer, Integer>();;
                                 ArrayList<Payment> paymentList = new ArrayList<Payment>();
                                 ArrayList<Payment> refundList = new ArrayList<Payment>();
                                 final Map<Integer, JSONObject> items_datas = new HashMap<Integer, JSONObject>();;
@@ -704,6 +706,20 @@ public class CustomerDetailActivity extends Activity {
             if (new_order_parts.size() <= 1) {
                 view.setVisibility(View.GONE);
             }
+
+            adapter.setOnItemClickListener(new AdapterListCustomerOrder.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, FeeOn obj, int position) {
+                    Intent newActivity = new Intent(getBaseContext(), SaleDetailActivity.class);
+                    int _inv_id = invoice_ids.get(position);
+                    newActivity.putExtra("sale_intent", list_invoices.get(_inv_id));
+                    newActivity.putExtra("customer_intent", list_customers.get(_inv_id));
+                    newActivity.putExtra("shipping_intent", list_shippings.get(_inv_id));
+                    newActivity.putExtra("payment_intent", list_payments.get(_inv_id));
+                    newActivity.putExtra("line_items_intent", list_items_belanja.get(_inv_id));
+                    startActivity(newActivity);
+                }
+            });
         } else {
             view.setVisibility(View.GONE);
         }

@@ -490,6 +490,10 @@ public class PurchaseDetailActivity extends Activity {
                                             }
                                         }
                                         pAdap.notifyDataSetChanged();
+                                        if (!is_manager) {
+                                            pAdap.hidePrice();
+                                            pAdap.hidePriceText();
+                                        }
                                         itemListRecycle.setAdapter(pAdap);
                                     }
 
