@@ -293,7 +293,7 @@ public class ShippingFragment extends Fragment {
                     }
 
                     if (setType == "phone") {
-                        if (s.toString().length() > 2) {
+                        if (s.toString().length() >= 0) {
                             cust.setPhone(s.toString());
                             cust.setName(customer_name);
                             if (customer_email.equals(null)) {
@@ -309,7 +309,7 @@ public class ShippingFragment extends Fragment {
                         }
                     }
                     if (setType == "address") {
-                        if (s.toString().length() > 2) {
+                        if (s.toString().length() >= 0) {
                             cust.setName(customer_name);
                             cust.setEmail(customer_email);
                             cust.setPhone(customer_phone);
@@ -328,6 +328,8 @@ public class ShippingFragment extends Fragment {
                         if (s.toString().length() > 2) {
                             ship.setName(s.toString());
                             ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
+                        } else {
+                            ship.setName(s.toString());
                         }
                     }
                     if (setType == "shipping_phone") {
@@ -338,7 +340,7 @@ public class ShippingFragment extends Fragment {
                     }
 
                     if (setType == "customer_name" && selected_cust_id <= 0) {
-                        if (s.toString().length() > 2) {
+                        if (s.toString().length() >= 0) {
                             cust.setName(customer_name);
                             if (cust.getEmail().equals("email@email.com")) {
                                 cust.setEmail("walkin@email.com");

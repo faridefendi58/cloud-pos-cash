@@ -137,12 +137,18 @@ public class CustomerFragment extends UpdatableFragment {
             if (whParam != null) {
                 warehouse_id = Integer.parseInt(whParam.getValue());
             }
+            customer_type_items.clear();
+            customer_type_items.add("All Customer");
+            customer_type_map_inv.clear();
+            customer_type_map_inv.put("All Customer", "");
             customer_type_map = Tools.getCustomerTypeList();
             for (Map.Entry<String, String> entry : customer_type_map.entrySet()) {
                 customer_type_items.add(entry.getValue());
                 customer_type_map_inv.put(entry.getValue(), entry.getKey());
             }
 
+            customer_order_items.clear();
+            customer_type_map_inv.clear();
             customer_order_map = Tools.getCustomerOrderList();
             for (Map.Entry<String, String> entry : customer_order_map.entrySet()) {
                 customer_order_items.add(entry.getValue());
@@ -161,7 +167,7 @@ public class CustomerFragment extends UpdatableFragment {
 
     @Override
     public void update() {
-        buildTheCustomerList();
+        buildTheCustomerList(false);
     }
 
     @Override
@@ -190,7 +196,7 @@ public class CustomerFragment extends UpdatableFragment {
     private ArrayList<JSONObject> list_items = new ArrayList<JSONObject>();
     private Map<Integer, JSONObject> customer_data = new HashMap<Integer, JSONObject>();
 
-    private void buildTheCustomerList() {
+    private void buildTheCustomerList(final Boolean show_dialog) {
         customer_data.clear();
         list_items.clear();
 
@@ -201,7 +207,7 @@ public class CustomerFragment extends UpdatableFragment {
 
         try {
             if (filter_result.containsKey("group_id")) {
-                if (!filter_result.get("group_id").equals("-")) {
+                if ((filter_result.get("group_id") != null) && !filter_result.get("group_id").equals("-")) {
                     params.put("group_id", filter_result.get("group_id"));
                 }
             }
@@ -216,21 +222,24 @@ public class CustomerFragment extends UpdatableFragment {
                 }
             }
             if (filter_result.containsKey("order_by")) {
-                if (!filter_result.get("order_by").equals("-")) {
+                if ((filter_result.get("order_by") != null) && !filter_result.get("order_by").equals("-")) {
                     params.put("order_by", filter_result.get("order_by"));
                 }
             }
-        } catch (Exception e){}
-        Log.e(TAG, "serach params : "+ params.toString());
+        } catch (Exception e){e.printStackTrace();}
+        Log.e(TAG, "search params : "+ params.toString());
 
         _string_request(
                 Request.Method.GET,
                 Server.URL + "customer/list?api-key=" + Server.API_KEY,
                 params,
-                false,
+                show_dialog,
                 new CustomerDetailActivity.VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
+                        if (show_dialog) {
+                            hideDialog();
+                        }
                         try {
                             JSONObject jObj = new JSONObject(result);
                             success = jObj.getInt(TAG_SUCCESS);
@@ -392,7 +401,7 @@ public class CustomerFragment extends UpdatableFragment {
                 if (cust_email.length() > 0) {
                     filter_result.put("email", cust_email);
                 }
-                buildTheCustomerList();
+                buildTheCustomerList(true);
                 bottomSheetDialog.dismiss();
             }
         });
@@ -401,7 +410,7 @@ public class CustomerFragment extends UpdatableFragment {
             @Override
             public void onClick(View v) {
                 filter_result.clear();
-                buildTheCustomerList();
+                buildTheCustomerList(true);
                 bottomSheetDialog.dismiss();
             }
         });

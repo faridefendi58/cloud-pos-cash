@@ -338,7 +338,10 @@ public class CheckoutActivity extends AppCompatActivity {
                                     || checkout_data.getShipping().getAddress() == null
                                     || checkout_data.getShipping().getDate() == null
                                     || checkout_data.getShipping().getPhone() == ""
-                                    || checkout_data.getShipping().getAddress() == "") {
+                                    || checkout_data.getShipping().getAddress() == ""
+                                    || checkout_data.getShipping().getName().length() == 0
+                                    || checkout_data.getShipping().getPhone().length() == 0
+                                    || checkout_data.getShipping().getAddress().length() == 0) {
                                 Toast.makeText(getBaseContext(),
                                         getResources().getString(R.string.error_empty_shipping_customer_data), Toast.LENGTH_SHORT)
                                         .show();

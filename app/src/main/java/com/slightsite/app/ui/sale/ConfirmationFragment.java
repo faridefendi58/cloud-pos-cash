@@ -222,6 +222,14 @@ public class ConfirmationFragment extends Fragment {
                     conf_customer_phone.setVisibility(View.GONE);
                     conf_customer_address.setVisibility(View.GONE);
                 }
+
+                if (customer.getPhone() == null || customer.getPhone() == "" || customer.getPhone().length() == 0) {
+                    conf_customer_phone.setVisibility(View.GONE);
+                }
+
+                if (customer.getAddress() == null || customer.getAddress() == "" || customer.getAddress().length() == 0) {
+                    conf_customer_address.setVisibility(View.GONE);
+                }
             }
             if (c_data.getTotalPaymentReceived() > 0) {
                 totalPayment.setText(CurrencyController.getInstance().moneyFormat(c_data.getTotalPaymentReceived()));
