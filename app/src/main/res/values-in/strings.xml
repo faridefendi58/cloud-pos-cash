@@ -233,6 +233,7 @@
     <string name="label_syncron_customer">Sesuaikan Data Pelanggan</string>
     <string name="label_proceed">Lanjutkan</string>
     <string name="label_proceed_now">Proses Sekarang</string>
+    <string name="label_send_transfer_notice">Kirim notifikasi transfer ke CS</string>
 
     <string name="message_success_save">Data Anda telah berhasil disimpan.</string>
     <string name="message_success_update">Data Anda telah berhasil diubah.</string>
@@ -264,6 +265,7 @@
     <string name="title_print_config">Konfigurasi</string>
     <string name="title_retur_invoice">Retur Tagihan</string>
     <string name="title_take_good">Pengambilan Barang</string>
+    <string name="title_transfer_to_another_wh">Tansfer Ke Warehouse Lain</string>
 
     <string name="label_print_char_length">Panjang Karakter :</string>
     <string name="label_print_header">Header :</string>
@@ -407,6 +409,7 @@
     <string name="button_take_good">Ambil Barang</string>
     <string name="button_proceed_take_good">Proses Pengambilan</string>
     <string name="button_add_to_take_good">Ambil</string>
+    <string name="button_transfer_now">Transfer Sekarang</string>
 
     <string name="confirm_edit">Anda yakin ingin mengubah data ini?</string>
     <string name="confirm_delete">Anda yakin ingin menghapus data ini?</string>

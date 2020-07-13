@@ -28,7 +28,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +56,9 @@ import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.domain.sale.Sale;
 import com.slightsite.app.domain.sale.SaleLedger;
 import com.slightsite.app.domain.sale.Shipping;
+import com.slightsite.app.domain.warehouse.WarehouseCatalog;
+import com.slightsite.app.domain.warehouse.WarehouseService;
+import com.slightsite.app.domain.warehouse.Warehouses;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Server;
 import com.slightsite.app.techicalservices.URLBuilder;
@@ -102,6 +107,7 @@ public class StaggingDetailActivity extends Activity{
 
     private SharedPreferences sharedpreferences;
     private Register register;
+    private WarehouseCatalog warehouseCatalog;
 
     private int FRAGMENT_STAGGING = 4;
 
@@ -111,6 +117,7 @@ public class StaggingDetailActivity extends Activity{
         try {
             paramCatalog = ParamService.getInstance().getParamCatalog();
             productCatalog = Inventory.getInstance().getProductCatalog();
+            warehouseCatalog = WarehouseService.getInstance().getWarehouseCatalog();
             register = Register.getInstance();
             saleLedger = SaleLedger.getInstance();
         } catch (NoDaoSetException e) {
@@ -130,6 +137,9 @@ public class StaggingDetailActivity extends Activity{
         String dt = DateTimeStrategy.getCurrentTime();
 
         initUI(savedInstanceState);
+        try {
+            getListWH();
+        } catch (Exception e){e.printStackTrace();}
     }
 
 
@@ -151,6 +161,9 @@ public class StaggingDetailActivity extends Activity{
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         //inflater.inflate(R.menu.menu_delete, menu);
+        MenuItem edit_item = menu.add(0, 0, 0, R.string.transfer);
+        edit_item.setIcon(R.drawable.ic_fast_forward_white_24dp);
+        edit_item.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return true;
     }
 
@@ -199,6 +212,9 @@ public class StaggingDetailActivity extends Activity{
                 return true;
             case R.id.nav_delete:
                 _remove_order();
+                return true;
+            case 0:
+                forwardOrder();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -645,5 +661,70 @@ public class StaggingDetailActivity extends Activity{
                         hideDialog();
                     }
                 });
+    }
+
+
+    private ArrayList<String> warehouse_items = new ArrayList<String>();
+    private HashMap<String, String> warehouse_ids = new HashMap<String, String>();
+    private JSONArray warehouse_data;
+
+    private void getListWH() {
+        Map<String, String> params = new HashMap<String, String>();
+
+        warehouse_items.clear();
+
+        String url = Server.URL + "warehouse/list?api-key=" + Server.API_KEY;
+        _string_request(
+                Request.Method.GET,
+                url, params, false,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            Params whParam = paramCatalog.getParamByName("warehouse_id");
+                            int selected_wh = 0;
+
+                            JSONObject jObj = new JSONObject(result);
+                            success = jObj.getInt(TAG_SUCCESS);
+                            // Check for error node in json
+                            if (success == 1) {
+                                warehouse_data = jObj.getJSONArray("data");
+                                for(int n = 0; n < warehouse_data.length(); n++)
+                                {
+                                    JSONObject data_n = warehouse_data.getJSONObject(n);
+                                    if (Integer.parseInt(whParam.getValue()) != Integer.parseInt(data_n.getString("id"))) {
+                                        warehouse_items.add(data_n.getString("title"));
+                                        warehouse_ids.put(data_n.getString("title"), data_n.getString("id"));
+                                    }
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    private BottomSheetDialog bottomSheetDialog;
+    private Spinner available_warehouse;
+
+    private void forwardOrder() {
+        bottomSheetDialog = new BottomSheetDialog(StaggingDetailActivity.this);
+        View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_trf_warehouse, null);
+        bottomSheetDialog.setContentView(sheetView);
+
+        available_warehouse = (Spinner) sheetView.findViewById(R.id.available_warehouse);
+        try {
+            if (warehouse_items.size() > 0) {
+                ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(
+                        getApplicationContext(),
+                        R.layout.spinner_item, warehouse_items);
+                whAdapter.notifyDataSetChanged();
+                available_warehouse.setAdapter(whAdapter);
+            }
+        } catch (Exception e){e.printStackTrace();}
+
+        bottomSheetDialog.show();
     }
 }

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+        android:id="@+id/fragment_change_warehouse_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:orientation="vertical"
+        android:background="#ffffff"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:background="@color/greenUcok"
+            android:paddingHorizontal="@dimen/spacing_middle"
+            android:paddingVertical="@dimen/spacing_large"
+            android:orientation="vertical">
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/title_transfer_to_another_wh"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/spacing_large"
+                android:textStyle="bold"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/spacing_middle"
+            android:orientation="vertical">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="@dimen/spacing_middle">
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_choose_warehouse"
+                    android:textStyle="bold"/>
+
+            <Spinner
+                    android:id="@+id/available_warehouse"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edit_text_round_bg_outline"
+                    android:drawableEnd="@drawable/ic_expand_arrow"
+                    android:drawableRight="@drawable/ic_expand_arrow"/>
+
+        </LinearLayout>
+
+        <CheckBox
+                android:id="@+id/send_message_to_cs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_send_transfer_notice"
+                android:layout_margin="@dimen/spacing_middle"
+                android:checked="true">
+        </CheckBox>
+
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/btnInfo"
+                android:text="@string/button_transfer_now"
+                android:textColor="@color/colorWhite"/>
+
+    </LinearLayout>
+
+</LinearLayout>

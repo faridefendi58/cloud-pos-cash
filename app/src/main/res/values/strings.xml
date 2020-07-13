@@ -233,6 +233,7 @@
     <string name="label_syncron_customer">Syncron Customer Data</string>
     <string name="label_proceed">Proceed</string>
     <string name="label_proceed_now">Proceed Now</string>
+    <string name="label_send_transfer_notice">Send transfer notification to CS</string>
 
     <string name="message_success_save">Your data has been successfully saved.</string>
     <string name="message_success_update">Your data has been successfully updated.</string>
@@ -266,6 +267,7 @@
     <string name="title_bluetooth_devices">Bluetooth Devices</string>
     <string name="title_retur_invoice">Return Item</string>
     <string name="title_take_good">Take Deposit Good</string>
+    <string name="title_transfer_to_another_wh">Tansfer To Another Warehouse</string>
 
     <string name="label_print_char_length">Character Length :</string>
     <string name="label_print_header">Header :</string>
@@ -409,6 +411,7 @@
     <string name="button_take_good">Take Item</string>
     <string name="button_proceed_take_good">Proceed Take Item</string>
     <string name="button_add_to_take_good">Take</string>
+    <string name="button_transfer_now">Transfer Now</string>
 
     <string name="confirm_edit">Are you sure you want to edit this?</string>
     <string name="confirm_delete">Are you sure you want to delete this?</string>
