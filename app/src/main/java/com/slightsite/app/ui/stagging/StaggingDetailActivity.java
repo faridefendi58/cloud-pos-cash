@@ -1,5 +1,6 @@
 package com.slightsite.app.ui.stagging;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,8 +16,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
@@ -29,6 +32,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -667,6 +672,8 @@ public class StaggingDetailActivity extends Activity{
     private ArrayList<String> warehouse_items = new ArrayList<String>();
     private HashMap<String, String> warehouse_ids = new HashMap<String, String>();
     private JSONArray warehouse_data;
+    private Integer current_warehouse_id = 0;
+    private String current_warehouse_name = "";
 
     private void getListWH() {
         Map<String, String> params = new HashMap<String, String>();
@@ -683,6 +690,7 @@ public class StaggingDetailActivity extends Activity{
                         try {
                             Params whParam = paramCatalog.getParamByName("warehouse_id");
                             int selected_wh = 0;
+                            current_warehouse_id = Integer.parseInt(whParam.getValue());
 
                             JSONObject jObj = new JSONObject(result);
                             success = jObj.getInt(TAG_SUCCESS);
@@ -695,6 +703,8 @@ public class StaggingDetailActivity extends Activity{
                                     if (Integer.parseInt(whParam.getValue()) != Integer.parseInt(data_n.getString("id"))) {
                                         warehouse_items.add(data_n.getString("title"));
                                         warehouse_ids.put(data_n.getString("title"), data_n.getString("id"));
+                                    } else {
+                                        current_warehouse_name = data_n.getString("title");
                                     }
                                 }
                             }
@@ -708,6 +718,8 @@ public class StaggingDetailActivity extends Activity{
 
     private BottomSheetDialog bottomSheetDialog;
     private Spinner available_warehouse;
+    private CheckBox send_message_to_cs;
+    private Button btn_transfer;
 
     private void forwardOrder() {
         bottomSheetDialog = new BottomSheetDialog(StaggingDetailActivity.this);
@@ -715,6 +727,8 @@ public class StaggingDetailActivity extends Activity{
         bottomSheetDialog.setContentView(sheetView);
 
         available_warehouse = (Spinner) sheetView.findViewById(R.id.available_warehouse);
+        send_message_to_cs = (CheckBox) sheetView.findViewById(R.id.send_message_to_cs);
+        btn_transfer = (Button) sheetView.findViewById(R.id.btn_transfer);
         try {
             if (warehouse_items.size() > 0) {
                 ArrayAdapter<String> whAdapter = new ArrayAdapter<String>(
@@ -726,5 +740,88 @@ public class StaggingDetailActivity extends Activity{
         } catch (Exception e){e.printStackTrace();}
 
         bottomSheetDialog.show();
+        triggerBottomSheetTransfer();
+    }
+
+    private void triggerBottomSheetTransfer() {
+        btn_transfer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Map<String, Object> mObj = new HashMap<String, Object>();
+                mObj.put("order_key", order_key);
+                final String warehouse_name = available_warehouse.getSelectedItem().toString();
+                int warehouse_id = current_warehouse_id;
+                if (warehouse_ids.containsKey(warehouse_name)) {
+                    warehouse_id = Integer.parseInt(warehouse_ids.get(warehouse_name));
+                }
+                if (warehouse_id > 0) {
+                    mObj.put("warehouse_id", warehouse_id + "");
+
+                    String _url = Server.URL + "transaction/transfer-stagging?api-key=" + Server.API_KEY;
+                    String qry = URLBuilder.httpBuildQuery(mObj, "UTF-8");
+                    _url += "&" + qry;
+
+                    Map<String, String> params = new HashMap<String, String>();
+                    String admin_id = sharedpreferences.getString(TAG_ID, null);
+                    Params adminParam = paramCatalog.getParamByName("admin_id");
+                    if (adminParam != null) {
+                        admin_id = adminParam.getValue();
+                    }
+
+                    params.put("admin_id", admin_id);
+
+                    _string_request(
+                            Request.Method.POST,
+                            _url,
+                            params,
+                            true,
+                            new VolleyCallback() {
+                                @Override
+                                public void onSuccess(String result) {
+                                    hideDialog();
+                                    try {
+                                        JSONObject jObj = new JSONObject(result);
+                                        Log.e(TAG, jObj.toString());
+                                        success = jObj.getInt(TAG_SUCCESS);
+                                        // Check for error node in json
+                                        if (jObj.has(TAG_MESSAGE)) {
+                                            Toast.makeText(getApplicationContext(),
+                                                    jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                                        }
+                                        if (success == 1) {
+                                            if (send_message_to_cs.isChecked() && jObj.has("cs_phone")) {
+                                                PackageManager packageManager = getPackageManager();
+                                                Intent i = new Intent(Intent.ACTION_VIEW);
+                                                try {
+                                                    String phone = jObj.getString("cs_phone");
+                                                    String message = "Hai CS " + warehouse_name + ", Ada order dari website yang salah masuk ke warehouse " + current_warehouse_name + ". Mohon untuk ditindaklanjuti di warehouse " + warehouse_name + ".";
+                                                    String url = "https://api.whatsapp.com/send?phone=" + phone + "&text=" + URLEncoder.encode(message, "UTF-8");
+                                                    i.setPackage("com.whatsapp");
+                                                    i.setData(Uri.parse(url));
+                                                    if (i.resolveActivity(packageManager) != null) {
+                                                        finish();
+                                                        startActivity(i);
+                                                    }
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                            } else {
+                                                Intent act = new Intent(StaggingDetailActivity.this, MainActivity.class);
+                                                act.putExtra("fragment", FRAGMENT_STAGGING);
+                                                finish();
+                                                startActivity(act);
+                                            }
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            "Please select Warehouse Destination!", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 }

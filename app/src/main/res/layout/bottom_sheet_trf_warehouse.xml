@@ -50,6 +50,7 @@
                     android:id="@+id/available_warehouse"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_middle"
                     android:background="@drawable/edit_text_round_bg_outline"
                     android:drawableEnd="@drawable/ic_expand_arrow"
                     android:drawableRight="@drawable/ic_expand_arrow"/>
@@ -66,6 +67,7 @@
         </CheckBox>
 
         <Button
+                android:id="@+id/btn_transfer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/btnInfo"
