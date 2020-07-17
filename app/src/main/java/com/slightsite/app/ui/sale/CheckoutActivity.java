@@ -331,8 +331,10 @@ public class CheckoutActivity extends AppCompatActivity {
                         ) {
                             idx_state = idx_state + 1;
                         }
-                        // not allowed empty shipping name phone and address for gosend (2)
-                        if (checkout_data.getShipping().getMethod() == 2) {
+                        // not allowed empty shipping name phone and address for gosend (2), train cargo (7), plane cargo (8)
+                        if (checkout_data.getShipping().getMethod() == 2
+                                || checkout_data.getShipping().getMethod() == 7
+                                || checkout_data.getShipping().getMethod() == 8) {
                             if (checkout_data.getShipping().getName() == null
                                     || checkout_data.getShipping().getPhone() == null
                                     || checkout_data.getShipping().getAddress() == null

@@ -421,6 +421,8 @@
     <string name="shipping_method_gofood">GoFood</string>
     <string name="shipping_method_grab_food">GrabFood</string>
     <string name="shipping_method_deposit">Beli dan Titip Barang</string>
+    <string name="shipping_method_train_cargo">Cargo Kereta Api</string>
+    <string name="shipping_method_plane_cargo">Cargo Pesawat</string>
 
     <string name="hint_email">Contoh: john@gmail.com</string>
     <string name="hint_retur_notes">Tambahkan catatan jika diperlukan.</string>

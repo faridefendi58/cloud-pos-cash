@@ -213,7 +213,9 @@ public class PaymentFragment extends Fragment {
             checkoutActivity.setShipping(shp, c_data);
         }
 
-        if (c_data.getShipping().getMethod() == 2) { //Gosend
+        if (c_data.getShipping().getMethod() == 2
+                || c_data.getShipping().getMethod() == 7
+                || c_data.getShipping().getMethod() == 8) { //Gosend (2), Train Cargo (7), Plane Cargo (8)
             ongkir_container.setVisibility(View.VISIBLE);
         }
 

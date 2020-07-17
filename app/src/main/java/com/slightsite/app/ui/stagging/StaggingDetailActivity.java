@@ -431,6 +431,10 @@ public class StaggingDetailActivity extends Activity{
                                     tv_shipping_method.setText("Ambil Nanti");
                                 } else if (server_stagging_data.getString("shipping_method").equals("gosend")) {
                                     tv_shipping_method.setText("GoSend");
+                                } else if (server_stagging_data.getString("shipping_method").equals("train_cargo")) {
+                                    tv_shipping_method.setText(getResources().getString(R.string.shipping_method_train_cargo));
+                                } else if (server_stagging_data.getString("shipping_method").equals("plane_cargo")) {
+                                    tv_shipping_method.setText(getResources().getString(R.string.shipping_method_plane_cargo));
                                 }
                                 tv_shipping_date.setText(server_stagging_data.getString("created_at"));
 

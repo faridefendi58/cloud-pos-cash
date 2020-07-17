@@ -200,35 +200,6 @@ public class ShippingFragment extends Fragment {
         shipping_invoice_container = (LinearLayout) root.findViewById(R.id.shipping_invoice_container);
         switch_use_customer_data = (SwitchCompat) root.findViewById(R.id.switch_use_customer_data);
 
-        final TextView customer_id = (TextView) root.findViewById(R.id.customer_id);
-        float elevation = 6f;
-        Drawable backgroundDrawable = new ColorDrawable(Color.WHITE);
-        /*AutocompletePresenter<Customer> presenter = new UserPresenter(getContext(), customers);
-        AutocompleteCallback<Customer> callback = new AutocompleteCallback<Customer>() {
-            @Override
-            public boolean onPopupItemClicked(Editable editable, Customer item) {
-                editable.clear();
-                editable.append(item.getName());
-                phone.setText(item.getPhone());
-                email.setText(item.getEmail());
-                address.setText(item.getAddress());
-                //customer_id.setText(item.getId());
-                selected_cust_id = item.getId();
-                ((CheckoutActivity) getActivity()).setCustomer(item);
-                ((CheckoutActivity) getActivity()).hideKeyboard(getActivity());
-                return true;
-            }
-
-            public void onPopupVisibilityChanged(boolean shown) {}
-        };
-
-        userAutocomplete = Autocomplete.<Customer>on(name)
-                .with(elevation)
-                .with(backgroundDrawable)
-                .with(presenter)
-                .with(callback)
-                .build();*/
-
         customer_name_autocomplete = (AutoCompleteTextView) root.findViewById(R.id.customer_name_autocomplete);
         AutoCompleteAdapter adapter = new AutoCompleteAdapter(getContext(), R.layout.spinner_item);
         adapter.notifyDataSetChanged();
@@ -516,6 +487,8 @@ public class ShippingFragment extends Fragment {
                     Double tot_inv = register.getTotal();
                     c_data.setWalletGrabFood(tot_inv + "");
                     ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
+                } else if (i == 7 || i == 8) { // cargo
+                    need_time_picker = true;
                 } else {
                     c_data.setWalletTokopedia("0");
                     ((CheckoutActivity) getActivity()).setShipping(ship, c_data);

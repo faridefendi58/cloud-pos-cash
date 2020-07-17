@@ -423,6 +423,8 @@
     <string name="shipping_method_gofood">GoFood</string>
     <string name="shipping_method_grab_food">GrabFood</string>
     <string name="shipping_method_deposit">Buy and Deposit</string>
+    <string name="shipping_method_train_cargo">Train Cargo</string>
+    <string name="shipping_method_plane_cargo">Plane Cargo</string>
 
     <string name="hint_email">E.g: john@gmail.com</string>
     <string name="hint_retur_notes">Add some notes if needed.</string>
