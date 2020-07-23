@@ -87,6 +87,10 @@ public class AdapterListStagging extends RecyclerView.Adapter<RecyclerView.ViewH
                         view.shipping_method.setText("Ambil Nanti");
                     } else if (jsonObject.getString("shipping_method").equals("gosend")) {
                         view.shipping_method.setText("GoSend");
+                    } else if (jsonObject.getString("shipping_method").equals("train_cargo")) {
+                        view.shipping_method.setText("Cargo Kereta Api");
+                    } else if (jsonObject.getString("shipping_method").equals("plane_cargo")) {
+                        view.shipping_method.setText("Cargo Pesawat");
                     }
                 }
             } catch (Exception e){e.printStackTrace();}

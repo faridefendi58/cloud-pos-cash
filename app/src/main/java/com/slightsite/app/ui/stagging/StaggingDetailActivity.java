@@ -92,6 +92,8 @@ public class StaggingDetailActivity extends Activity{
     private TextView tv_shipping_method;
     private TextView tv_shipping_date;
     private LinearLayout complete_button_container;
+    private LinearLayout stagging_notes_container;
+    private TextView tv_notes;
 
     private ParamCatalog paramCatalog;
     private ProductCatalog productCatalog;
@@ -191,8 +193,10 @@ public class StaggingDetailActivity extends Activity{
         tv_customer_phone = (TextView) findViewById(R.id.tv_customer_phone);
         tv_shipping_method = (TextView) findViewById(R.id.tv_shipping_method);
         tv_shipping_date = (TextView) findViewById(R.id.tv_shipping_date);
+        tv_notes = (TextView) findViewById(R.id.tv_notes);
 
         complete_button_container = (LinearLayout) findViewById(R.id.complete_button_container);
+        stagging_notes_container = (LinearLayout) findViewById(R.id.stagging_notes_container);
 
         lineitemListRecycle = (RecyclerView) findViewById(R.id.lineitemListRecycle);
         lineitemListRecycle.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -437,6 +441,10 @@ public class StaggingDetailActivity extends Activity{
                                     tv_shipping_method.setText(getResources().getString(R.string.shipping_method_plane_cargo));
                                 }
                                 tv_shipping_date.setText(server_stagging_data.getString("created_at"));
+                                if (server_stagging_data.has("notes")) {
+                                    stagging_notes_container.setVisibility(View.VISIBLE);
+                                    tv_notes.setText(server_stagging_data.getString("notes"));
+                                }
 
                                 buildListItems();
                             }

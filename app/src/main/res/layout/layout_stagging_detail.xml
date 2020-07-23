@@ -445,6 +445,29 @@
 
                             </LinearLayout>
 
+                            <LinearLayout
+                                    android:id="@+id/stagging_notes_container"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:orientation="vertical"
+                                    android:visibility="gone">
+
+                                <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="1dp"
+                                        android:background="@color/grey_10" />
+
+                                <TextView
+                                        android:id="@+id/tv_notes"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_margin="@dimen/spacing_middle"
+                                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                        android:textColor="@color/grey_90"
+                                        app:fontFamily="sans-serif-medium"/>
+
+                            </LinearLayout>
+
                         </LinearLayout>
 
                     </android.support.v7.widget.CardView>
