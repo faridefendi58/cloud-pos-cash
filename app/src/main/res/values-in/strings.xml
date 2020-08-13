@@ -294,6 +294,7 @@
     <string name="label_next">Selanjutnya</string>
     <string name="label_contact_detail">Rincian Data Pelanggan</string>
     <string name="label_shipping_method">Metode Pengiriman</string>
+    <string name="label_cargo_location">Lokasi Cargo</string>
     <string name="label_checkout_save_order">Checkout / Save Order</string>
     <string name="label_role">Daftar Sebagai</string>
     <string name="label_role_access">Hak Akses :</string>

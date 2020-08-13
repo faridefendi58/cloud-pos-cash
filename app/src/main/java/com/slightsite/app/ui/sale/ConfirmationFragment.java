@@ -82,9 +82,11 @@ public class ConfirmationFragment extends Fragment {
     private LinearLayout invoice_number_container;
     private LinearLayout shipping_date_container;
     private LinearLayout shipping_location_container;
+    private LinearLayout shipping_cargo_container;
     private TextView shipping_recipient_name;
     private TextView shipping_recipient_phone;
     private TextView shipping_invoice_number;
+    private TextView cargo_location;
     private Shipping shipping;
     private String[] ship_methods;
 
@@ -170,7 +172,9 @@ public class ConfirmationFragment extends Fragment {
         invoice_number_container = (LinearLayout) root.findViewById(R.id.invoice_number_container);
         shipping_date_container = (LinearLayout) root.findViewById(R.id.shipping_date_container);
         shipping_location_container = (LinearLayout) root.findViewById(R.id.shipping_location_container);
+        shipping_cargo_container = (LinearLayout) root.findViewById(R.id.shipping_cargo_container);
         shipping_invoice_number = (TextView) root.findViewById(R.id.shipping_invoice_number);
+        cargo_location = (TextView) root.findViewById(R.id.cargo_location);
     }
 
     private void initAction() {
@@ -378,6 +382,19 @@ public class ConfirmationFragment extends Fragment {
                 if (shipping.getInvoiceNumber() != null) {
                     invoice_number_container.setVisibility(View.VISIBLE);
                     shipping_invoice_number.setText(shipping.getInvoiceNumber());
+                }
+
+                if (shipping.getMethod() == 7 || shipping.getMethod() == 8) {
+                    // get the cargo location
+                    String cargo_loc = ((CheckoutActivity)getActivity()).getCargoLocation();
+                    if (cargo_loc != null && cargo_loc.length() > 0) {
+                        cargo_location.setText(cargo_loc);
+                        int cargo_loc_id = ((CheckoutActivity)getActivity()).getCargoId();
+                        c_data.getShipping().setCargoLocation(cargo_loc_id, cargo_loc);
+                        shipping_cargo_container.setVisibility(View.VISIBLE);
+                    } else {
+                        shipping_cargo_container.setVisibility(View.GONE);
+                    }
                 }
             }
         } catch (Exception e) {e.printStackTrace();}

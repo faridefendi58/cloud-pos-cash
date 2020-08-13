@@ -1112,4 +1112,140 @@ public class CheckoutActivity extends AppCompatActivity {
         }
         return file;
     }
+
+    private HashMap<String, JSONArray> cargo_items = new HashMap<String, JSONArray>();
+    private HashMap<String, Integer> cargo_ids = new HashMap<String, Integer>();
+    private ArrayList<String> cargo_array_list = new ArrayList<String>();
+    private String cargo_location = null;
+    private HashMap<String, JSONObject> produck_ongkirs = new HashMap<String, JSONObject>();
+    private HashMap<String, JSONObject> cargo_configs = new HashMap<String, JSONObject>();
+    private Double total_ongkir = 0.0;
+
+    public void buildCargoLocations(final String type) {
+        if (!cargo_items.containsKey(type)) {
+            try {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("admin_id", admin_id);
+                params.put("type", type);
+                Params whParam = paramCatalog.getParamByName("warehouse_id");
+                if (whParam != null) {
+                    params.put("warehouse_id", whParam.getValue());
+                }
+
+                String url = Server.URL + "cargo/list?api-key=" + Server.API_KEY;
+                _string_request(
+                        Request.Method.GET,
+                        url, params, false,
+                        new VolleyCallback() {
+                            @Override
+                            public void onSuccess(String result) {
+                                try {
+                                    JSONObject jObj = new JSONObject(result);
+                                    success = jObj.getInt(TAG_SUCCESS);
+                                    // Check for error node in json
+                                    if (success == 1) {
+                                        JSONArray cargo_data = jObj.getJSONArray("data");
+                                        Log.e(TAG, "cargo_data : "+ cargo_data.toString());
+                                        for(int n = 0; n < cargo_data.length(); n++)
+                                        {
+                                            JSONObject data_n = cargo_data.getJSONObject(n);
+                                            if (data_n.has("id")) {
+                                                String cargo_label = data_n.getString("town")+" - "+data_n.getString("name");
+                                                cargo_ids.put(cargo_label, data_n.getInt("id"));
+                                                cargo_array_list.add(cargo_label);
+                                                if (data_n.has("global_configs")) {
+                                                    cargo_configs.put(cargo_label, data_n.getJSONObject("global_configs"));
+                                                }
+
+                                                if (data_n.has("ongkir")) {
+                                                    produck_ongkirs.put(cargo_label, data_n.getJSONObject("ongkir"));
+                                                }
+                                            }
+                                        }
+                                        cargo_items.put(type, cargo_data);
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+            } catch (Exception e){e.printStackTrace();}
+        }
+    }
+
+    public String[] getCargoLocations(String type) {
+        return cargo_array_list.toArray(new String[cargo_array_list.size()]);
+    }
+
+    public void setCargoLocation(String location) {
+        this.cargo_location = location;
+        // just test
+        setTotalOngkir();
+    }
+
+    public String getCargoLocation() {
+        return cargo_location;
+    }
+
+    public int getCargoId() {
+        return cargo_ids.get(cargo_location);
+    }
+
+    public JSONObject getCargoConfigs() {
+        if (cargo_location == null) {
+            return new JSONObject();
+        }
+        return cargo_configs.get(cargo_location);
+    }
+
+    public JSONObject getProductOngkirs() {
+        if (cargo_location == null) {
+            return new JSONObject();
+        }
+        return produck_ongkirs.get(cargo_location);
+    }
+
+    private void setTotalOngkir() {
+        Double ongkir = 0.0;
+        try {
+            JSONObject cfg = getCargoConfigs();
+            JSONObject bobots = new JSONObject();
+            if (cfg.has("bobot")) {
+                bobots = cfg.getJSONObject("bobot");
+            }
+
+            JSONObject onk = getProductOngkirs();
+            for(LineItem line : register.getCurrentSale().getAllLineItem()) {
+                String product_id = line.getProduct().getBarcode();
+                Double bobot = 2.0;
+                if (bobots.has(product_id)) {
+                    JSONObject bbt_prod = bobots.getJSONObject(product_id);
+                    if (bbt_prod.has("value")) {
+                        bobot = bbt_prod.getDouble("value");
+                    }
+                }
+                if (onk.has(product_id)) {
+                    JSONArray onk_arr = onk.getJSONArray(product_id);
+                    int tot_qty = register.getCurrentSale().getOrders();
+                    for(int n = 0; n < onk_arr.length(); n++) {
+                        JSONObject onk_n = onk_arr.getJSONObject(n);
+                        int _qty = onk_n.getInt("quantity");
+                        int _qty_max = onk_n.getInt("quantity_max");
+                        if ((tot_qty >= _qty) && (tot_qty <= _qty_max)) {
+                            Double _price = onk_n.getDouble("price");
+                            //Log.e("CUK1", "_price*bobot*line.getQuantity() : "+ _price+"*"+bobot+"*"+line.getQuantity());
+                            ongkir = ongkir + (_price*bobot*line.getQuantity());
+                        }
+                    }
+                } else {
+                    //Log.e("CUK3", "ga ada setup ongkir utk produk "+ product_id);
+                }
+            }
+            this.total_ongkir = ongkir;
+
+            int int_ongkir = Integer.valueOf(ongkir.intValue());
+            checkout_data.setOngkir(int_ongkir);
+        } catch (Exception e){e.printStackTrace();}
+    }
 }

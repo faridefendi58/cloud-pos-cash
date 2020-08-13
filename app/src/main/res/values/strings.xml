@@ -296,6 +296,7 @@
     <string name="label_next">Next</string>
     <string name="label_contact_detail">Contact Detail</string>
     <string name="label_shipping_method">Shipping Method</string>
+    <string name="label_cargo_location">Cargo Location</string>
     <string name="label_checkout_save_order">Checkout / Save Order</string>
     <string name="label_role">Register As</string>
     <string name="label_role_access">Role Access :</string>

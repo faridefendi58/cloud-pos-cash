@@ -24,6 +24,8 @@ public class Shipping implements Serializable {
     private String configs;
     private String pickup_date;
     private Boolean use_customer_data = false;
+    private String cargo_location = null;
+    private int cargo_id = 0;
 
     public static final int UNDEFINED = -1;
 
@@ -62,6 +64,10 @@ public class Shipping implements Serializable {
         map.put("recipient_phone", phone);
         if (invoice_number != null) {
             map.put("invoice_number", invoice_number); //gosend, gofood, or grabfood inv number
+        }
+        if (cargo_id > 0) {
+            map.put("cargo_id", cargo_id+"");
+            map.put("cargo_location", cargo_location);
         }
 
         return map;
@@ -161,5 +167,14 @@ public class Shipping implements Serializable {
     }
     public String getInvoiceNumber() {
         return invoice_number;
+    }
+
+    public void setCargoLocation(int _cargo_id, String _cargo_location) {
+        this.cargo_id = _cargo_id;
+        this.cargo_location = _cargo_location;
+    }
+
+    public String getCargoLocation() {
+        return cargo_location;
     }
 }

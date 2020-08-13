@@ -69,6 +69,7 @@ public class ShippingFragment extends Fragment {
     private EditText email;
     private EditText address;
     private EditText shipping_method;
+    private EditText cargo_location;
     private AutoCompleteTextView shipping_date;
     private AutoCompleteTextView shipping_warehouse;
     private EditText shipping_address;
@@ -88,6 +89,7 @@ public class ShippingFragment extends Fragment {
     private int selected_cust_id = -1;
 
     private String[] ship_methods = new String[]{};
+    private String[] cargo_locations = new String[]{};
 
     private ArrayList<String> warehouse_items = new ArrayList<String>();
     private HashMap<String, String> warehouse_ids = new HashMap<String, String>();
@@ -101,6 +103,7 @@ public class ShippingFragment extends Fragment {
     private AutoCompleteTextView customer_phone_autocomplete;
 
     private Boolean need_time_picker = false;
+    private String cargo_type = null;
 
     public ShippingFragment() {
     }
@@ -189,6 +192,7 @@ public class ShippingFragment extends Fragment {
         email = (EditText) root.findViewById(R.id.customer_email);
         address = (EditText) root.findViewById(R.id.customer_address);
         shipping_method = (EditText) root.findViewById(R.id.shipping_method);
+        cargo_location = (EditText) root.findViewById(R.id.cargo_location);
         shipping_date = (AutoCompleteTextView) root.findViewById(R.id.shipping_date);
         shipping_address = (EditText) root.findViewById(R.id.shipping_address);
         shipping_name = (EditText) root.findViewById(R.id.shipping_name);
@@ -378,6 +382,14 @@ public class ShippingFragment extends Fragment {
                 showShippingMethodDialog(v);
             }
         });
+
+        cargo_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCargoDialog(v);
+            }
+        });
+
         shipping_warehouse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -471,6 +483,7 @@ public class ShippingFragment extends Fragment {
                 ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
                 setupShippingForm(i);
                 ((EditText) v).setText(ship_methods[i]);
+                cargo_location.setVisibility(View.GONE); //just 7,8 using cargo
                 if (i == 1) {
                     need_time_picker = true;
                 } else if (i == 2) { //gosend
@@ -489,6 +502,7 @@ public class ShippingFragment extends Fragment {
                     ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
                 } else if (i == 7 || i == 8) { // cargo
                     need_time_picker = true;
+                    setCargoList(i);
                 } else {
                     c_data.setWalletTokopedia("0");
                     ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
@@ -641,5 +655,35 @@ public class ShippingFragment extends Fragment {
             InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
         }
+    }
+
+    private void setCargoList(int i) {
+        cargo_location.setVisibility(View.VISIBLE);
+        if (i == 7) {
+            this.cargo_type = "train";
+        } else if (i == 8) {
+            this.cargo_type = "plane";
+        } else {
+            this.cargo_type = null;
+        }
+        ((CheckoutActivity)getActivity()).buildCargoLocations(cargo_type);
+    }
+
+    private void showCargoDialog(final View v) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+        this.cargo_locations = ((CheckoutActivity)getActivity()).getCargoLocations(cargo_type);
+        builder.setSingleChoiceItems(cargo_locations, 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                ((EditText) v).setText(cargo_locations[i]);
+                try {
+                    ((CheckoutActivity)getActivity()).setCargoLocation(cargo_locations[i]);
+                } catch (Exception e){e.printStackTrace();}
+                dialogInterface.dismiss();
+            }
+        });
+
+        builder.show();
     }
 }

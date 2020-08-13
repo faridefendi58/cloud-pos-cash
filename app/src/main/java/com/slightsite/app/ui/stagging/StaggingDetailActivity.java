@@ -713,8 +713,17 @@ public class StaggingDetailActivity extends Activity{
                                 {
                                     JSONObject data_n = warehouse_data.getJSONObject(n);
                                     if (Integer.parseInt(whParam.getValue()) != Integer.parseInt(data_n.getString("id"))) {
-                                        warehouse_items.add(data_n.getString("title"));
-                                        warehouse_ids.put(data_n.getString("title"), data_n.getString("id"));
+                                        Boolean _include_in = false;
+                                        if (data_n.has("configs")) {
+                                            JSONObject _configs = data_n.getJSONObject("configs");
+                                            if (_configs.has("category") && _configs.getString("category").equals("warehouse")) {
+                                                _include_in = true;
+                                            }
+                                        }
+                                        if (_include_in) {
+                                            warehouse_items.add(data_n.getString("title"));
+                                            warehouse_ids.put(data_n.getString("title"), data_n.getString("id"));
+                                        }
                                     } else {
                                         current_warehouse_name = data_n.getString("title");
                                     }

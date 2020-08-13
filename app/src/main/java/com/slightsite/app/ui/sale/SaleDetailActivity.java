@@ -178,6 +178,9 @@ public class SaleDetailActivity extends Activity{
 	private TextView gograbfood_total_price;
 	private TextView gograbfood_discount;
 
+	private LinearLayout shipping_cargo_container;
+	private TextView cargo_location;
+
 	private PaymentCatalog paymentCatalog;
 	private List<Payment> paymentList;
 	private List<LineItem> lineItems;
@@ -395,6 +398,8 @@ public class SaleDetailActivity extends Activity{
 		shipping_recipient_name = (TextView) findViewById(R.id.shipping_recipient_name);
 		shipping_recipient_phone = (TextView) findViewById(R.id.shipping_recipient_phone);
 		recipient_name_container = (LinearLayout) findViewById(R.id.recipient_name_container);
+		shipping_cargo_container = (LinearLayout) findViewById(R.id.shipping_cargo_container);
+		cargo_location = (TextView) findViewById(R.id.cargo_location);
 
 		try {
 			paymentCatalog = PaymentService.getInstance().getPaymentCatalog();
@@ -1065,6 +1070,12 @@ public class SaleDetailActivity extends Activity{
 												shipping_date.setText(DateTimeStrategy.parseDate(server_invoice_data.getString("delivered_at"), "dd MMM yyyy HH:mm") + "");
 											}
 										} catch (Exception e){}
+									}
+
+									// if use cargo
+									if (obj_shipping.has("cargo_location")) {
+										cargo_location.setText(obj_shipping.getString("cargo_location"));
+										shipping_cargo_container.setVisibility(View.VISIBLE);
 									}
 
 									// find the retur data

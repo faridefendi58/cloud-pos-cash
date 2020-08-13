@@ -382,6 +382,22 @@ public class PaymentFragment extends Fragment {
             }
         });
 
+        // if has calculated ongkir
+        if (c_data.getOngkir() > 0) {
+            try {
+                String ongk = CurrencyController.getInstance().moneyFormat(Double.parseDouble(c_data.getOngkir() + ""));
+                total_ongkir.setText(ongk);
+                String _tot_order = CurrencyController.getInstance().moneyFormat(register.getTotal());
+                _tot_order = _tot_order.replace(".", "");
+                int grand_total_now = Integer.parseInt(_tot_order);
+                int grand_total_current = grand_total_now + c_data.getOngkir() - c_data.getDiscount();
+                if (c_data.getOngkirCashToDriver()) {
+                    grand_total_current = grand_total_now + c_data.getDiscount();
+                }
+                grand_total.setText(CurrencyController.getInstance().moneyFormat(Double.parseDouble(grand_total_current+"")));
+            } catch (Exception e){e.printStackTrace();}
+        }
+
         total_ongkir.addTextChangedListener(new TextWatcher(){
             private String current_ongkir_val;
             public void afterTextChanged(Editable s) {
