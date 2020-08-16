@@ -1157,8 +1157,28 @@ public class CheckoutActivity extends AppCompatActivity {
                                                     cargo_configs.put(cargo_label, data_n.getJSONObject("global_configs"));
                                                 }
 
+                                                JSONObject data_cfg_ongkir = new JSONObject();
+                                                if (data_n.has("configs")) {
+                                                    JSONObject data_cfg = data_n.getJSONObject("configs");
+                                                    if (data_cfg.has("ongkir")) {
+                                                        data_cfg_ongkir = data_cfg.getJSONObject("ongkir");
+                                                    }
+                                                }
+
                                                 if (data_n.has("ongkir")) {
-                                                    produck_ongkirs.put(cargo_label, data_n.getJSONObject("ongkir"));
+                                                    //produck_ongkirs.put(cargo_label, data_n.getJSONObject("ongkir"));
+                                                    JSONObject glob_ongkir = data_n.getJSONObject("ongkir");
+                                                    Iterator<String> keys = glob_ongkir.keys();
+                                                    while(keys.hasNext()) {
+                                                        String key = keys.next();
+                                                        if (!data_cfg_ongkir.has(key)) {
+                                                            data_cfg_ongkir.put(key, glob_ongkir.getJSONArray(key));
+                                                        }
+                                                    }
+                                                }
+
+                                                if (data_cfg_ongkir.length() > 0) {
+                                                    produck_ongkirs.put(cargo_label, data_cfg_ongkir);
                                                 }
                                             }
                                         }
