@@ -40,6 +40,7 @@ import com.slightsite.app.domain.params.Params;
 import com.slightsite.app.domain.sale.Checkout;
 import com.slightsite.app.domain.sale.Register;
 import com.slightsite.app.domain.sale.Shipping;
+import com.slightsite.app.domain.shipping.CargoListDialog;
 import com.slightsite.app.techicalservices.AutoCompleteAdapter;
 import com.slightsite.app.techicalservices.NoDaoSetException;
 import com.slightsite.app.techicalservices.Tools;
@@ -386,7 +387,7 @@ public class ShippingFragment extends Fragment {
         cargo_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showCargoDialog(v);
+                showCargoDialogSearch(v);
             }
         });
 
@@ -500,7 +501,7 @@ public class ShippingFragment extends Fragment {
                     Double tot_inv = register.getTotal();
                     c_data.setWalletGrabFood(tot_inv + "");
                     ((CheckoutActivity) getActivity()).setShipping(ship, c_data);
-                } else if (i == 7 || i == 8) { // cargo
+                } else if (i == 7 || i == 8 || i == 9) { // cargo
                     need_time_picker = true;
                     setCargoList(i);
                 } else {
@@ -663,6 +664,8 @@ public class ShippingFragment extends Fragment {
             this.cargo_type = "train";
         } else if (i == 8) {
             this.cargo_type = "plane";
+        } else if (i == 9) {
+            this.cargo_type = "bus";
         } else {
             this.cargo_type = null;
         }
@@ -685,5 +688,11 @@ public class ShippingFragment extends Fragment {
         });
 
         builder.show();
+    }
+
+    private void showCargoDialogSearch(final View v) {
+        this.cargo_locations = ((CheckoutActivity)getActivity()).getCargoLocations(cargo_type);
+        CargoListDialog dialog = new CargoListDialog(getContext(), v, cargo_locations);
+        dialog.show();
     }
 }

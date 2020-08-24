@@ -41,6 +41,7 @@
     <string name="hint_search_customer">Enter name or email</string>
     <string name="hint_cash">Cash Received</string>
     <string name="hint_transfer">Enter transfer nominal here</string>
+    <string name="hint_searching">Searching</string>
     <string name="add_new_product">Add New Product</string>
     <string name="add_stock">Add Stock</string>
     <string name="add_discount">Add Multilevel Price</string>
@@ -426,6 +427,7 @@
     <string name="shipping_method_deposit">Buy and Deposit</string>
     <string name="shipping_method_train_cargo">Train Cargo</string>
     <string name="shipping_method_plane_cargo">Plane Cargo</string>
+    <string name="shipping_method_bus_cargo">Bus Cargo</string>
 
     <string name="hint_email">E.g: john@gmail.com</string>
     <string name="hint_retur_notes">Add some notes if needed.</string>

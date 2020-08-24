@@ -41,6 +41,7 @@
     <string name="hint_search_customer">Masukkan nama atau email</string>
     <string name="hint_cash">Uang diterima</string>
     <string name="hint_transfer">Nominal yang ditransfer</string>
+    <string name="hint_searching">Pencarian</string>
     <string name="add_new_product">Tambah Produk Baru</string>
     <string name="add_stock">Tambah Stok</string>
     <string name="add_discount">Tambah Harga</string>
@@ -424,6 +425,7 @@
     <string name="shipping_method_deposit">Beli dan Titip Barang</string>
     <string name="shipping_method_train_cargo">Cargo Kereta Api</string>
     <string name="shipping_method_plane_cargo">Cargo Pesawat</string>
+    <string name="shipping_method_bus_cargo">Cargo Bus</string>
 
     <string name="hint_email">Contoh: john@gmail.com</string>
     <string name="hint_retur_notes">Tambahkan catatan jika diperlukan.</string>

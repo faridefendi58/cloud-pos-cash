@@ -215,7 +215,7 @@ public class PaymentFragment extends Fragment {
 
         if (c_data.getShipping().getMethod() == 2
                 || c_data.getShipping().getMethod() == 7
-                || c_data.getShipping().getMethod() == 8) { //Gosend (2), Train Cargo (7), Plane Cargo (8)
+                || c_data.getShipping().getMethod() == 8 || c_data.getShipping().getMethod() == 9) { //Gosend (2), Train Cargo (7), Plane Cargo (8), Bus Cargo (9)
             ongkir_container.setVisibility(View.VISIBLE);
         }
 

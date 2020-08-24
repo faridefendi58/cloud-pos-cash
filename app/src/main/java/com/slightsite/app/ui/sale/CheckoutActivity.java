@@ -331,10 +331,11 @@ public class CheckoutActivity extends AppCompatActivity {
                         ) {
                             idx_state = idx_state + 1;
                         }
-                        // not allowed empty shipping name phone and address for gosend (2), train cargo (7), plane cargo (8)
+                        // not allowed empty shipping name phone and address for gosend (2), train cargo (7), plane cargo (8), bus cargo (9)
                         if (checkout_data.getShipping().getMethod() == 2
                                 || checkout_data.getShipping().getMethod() == 7
-                                || checkout_data.getShipping().getMethod() == 8) {
+                                || checkout_data.getShipping().getMethod() == 8
+                                || checkout_data.getShipping().getMethod() == 9) {
                             if (checkout_data.getShipping().getName() == null
                                     || checkout_data.getShipping().getPhone() == null
                                     || checkout_data.getShipping().getAddress() == null
@@ -1115,7 +1116,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
     private HashMap<String, JSONArray> cargo_items = new HashMap<String, JSONArray>();
     private HashMap<String, Integer> cargo_ids = new HashMap<String, Integer>();
-    private ArrayList<String> cargo_array_list = new ArrayList<String>();
+    private HashMap<String, ArrayList> cargo_list_map = new HashMap<String, ArrayList>();
     private String cargo_location = null;
     private HashMap<String, JSONObject> produck_ongkirs = new HashMap<String, JSONObject>();
     private HashMap<String, JSONObject> cargo_configs = new HashMap<String, JSONObject>();
@@ -1146,6 +1147,7 @@ public class CheckoutActivity extends AppCompatActivity {
                                     if (success == 1) {
                                         JSONArray cargo_data = jObj.getJSONArray("data");
                                         Log.e(TAG, "cargo_data : "+ cargo_data.toString());
+                                        ArrayList<String> cargo_array_list = new ArrayList<String>();
                                         for(int n = 0; n < cargo_data.length(); n++)
                                         {
                                             JSONObject data_n = cargo_data.getJSONObject(n);
@@ -1158,14 +1160,14 @@ public class CheckoutActivity extends AppCompatActivity {
                                                 }
 
                                                 JSONObject data_cfg_ongkir = new JSONObject();
-                                                if (data_n.has("configs")) {
+                                                if (data_n.has("configs") && !data_n.getString("configs").equals(null) && !data_n.getString("configs").equals("null")) {
                                                     JSONObject data_cfg = data_n.getJSONObject("configs");
                                                     if (data_cfg.has("ongkir")) {
                                                         data_cfg_ongkir = data_cfg.getJSONObject("ongkir");
                                                     }
                                                 }
 
-                                                if (data_n.has("ongkir")) {
+                                                if (data_n.has("ongkir") && !data_n.getString("ongkir").equals(null) && !data_n.getString("ongkir").equals("null")) {
                                                     //produck_ongkirs.put(cargo_label, data_n.getJSONObject("ongkir"));
                                                     JSONObject glob_ongkir = data_n.getJSONObject("ongkir");
                                                     Iterator<String> keys = glob_ongkir.keys();
@@ -1182,6 +1184,7 @@ public class CheckoutActivity extends AppCompatActivity {
                                                 }
                                             }
                                         }
+                                        cargo_list_map.put(type, cargo_array_list);
                                         cargo_items.put(type, cargo_data);
                                     }
 
@@ -1195,7 +1198,8 @@ public class CheckoutActivity extends AppCompatActivity {
     }
 
     public String[] getCargoLocations(String type) {
-        return cargo_array_list.toArray(new String[cargo_array_list.size()]);
+        ArrayList<String> _cargo_array_list = cargo_list_map.get(type);
+        return _cargo_array_list.toArray(new String[_cargo_array_list.size()]);
     }
 
     public void setCargoLocation(String location) {

@@ -384,7 +384,7 @@ public class ConfirmationFragment extends Fragment {
                     shipping_invoice_number.setText(shipping.getInvoiceNumber());
                 }
 
-                if (shipping.getMethod() == 7 || shipping.getMethod() == 8) {
+                if (shipping.getMethod() == 7 || shipping.getMethod() == 8 || shipping.getMethod() == 9) {
                     // get the cargo location
                     String cargo_loc = ((CheckoutActivity)getActivity()).getCargoLocation();
                     if (cargo_loc != null && cargo_loc.length() > 0) {
